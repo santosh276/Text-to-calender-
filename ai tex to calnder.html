@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -217,15 +217,6 @@
         .settings-group input[type="checkbox"] { width: auto; margin-right: 8px; vertical-align: middle; }
         .settings-group input[type="checkbox"] + label { display: inline; font-weight: normal; }
         /* --- END: Settings Panel Styles --- */
-
-        @media print {
-            header, .controls, .download-controls, .input-pane, #settingsPanel, #toggleGuideButton, #formatting-guide, #dragDropOverlay, .calendar-sidebar, .calendar-header:not(.app-container .calendar-header) { display: none !important; }
-            body { background: #fff !important; padding: 0 !important; font-size: 11pt; display: block !important; }
-            .container, .editor-area { all: unset !important; display: block !important; }
-            #formattedOutput { all: unset !important; display: block !important; width: 100% !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; text-shadow: none !important; }
-            p, li, blockquote { orphans: 3; widows: 3; }
-        }
     </style>
 </head>
 <body>
@@ -238,7 +229,6 @@
             <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" multiple>
             <button id="downloadHtmlButton">Download HTML</button>
             <button id="downloadTxtButton">Download TXT</button>
-            <button id="printOutputButton">Print Output</button>
             <button id="settingsButton">Settings</button>
             <button id="clearButton">Clear Input</button>
             <div class="control-group">
@@ -344,9 +334,7 @@ New Moon: 24
 - Complete all pending tasks before the festival season.
 :::
 :::
-
-## General Notes
-This calendar is for demonstration purposes.</textarea>
+</textarea>
             </div>
             <div class="output-pane"><div id="formattedOutput"></div></div>
         </div>
@@ -365,39 +353,11 @@ This calendar is for demonstration purposes.</textarea>
     <div id="settingsPanel" class="hidden" translate="no">
         <div class="panel-header"><h3>Settings</h3><button id="closeSettingsButton" title="Close">×</button></div>
         <div class="panel-tabs">
-            <button class="tab-link active" data-tab="options">Options</button><button class="tab-link" data-tab="margins">Margins</button><button class="tab-link" data-tab="page">Page</button><button class="tab-link" data-tab="download">Download</button>
+            <button class="tab-link active" data-tab="download">Download</button>
         </div>
         <div class="panel-content">
-            <div id="tab-options" class="tab-content active">
-                 <div class="settings-group">
-                    <label for="printFontSizeSelect">Base Font Size:</label><select id="printFontSizeSelect"><option value="10pt">10pt</option><option value="11pt">11pt (Default)</option><option value="12pt">12pt</option><option value="14pt">14pt</option><option value="custom">Custom...</option></select><input type="text" id="customPrintFontSize" class="custom-input hidden" placeholder="e.g., 12.5pt">
-                </div>
-                <div class="settings-group">
-                    <label for="printLineHeightSelect">Line Height:</label><select id="printLineHeightSelect"><option value="1.3">1.3</option><option value="1.45">1.45 (Default)</option><option value="1.6">1.6 (Spacious)</option><option value="custom">Custom...</option></select><input type="text" id="customPrintLineHeight" class="custom-input hidden" placeholder="e.g., 1.5">
-                </div>
-                 <div class="settings-group">
-                    <label for="printPageBreakControl">Page Break Mode:</label><select id="printPageBreakControl"><option value="smart">Smart Splitting (Default)</option><option value="smart-css">Smart Splitting (CSS)</option><option value="avoid">Keep Groups Together</option><option value="auto">Allow All Splitting</option></select>
-                </div>
-            </div>
-            <div id="tab-margins" class="tab-content">
-                 <div class="margins-layout">
-                    <div class="margin-controls">
-                        <div class="settings-group"><label>Page Margins (e.g., 20px, 1in, 2.5cm)</label><input type="text" id="marginTop" placeholder="Top"><input type="text" id="marginBottom" placeholder="Bottom"><input type="text" id="marginLeft" placeholder="Left"><input type="text" id="marginRight" placeholder="Right"></div>
-                    </div>
-                    <div class="margin-preview-container"><label>Preview</label><div id="marginPreview" class="margin-preview"><div class="preview-page"></div></div></div>
-                </div>
-            </div>
-            <div id="tab-page" class="tab-content">
-                <div class="settings-group"><label>Orientation</label><div class="radio-group"><label><input type="radio" name="orientation" value="portrait" checked> Portrait</label><label><input type="radio" name="orientation" value="landscape"> Landscape</label></div></div>
-                <div class="settings-group">
-                    <label for="paperSizeSelect">Paper Size</label><select id="paperSizeSelect"><option value="Letter">Letter (8.5in x 11in)</option><option value="Legal">Legal (8.5in x 14in)</option><option value="Tabloid">Tabloid (11in x 17in)</option><option value="A3">A3 (297mm x 420mm)</option><option value="A4">A4 (210mm x 297mm)</option><option value="A5">A5 (148mm x 210mm)</option></select>
-                </div>
-                <div class="settings-group">
-                    <label for="scalingFactor">Scaling</label><div style="display: flex; align-items: center; gap: 10px;"><input type="range" id="scalingRange" min="20" max="200" value="100" style="width: 100%;"><input type="number" id="scalingFactor" min="20" max="200" value="100" style="width: 80px;"><span>%</span></div>
-                </div>
-            </div>
-            <div id="tab-download" class="tab-content">
-                <div class="settings-group"><label>Include Interactive Controls in Downloaded Files</label><div class="checkbox-group"><label><input type="checkbox" id="downloadIncludePrint"> Print Button</label><label><input type="checkbox" id="downloadIncludeSettings" checked> Settings Button</label></div></div>
+            <div id="tab-download" class="tab-content active">
+                <div class="settings-group"><label>Include Interactive Controls in Downloaded Files</label><div class="checkbox-group"><label><input type="checkbox" id="downloadIncludeSettings" checked> Settings Button</label></div></div>
             </div>
         </div>
         <div class="panel-footer"><button id="resetSettingsButton">Reset to Defaults</button><button id="applySettingsButton">OK</button></div>
@@ -407,7 +367,7 @@ This calendar is for demonstration purposes.</textarea>
     <template id="download-template">
         <div id="download-controls" class="download-controls" translate="no">
             <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
-                <div class="control-group"><button id="printOutputButton"><span>Print</span></button><button id="settingsButton"><span>Settings</span></button><button id="hideControlsButton" title="Hide Controls"></button></div>
+                <div class="control-group"><button id="settingsButton"><span>Settings</span></button><button id="hideControlsButton" title="Hide Controls"></button></div>
                 <div class="control-group"><label for="languageToggle">View:</label><select id="languageToggle"><option value="both">Show Both Languages</option><option value="primary">Primary Only</option><option value="secondary">Secondary Only</option><option value="translate">Browser Translation</option></select></div>
             </div>
         </div>
@@ -419,8 +379,7 @@ This calendar is for demonstration purposes.</textarea>
     
     <script>
     const defaultSettings = {
-        print: { orientation: 'portrait', paperSize: 'Letter', scalingFactor: 100, marginTop: '0.7in', marginBottom: '0.7in', marginLeft: '0.7in', marginRight: '0.7in', fontSize: '11pt', lineHeight: '1.45', pageBreak: 'smart' },
-        download: { includePrint: false, includeSettings: true }
+        download: { includeSettings: true }
     };
     let currentSettings = JSON.parse(JSON.stringify(defaultSettings));
 
@@ -429,7 +388,6 @@ This calendar is for demonstration purposes.</textarea>
         const body = document.body;
         const languageToggle = get('#languageToggle');
         const settingsPanel = get('#settingsPanel');
-        const customPrintStyleTag = get('#customPrintStyles');
         
         const setupLanguageToggle = () => {
             if (!languageToggle) return;
@@ -444,91 +402,44 @@ This calendar is for demonstration purposes.</textarea>
         };
         setupLanguageToggle();
         
-        const loadSettings = () => { try { const saved = localStorage.getItem('formatterSettings'); if(saved) { const parsed = JSON.parse(saved); currentSettings.print = {...defaultSettings.print, ...parsed.print}; currentSettings.download = {...defaultSettings.download, ...parsed.download}; } } catch { currentSettings = JSON.parse(JSON.stringify(defaultSettings)); } updateSettingsPanel(); updateDynamicStyles(); };
+        const loadSettings = () => { try { const saved = localStorage.getItem('formatterSettings'); if(saved) { const parsed = JSON.parse(saved); currentSettings.download = {...defaultSettings.download, ...parsed.download}; } } catch { currentSettings = JSON.parse(JSON.stringify(defaultSettings)); } updateSettingsPanel(); };
         const saveSettings = () => { localStorage.setItem('formatterSettings', JSON.stringify(currentSettings)); };
-        const handlePrint = () => { readSettingsFromPanel(); saveSettings(); updateDynamicStyles(); setTimeout(() => window.print(), 100); };
         
-        const updateMarginPreview = () => {
-            const preview = get('#marginPreview'); if (!preview) return;
-            const toPx = (val) => (parseFloat(val) || 0) * 20;
-            preview.style.paddingTop = `${toPx(get('#marginTop', settingsPanel).value)}px`;
-            preview.style.paddingBottom = `${toPx(get('#marginBottom', settingsPanel).value)}px`;
-            preview.style.paddingLeft = `${toPx(get('#marginLeft', settingsPanel).value)}px`;
-            preview.style.paddingRight = `${toPx(get('#marginRight', settingsPanel).value)}px`;
-        };
         const updateSettingsPanel = () => {
             if (!settingsPanel) return;
-            get(`input[name="orientation"][value="${currentSettings.print.orientation}"]`, settingsPanel).checked = true;
-            get('#paperSizeSelect', settingsPanel).value = currentSettings.print.paperSize;
-            get('#scalingFactor', settingsPanel).value = currentSettings.print.scalingFactor;
-            get('#scalingRange', settingsPanel).value = currentSettings.print.scalingFactor;
-            get('#marginTop', settingsPanel).value = currentSettings.print.marginTop;
-            get('#marginBottom', settingsPanel).value = currentSettings.print.marginBottom;
-            get('#marginLeft', settingsPanel).value = currentSettings.print.marginLeft;
-            get('#marginRight', settingsPanel).value = currentSettings.print.marginRight;
-            updateMarginPreview();
-            const setHybrid = (sel, customEl, val) => { if(!sel || !customEl) return; const isPreset = Array.from(sel.options).some(o => o.value === val); sel.value = isPreset ? val : 'custom'; customEl.classList.toggle('hidden', isPreset); if (!isPreset) customEl.value = val; };
-            setHybrid(get('#printFontSizeSelect', settingsPanel), get('#customPrintFontSize', settingsPanel), currentSettings.print.fontSize);
-            setHybrid(get('#printLineHeightSelect', settingsPanel), get('#customPrintLineHeight', settingsPanel), currentSettings.print.lineHeight);
-            get('#printPageBreakControl', settingsPanel).value = currentSettings.print.pageBreak;
-            get('#downloadIncludePrint', settingsPanel).checked = currentSettings.download.includePrint;
             get('#downloadIncludeSettings', settingsPanel).checked = currentSettings.download.includeSettings;
         };
         const readSettingsFromPanel = () => {
             if (!settingsPanel) return;
-            currentSettings.print.orientation = get('input[name="orientation"]:checked', settingsPanel).value;
-            currentSettings.print.paperSize = get('#paperSizeSelect', settingsPanel).value;
-            currentSettings.print.scalingFactor = get('#scalingFactor', settingsPanel).value;
-            currentSettings.print.marginTop = get('#marginTop', settingsPanel).value;
-            currentSettings.print.marginBottom = get('#marginBottom', settingsPanel).value;
-            currentSettings.print.marginLeft = get('#marginLeft', settingsPanel).value;
-            currentSettings.print.marginRight = get('#marginRight', settingsPanel).value;
-            const getHybrid = (sel, customEl) => sel.value === 'custom' ? customEl.value : sel.value;
-            currentSettings.print.fontSize = getHybrid(get('#printFontSizeSelect', settingsPanel), get('#customPrintFontSize', settingsPanel));
-            currentSettings.print.lineHeight = getHybrid(get('#printLineHeightSelect', settingsPanel), get('#customPrintLineHeight', settingsPanel));
-            currentSettings.print.pageBreak = get('#printPageBreakControl', settingsPanel).value;
-            currentSettings.download.includePrint = get('#downloadIncludePrint', settingsPanel).checked;
             currentSettings.download.includeSettings = get('#downloadIncludeSettings', settingsPanel).checked;
-        };
-        const updateDynamicStyles = () => {
-            if (!customPrintStyleTag) return;
-            const { paperSize, orientation, scalingFactor, marginTop, marginBottom, marginLeft, marginRight, fontSize, lineHeight, pageBreak } = currentSettings.print;
-            const valid = { margin: /^\d+(\.\d+)?(cm|mm|in|pt|px)$/, fontSize: /^\d+(\.\d+)?(pt|px|em|rem)$/, lineHeight: /^\d+(\.\d+)?$/, zoom: /^\d+(\.\d+)?%?$/ };
-            const validVal = (key, val, def) => (String(val).trim() && valid[key].test(String(val).trim()) ? String(val).trim() : def);
-            const pageRule = `@page { size: ${paperSize} ${orientation}; margin: ${validVal('margin', marginTop, '0.7in')} ${validVal('margin', marginRight, '0.7in')} ${validVal('margin', marginBottom, '0.7in')} ${validVal('margin', marginLeft, '0.7in')} !important; }`;
-            let bodyPrintStyles = `font-size: ${validVal('fontSize', fontSize, '11pt')} !important; line-height: ${validVal('lineHeight', lineHeight, '1.45')} !important; zoom: ${validVal('zoom', scalingFactor + '%', '100%')} !important;`;
-            const pageBreakStyles = { 'smart': `p, li, blockquote { orphans: 3; widows: 3; } h1, h2, h3, h4 { break-after: avoid; } .calendar-wrapper, figure, table { break-inside: avoid; }`, 'smart-css': `:is(h1,h2,h3,h4,p,ul,ol,figure,table,.calendar-wrapper) { page-break-inside: avoid !important; }`, 'avoid': `#formattedOutput > * { page-break-inside: avoid !important; }`, 'auto': `* { page-break-inside: auto !important; }` };
-            customPrintStyleTag.innerHTML = `@media print { ${pageRule} body { ${bodyPrintStyles} } ${pageBreakStyles[pageBreak] || pageBreakStyles['smart']} }`;
         };
 
         document.addEventListener('click', (e) => {
             const target = e.target;
             const clickHandlers = {
-                '#printOutputButton': handlePrint,
                 '#settingsButton': () => { updateSettingsPanel(); settingsPanel.classList.remove('hidden'); },
                 '#closeSettingsButton': () => settingsPanel.classList.add('hidden'),
-                '#applySettingsButton': () => { readSettingsFromPanel(); saveSettings(); updateDynamicStyles(); settingsPanel.classList.add('hidden'); },
-                '#resetSettingsButton': () => { currentSettings = JSON.parse(JSON.stringify(defaultSettings)); saveSettings(); updateSettingsPanel(); updateDynamicStyles(); },
+                '#applySettingsButton': () => { readSettingsFromPanel(); saveSettings(); settingsPanel.classList.add('hidden'); },
+                '#resetSettingsButton': () => { currentSettings = JSON.parse(JSON.stringify(defaultSettings)); saveSettings(); updateSettingsPanel(); },
                 '#hideControlsButton': (t) => { const c = t.closest('.download-controls'); if (c) { c.style.display = 'none'; const s = document.getElementById('show-controls-tab'); if(s) s.style.display = 'block'; } },
                 '#show-controls-tab': (t) => { const c = document.getElementById('download-controls'); if (c) { c.style.display = 'flex'; t.style.display = 'none'; } },
-                '.tab-link': (t) => { const tabId = t.dataset.tab; const panel = t.closest('#settingsPanel'); panel.querySelector('.tab-link.active').classList.remove('active'); t.classList.add('active'); panel.querySelector('.tab-content.active').classList.remove('active'); panel.querySelector(`#tab-${tabId}`).classList.add('active'); }
+                '#toggleGuideButton': (button) => {
+                    const guide = document.getElementById('formatting-guide');
+                    guide.classList.toggle('visible');
+                    button.classList.toggle('active');
+                    const span = button.querySelector('span');
+                    if (span) span.textContent = guide.classList.contains('visible') ? 'Hide Guide' : 'Show Guide';
+                }
             };
             for (const sel in clickHandlers) { const el = target.closest(sel); if (el) { clickHandlers[sel](el); return; } }
         });
 
         if (settingsPanel) { 
             settingsPanel.addEventListener('input', (e) => { 
-                if (e.target.closest('#tab-margins')) updateMarginPreview();
-                if (e.target.id === 'scalingRange') get('#scalingFactor').value = e.target.value;
-                if (e.target.id === 'scalingFactor') get('#scalingRange').value = e.target.value;
-                readSettingsFromPanel(); updateDynamicStyles();
+                readSettingsFromPanel();
             }); 
             settingsPanel.addEventListener('change', (e) => {
-                 if (e.target.matches('#printFontSizeSelect, #printLineHeightSelect')) {
-                    const customInput = e.target.nextElementSibling;
-                    if (customInput?.classList.contains('custom-input')) customInput.classList.toggle('hidden', e.target.value !== 'custom');
-                }
-                readSettingsFromPanel(); updateDynamicStyles();
+                readSettingsFromPanel();
             });
         }
         
@@ -844,13 +755,6 @@ This calendar is for demonstration purposes.</textarea>
                     case 'clearButton': App.dom.rawInput.value = ''; App.state.uploadedImages = {}; formatText(); App.dom.rawInput.focus(); break;
                     case 'downloadHtmlButton': downloadFile(createDownloadableHtml(), getSanitizedFilename(App.dom.formattedOutput.querySelector('h1, h2, .calendar-header h2')?.textContent, 'formatted_output') + '.html', 'text/html;charset=utf-8'); break;
                     case 'downloadTxtButton': downloadFile('\uFEFF'+App.dom.rawInput.value.replace(/^!\[.*?\]\(local-image:\/\/.*?\)(?:\[.*?\])?\s*(\r\n|\n)?/gm, ''), getSanitizedFilename(App.dom.rawInput.value.split('\n')[0], 'raw_text') + '.txt', 'text/plain;charset=utf-8'); break;
-                    case 'toggleGuideButton':
-                        const guide = App.dom.formattingGuide;
-                        guide.classList.toggle('visible');
-                        button.classList.toggle('active');
-                        const span = button.querySelector('span');
-                        if (span) span.textContent = guide.classList.contains('visible') ? 'Hide Guide' : 'Show Guide';
-                        break;
                 }
             });
 
