@@ -1,0 +1,1799 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akshaya Odia Calendar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #c40000;
+            --primary-dark: #9b0000;
+            --secondary-color: #15803d;
+            --accent-color: #fbbf24;
+            --text-color: #34495e;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            
+            /* Event Type Colors - SWAPPED */
+            --festival-color: #9b59b6; /* Purple (was Parbaparbani) */
+            --festival-bg: rgba(155, 89, 182, 0.1);
+            --goodday-color: #f39c12; /* Orange (was Shubhadina) */
+            --goodday-bg: rgba(243, 156, 18, 0.1);
+            --holiday-color: #1abc9c; /* Teal (was Chutidina) */
+            --holiday-bg: rgba(26, 188, 156, 0.1);
+            --parbaparbani-color: #e74c3c; /* Red (was Festival) */
+            --parbaparbani-bg: rgba(231, 76, 60, 0.1);
+            --shubhadina-color: #2ecc71; /* Green (was Good Day) */
+            --shubhadina-bg: rgba(46, 204, 113, 0.1);
+            --chutidina-color: #3498db; /* Blue (was Holiday) */
+            --chutidina-bg: rgba(52, 152, 219, 0.1);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .font-oriya {
+            font-family: 'Noto Sans Oriya', sans-serif;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://picsum.photos/seed/odia-calendar/1200/300.jpg') center/cover;
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .deities {
+            display: flex;
+            gap: 15px;
+        }
+
+        .deity {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            text-align: center;
+            border: 3px solid var(--secondary-color);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .deity:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Top Controls */
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 10px 15px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            margin-left: 10px;
+            width: 100%;
+            color: var(--text-color);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background-color: var(--white);
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            color: var(--text-color);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .control-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .month-display {
+            text-align: center;
+        }
+
+        .odia-month {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        .english-month {
+            font-size: 18px;
+            color: var(--text-color);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toggle-btn {
+            padding: 8px 15px;
+            background-color: var(--light-bg);
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Calendar */
+        .calendar-container {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .weekday-headers {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: var(--primary-color);
+        }
+
+        .weekday-header {
+            padding: 15px 5px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .weekday-header:first-child {
+            background-color: var(--primary-dark);
+        }
+
+        .weekday-header .weekday-name {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .weekday-header .weekday-short {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: #eee;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            padding: 10px;
+            background-color: var(--white);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calendar-day:hover {
+            background-color: #f9f9f9;
+            transform: scale(1.02);
+            z-index: 1;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-day.sunday {
+            background-color: rgba(254, 242, 242, 0.7);
+        }
+
+        .calendar-day.sunday .day-number {
+            color: var(--primary-color);
+        }
+
+        .calendar-day.today {
+            background-color: rgba(251, 191, 36, 0.2);
+        }
+
+        .calendar-day.today::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        .day-number {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .festival-indicator {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Event Type Styles - WITH SWAPPED COLORS */
+        .calendar-day.festival-day {
+            background-color: var(--festival-bg);
+        }
+
+        .calendar-day.festival-day .festival-indicator {
+            background-color: var(--festival-color);
+        }
+
+        .calendar-day.goodday-day {
+            background-color: var(--goodday-bg);
+        }
+
+        .calendar-day.goodday-day .festival-indicator {
+            background-color: var(--goodday-color);
+        }
+
+        .calendar-day.holiday-day {
+            background-color: var(--holiday-bg);
+        }
+
+        .calendar-day.holiday-day .festival-indicator {
+            background-color: var(--holiday-color);
+        }
+
+        .calendar-day.parbaparbani-day {
+            background-color: var(--parbaparbani-bg);
+        }
+
+        .calendar-day.parbaparbani-day .festival-indicator {
+            background-color: var(--parbaparbani-color);
+        }
+
+        .calendar-day.shubhadina-day {
+            background-color: var(--shubhadina-bg);
+        }
+
+        .calendar-day.shubhadina-day .festival-indicator {
+            background-color: var(--shubhadina-color);
+        }
+
+        .calendar-day.chutidina-day {
+            background-color: var(--chutidina-bg);
+        }
+
+        .calendar-day.chutidina-day .festival-indicator {
+            background-color: var(--chutidina-color);
+        }
+
+        /* Event Details Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: modalOpen 0.3s ease;
+        }
+
+        @keyframes modalOpen {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .event-details h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .event-details p {
+            margin-bottom: 10px;
+        }
+
+        .event-details .event-type {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .event-details .event-type.festival {
+            background-color: var(--festival-color);
+        }
+
+        .event-details .event-type.goodday {
+            background-color: var(--goodday-color);
+        }
+
+        .event-details .event-type.holiday {
+            background-color: var(--holiday-color);
+        }
+
+        .event-details .event-type.parbaparbani {
+            background-color: var(--parbaparbani-color);
+        }
+
+        .event-details .event-type.shubhadina {
+            background-color: var(--shubhadina-color);
+        }
+
+        .event-details .event-type.chutidina {
+            background-color: var(--chutidina-color);
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .event-action-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-action-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Festival Highlights */
+        .festival-highlights {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .festival-highlights h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .festival-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .festival-card {
+            border-radius: var(--border-radius);
+            padding: 15px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            border-left: 4px solid;
+        }
+
+        .festival-card.festival {
+            background-color: var(--festival-bg);
+            border-left-color: var(--festival-color);
+        }
+
+        .festival-card.goodday {
+            background-color: var(--goodday-bg);
+            border-left-color: var(--goodday-color);
+        }
+
+        .festival-card.holiday {
+            background-color: var(--holiday-bg);
+            border-left-color: var(--holiday-color);
+        }
+
+        .festival-card.parbaparbani {
+            background-color: var(--parbaparbani-bg);
+            border-left-color: var(--parbaparbani-color);
+        }
+
+        .festival-card.shubhadina {
+            background-color: var(--shubhadina-bg);
+            border-left-color: var(--shubhadina-color);
+        }
+
+        .festival-card.chutidina {
+            background-color: var(--chutidina-bg);
+            border-left-color: var(--chutidina-color);
+        }
+
+        .festival-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .festival-date {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .festival-card.festival .festival-date {
+            color: var(--festival-color);
+        }
+
+        .festival-card.goodday .festival-date {
+            color: var(--goodday-color);
+        }
+
+        .festival-card.holiday .festival-date {
+            color: var(--holiday-color);
+        }
+
+        .festival-card.parbaparbani .festival-date {
+            color: var(--parbaparbani-color);
+        }
+
+        .festival-card.shubhadina .festival-date {
+            color: var(--shubhadina-color);
+        }
+
+        .festival-card.chutidina .festival-date {
+            color: var(--chutidina-color);
+        }
+
+        .festival-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .festival-description {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .favorite-btn.active {
+            color: #e74c3c;
+        }
+
+        /* Event Type Filters - Now in Month Events Section */
+        .event-filters {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background-color: var(--light-bg);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .event-filter {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .event-filter.festival {
+            background-color: var(--festival-bg);
+            color: var(--festival-color);
+            border: 1px solid var(--festival-color);
+        }
+
+        .event-filter.goodday {
+            background-color: var(--goodday-bg);
+            color: var(--goodday-color);
+            border: 1px solid var(--goodday-color);
+        }
+
+        .event-filter.holiday {
+            background-color: var(--holiday-bg);
+            color: var(--holiday-color);
+            border: 1px solid var(--holiday-color);
+        }
+
+        .event-filter.parbaparbani {
+            background-color: var(--parbaparbani-bg);
+            color: var(--parbaparbani-color);
+            border: 1px solid var(--parbaparbani-color);
+        }
+
+        .event-filter.shubhadina {
+            background-color: var(--shubhadina-bg);
+            color: var(--shubhadina-color);
+            border: 1px solid var(--shubhadina-color);
+        }
+
+        .event-filter.chutidina {
+            background-color: var(--chutidina-bg);
+            color: var(--chutidina-color);
+            border: 1px solid var(--chutidina-color);
+        }
+
+        .event-filter.active {
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+
+        .event-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Countdown Timer - Smaller Version */
+        .countdown-container {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .countdown-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .countdown-item {
+            text-align: center;
+            min-width: 45px;
+        }
+
+        .countdown-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+            line-height: 1.2;
+        }
+
+        .countdown-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Weather Widget */
+        .weather-widget {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .weather-icon {
+            font-size: 40px;
+            color: var(--accent-color);
+        }
+
+        .weather-details h3 {
+            margin-bottom: 5px;
+        }
+
+        .weather-details p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .top-controls {
+                flex-direction: column;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .month-nav {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .odia-month {
+                font-size: 22px;
+            }
+
+            .english-month {
+                font-size: 16px;
+            }
+
+            .weekday-header {
+                padding: 10px 5px;
+            }
+
+            .weekday-header .weekday-name {
+                font-size: 14px;
+            }
+
+            .day-number {
+                font-size: 16px;
+            }
+
+            .festival-list {
+                grid-template-columns: 1fr;
+            }
+
+            .event-filters {
+                justify-content: flex-start;
+            }
+
+            .countdown {
+                gap: 8px;
+            }
+
+            .countdown-value {
+                font-size: 16px;
+            }
+
+            .countdown-label {
+                font-size: 10px;
+            }
+
+            .weather-widget {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .deity {
+                width: 50px;
+                height: 50px;
+                font-size: 12px;
+            }
+
+            .odia-month {
+                font-size: 18px;
+            }
+
+            .english-month {
+                font-size: 14px;
+            }
+
+            .day-number {
+                font-size: 14px;
+            }
+
+            .event-filter {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .countdown {
+                gap: 5px;
+            }
+
+            .countdown-value {
+                font-size: 14px;
+            }
+
+            .countdown-label {
+                font-size: 9px;
+            }
+
+            .countdown-container h2 {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon font-oriya">ଅ</div>
+                    <div class="logo-text font-oriya">ଅକ୍ଷୟ କ୍ଯାଲେଣ୍ଡର</div>
+                </div>
+                <div class="deities">
+                    <div class="deity font-oriya">ଜଗନ୍ନାଥ</div>
+                    <div class="deity font-oriya">ବଳଭଦ୍ର</div>
+                    <div class="deity font-oriya">ସୁଭଦ୍ରା</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="top-controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search events..." id="searchInput">
+            </div>
+            <div class="control-buttons">
+                <button class="control-btn" id="todayBtn">
+                    <i class="fas fa-calendar-day"></i> Today
+                </button>
+            </div>
+        </div>
+
+        <nav class="navigation">
+            <div class="month-nav">
+                <button class="nav-btn" id="prevMonth">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="month-display">
+                    <div class="odia-month font-oriya">September - 2025</div>
+                    <div class="english-month">SEPTEMBER - 2025</div>
+                </div>
+                <button class="nav-btn" id="nextMonth">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="view-toggle">
+                <button class="toggle-btn active" data-view="month">Month</button>
+                <button class="toggle-btn" data-view="list">List</button>
+                <button class="toggle-btn" data-view="year">Year</button>
+            </div>
+        </nav>
+
+        <div class="countdown-container">
+            <h2>Next Event Countdown</h2>
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-value" id="days">0</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="hours">0</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="minutes">0</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="seconds">0</div>
+                    <div class="countdown-label">Seconds</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="weather-widget">
+            <div class="weather-info">
+                <div class="weather-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <div class="weather-details">
+                    <h3>Bhubaneswar</h3>
+                    <p>28°C / 82°F</p>
+                    <p>Partly Cloudy</p>
+                </div>
+            </div>
+            <div class="weather-forecast">
+                <p>Tomorrow: 30°C / 86°F, Sunny</p>
+            </div>
+        </div>
+
+        <div class="calendar-container">
+            <div class="weekday-headers">
+                <div class="weekday-header">
+                    <div class="weekday-name font-oriya">ରବି</div>
+                    <div class="weekday-short">SUN</div>
+                </div>
+                <div class="weekday-header">
+                    <div class="weekday-name font-oriya">ସୋମ</div>
+                    <div class="weekday-short">MON</div>
+                </div>
+                <div class="weekday-header">
+                    <div class="weekday-name font-oriya">ମଙ୍ଗଳ</div>
+                    <div class="weekday-short">TUE</div>
+                </div>
+                <div class="weekday-header">
+                    <div class="weekday-name font-oriya">ବୁଧ</div>
+                    <div class="weekday-short">WED</div>
+                </div>
+                <div class="weekday-header">
+                    <div class="weekday-name font-oriya">ଗୁରୁ</div>
+                    <div class="weekday-short">THU</div>
+                </div>
+                <div class="weekday-header">
+                    <div class="weekday-name font-oriya">ଶୁକ୍ର</div>
+                    <div class="weekday-short">FRI</div>
+                </div>
+                <div class="weekday-header">
+                    <div class="weekday-name font-oriya">ଶନି</div>
+                    <div class="weekday-short">SAT</div>
+                </div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendar days will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="festival-highlights">
+            <h2><i class="fas fa-star"></i> Month Events</h2>
+            
+            <!-- Event Type Filters - Only Odia Text Filters -->
+            <div class="event-filters">
+                <div class="event-filter parbaparbani active" data-type="parbaparbani">
+                    <i class="fas fa-gopuram"></i> ପର୍ବପର୍ବାଣି
+                </div>
+                <div class="event-filter shubhadina active" data-type="shubhadina">
+                    <i class="fas fa-om"></i> ଶୁଭ ଦିନ
+                </div>
+                <div class="event-filter chutidina active" data-type="chutidina">
+                    <i class="fas fa-umbrella-beach"></i> ଛୁଟି ଦିନ
+                </div>
+            </div>
+            
+            <div class="festival-list" id="festivalList">
+                <!-- Festival cards will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Akshaya Odia Calendar. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Event Details</h2>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="event-details" id="eventDetails">
+                    <!-- Event details will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calendar data
+        const calendarData = {
+            currentMonth: 8, // September (0-indexed)
+            currentYear: 2025,
+            today: { day: 1, month: 8, year: 2025 }, // Today's date
+            events: {
+                '2025-09-01': [
+                    { 
+                        name: 'Sankashti Chaturthi', 
+                        nameOdia: 'ସଂକଷ୍ଟି ଚତୁର୍ଥୀ', 
+                        type: 'shubhadina', 
+                        description: 'Fasting day dedicated to Lord Ganesha.',
+                        time: 'All day',
+                        location: 'Temples across Odisha',
+                        significance: 'Auspicious day for Ganesha worship'
+                    }
+                ],
+                '2025-09-04': [
+                    { 
+                        name: 'Nuakhai', 
+                        nameOdia: 'ନୂଆଖାଇ', 
+                        type: 'festival', 
+                        description: 'An agricultural festival mainly observed by people of Western Odisha.',
+                        time: 'All day',
+                        location: 'Western Odisha',
+                        significance: 'Celebration of new rice harvest'
+                    }
+                ],
+                '2025-09-05': [
+                    { 
+                        name: 'Good Day', 
+                        nameOdia: 'ଭଲ ଦିନ', 
+                        type: 'goodday', 
+                        description: 'Auspicious day for starting new ventures.',
+                        time: 'All day',
+                        location: 'Throughout Odisha',
+                        significance: 'Favorable planetary positions'
+                    }
+                ],
+                '2025-09-08': [
+                    { 
+                        name: 'Radha Ashtami', 
+                        nameOdia: 'ରାଧା ଅଷ୍ଟମୀ', 
+                        type: 'festival', 
+                        description: 'The birth celebration of Radha, consort of Krishna.',
+                        time: 'All day',
+                        location: 'Temples across Odisha',
+                        significance: 'Celebration of Radha\'s appearance day'
+                    }
+                ],
+                '2025-09-10': [
+                    { 
+                        name: 'Ganesh Sankashti', 
+                        nameOdia: 'ଗଣେଶ ସଂକଷ୍ଟି', 
+                        type: 'shubhadina', 
+                        description: 'Fasting day for Lord Ganesha.',
+                        time: 'All day',
+                        location: 'Temples across Odisha',
+                        significance: 'Day for seeking Ganesha\'s blessings'
+                    }
+                ],
+                '2025-09-14': [
+                    { 
+                        name: 'Parbaparbani', 
+                        nameOdia: 'ପର୍ବପର୍ବାଣି', 
+                        type: 'parbaparbani', 
+                        description: 'Special occasion for community gatherings and celebrations.',
+                        time: 'All day',
+                        location: 'Community centers across Odisha',
+                        significance: 'Traditional community celebration day'
+                    }
+                ],
+                '2025-09-17': [
+                    { 
+                        name: 'Ganesh Chaturthi', 
+                        nameOdia: 'ଗଣେଶ ଚତୁର୍ଥୀ', 
+                        type: 'festival', 
+                        description: 'The Hindu festival celebrating birth of Lord Ganesha.',
+                        time: 'All day',
+                        location: 'Temples across Odisha',
+                        significance: 'Celebration of Ganesha\'s birth'
+                    }
+                ],
+                '2025-09-19': [
+                    { 
+                        name: 'Holiday', 
+                        nameOdia: 'ଛୁଟି ଦିନ', 
+                        type: 'chutidina', 
+                        description: 'Government holiday for schools and offices.',
+                        time: 'All day',
+                        location: 'Throughout Odisha',
+                        significance: 'Public holiday'
+                    }
+                ],
+                '2025-09-22': [
+                    { 
+                        name: 'Mahalaya Amavasya', 
+                        nameOdia: 'ମହାଲୟ ଅମାବାସ୍ଟା', 
+                        type: 'parbaparbani', 
+                        description: 'The day marking beginning of Durga Puja festivities.',
+                        time: 'All day',
+                        location: 'Temples across Odisha',
+                        significance: 'Beginning of Durga Puja celebrations'
+                    }
+                ],
+                '2025-09-25': [
+                    { 
+                        name: 'Mahalaya', 
+                        nameOdia: 'ମହାଲୟ', 
+                        type: 'festival', 
+                        description: 'The day marking beginning of Durga Puja festivities.',
+                        time: 'All day',
+                        location: 'Temples across Odisha',
+                        significance: 'Beginning of Durga Puja celebrations'
+                    }
+                ],
+                '2025-09-28': [
+                    { 
+                        name: 'Holiday', 
+                        nameOdia: 'ଛୁଟି ଦିନ', 
+                        type: 'chutidina', 
+                        description: 'Weekend holiday.',
+                        time: 'All day',
+                        location: 'Throughout Odisha',
+                        significance: 'Weekend holiday'
+                    }
+                ]
+            },
+            favorites: [],
+            activeFilters: {
+                parbaparbani: true,
+                shubhadina: true,
+                chutidina: true
+            }
+        };
+
+        // DOM elements
+        const calendarGrid = document.getElementById('calendarGrid');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const monthDisplay = document.querySelector('.odia-month');
+        const yearDisplay = document.querySelector('.english-month');
+        const festivalList = document.getElementById('festivalList');
+        const modal = document.getElementById('eventModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalTitle = document.getElementById('modalTitle');
+        const eventDetails = document.getElementById('eventDetails');
+        const viewToggleBtns = document.querySelectorAll('.toggle-btn');
+        const todayBtn = document.getElementById('todayBtn');
+        const searchInput = document.getElementById('searchInput');
+        const eventFilters = document.querySelectorAll('.event-filter');
+
+        // Month names in Odia and English
+        const monthNames = [
+            { odia: 'ଜାନୁଆରୀ', english: 'JANUARY' },
+            { odia: 'ଫେବୃଆରୀ', english: 'FEBRUARY' },
+            { odia: 'ମାର୍ଚ୍ଚ', english: 'MARCH' },
+            { odia: 'ଅପ୍ରେଲ', english: 'APRIL' },
+            { odia: 'ମଇ', english: 'MAY' },
+            { odia: 'ଜୁନ', english: 'JUNE' },
+            { odia: 'ଜୁଲାଇ', english: 'JULY' },
+            { odia: 'ଜୁଲାଇ', english: 'AUGUST' },
+            { odia: 'ଅଗଷ୍ଟ', english: 'AUGUST' },
+            { odia: 'ସେପ୍ଟେମ୍ବର', english: 'SEPTEMBER' },
+            { odia: 'ଅକ୍ଟୋ��ର', english: 'OCTOBER' },
+            { odia: 'ନଭେମ୍ବର', english: 'NOVEMBER' },
+            { odia: 'ଡିସେମ୍ବର', english: 'DECEMBER' }
+        ];
+
+        // Initialize calendar
+        function initCalendar() {
+            renderCalendar();
+            updateMonthDisplay();
+            renderFestivalHighlights();
+            setupEventListeners();
+            startCountdown();
+            updateWeather();
+        }
+
+        // Render calendar grid
+        function renderCalendar() {
+            const firstDay = new Date(calendarData.currentYear, calendarData.currentMonth, 1).getDay();
+            const daysInMonth = new Date(calendarData.currentYear, calendarData.currentMonth + 1, 0).getDate();
+            const daysInPrevMonth = new Date(calendarData.currentYear, calendarData.currentMonth, 0).getDate();
+
+            // Clear previous calendar
+            calendarGrid.innerHTML = '';
+
+            // Add previous month's trailing days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                const dayElement = createDayElement(day, 'prev-month');
+                calendarGrid.appendChild(dayElement);
+            }
+
+            // Add current month's days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = createDayElement(day, 'current-month');
+                calendarGrid.appendChild(dayElement);
+            }
+
+            // Add next month's leading days
+            const totalCells = calendarGrid.children.length;
+            const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+            for (let day = 1; day <= remainingCells; day++) {
+                const dayElement = createDayElement(day, 'next-month');
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Create day element
+        function createDayElement(day, monthType) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            
+            // Check if it's today
+            if (monthType === 'current-month' && 
+                day === calendarData.today.day && 
+                calendarData.currentMonth === calendarData.today.month && 
+                calendarData.currentYear === calendarData.today.year) {
+                dayElement.classList.add('today');
+            }
+
+            // Check if it's Sunday
+            const dayOfWeek = new Date(calendarData.currentYear, calendarData.currentMonth, day).getDay();
+            if (dayOfWeek === 0) {
+                dayElement.classList.add('sunday');
+            }
+
+            // Create day number
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'day-number font-oriya';
+            dayNumber.textContent = day;
+            dayElement.appendChild(dayNumber);
+
+            // Check for events
+            if (monthType === 'current-month') {
+                const dateStr = `${calendarData.currentYear}-${String(calendarData.currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const events = calendarData.events[dateStr];
+
+                if (events && events.length > 0) {
+                    // Get first event for styling
+                    const firstEvent = events[0];
+                    dayElement.classList.add(`${firstEvent.type}-day`);
+                    
+                    // Add festival indicator
+                    const indicator = document.createElement('div');
+                    indicator.className = 'festival-indicator';
+                    dayElement.appendChild(indicator);
+
+                    // Add click event to show modal
+                    dayElement.addEventListener('click', () => showEventModal(dateStr, day, events));
+                } else {
+                    // Add click event for regular days
+                    dayElement.addEventListener('click', () => showEventModal(dateStr, day, []));
+                }
+            }
+
+            return dayElement;
+        }
+
+        // Update month display
+        function updateMonthDisplay() {
+            const monthName = monthNames[calendarData.currentMonth];
+            monthDisplay.textContent = `${monthName.odia} - ${calendarData.currentYear}`;
+            yearDisplay.textContent = `${monthName.english} - ${calendarData.currentYear}`;
+        }
+
+        // Render festival highlights
+        function renderFestivalHighlights() {
+            festivalList.innerHTML = '';
+            
+            // Get all events for current month
+            const monthEvents = [];
+            for (const [date, events] of Object.entries(calendarData.events)) {
+                const [year, month] = date.split('-').map(Number);
+                if (year === calendarData.currentYear && month - 1 === calendarData.currentMonth) {
+                    const day = parseInt(date.split('-')[2]);
+                    events.forEach(event => {
+                        // Only include events that match active filters
+                        if (calendarData.activeFilters[event.type]) {
+                            monthEvents.push({ day, date, event });
+                        }
+                    });
+                }
+            }
+
+            // Sort events by day
+            monthEvents.sort((a, b) => a.day - b.day);
+
+            // Create event cards
+            monthEvents.forEach(({ day, date, event }) => {
+                const card = document.createElement('div');
+                card.className = `festival-card ${event.type}`;
+                
+                const dateElement = document.createElement('div');
+                dateElement.className = 'festival-date';
+                dateElement.textContent = `${monthNames[calendarData.currentMonth].english} ${day}, ${calendarData.currentYear}`;
+                
+                const nameElement = document.createElement('div');
+                nameElement.className = 'festival-name font-oriya';
+                nameElement.textContent = event.nameOdia;
+                
+                const descriptionElement = document.createElement('div');
+                descriptionElement.className = 'festival-description';
+                descriptionElement.textContent = event.description;
+                
+                // Add favorite button
+                const favoriteBtn = document.createElement('button');
+                favoriteBtn.className = 'favorite-btn';
+                favoriteBtn.innerHTML = '<i class="fas fa-heart"></i>';
+                
+                // Check if this event is already a favorite
+                const isFavorite = calendarData.favorites.some(fav => fav.date === date && fav.name === event.name);
+                if (isFavorite) {
+                    favoriteBtn.classList.add('active');
+                }
+                
+                favoriteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(date, event, favoriteBtn);
+                });
+                
+                card.appendChild(dateElement);
+                card.appendChild(nameElement);
+                card.appendChild(descriptionElement);
+                card.appendChild(favoriteBtn);
+                
+                card.addEventListener('click', () => showEventModal(date, day, [event]));
+                
+                festivalList.appendChild(card);
+            });
+        }
+
+        // Toggle favorite
+        function toggleFavorite(date, event, btn) {
+            const index = calendarData.favorites.findIndex(fav => fav.date === date && fav.name === event.name);
+            
+            if (index === -1) {
+                // Add to favorites
+                calendarData.favorites.push({ date, name: event.name, nameOdia: event.nameOdia });
+                btn.classList.add('active');
+            } else {
+                // Remove from favorites
+                calendarData.favorites.splice(index, 1);
+                btn.classList.remove('active');
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('odiaCalendarFavorites', JSON.stringify(calendarData.favorites));
+        }
+
+        // Load favorites from localStorage
+        function loadFavorites() {
+            const savedFavorites = localStorage.getItem('odiaCalendarFavorites');
+            if (savedFavorites) {
+                calendarData.favorites = JSON.parse(savedFavorites);
+            }
+        }
+
+        // Show event modal
+        function showEventModal(date, day, events) {
+            const [year, month] = date.split('-').map(Number);
+            const monthName = monthNames[month - 1];
+            
+            modalTitle.textContent = `${monthName.odia} ${day}, ${year}`;
+            
+            if (events.length === 0) {
+                eventDetails.innerHTML = `
+                    <p>No special events on this day.</p>
+                    <div class="event-actions">
+                        <button class="event-action-btn" onclick="addEvent('${date}')">
+                            <i class="fas fa-plus"></i> Add Event
+                        </button>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                events.forEach(event => {
+                    html += `
+                        <h3>${event.nameOdia}</h3>
+                        <p><strong>Type:</strong> <span class="event-type ${event.type}">${getEventTypeName(event.type)}</span></p>
+                        <p><strong>Time:</strong> ${event.time}</p>
+                        <p><strong>Location:</strong> ${event.location}</p>
+                        <p><strong>Significance:</strong> ${event.significance}</p>
+                        <p>${event.description}</p>
+                    `;
+                });
+                
+                html += `
+                    <div class="event-actions">
+                        <button class="event-action-btn" onclick="addToCalendar('${date}', '${events[0].name}')">
+                            <i class="fas fa-calendar-plus"></i> Add to Calendar
+                        </button>
+                        <button class="event-action-btn" onclick="setReminder('${date}', '${events[0].name}')">
+                            <i class="fas fa-bell"></i> Set Reminder
+                        </button>
+                        <button class="event-action-btn" onclick="shareEvent('${date}', '${events[0].name}')">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                    </div>
+                `;
+                
+                eventDetails.innerHTML = html;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // Get event type name
+        function getEventTypeName(type) {
+            const typeNames = {
+                'festival': 'Festival',
+                'goodday': 'Good Day',
+                'holiday': 'Holiday',
+                'parbaparbani': 'ପର୍ବପର୍ବାଣି',
+                'shubhadina': 'ଶୁଭ ଦିନ',
+                'chutidina': 'ଛୁଟି ଦିନ'
+            };
+            return typeNames[type] || type;
+        }
+
+        // Add to calendar
+        function addToCalendar(date, eventName) {
+            // In a real app, this would integrate with device's calendar
+            alert(`Event "${eventName}" on ${date} has been added to your calendar!`);
+        }
+
+        // Set reminder
+        function setReminder(date, eventName) {
+            // In a real app, this would set a notification
+            alert(`Reminder set for "${eventName}" on ${date}!`);
+        }
+
+        // Share event
+        function shareEvent(date, eventName) {
+            // In a real app, this would open a share dialog
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Odia Calendar Event',
+                    text: `Join me for ${eventName} on ${date}!`,
+                    url: window.location.href
+                });
+            } else {
+                alert(`Share this event: ${eventName} on ${date}`);
+            }
+        }
+
+        // Add event
+        function addEvent(date) {
+            // In a real app, this would open a form to add a new event
+            const eventName = prompt(`Enter event name for ${date}:`);
+            if (eventName) {
+                if (!calendarData.events[date]) {
+                    calendarData.events[date] = [];
+                }
+                calendarData.events[date].push({
+                    name: eventName,
+                    nameOdia: eventName,
+                    type: 'festival',
+                    description: 'Custom event',
+                    time: 'All day',
+                    location: '',
+                    significance: ''
+                });
+                renderCalendar();
+                renderFestivalHighlights();
+            }
+        }
+
+        // Start countdown to next event
+        function startCountdown() {
+            // Find next event
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            let nextEvent = null;
+            let nextEventDate = null;
+            
+            for (const [dateStr, events] of Object.entries(calendarData.events)) {
+                const [year, month, day] = dateStr.split('-').map(Number);
+                const eventDate = new Date(year, month - 1, day);
+                
+                if (eventDate >= today) {
+                    if (!nextEventDate || eventDate < nextEventDate) {
+                        nextEventDate = eventDate;
+                        nextEvent = events[0];
+                    }
+                }
+            }
+            
+            if (nextEvent && nextEventDate) {
+                updateCountdown(nextEventDate, nextEvent.nameOdia);
+                
+                // Update countdown every second
+                setInterval(() => {
+                    updateCountdown(nextEventDate, nextEvent.nameOdia);
+                }, 1000);
+            } else {
+                document.querySelector('.countdown-container h2').textContent = 'No upcoming events this month';
+            }
+        }
+
+        // Update countdown display
+        function updateCountdown(targetDate, eventName) {
+            const now = new Date();
+            const difference = targetDate - now;
+            
+            if (difference > 0) {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+                
+                document.getElementById('days').textContent = days;
+                document.getElementById('hours').textContent = hours;
+                document.getElementById('minutes').textContent = minutes;
+                document.getElementById('seconds').textContent = seconds;
+                
+                document.querySelector('.countdown-container h2').textContent = `Countdown to ${eventName}`;
+            } else {
+                document.querySelector('.countdown-container h2').textContent = 'Event has passed!';
+            }
+        }
+
+        // Update weather
+        function updateWeather() {
+            // In a real app, this would fetch actual weather data from an API
+            // For now, we'll use placeholder data
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Navigation buttons
+            prevMonthBtn.addEventListener('click', () => {
+                calendarData.currentMonth--;
+                if (calendarData.currentMonth < 0) {
+                    calendarData.currentMonth = 11;
+                    calendarData.currentYear--;
+                }
+                renderCalendar();
+                updateMonthDisplay();
+                renderFestivalHighlights();
+                startCountdown();
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                calendarData.currentMonth++;
+                if (calendarData.currentMonth > 11) {
+                    calendarData.currentMonth = 0;
+                    calendarData.currentYear++;
+                }
+                renderCalendar();
+                updateMonthDisplay();
+                renderFestivalHighlights();
+                startCountdown();
+            });
+
+            // Today button
+            todayBtn.addEventListener('click', () => {
+                calendarData.currentMonth = calendarData.today.month;
+                calendarData.currentYear = calendarData.today.year;
+                renderCalendar();
+                updateMonthDisplay();
+                renderFestivalHighlights();
+                startCountdown();
+            });
+
+            // Event type filters
+            eventFilters.forEach(filter => {
+                filter.addEventListener('click', () => {
+                    const type = filter.getAttribute('data-type');
+                    calendarData.activeFilters[type] = !calendarData.activeFilters[type];
+                    filter.classList.toggle('active');
+                    renderCalendar();
+                    renderFestivalHighlights();
+                });
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                if (searchTerm === '') {
+                    renderFestivalHighlights();
+                    return;
+                }
+                
+                // Filter events based on search term
+                const filteredEvents = [];
+                for (const [date, events] of Object.entries(calendarData.events)) {
+                    const [year, month] = date.split('-').map(Number);
+                    if (year === calendarData.currentYear && month - 1 === calendarData.currentMonth) {
+                        const day = parseInt(date.split('-')[2]);
+                        events.forEach(event => {
+                            if (calendarData.activeFilters[event.type] && 
+                                (event.name.toLowerCase().includes(searchTerm) || 
+                                event.nameOdia.toLowerCase().includes(searchTerm))) {
+                                filteredEvents.push({ day, date, event });
+                            }
+                        });
+                    }
+                }
+                
+                // Render filtered events
+                festivalList.innerHTML = '';
+                if (filteredEvents.length === 0) {
+                    festivalList.innerHTML = '<p>No events found matching your search.</p>';
+                } else {
+                    filteredEvents.forEach(({ day, date, event }) => {
+                        const card = document.createElement('div');
+                        card.className = `festival-card ${event.type}`;
+                        
+                        const dateElement = document.createElement('div');
+                        dateElement.className = 'festival-date';
+                        dateElement.textContent = `${monthNames[calendarData.currentMonth].english} ${day}, ${calendarData.currentYear}`;
+                        
+                        const nameElement = document.createElement('div');
+                        nameElement.className = 'festival-name font-oriya';
+                        nameElement.textContent = event.nameOdia;
+                        
+                        const descriptionElement = document.createElement('div');
+                        descriptionElement.className = 'festival-description';
+                        descriptionElement.textContent = event.description;
+                        
+                        card.appendChild(dateElement);
+                        card.appendChild(nameElement);
+                        card.appendChild(descriptionElement);
+                        
+                        card.addEventListener('click', () => showEventModal(date, day, [event]));
+                        
+                        festivalList.appendChild(card);
+                    });
+                }
+            });
+
+            // Modal close button
+            modalClose.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+
+            // Click outside modal to close
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+
+            // View toggle buttons
+            viewToggleBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    viewToggleBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // Here you would implement different view modes
+                    // For now, we'll just show an alert
+                    const view = btn.getAttribute('data-view');
+                    if (view !== 'month') {
+                        alert(`${view.charAt(0).toUpperCase() + view.slice(1)} view is coming soon!`);
+                        // Reset to month view
+                        viewToggleBtns.forEach(b => b.classList.remove('active'));
+                        document.querySelector('[data-view="month"]').classList.add('active');
+                    }
+                });
+            });
+
+            // Deity hover effects
+            const deities = document.querySelectorAll('.deity');
+            deities.forEach(deity => {
+                deity.addEventListener('mouseenter', () => {
+                    // You could add a tooltip or more information here
+                });
+            });
+        }
+
+        // Initialize calendar when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFavorites();
+            initCalendar();
+        });
+    </script>
+</body>
+</html>
