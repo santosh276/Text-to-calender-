@@ -42,6 +42,40 @@
         
         body.downloaded-content #formattedOutput { max-width: 1536px; margin: 0 auto; padding: 1rem; }
 
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+            height: calc(100vh - 75px); /* Full height minus header */
+        }
+        .admin-panel, .output-panel {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .admin-panel {
+            border-right: 1px solid var(--border-color);
+        }
+        .admin-panel .input-pane {
+            flex-grow: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+                height: auto;
+            }
+            .admin-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                min-height: 60vh;
+            }
+            .output-panel {
+                min-height: 60vh;
+            }
+        }
+
         .container { flex-grow: 1; display: flex; flex-direction: column; max-width: 100%; width: 100%; margin: 0 auto; background-color: #fff; box-shadow: none; border: none; border-radius: 0; overflow: hidden; }
         header { background: linear-gradient(135deg, #4a69bd 0%, #6f8de7 100%); color: var(--header-text); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
         header h1 { margin: 0; font-family: var(--heading-font); font-size: 1.5rem; font-weight: 500; }
@@ -222,33 +256,35 @@
 <body>
     <div class="container">
         <header translate="no"><h1>TXT to Auto Calendar HTML Page Creator</h1></header>
-        <div class="controls" translate="no">
-            <button id="openFileButton">Open File</button>
-            <input type="file" id="fileUploadInput" accept=".txt,.md,.html,.htm" style="display: none;" multiple>
-            <button id="uploadImageButton">Upload Image</button>
-            <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" multiple>
-            <button id="downloadHtmlButton">Download HTML</button>
-            <button id="downloadTxtButton">Download TXT</button>
-            <button id="settingsButton">Settings</button>
-            <button id="clearButton">Clear Input</button>
-            <div class="control-group">
-                <label for="languageToggle">View:</label>
-                <select id="languageToggle">
-                    <option value="both">Show Both Languages</option>
-                    <option value="primary">Primary Only</option>
-                    <option value="secondary">Secondary Only</option>
-                    <option value="translate">Browser Translation</option>
-                </select>
-            </div>
-             <button id="toggleGuideButton" title="Show/Hide Formatting Guide"><span>Show Guide</span></button>
-        </div>
-        <div id="formatting-guide">
-            <h3 class="guide-title">Formatting Guide</h3>
-            <div id="guide-content-wrapper">
-                <div class="guide-section gs-calendar">
-                    <h4>Calendar Markup Language</h4>
-                    <p class="guide-intro">Create a rich, detailed calendar month using a dedicated block. All event text supports standard formatting like **bold** and bilingual syntax `[like this]`.</p>
-                    <div class="guide-syntax"><pre><code>::: calendar
+        <div class="main-content">
+            <div class="admin-panel">
+                <div class="controls" translate="no">
+                    <button id="openFileButton">Open File</button>
+                    <input type="file" id="fileUploadInput" accept=".txt,.md,.html,.htm" style="display: none;" multiple>
+                    <button id="uploadImageButton">Upload Image</button>
+                    <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" multiple>
+                    <button id="downloadHtmlButton">Download HTML</button>
+                    <button id="downloadTxtButton">Download TXT</button>
+                    <button id="settingsButton">Settings</button>
+                    <button id="clearButton">Clear Input</button>
+                    <div class="control-group">
+                        <label for="languageToggle">View:</label>
+                        <select id="languageToggle">
+                            <option value="both">Show Both Languages</option>
+                            <option value="primary">Primary Only</option>
+                            <option value="secondary">Secondary Only</option>
+                            <option value="translate">Browser Translation</option>
+                        </select>
+                    </div>
+                     <button id="toggleGuideButton" title="Show/Hide Formatting Guide"><span>Show Guide</span></button>
+                </div>
+                <div id="formatting-guide">
+                    <h3 class="guide-title">Formatting Guide</h3>
+                    <div id="guide-content-wrapper">
+                        <div class="guide-section gs-calendar">
+                            <h4>Calendar Markup Language</h4>
+                            <p class="guide-intro">Create a rich, detailed calendar month using a dedicated block. All event text supports standard formatting like **bold** and bilingual syntax `[like this]`.</p>
+                            <div class="guide-syntax"><pre><code>::: calendar
 ++ September 2025 ++
 Description: Odia Kohinoor Calendar [ଓଡ଼ିଆ କୋହିନୂର କ୍ୟାଲେଣ୍ଡର]
 Full Moon: 9
@@ -269,47 +305,46 @@ New Moon: 24
 - Nuakhai is a major agricultural festival.
 :::
 :::</code></pre></div>
-                    <h5 class="guide-subsection-title">Structure</h5>
-                    <ul class="guide-bullet-grid" style="grid-template-columns: auto 1fr; align-items: start;">
-                        <code style="margin-top: 0.3em;">::: calendar</code> <li data-bullet-style="arrow" style="margin:0;">Start and end the block with <code>::: calendar</code> and <code>:::</code>.</li>
-                        <code style="margin-top: 0.3em;">++ ... ++</code> <li data-bullet-style="arrow" style="margin:0;">Define the month and year.</li>
-                        <code style="margin-top: 0.3em;">Key: Val</code> <li data-bullet-style="arrow" style="margin:0;">Set month-wide data like <code>Full Moon: 9</code> or <code>Description: ...</code>.</li>
-                         <code style="margin-top: 0.3em;">::: notes</code> <li data-bullet-style="arrow" style="margin:0;">Create a notes section for the sidebar.</li>
-                    </ul>
-                    <h5 class="guide-subsection-title">Day Entry Syntax</h5>
-                    <p class="guide-intro">Use a prefix to define the type of information for a specific day. Indent lines to add more details to the same day.</p>
-                     <ul class="guide-bullet-grid" style="grid-template-columns: auto 1fr; align-items: start;">
-                        <code style="margin-top: 0.3em;">Day ! Event</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Holiday</strong> or major public event.</li>
-                        <code style="margin-top: 0.3em;">Day > Event</code> <li data-bullet-style="arrow" style="margin:0;">A general event or appointment.</li>
-                        <code style="margin-top: 0.3em;">Day * Event</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>special occasion</strong> like a birthday or anniversary.</li>
-                        <code style="margin-top: 0.3em;">Day ~ Text</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Tithi</strong> or other lunar/astrological note.</li>
-                        <code style="margin-top: 0.3em;">Day @ Key: Val</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Panchang detail</strong> (e.g., <code>@ Sunrise: 06:10</code>).</li>
-                        <code style="margin-top: 0.3em;">(Tag)</code> <li data-bullet-style="arrow" style="margin:0;">Add a tag like <code>(Work)</code> or <code>(Health)</code> to color-code events.</li>
-                    </ul>
-                </div>
-                <div class="guide-section gs-headings">
-                    <h4>Headings</h4>
-                    <div class="guide-syntax"><pre><code>++ Main Title ++
+                            <h5 class="guide-subsection-title">Structure</h5>
+                            <ul class="guide-bullet-grid" style="grid-template-columns: auto 1fr; align-items: start;">
+                                <code style="margin-top: 0.3em;">::: calendar</code> <li data-bullet-style="arrow" style="margin:0;">Start and end the block with <code>::: calendar</code> and <code>:::</code>.</li>
+                                <code style="margin-top: 0.3em;">++ ... ++</code> <li data-bullet-style="arrow" style="margin:0;">Define the month and year.</li>
+                                <code style="margin-top: 0.3em;">Key: Val</code> <li data-bullet-style="arrow" style="margin:0;">Set month-wide data like <code>Full Moon: 9</code> or <code>Description: ...</code>.</li>
+                                 <code style="margin-top: 0.3em;">::: notes</code> <li data-bullet-style="arrow" style="margin:0;">Create a notes section for the sidebar.</li>
+                            </ul>
+                            <h5 class="guide-subsection-title">Day Entry Syntax</h5>
+                            <p class="guide-intro">Use a prefix to define the type of information for a specific day. Indent lines to add more details to the same day.</p>
+                             <ul class="guide-bullet-grid" style="grid-template-columns: auto 1fr; align-items: start;">
+                                <code style="margin-top: 0.3em;">Day ! Event</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Holiday</strong> or major public event.</li>
+                                <code style="margin-top: 0.3em;">Day > Event</code> <li data-bullet-style="arrow" style="margin:0;">A general event or appointment.</li>
+                                <code style="margin-top: 0.3em;">Day * Event</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>special occasion</strong> like a birthday or anniversary.</li>
+                                <code style="margin-top: 0.3em;">Day ~ Text</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Tithi</strong> or other lunar/astrological note.</li>
+                                <code style="margin-top: 0.3em;">Day @ Key: Val</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Panchang detail</strong> (e.g., <code>@ Sunrise: 06:10</code>).</li>
+                                <code style="margin-top: 0.3em;">(Tag)</code> <li data-bullet-style="arrow" style="margin:0;">Add a tag like <code>(Work)</code> or <code>(Health)</code> to color-code events.</li>
+                            </ul>
+                        </div>
+                        <div class="guide-section gs-headings">
+                            <h4>Headings</h4>
+                            <div class="guide-syntax"><pre><code>++ Main Title ++
 ## Section Title
 ### Subsection</code></pre></div>
-                </div>
-                <div class="guide-section gs-text">
-                    <h4>Basic Text</h4>
-                    <div class="guide-syntax"><pre><code>**Bold Text**
+                        </div>
+                        <div class="guide-section gs-text">
+                            <h4>Basic Text</h4>
+                            <div class="guide-syntax"><pre><code>**Bold Text**
 *Italic Text*
 A paragraph with a [translation].</code></pre></div>
-                </div>
-                <div class="guide-section gs-structure">
-                    <h4>Images & Rules</h4>
-                    <div class="guide-syntax"><pre><code>![alt text](URL)[caption]
+                        </div>
+                        <div class="guide-section gs-structure">
+                            <h4>Images & Rules</h4>
+                            <div class="guide-syntax"><pre><code>![alt text](URL)[caption]
 ---</code></pre></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="editor-area">
-            <div class="input-pane">
-                 <div id="dragDropOverlay" style="display: none;">Drop Files Here</div>
-                <textarea id="rawInput" placeholder="Paste text here, or drag & drop files to open..." spellcheck="false">::: calendar
+                <div class="input-pane">
+                     <div id="dragDropOverlay" style="display: none;">Drop Files Here</div>
+                    <textarea id="rawInput" placeholder="Paste text here, or drag & drop files to open..." spellcheck="false">::: calendar
 ++ September 2025 ++
 Description: Odia Kohinoor Calendar [ଓଡ଼ିଆ କୋହିନୂର କ୍ୟାଲେଣ୍ଡର]
 Full Moon: 9
@@ -335,8 +370,11 @@ New Moon: 24
 :::
 :::
 </textarea>
+                </div>
             </div>
-            <div class="output-pane"><div id="formattedOutput"></div></div>
+            <div class="output-panel">
+                <div id="formattedOutput"></div>
+            </div>
         </div>
     </div>
     
