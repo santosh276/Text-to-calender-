@@ -3,48 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TXT to Auto Calendar HTML Page Creator</title>
+    <title>TXT to Auto Calendar HTML Page Creator - Enhanced with Larger Calendar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/morphdom@2.7.0/dist/morphdom.min.js"></script>
-    <style id="customPrintStyles"></style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Modernized & Simplified Theme */
+        /* Previous styles remain the same... */
         :root {
-            /* Base & Text */
             --bg-color: #f8f9fa; --text-color: #34495e; --border-color: #dee2e6; --shadow-color: rgba(0, 0, 0, 0.07);
-            /* UI Elements */
             --header-bg: #4a69bd; --header-text: #fff;
-            /* Content Palette */
             --heading-font: 'Inter', sans-serif; --body-font: 'Inter', sans-serif; --hr-color: #ced4da;
             --code-bg: #e9ecef; --code-text: #e67e22; --desc-text-color: #7f8c8d;
-            /* Heading Colors */
             --h1-color: #c0392b; --h2-color: #4a69bd; --h3-color: #f39c12; --h4-color: #16a085;
             
-            /* Calendar Styles */
+            /* Enhanced Calendar Colors */
+            --odia-saffron: #FF9933;
+            --odia-deep-red: #CC0000;
+            --odia-gold: #FFD700;
+            --odia-maroon: #800000;
+            --odia-orange: #FF6600;
+            --odia-green: #008000;
+            --odia-sandal: #F4E4C1;
+            --odia-cream: #FFF8DC;
             --calendar-primary: #c40000;
             --calendar-primary-dark: #9b0000;
+            --calendar-secondary: #15803d;
+            --calendar-accent: #fbbf24;
             --calendar-border: #e0e0e0;
             --calendar-bg-secondary: #f5f5f5;
-            --calendar-cell-size: clamp(80px, 10vw, 140px);
+            --calendar-radius: 12px;
+            --calendar-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            
+            /* Horoscope Colors */
+            --aries-color: #FF6B6B;
+            --taurus-color: #4ECDC4;
+            --gemini-color: #45B7D1;
+            --cancer-color: #96CEB4;
+            --leo-color: #FFEAA7;
+            --virgo-color: #DDA0DD;
+            --libra-color: #98D8C8;
+            --scorpio-color: #F7DC6F;
+            --sagittarius-color: #BB8FCE;
+            --capricorn-color: #85C1E2;
+            --aquarius-color: #F8B739;
+            --pisces-color: #85C1E9;
         }
-        
-        @keyframes flash-animation { 0% { background-color: #dbeafe; } 100% { background-color: transparent; } }
-        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         html { scroll-behavior: smooth; font-size: 15px; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
         body { font-family: var(--body-font); line-height: 1.65; background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; font-weight: 500; }
-        .font-oriya { font-family: 'Noto Sans Oriya', sans-serif; }
+        .odia-font { font-family: 'Noto Sans Oriya', sans-serif; }
         
         body.downloaded-content #formattedOutput { max-width: 1536px; margin: 0 auto; padding: 1rem; }
 
         .container { flex-grow: 1; display: flex; flex-direction: column; max-width: 100%; width: 100%; margin: 0 auto; background-color: #fff; box-shadow: none; border: none; border-radius: 0; overflow: hidden; }
+        
+        /* Admin Header */
         header { background: linear-gradient(135deg, #4a69bd 0%, #6f8de7 100%); color: var(--header-text); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
         header h1 { margin: 0; font-family: var(--heading-font); font-size: 1.5rem; font-weight: 500; }
+        
+        /* Admin Controls */
         .controls { padding: 12px 25px; background-color: #fff; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .controls button, .controls select { font-family: var(--heading-font); padding: 10px 18px; font-size: 0.95rem; font-weight: 500; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #fff; color: #374151; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
         .controls button:hover, .controls select:hover { background-color: #f9fafb; border-color: #d1d5db; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
@@ -53,208 +75,914 @@
         .controls select { padding: 9px 12px; -webkit-appearance: none; appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center/1em; padding-right: 35px; }
         .controls .control-group { display: flex; align-items: center; gap: 6px; }
         .controls .control-group > label { font-size: 0.9rem; color: var(--desc-text-color); font-weight: 500; }
-        .controls button::before, #toggleGuideButton::before { content: ''; display: inline-block; width: 20px; height: 20px; background-size: contain; background-position: center; background-repeat: no-repeat; flex-shrink: 0; opacity: 0.9; color: #374151; }
-        #openFileButton::before { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-3-2v-4M17 8l-5-5-5 5M12 3v12'/%3e%3c/svg%3e"); }
-        #uploadImageButton::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'%3E%3C/circle%3E%3Cpolyline points='21 15 16 10 5 21'%3E%3C/polyline%3E%3C/svg%3E"); }
-        #downloadHtmlButton::before { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3e%3cpath d='M14 2v6h6M16 13H8M16 17H8M10 9H8'/%3e%3c/svg%3e"); }
-        #downloadTxtButton::before { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3e%3cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3e%3c/svg%3e"); }
-        #clearButton::before { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='3 6 5 6 21 6'%3e%3c/polyline%3e%3cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3e%3c/path%3e%3cline x1='10' y1='11' x2='10' y2='17'%3e%3c/line%3e%3cline x1='14' y1='11' x2='14' y2='17'%3e%3c/line%3e%3c/svg%3e"); }
-        #toggleGuideButton::before { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3e%3c/svg%3e"); }
-        #printOutputButton::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 6 2 18 2 18 9'/%3E%3Cpath d='M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2'/%3E%3Crect x='6' y='14' width='12' height='8'/%3E%3C/svg%3E"); }
-        #settingsButton::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z'/%3E%3C/svg%3E"); }
-        
+
+        /* Formatting Guide */
         #formatting-guide { background-color: var(--bg-color); padding: 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; max-height: 0; opacity: 0; overflow: hidden; transition: all 0.6s ease-in-out; visibility: hidden; }
         #formatting-guide.visible { max-height: 85vh; opacity: 1; overflow-y: auto; padding: 25px 20px; visibility: visible; }
         #formatting-guide h3.guide-title { font-family: var(--heading-font); margin-bottom: 25px; font-size: 1.3rem; text-align: center; color: var(--h2-color); }
         #guide-content-wrapper { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
-        .guide-section { background-color: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px 25px; box-shadow: 0 3px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
-        .guide-section h4 { font-family: var(--heading-font); font-size: 1.1rem; color: var(--h2-color); margin: 0 0 1.2em 0; padding-bottom: 0.7em; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.6em; }
-        .guide-section h4::before { font-size: 1.2rem; font-weight: bold; }
-        .guide-section.gs-calendar h4::before { content: '📅'; }
-        .guide-section.gs-text h4::before { content: 'T'; }
-        .guide-section.gs-headings h4::before { content: 'H'; }
-        .guide-section.gs-structure h4::before { content: '▦'; }
-        .guide-subsection-title { font-size: 1.05rem; font-weight: 700; color: var(--text-color); margin: 1.5em 0 1em 0; }
-        .guide-intro { font-size: 0.95rem; color: var(--desc-text-color); margin-bottom: 1em; line-height: 1.6; }
-        .guide-intro code { background-color: var(--code-bg); color: var(--code-text); padding: 2px 5px; border-radius: 4px; font-size: 0.9em; font-family: "Fira Code", monospace; }
-        .guide-syntax { margin-bottom: 1.2em; }
+        .guide-section { background-color: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px 25px; box-shadow: 0 3px 8px rgba(0,0,0,0.04); }
+        .guide-section h4 { font-family: var(--heading-font); font-size: 1.1rem; color: var(--h2-color); margin: 0 0 1.2em 0; padding-bottom: 0.7em; border-bottom: 1px solid #e5e7eb; }
         .guide-syntax pre { background-color: #f7f7f9; border: 1px solid #e1e1e8; padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.6; margin: 0; white-space: pre-wrap; word-break: break-word; font-family: "Fira Code", monospace; color: #333; }
-        .guide-bullet-grid { display: grid; grid-template-columns: auto 1fr; gap: 8px 15px; align-items: center; margin-top: 1.2em; }
-        .guide-bullet-grid > code { background-color: var(--code-bg); color: var(--code-text); padding: 6px 12px; border-radius: 6px; font-size: 0.9em; font-family: "Fira Code", monospace; justify-self: start; }
-        
+
+        /* Editor Area */
         .editor-area { display: flex; flex-direction: column; flex-grow: 1; min-height: 80vh; }
         #admin-panel { display: flex; flex-direction: column; }
         .input-pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 40vh; position: relative; }
         #rawInput { flex-grow: 1; padding: 25px; border: none; font-size: 14px; line-height: 1.7; overflow-y: auto; height: 100%; background-color: #fff; color: var(--text-color); resize: none; font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace; }
         #rawInput:focus { outline: 2px solid var(--header-bg); outline-offset: -2px; }
-        
         #dragDropOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(74, 105, 189, 0.9); color: white; display: none; align-items: center; justify-content: center; font-size: 1.5rem; font-family: var(--heading-font); font-weight: 500; z-index: 10; pointer-events: none; border: 4px dashed #ffffff; }
         .input-pane.drag-over #dragDropOverlay { display: flex; }
 
+        /* Output Panel */
         #formattedOutput { flex-grow: 1; padding: 25px 4vw; overflow-y: auto; height: 100%; background-color: #fff; border-top: 1px solid var(--border-color); }
         #formattedOutput:empty::before { content: "Formatted content will appear here..."; display: block; text-align: center; padding-top: 40px; font-family: var(--heading-font); font-size: 0.85rem; color: var(--desc-text-color); font-style: normal; opacity: 0.7; }
-        
-        #formattedOutput [data-source-line], #formattedOutput [data-source-line-start] { cursor: pointer; border-radius: 3px; }
-        #formattedOutput .flash-sync { animation: flash-animation 0.8s ease-out; }
-        #formattedOutput .image-container { margin: 2.5em auto; text-align: center; max-width: 100%; }
-        #formattedOutput .image-container img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: block; margin: 0 auto; }
-        #formattedOutput .image-container figcaption { margin-top: 1em; font-size: 0.9rem; color: var(--desc-text-color); font-style: italic; }
 
-        #popupSyncIcon { position: absolute; display: none; width: 28px; height: 28px; background-color: white; border-radius: 50%; border: 1px solid #d1d5db; z-index: 1000; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: transform 0.15s ease-out; align-items: center; justify-content: center; pointer-events: none; }
-        #popupSyncIcon.visible { display: flex; pointer-events: auto; }
-        #popupSyncIcon:hover { transform: scale(1.15) !important; }
-        #popupSyncIcon::before { content: ''; width: 16px; height: 16px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a69bd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E"); background-size: contain; background-repeat: no-repeat; background-position: center; }
-        
-        #formattedOutput h1, #formattedOutput h2, #formattedOutput h3, #formattedOutput h4 { font-family: var(--heading-font); line-height: 1.4; position: relative; padding-bottom: 0.6em; border-bottom: none !important; }
-        #formattedOutput h1 { font-size: 2.4rem; font-weight: 700; color: var(--h1-color); margin: 0 0 1em; text-transform: uppercase; letter-spacing: 1px; }
-        #formattedOutput h2 { font-size: 1.9rem; font-weight: 700; color: var(--h2-color); margin: 1.5em 0 1em; }
-        #formattedOutput h3 { font-size: 1.5rem; font-weight: 500; color: var(--h3-color); margin: 1.2em 0 0.8em; }
-        #formattedOutput h4 { font-size: 1.25rem; font-weight: 700; color: var(--h4-color); margin: 1em 0 0.7em; }
-        #formattedOutput h1::after, #formattedOutput h2::after, #formattedOutput h3::after, #formattedOutput h4::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; }
-        #formattedOutput h1::after, #formattedOutput h2::after { height: 2px; }
-        #formattedOutput h3::after, #formattedOutput h4::after { height: 1px; background-image: linear-gradient(to right, currentColor 33%, transparent 33%, transparent 66%, currentColor 66%, currentColor); background-size: 8px 1px; background-repeat: repeat-x; }
-        #formattedOutput h1::after { background-color: var(--h1-color); }
-        #formattedOutput h2::after { background-color: var(--h2-color); }
-        #formattedOutput h3::after { color: var(--h3-color); }
-        #formattedOutput h4::after { color: var(--h4-color); }
-        
-        #formattedOutput p { margin-bottom: 1.25em; }
-        #formattedOutput hr { border: 0; height: 2px; background-color: var(--hr-color); margin: 3em 0; }
-        #formattedOutput ul { margin: 0 0 1.25em 25px; padding: 0; list-style-type: none; }
-        #formattedOutput li { padding-left: 2em; position: relative; margin-bottom: 0.75em; }
-        #formattedOutput li::before { content: "•"; position: absolute; left: 0; top: 0.05em; width: 1.5em; text-align: center; font-weight: bold; color: var(--h2-color); font-size: 1.1rem; }
-        
-        .bilingual-secondary { margin-left: 0.25em; }
-        body.hide-bilingual-secondary .bilingual-secondary, body.show-translation .bilingual-secondary { display: none; }
-        body.hide-bilingual-primary .bilingual-primary-text { display: none; }
-        body.hide-bilingual-primary .bilingual-secondary { margin-left: 0; }
-        .translatable-text { display: none; margin-left: 0.3em; color: var(--h2-color); }
-        #formattedOutput :is(h1, h2, h3, h4) .translatable-text { color: inherit; }
-        body.show-translation .translatable-text { display: inline; }
-        
-        .formatter-error { padding: 15px 20px; margin: 2em; border: 1px solid #ef4444; background-color: #fef2f2; color: #991b1b; border-radius: 8px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; line-height: 1.5; }
-        .hidden { display: none !important; }
+        /* Enhanced Calendar Styles */
+        .calendar-header {
+            background: linear-gradient(135deg, var(--odia-saffron), var(--odia-deep-red));
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-radius: var(--calendar-radius) var(--calendar-radius) 0 0;
+        }
 
-        /* --- START: Calendar-Mimic Styles --- */
-        #formattedOutput .app-container { max-width: 1536px; margin: 2rem auto; background: linear-gradient(to bottom, #FFF5E6, #FFF9F0); border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; border: 4px solid #991b1b; }
-        #formattedOutput .calendar-main { display: flex; flex-direction: column; }
-        #formattedOutput .calendar-header { background: linear-gradient(to right, #991b1b, #f97316, #991b1b); padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
-        #formattedOutput .logo { background-color: #fbbf24; color: #991b1b; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-weight: bold; font-size: 1.125rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        #formattedOutput .logo span { background-color: #991b1b; color: #fbbf24; border-radius: 9999px; width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        #formattedOutput .deities { display: flex; gap: 1rem; }
-        #formattedOutput .deity { width: 5rem; height: 5rem; background-color: #fbbf24; border-radius: 9999px; display: flex; justify-content: center; align-items: center; border: 4px solid #15803d; font-size: 0.875rem; color: #991b1b; font-weight: bold; text-align: center; position: relative; overflow: hidden; transition: transform 0.2s; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        #formattedOutput .deity:hover { transform: scale(1.1); }
-        #formattedOutput .shloka { padding: 0.75rem; margin: 1rem; background-color: rgba(254, 249, 195, 0.5); color: #991b1b; font-weight: 600; text-align: center; border-left: 4px solid #b91c1c; position: relative; font-size: 0.875rem; }
-        #formattedOutput .shloka .bilingual-container { font-weight: 600; }
-        #formattedOutput .shloka::after { content: 'ॐ'; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 2.25rem; opacity: 0.1; font-family: 'Noto Sans Oriya', sans-serif; }
-        #formattedOutput .navigation { display: flex; justify-content: center; align-items: center; margin: 0.5rem 0; padding: 0 1.5rem; }
-        #formattedOutput .month-heading { text-align: center; }
-        #formattedOutput .odia-month { background-color: #15803d; color: #fde047; font-size: 1.875rem; font-weight: 700; padding: 0.5rem 1.5rem; border-radius: 0.5rem 0.5rem 0 0; box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.05); }
-        #formattedOutput .english-month { background-color: #166532; color: white; font-weight: 600; padding: 0.25rem 1.5rem; border-radius: 0 0 0.5rem 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); font-size: 1.25rem; }
-        #formattedOutput .festival-info { margin: 0 1rem 0.5rem; padding: 0.5rem; background-color: #fcd34d; color: #991b1b; font-weight: 700; text-align: center; font-size: 0.875rem; border-radius: 0.375rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
-        #formattedOutput .calendar-main { display: flex; flex: 1 1 0%; background-color: rgba(255,255,255,0.3); overflow: hidden; }
-        #formattedOutput .calendar-container { flex: 1 1 0%; padding: 0.5rem; position: relative; }
-        #formattedOutput .weekday-headers { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.25rem; margin-bottom: 0.25rem; }
-        #formattedOutput .weekday-header { color: white; padding: 0.5rem; text-align: center; border-radius: 0.375rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
-        #formattedOutput .weekday-header:first-child { background-color: #b91c1c; }
-        #formattedOutput .weekday-header:not(:first-child) { background-color: #15803d; }
-        #formattedOutput .weekday-header .font-bold { font-weight: 700; }
-        #formattedOutput .weekday-header .text-xs { font-size: 0.75rem; opacity: 0.8; display: block; }
-        #formattedOutput .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 0.25rem; }
-        #formattedOutput .calendar-day { aspect-ratio: 1/1; padding: 0.5rem; display: flex; flex-direction: column; position: relative; transition: all 0.2s ease-in-out; cursor: pointer; border-radius: 0.375rem; }
-        #formattedOutput .calendar-day[data-date] { background-color: white; }
-        #formattedOutput .calendar-day[data-date]:hover { background-color: rgba(254, 249, 195, 0.5); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transform: scale(1.05); z-index: 10; }
-        #formattedOutput .calendar-day .day-number { font-size: 1.5rem; font-weight: 700; }
-        #formattedOutput .day-indicators { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: auto; padding-top: 0.25rem; }
-        #formattedOutput .indicator { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background-color: #dc2626; }
-        #formattedOutput .sunday { background-color: rgba(254, 242, 242, 0.7); }
-        #formattedOutput .sunday .day-number { color: #b91c1c; }
-        #formattedOutput .special-day { background-color: rgba(254, 252, 232, 0.7); }
-        #formattedOutput .calendar-sidebar { width: 100%; flex-shrink: 0; background-color: rgba(254, 252, 232, 0.3); padding: 1rem; border-top: 2px solid rgba(253, 224, 71, 0.5); overflow-y: auto; }
-        #formattedOutput .sidebar-section h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; padding-bottom: 0.5rem; }
-        #formattedOutput .sidebar-section .space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; }
-        #formattedOutput .sidebar-section .p-3 { padding: 0.75rem; border-radius: 0.5rem; border-left-width: 4px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); transition: transform 0.2s; }
-        #formattedOutput .sidebar-section .p-3:hover { transform: scale(1.05); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        @media (min-width: 1024px) { #formattedOutput .calendar-main { flex-direction: row; } #formattedOutput .calendar-sidebar { width: 24rem; border-top: 0; border-left: 2px solid rgba(253, 224, 71, 0.5); } }
-        /* --- END: Calendar-Mimic Styles --- */
+        .calendar-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7 3.134-7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7 3.134-7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 3 3z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
 
-        /* --- START: Modal Styles (from Tool 2) --- */
-        .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; transition: opacity 0.2s ease-out; pointer-events: none; }
-        .modal-overlay.visible { opacity: 1; pointer-events: auto; }
-        .modal-content { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); width: 100%; max-width: 32rem; margin: 1rem; animation: fadeInScale 0.2s ease-out forwards; }
-        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #e5e7eb; }
-        .modal-body { padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
-        #modal-close-btn:hover { color: #1e293b; background-color: #f1f5f9; border-radius: 9999px; }
-        .detail-section h3 { font-weight: bold; margin-bottom: 0.5rem; font-family: 'Noto Sans Oriya', sans-serif; font-size: 1.125rem; border-bottom: 2px solid; padding-bottom: 0.25rem; }
-        .holiday-header { color: #b91c1c; border-color: #fecaca; }
-        .event-header { color: #1d4ed8; border-color: #bfdbfe; }
-        .panchang-header { color: #b45309; border-color: #fde68a; }
-        .detail-item { font-size: 0.875rem; padding: 0.75rem; border-radius: 0.5rem; border-left-width: 4px; }
-        .holiday-item { background-color: #fef2f2; border-color: #dc2626; font-weight: 600; color: #7f1d1d; }
-        .event-item { background-color: #eff6ff; border-color: #2563eb; }
-        .panchang-item { background-color: #fffbeb; border-color: #f59e0b; color: #78350f; }
-        /* --- END: Modal Styles --- */
+        .month-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
 
-        /* --- START: Settings Panel Styles --- */
-        #settingsPanel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; font-family: var(--body-font); color: var(--text-color); width: 90%; max-width: 680px; padding: 0; display: flex; flex-direction: column; }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-        #closeSettingsButton { background: none; border: none; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--desc-text-color); padding: 2px 8px; }
-        .panel-tabs { display: flex; background-color: #f8f9fa; padding: 0 15px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-        .tab-link { font-family: var(--heading-font); padding: 10px 18px; border: none; background: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--desc-text-color); border-bottom: 3px solid transparent; transition: all 0.2s ease; margin-bottom: -1px; }
-        .tab-link.active { color: var(--header-bg); font-weight: 700; border-bottom-color: var(--header-bg); }
-        .panel-content { padding: 20px 25px; flex-grow: 1; overflow-y: auto; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .margins-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; align-items: flex-start; }
-        .margin-controls input[type="text"] { display: block; width: 100%; margin-bottom: 8px; }
-        .margin-preview-container { text-align: center; }
-        .margin-preview { width: 120px; height: 155px; border: 1px solid #ccc; background-color: #f8f9fa; padding: 10px; }
-        .preview-page { width: 100%; height: 100%; border: 2px dotted var(--header-bg); background-color: #fff; box-sizing: border-box; }
-        .panel-footer { padding: 15px 25px; background-color: #f8f9fa; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; }
-        .settings-group { margin-bottom: 20px; }
-        .settings-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; }
-        .settings-group select, .settings-group input[type="text"], .settings-group input[type="number"] { font-family: var(--body-font); font-size: 0.9rem; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 6px; width: 100%; }
-        .settings-group input[type="text"].custom-input { margin-top: 8px; }
-        .settings-group input[type="checkbox"] { width: auto; margin-right: 8px; vertical-align: middle; }
-        .settings-group input[type="checkbox"] + label { display: inline; font-weight: normal; }
-        /* --- END: Settings Panel Styles --- */
+        .month-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .navigation-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: white;
+            color: var(--odia-deep-red);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .today-btn {
+            background: var(--odia-gold);
+            color: var(--odia-deep-red);
+            border: none;
+            padding: 0.75rem 2rem;
+            font-weight: 700;
+        }
+
+        .calendar-container {
+            max-width: 1600px; /* Increased for larger calendar */
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        .calendar-main {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 3px solid var(--odia-saffron);
+        }
+
+        .weekday-headers {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: linear-gradient(135deg, var(--odia-saffron), var(--odia-deep-red));
+            color: white;
+        }
+
+        .weekday-header {
+            padding: 1.2rem; /* Increased padding */
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem; /* Increased font size */
+            border-right: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .weekday-header:last-child {
+            border-right: none;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: minmax(150px, 1fr); /* Increased from 120px to 150px */
+        }
+
+        .calendar-day {
+            border: 1px solid #e5e7eb;
+            padding: 1rem; /* Increased padding */
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            overflow: hidden;
+            min-height: 150px; /* Explicit minimum height */
+        }
+
+        .calendar-day::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,153,51,0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .calendar-day:hover::before {
+            opacity: 1;
+        }
+
+        .calendar-day:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            z-index: 10;
+            border-color: var(--odia-saffron);
+        }
+
+        .day-number {
+            font-size: 2rem; /* Increased from 1.25rem to 2rem */
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.75rem; /* Increased margin */
+            line-height: 1;
+        }
+
+        .sunday .day-number {
+            color: var(--odia-deep-red);
+        }
+
+        .tithi {
+            font-size: 0.9rem; /* Increased from 0.75rem to 0.9rem */
+            color: #666;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .event-indicator {
+            display: flex;
+            gap: 0.5rem; /* Increased gap */
+            margin-top: 0.75rem; /* Increased margin */
+            flex-wrap: wrap;
+        }
+
+        .event-dot {
+            width: 10px; /* Increased from 8px to 10px */
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .festival-dot {
+            background: var(--odia-gold);
+            box-shadow: 0 0 6px var(--odia-gold); /* Increased shadow */
+        }
+
+        .holiday-dot {
+            background: var(--odia-deep-red);
+            box-shadow: 0 0 6px var(--odia-deep-red); /* Increased shadow */
+        }
+
+        .special-dot {
+            background: var(--odia-orange);
+            box-shadow: 0 0 6px var(--odia-orange); /* Increased shadow */
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 2px solid var(--odia-saffron);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--odia-deep-red);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--odia-saffron);
+        }
+
+        .festival-item {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .festival-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .major-festival {
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+            border-left-color: var(--odia-gold);
+        }
+
+        .holiday {
+            background: linear-gradient(135deg, rgba(204,0,0,0.1), rgba(204,0,0,0.05));
+            border-left-color: var(--odia-deep-red);
+        }
+
+        /* Enhanced Horoscope Section Styles */
+        .horoscope-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .horoscope-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .horoscope-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .horoscope-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .horoscope-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .zodiac-item {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zodiac-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .zodiac-item:hover::before {
+            opacity: 1;
+        }
+
+        .zodiac-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .zodiac-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 0.5rem;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .zodiac-item:hover .zodiac-icon {
+            transform: rotate(10deg) scale(1.1);
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3));
+        }
+
+        .zodiac-name {
+            font-weight: 600;
+            font-size: 1rem; /* Increased from 0.9rem */
+            margin-bottom: 0.25rem;
+        }
+
+        .zodiac-date-range {
+            font-size: 0.8rem; /* Increased from 0.75rem */
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .zodiac-prediction {
+            font-size: 0.85rem; /* Increased from 0.8rem */
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        .zodiac-lucky {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 0.5rem;
+            font-size: 0.8rem; /* Increased from 0.75rem */
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .lucky-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .lucky-label {
+            opacity: 0.7;
+            font-size: 0.75rem;
+        }
+
+        .lucky-value {
+            font-weight: 600;
+            font-size: 1rem; /* Increased from default */
+        }
+
+        /* Individual Zodiac Colors with Enhanced Icons */
+        .zodiac-aries { border-color: var(--aries-color); }
+        .zodiac-aries:hover { background: linear-gradient(135deg, var(--aries-color), rgba(255,107,107,0.3)); }
+
+        .zodiac-taurus { border-color: var(--taurus-color); }
+        .zodiac-taurus:hover { background: linear-gradient(135deg, var(--taurus-color), rgba(78,205,196,0.3)); }
+
+        .zodiac-gemini { border-color: var(--gemini-color); }
+        .zodiac-gemini:hover { background: linear-gradient(135deg, var(--gemini-color), rgba(69,183,209,0.3)); }
+
+        .zodiac-cancer { border-color: var(--cancer-color); }
+        .zodiac-cancer:hover { background: linear-gradient(135deg, var(--cancer-color), rgba(150,206,180,0.3)); }
+
+        .zodiac-leo { border-color: var(--leo-color); }
+        .zodiac-leo:hover { background: linear-gradient(135deg, var(--leo-color), rgba(255,234,167,0.3)); }
+
+        .zodiac-virgo { border-color: var(--virgo-color); }
+        .zodiac-virgo:hover { background: linear-gradient(135deg, var(--virgo-color), rgba(221,160,221,0.3)); }
+
+        .zodiac-libra { border-color: var(--libra-color); }
+        .zodiac-libra:hover { background: linear-gradient(135deg, var(--libra-color), rgba(152,216,200,0.3)); }
+
+        .zodiac-scorpio { border-color: var(--scorpio-color); }
+        .zodiac-scorpio:hover { background: linear-gradient(135deg, var(--scorpio-color), rgba(247,220,111,0.3)); }
+
+        .zodiac-sagittarius { border-color: var(--sagittarius-color); }
+        .zodiac-sagittarius:hover { background: linear-gradient(135deg, var(--sagittarius-color), rgba(187,143,206,0.3)); }
+
+        .zodiac-capricorn { border-color: var(--capricorn-color); }
+        .zodiac-capricorn:hover { background: linear-gradient(135deg, var(--capricorn-color), rgba(133,193,226,0.3)); }
+
+        .zodiac-aquarius { border-color: var(--aquarius-color); }
+        .zodiac-aquarius:hover { background: linear-gradient(135deg, var(--aquarius-color), rgba(248,183,57,0.3)); }
+
+        .zodiac-pisces { border-color: var(--pisces-color); }
+        .zodiac-pisces:hover { background: linear-gradient(135deg, var(--pisces-color), rgba(133,193,233,0.3)); }
+
+        /* Search and Filter Bar */
+        .search-filter-bar {
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--odia-saffron);
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255,153,51,0.2);
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.25rem;
+            border: 2px solid var(--odia-saffron);
+            background: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--odia-deep-red);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--odia-saffron);
+            color: white;
+        }
+
+        .event-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .event-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+            border: 3px solid var(--odia-saffron);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--odia-deep-red);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+            background: var(--odia-saffron);
+        }
+
+        .panchang-info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.75rem;
+            align-items: center;
+            padding: 0.5rem;
+            background: var(--odia-cream);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .panchang-label {
+            font-weight: 600;
+            color: var(--odia-deep-red);
+        }
+
+        .panchang-value {
+            color: #333;
+        }
+
+        .voice-indicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--odia-deep-red);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .voice-indicator:hover {
+            transform: scale(1.1);
+            background: var(--odia-saffron);
+        }
+
+        .voice-indicator.listening {
+            animation: pulse 1s infinite;
+            background: var(--odia-gold);
+        }
+
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--odia-cream);
+            border-top: 4px solid var(--odia-deep-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .calendar-container {
+                max-width: 1200px; /* Adjust for smaller screens */
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .calendar-container {
+                max-width: 1000px; /* Further adjust */
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .calendar-container {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+                padding: 0 0.5rem;
+            }
+            .sidebar {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1rem;
+            }
+            .zodiac-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .calendar-grid {
+                grid-auto-rows: minmax(130px, 1fr); /* Slightly smaller on mobile */
+            }
+            .day-number {
+                font-size: 1.75rem; /* Adjust for mobile */
+            }
+            .tithi {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .calendar-container {
+                padding: 0 0.25rem;
+            }
+            .calendar-grid {
+                grid-auto-rows: minmax(120px, 1fr); /* Even smaller on tablets */
+            }
+            .day-number {
+                font-size: 1.5rem; /* Smaller on mobile */
+            }
+            .weekday-header {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+            .zodiac-grid {
+                grid-template-columns: 1fr; /* Single column on mobile */
+            }
+        }
+
+        @media (max-width: 640px) {
+            .month-name {
+                font-size: 1.5rem;
+            }
+            .navigation-controls {
+                flex-wrap: wrap;
+            }
+            .calendar-grid {
+                grid-auto-rows: minmax(100px, 1fr); /* Smallest on phones */
+            }
+            .day-number {
+                font-size: 1.25rem; /* Even smaller on small phones */
+            }
+            .tithi {
+                font-size: 0.8rem;
+            }
+            .weekday-header {
+                padding: 0.6rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Settings Panel */
+        #settingsPanel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--calendar-radius);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            z-index: 2000;
+            font-family: var(--body-font);
+            color: var(--text-color);
+            width: 90%;
+            max-width: 680px;
+            padding: 0;
+            display: none;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--header-bg), #6f8de7);
+            color: white;
+            border-radius: var(--calendar-radius) var(--calendar-radius) 0 0;
+        }
+
+        #closeSettingsButton {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            line-height: 1;
+            cursor: pointer;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        #closeSettingsButton:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: rotate(90deg);
+        }
+
+        .panel-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .panel-footer {
+            padding: 1rem 1.5rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .settings-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .settings-group select, .settings-group input[type="text"], .settings-group input[type="number"] {
+            font-family: var(--body-font);
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .settings-group select:focus, 
+        .settings-group input[type="text"]:focus, 
+        .settings-group input[type="number"]:focus {
+            outline: none;
+            border-color: var(--header-bg);
+            box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .checkbox-group label:hover {
+            background-color: #f1f5f9;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        /* Calendar Size Toggle in Settings */
+        .calendar-size-small .calendar-grid { grid-auto-rows: minmax(100px, 1fr); }
+        .calendar-size-small .day-number { font-size: 1.25rem; }
+        .calendar-size-small .tithi { font-size: 0.75rem; }
+        
+        .calendar-size-medium .calendar-grid { grid-auto-rows: minmax(120px, 1fr); }
+        .calendar-size-medium .day-number { font-size: 1.5rem; }
+        .calendar-size-medium .tithi { font-size: 0.8rem; }
+        
+        .calendar-size-large .calendar-grid { grid-auto-rows: minmax(150px, 1fr); }
+        .calendar-size-large .day-number { font-size: 1.75rem; }
+        .calendar-size-large .tithi { font-size: 0.9rem; }
+        
+        .calendar-size-xlarge .calendar-grid { grid-auto-rows: minmax(180px, 1fr); }
+        .calendar-size-xlarge .day-number { font-size: 2rem; }
+        .calendar-size-xlarge .tithi { font-size: 1rem; }
     </style>
 </head>
 <body>
     <div class="container">
-        <header translate="no"><h1>TXT to Auto Calendar HTML Page Creator</h1></header>
-        <div class="editor-area">
-            <!-- START: Admin Panel -->
-            <div id="admin-panel">
-                <div class="controls" translate="no">
-                    <button id="openFileButton">Open File</button>
-                    <input type="file" id="fileUploadInput" accept=".txt,.md,.html,.htm" style="display: none;" multiple>
-                    <button id="uploadImageButton">Upload Image</button>
-                    <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" multiple>
-                    <button id="downloadHtmlButton">Download HTML</button>
-                    <button id="downloadTxtButton">Download TXT</button>
-                    <button id="settingsButton">Settings</button>
-                    <button id="clearButton">Clear Input</button>
-                    <div class="control-group">
-                        <label for="languageToggle">View:</label>
-                        <select id="languageToggle">
-                            <option value="both">Show Both Languages</option>
-                            <option value="primary">Primary Only</option>
-                            <option value="secondary">Secondary Only</option>
-                            <option value="translate">Browser Translation</option>
-                        </select>
-                    </div>
-                     <button id="toggleGuideButton" title="Show/Hide Formatting Guide"><span>Show Guide</span></button>
+        <!-- Admin Header -->
+        <header translate="no">
+            <h1>TXT to Auto Calendar HTML Page Creator</h1>
+        </header>
+
+        <!-- Admin Controls -->
+        <div id="admin-panel">
+            <div class="controls" translate="no">
+                <button id="openFileButton">
+                    <i class="fas fa-file-upload"></i> Open File
+                </button>
+                <input type="file" id="fileUploadInput" accept=".txt,.md,.html,.htm" style="display: none;" multiple>
+                
+                <button id="uploadImageButton">
+                    <i class="fas fa-image"></i> Upload Image
+                </button>
+                <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" multiple>
+                
+                <button id="downloadHtmlButton">
+                    <i class="fas fa-download"></i> Download HTML
+                </button>
+                
+                <button id="downloadTxtButton">
+                    <i class="fas fa-file-alt"></i> Download TXT
+                </button>
+                
+                <button id="settingsButton">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+                
+                <button id="clearButton">
+                    <i class="fas fa-trash"></i> Clear Input
+                </button>
+                
+                <div class="control-group">
+                    <label for="languageToggle">View:</label>
+                    <select id="languageToggle">
+                        <option value="both">Show Both Languages</option>
+                        <option value="primary">Primary Only</option>
+                        <option value="secondary">Secondary Only</option>
+                        <option value="translate">Browser Translation</option>
+                    </select>
                 </div>
-                <div id="formatting-guide">
-                    <h3 class="guide-title">Formatting Guide</h3>
-                    <div id="guide-content-wrapper">
-                        <div class="guide-section gs-calendar">
-                            <h4>Calendar Markup Language</h4>
-                            <p class="guide-intro">Create a rich, detailed calendar month using a dedicated block. All event text supports standard formatting like **bold** and bilingual syntax `[like this]`.</p>
-                            <div class="guide-syntax"><pre><code>::: calendar
+                
+                <button id="toggleGuideButton" title="Show/Hide Formatting Guide">
+                    <i class="fas fa-book"></i> Show Guide
+                </button>
+            </div>
+
+            <!-- Formatting Guide -->
+            <div id="formatting-guide">
+                <h3 class="guide-title">Formatting Guide</h3>
+                <div id="guide-content-wrapper">
+                    <div class="guide-section">
+                        <h4>Calendar Markup Language</h4>
+                        <p class="guide-intro">Create a rich, detailed calendar month using a dedicated block. All event text supports standard formatting like **bold** and bilingual syntax `[like this]`.</p>
+                        <div class="guide-syntax">
+                            <pre><code>::: calendar
 ++ September 2025 ++
-Description: Odia Kohinoor Calendar [ଓଡ଼ିଆ କୋହିନୂର କ୍ୟାଲେଣ୍ଡର]
+Description: Odia Kohinoor Calendar [ଓଡ଼ିଆ କୋହିନୂର କ୍ଟାଲେଣ୍ଡର]
 Full Moon: 9
 New Moon: 24
 
@@ -268,53 +996,30 @@ New Moon: 24
    @ Due Date: 28th
 
 ::: notes
-++ Month Highlights [ମାସର ମୁଖ୍ୟାଂଶ] ++
-- Durga Puja begins at the end of the month.
+++ Month Highlights [ମାସର ମୁଖ୍ଟାଂଶ] ++
+- Durga Puja begins at end of month.
 - Nuakhai is a major agricultural festival.
 :::
-:::</code></pre></div>
-                            <h5 class="guide-subsection-title">Structure</h5>
-                            <ul class="guide-bullet-grid" style="grid-template-columns: auto 1fr; align-items: start;">
-                                <code style="margin-top: 0.3em;">::: calendar</code> <li data-bullet-style="arrow" style="margin:0;">Start and end the block with <code>::: calendar</code> and <code>:::</code>.</li>
-                                <code style="margin-top: 0.3em;">++ ... ++</code> <li data-bullet-style="arrow" style="margin:0;">Define the month and year.</li>
-                                <code style="margin-top: 0.3em;">Key: Val</code> <li data-bullet-style="arrow" style="margin:0;">Set month-wide data like <code>Full Moon: 9</code> or <code>Description: ...</code>.</li>
-                                 <code style="margin-top: 0.3em;">::: notes</code> <li data-bullet-style="arrow" style="margin:0;">Create a notes section for the sidebar.</li>
-                            </ul>
-                            <h5 class="guide-subsection-title">Day Entry Syntax</h5>
-                            <p class="guide-intro">Use a prefix to define the type of information for a specific day. Indent lines to add more details to the same day.</p>
-                             <ul class="guide-bullet-grid" style="grid-template-columns: auto 1fr; align-items: start;">
-                                <code style="margin-top: 0.3em;">Day ! Event</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Holiday</strong> or major public event.</li>
-                                <code style="margin-top: 0.3em;">Day > Event</code> <li data-bullet-style="arrow" style="margin:0;">A general event or appointment.</li>
-                                <code style="margin-top: 0.3em;">Day * Event</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>special occasion</strong> like a birthday or anniversary.</li>
-                                <code style="margin-top: 0.3em;">Day ~ Text</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Tithi</strong> or other lunar/astrological note.</li>
-                                <code style="margin-top: 0.3em;">Day @ Key: Val</code> <li data-bullet-style="arrow" style="margin:0;">A <strong>Panchang detail</strong> (e.g., <code>@ Sunrise: 06:10</code>).</li>
-                                <code style="margin-top: 0.3em;">(Tag)</code> <li data-bullet-style="arrow" style="margin:0;">Add a tag like <code>(Work)</code> or <code>(Health)</code> to color-code events.</li>
-                            </ul>
+:::</code></pre>
                         </div>
-                        <div class="guide-section gs-headings">
-                            <h4>Headings</h4>
-                            <div class="guide-syntax"><pre><code>++ Main Title ++
-## Section Title
-### Subsection</code></pre></div>
-                        </div>
-                        <div class="guide-section gs-text">
-                            <h4>Basic Text</h4>
-                            <div class="guide-syntax"><pre><code>**Bold Text**
+                    </div>
+                    <div class="guide-section">
+                        <h4>Basic Text</h4>
+                        <div class="guide-syntax">
+                            <pre><code>**Bold Text**
 *Italic Text*
-A paragraph with a [translation].</code></pre></div>
-                        </div>
-                        <div class="guide-section gs-structure">
-                            <h4>Images & Rules</h4>
-                            <div class="guide-syntax"><pre><code>![alt text](URL)[caption]
----</code></pre></div>
+A paragraph with a [translation].</code></pre>
                         </div>
                     </div>
                 </div>
-                <div class="input-pane">
-                     <div id="dragDropOverlay" style="display: none;">Drop Files Here</div>
-                    <textarea id="rawInput" placeholder="Paste text here, or drag & drop files to open..." spellcheck="false">::: calendar
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-pane">
+                <div id="dragDropOverlay" style="display: none;">Drop Files Here</div>
+                <textarea id="rawInput" placeholder="Paste text here, or drag & drop files to open..." spellcheck="false">::: calendar
 ++ September 2025 ++
-Description: Odia Kohinoor Calendar [ଓଡ଼ିଆ କୋହିନୂର କ୍ୟାଲେଣ୍ଡର]
+Description: Odia Kohinoor Calendar [ଓଡ଼ିଆ କୋହିନୂର କ୍ଟାଲେଣ୍ଡର]
 Full Moon: 9
 New Moon: 24
 
@@ -328,511 +1033,1327 @@ New Moon: 24
    @ Due Date: 28th
 
 ::: notes
-++ Month Highlights [ମାସର ମୁଖ୍ୟାଂଶ] ++
-- Durga Puja begins at the end of the month.
+++ Month Highlights [ମାସର ମୁଖ୍ଟାଂଶ] ++
+- Durga Puja begins at end of month.
 - Nuakhai is a major agricultural festival.
+:::
+:::</textarea>
+            </div>
+        </div>
 
-++ Important Reminder [ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ସ୍ମରଣିକା] ++
-- Plan for the Puja holidays.
-- Complete all pending tasks before the festival season.
-:::
-:::
-</textarea>
+        <!-- Enhanced Calendar Output Panel -->
+        <div id="formattedOutput">
+            <!-- Enhanced Calendar Content -->
+            <div class="calendar-header">
+                <div class="month-display">
+                    <div>
+                        <h1 class="month-name odia-font">ଭାଦ୍ରବ - Bhadrab</h1>
+                        <p class="text-xl mt-2 opacity-90">August - September 2025</p>
+                    </div>
+                    <div class="navigation-controls">
+                        <button class="nav-btn" onclick="previousMonth()">
+                            <i class="fas fa-chevron-left mr-2"></i>Previous
+                        </button>
+                        <button class="nav-btn today-btn" onclick="goToToday()">
+                            <i class="fas fa-calendar-day mr-2"></i>Today
+                        </button>
+                        <button class="nav-btn" onclick="nextMonth()">
+                            Next<i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <!-- END: Admin Panel -->
-            <!-- START: Output Panel -->
-            <div id="output-panel">
-                <div class="output-pane"><div id="formattedOutput"></div></div>
+
+            <!-- Search and Filter Bar -->
+            <div class="search-filter-bar">
+                <input type="text" class="search-input" placeholder="Search festivals, dates, or events..." id="searchInput">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="festival">Festivals</button>
+                <button class="filter-btn" data-filter="holiday">Holidays</button>
+                <button class="filter-btn" data-filter="special">Special</button>
+                <button class="filter-btn" onclick="toggleAccessibility()">
+                    <i class="fas fa-universal-access"></i> A11y
+                </button>
             </div>
-            <!-- END: Output Panel -->
+
+            <!-- Main Calendar Container -->
+            <div class="calendar-container">
+                <!-- Calendar Grid -->
+                <div class="calendar-main">
+                    <div class="weekday-headers">
+                        <div class="weekday-header">
+                            <div class="odia-font">ରବି</div>
+                            <div class="text-xs">Sun</div>
+                        </div>
+                        <div class="weekday-header">
+                            <div class="odia-font">ସୋମ</div>
+                            <div class="text-xs">Mon</div>
+                        </div>
+                        <div class="weekday-header">
+                            <div class="odia-font">ମଙ୍ଗଳ</div>
+                            <div class="text-xs">Tue</div>
+                        </div>
+                        <div class="weekday-header">
+                            <div class="odia-font">ବୁଧ</div>
+                            <div class="text-xs">Wed</div>
+                        </div>
+                        <div class="weekday-header">
+                            <div class="odia-font">ଗୁରୁ</div>
+                            <div class="text-xs">Thu</div>
+                        </div>
+                        <div class="weekday-header">
+                            <div class="odia-font">ଶୁକ୍ର</div>
+                            <div class="text-xs">Fri</div>
+                        </div>
+                        <div class="weekday-header">
+                            <div class="odia-font">ଶନି</div>
+                            <div class="text-xs">Sat</div>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar days will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <!-- Enhanced Daily Horoscope Section -->
+                    <div class="horoscope-section">
+                        <div class="horoscope-header">
+                            <div class="horoscope-title">
+                                <i class="fas fa-star"></i>
+                                <span class="odia-font">ଦୈନିକ ରାଶିଫଳ</span>
+                            </div>
+                            <div class="horoscope-date" id="horoscopeDate">Today, September 20, 2025</div>
+                        </div>
+                        <div class="zodiac-grid" id="zodiacGrid">
+                            <!-- Enhanced Aries -->
+                            <div class="zodiac-item zodiac-aries" onclick="showHoroscopeDetails('aries')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Ram horns -->
+                                    <path d="M20 25 Q15 15 30 20 L35 15 Q40 20 35 25" 
+                                          fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                    <path d="M65 25 Q70 15 75 20 L80 15 Q85 20 80 25" 
+                                          fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                    <!-- Ram head -->
+                                    <circle cx="50" cy="35" r="12" fill="var(--aries-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Ram face -->
+                                    <circle cx="45" cy="32" r="2" fill="white"/>
+                                    <circle cx="55" cy="32" r="2" fill="white"/>
+                                    <!-- Spiral horns -->
+                                    <path d="M25 20 Q20 10 15 15 Q20 20 25 25" 
+                                          fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M75 20 Q80 10 85 15 Q80 20 75 25" 
+                                          fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <!-- Stars -->
+                                    <circle cx="30" cy="10" r="1.5" fill="white" opacity="0.8"/>
+                                    <circle cx="50" cy="8" r="1.5" fill="white" opacity="0.8"/>
+                                    <circle cx="70" cy="10" r="1.5" fill="white" opacity="0.8"/>
+                                </svg>
+                                <div class="zodiac-name">ମେଷ - Aries</div>
+                                <div class="zodiac-date-range">Mar 21 - Apr 19</div>
+                                <div class="zodiac-prediction">Today brings leadership opportunities. Your courage will shine.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">9</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Red</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Taurus -->
+                            <div class="zodiac-item zodiac-taurus" onclick="showHoroscopeDetails('taurus')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Bull body -->
+                                    <ellipse cx="50" cy="45" rx="25" ry="20" fill="var(--taurus-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Bull head -->
+                                    <circle cx="50" cy="25" r="12" fill="var(--taurus-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Horns -->
+                                    <path d="M40 20 Q35 10 30 15" 
+                                          fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                    <path d="M60 20 Q65 10 70 15" 
+                                          fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                    <!-- Bull face -->
+                                    <circle cx="45" cy="22" r="1.5" fill="white"/>
+                                    <circle cx="55" cy="22" r="1.5" fill="white"/>
+                                    <!-- Nose ring -->
+                                    <circle cx="50" cy="28" r="3" fill="none" stroke="white" stroke-width="2"/>
+                                    <!-- Ground line -->
+                                    <path d="M25 65 Q50 60 75 65" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <div class="zodiac-name">ବୃଷ - Taurus</div>
+                                <div class="zodiac-date-range">Apr 20 - May 20</div>
+                                <div class="zodiac-prediction">Financial stability improves. Patience brings rewards.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">6</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Green</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Gemini -->
+                            <div class="zodiac-item zodiac-gemini" onclick="showHoroscopeDetails('gemini')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Twin figures -->
+                                    <circle cx="30" cy="35" r="12" fill="var(--gemini-color)" stroke="white" stroke-width="2"/>
+                                    <circle cx="70" cy="35" r="12" fill="var(--gemini-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Connecting lines -->
+                                    <path d="M42 35 Q50 25 58 35" 
+                                          stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                    <!-- Faces -->
+                                    <circle cx="28" cy="32" r="1.5" fill="white"/>
+                                    <circle cx="32" cy="32" r="1.5" fill="white"/>
+                                    <circle cx="68" cy="32" r="1.5" fill="white"/>
+                                    <circle cx="72" cy="32" r="1.5" fill="white"/>
+                                    <!-- Stars -->
+                                    <path d="M20 15 L25 20 M30 10 L35 15 M40 20 L45 15 M55 20 L60 15 M65 10 L70 15 M75 20 L80 15" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <div class="zodiac-name">ମିଥୁନ - Gemini</div>
+                                <div class="zodiac-date-range">May 21 - Jun 20</div>
+                                <div class="zodiac-prediction">Communication flows perfectly today. Share your ideas freely.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">5</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Yellow</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Cancer -->
+                            <div class="zodiac-item zodiac-cancer" onclick="showHoroscopeDetails('cancer')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Crab shell -->
+                                    <path d="M30 45 Q50 30 70 45 Q50 60 30 45" 
+                                          fill="var(--cancer-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Crab body -->
+                                    <ellipse cx="50" cy="45" rx="15" ry="12" fill="var(--cancer-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Claws -->
+                                    <path d="M35 40 Q30 35 25 40" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M65 40 Q70 35 75 40" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <!-- Eyes -->
+                                    <circle cx="45" cy="42" r="2" fill="white"/>
+                                    <circle cx="55" cy="42" r="2" fill="white"/>
+                                    <!-- Shell pattern -->
+                                    <path d="M35 50 Q40 55 45 50 Q50 45 55 50 Q60 55 65 50" 
+                                          stroke="white" stroke-width="1.5" fill="none"/>
+                                </svg>
+                                <div class="zodiac-name">କର୍କଟ - Cancer</div>
+                                <div class="zodiac-date-range">Jun 21 - Jul 22</div>
+                                <div class="zodiac-prediction">Emotional intelligence guides you today. Trust your feelings.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">2</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">White</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Leo -->
+                            <div class="zodiac-item zodiac-leo" onclick="showHoroscopeDetails('leo')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Lion mane -->
+                                    <circle cx="50" cy="40" r="20" fill="var(--leo-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Lion face -->
+                                    <circle cx="50" cy="35" r="10" fill="var(--leo-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Mane details -->
+                                    <path d="M30 30 Q35 20 40 25 Q50 15 60 25 Q65 20 70 30" 
+                                          stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+                                    <!-- Eyes -->
+                                    <circle cx="45" cy="32" r="2" fill="white"/>
+                                    <circle cx="55" cy="32" r="2" fill="white"/>
+                                    <!-- Crown -->
+                                    <path d="M40 25 L50 20 L60 25" 
+                                          stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                    <circle cx="45" cy="23" r="1.5" fill="white"/>
+                                    <circle cx="55" cy="23" r="1.5" fill="white"/>
+                                </svg>
+                                <div class="zodiac-name">ସିଂହ - Leo</div>
+                                <div class="zodiac-date-range">Jul 23 - Aug 22</div>
+                                <div class="zodiac-prediction">Your natural charisma attracts success today. Lead with confidence.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">1</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Gold</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Virgo -->
+                            <div class="zodiac-item zodiac-virgo" onclick="showHoroscopeDetails('virgo')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Maiden figure -->
+                                    <path d="M30 30 L30 70 M35 25 L35 75 M40 30 L40 70 M45 25 L45 75 M50 30 L50 70 M55 25 L55 75 M60 30 L60 70 M65 25 L65 75 M70 30 L70 70" 
+                                          stroke="var(--virgo-color)" stroke-width="2" stroke-linecap="round"/>
+                                    <!-- Wheat sheaf -->
+                                    <path d="M25 40 Q50 30 75 40" 
+                                          stroke="white" stroke-width="2" fill="none"/>
+                                    <circle cx="50" cy="50" r="15" fill="none" stroke="white" stroke-width="2"/>
+                                    <!-- Stars in sheaf -->
+                                    <circle cx="40" cy="45" r="1" fill="white"/>
+                                    <circle cx="50" cy="40" r="1" fill="white"/>
+                                    <circle cx="60" cy="45" r="1" fill="white"/>
+                                </svg>
+                                <div class="zodiac-name">କନ୍ଟା - Virgo</div>
+                                <div class="zodiac-date-range">Aug 23 - Sep 22</div>
+                                <div class="zodiac-prediction">Attention to detail brings rewards today. Perfect your craft.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">5</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Navy</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Libra -->
+                            <div class="zodiac-item zodiac-libra" onclick="showHoroscopeDetails('libra')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Balance scales -->
+                                    <path d="M20 35 L20 65 M80 35 L80 65" 
+                                          stroke="var(--libra-color)" stroke-width="3" stroke-linecap="round"/>
+                                    <!-- Scale pans -->
+                                    <rect x="25" y="40" width="50" height="3" rx="2" fill="var(--libra-color)" stroke="white" stroke-width="1"/>
+                                    <!-- Balance beam -->
+                                    <path d="M35 50 Q50 40 65 50" 
+                                          stroke="white" stroke-width="2" fill="none"/>
+                                    <!-- Decorative elements -->
+                                    <circle cx="30" cy="35" r="3" fill="var(--libra-color)" stroke="white" stroke-width="1"/>
+                                    <circle cx="70" cy="35" r="3" fill="var(--libra-color)" stroke="white" stroke-width="1"/>
+                                    <circle cx="30" cy="65" r="3" fill="var(--libra-color)" stroke="white" stroke-width="1"/>
+                                    <circle cx="70" cy="65" r="3" fill="var(--libra-color)" stroke="white" stroke-width="1"/>
+                                </svg>
+                                <div class="zodiac-name">ତୁଳା - Libra</div>
+                                <div class="zodiac-date-range">Sep 23 - Oct 22</div>
+                                <div class="zodiac-prediction">Balance brings harmony today. Seek justice in all matters.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">6</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Pink</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Scorpio -->
+                            <div class="zodiac-item zodiac-scorpio" onclick="showHoroscopeDetails('scorpio')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Scorpion body -->
+                                    <path d="M30 40 Q50 30 70 40 L65 60 Q50 70 35 60 Z" 
+                                          fill="var(--scorpio-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Stinger -->
+                                    <path d="M65 60 L75 65" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <circle cx="75" cy="65" r="2" fill="white"/>
+                                    <!-- Claws -->
+                                    <path d="M25 35 L30 40" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M70 40 L75 35" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <!-- Eyes -->
+                                    <circle cx="40" cy="38" r="1.5" fill="white"/>
+                                    <circle cx="60" cy="38" r="1.5" fill="white"/>
+                                </svg>
+                                <div class="zodiac-name">ବିଛ - Scorpio</div>
+                                <div class="zodiac-date-range">Oct 23 - Nov 21</div>
+                                <div class="zodiac-prediction">Your intensity transforms challenges today. Embrace change.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">8</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Maroon</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Sagittarius -->
+                            <div class="zodiac-item zodiac-sagittarius" onclick="showHoroscopeDetails('sagittarius')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Archer body -->
+                                    <path d="M30 60 L50 30 L70 60" 
+                                          stroke="var(--sagittarius-color)" stroke-width="3" stroke-linecap="round"/>
+                                    <!-- Bow -->
+                                    <path d="M25 65 Q50 55 75 65" 
+                                          stroke="white" stroke-width="2" fill="none"/>
+                                    <!-- Arrow -->
+                                    <path d="M70 60 L80 50" 
+                                          stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                    <path d="M75 55 L80 50" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <!-- Horse body -->
+                                    <ellipse cx="50" cy="65" rx="12" ry="8" fill="var(--sagittarius-color)" stroke="white" stroke-width="1"/>
+                                    <!-- Horse legs -->
+                                    <path d="M40 70 L38 80 M45 70 L43 80 M50 70 L48 80 M55 70 L53 80 M60 70 L58 80" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <div class="zodiac-name">ଧନୁ - Sagittarius</div>
+                                <div class="zodiac-date-range">Nov 22 - Dec 21</div>
+                                <div class="zodiac-prediction">Adventure calls your name today. Explore new possibilities.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">3</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Purple</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Capricorn -->
+                            <div class="zodiac-item zodiac-capricorn" onclick="showHoroscopeDetails('capricorn')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Sea-goat body -->
+                                    <path d="M30 50 Q35 30 50 35 Q65 30 70 50 L65 70 Q50 75 35 70 Z" 
+                                          fill="var(--capricorn-color)" stroke="white" stroke-width="2"/>
+                                    <!-- Fish tail -->
+                                    <path d="M65 70 Q75 65 80 70 Q85 75 80 70" 
+                                          fill="var(--capricorn-color)" stroke="white" stroke-width="1"/>
+                                    <!-- Horns -->
+                                    <path d="M35 35 Q30 25 25 30" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M65 35 Q70 25 75 30" 
+                                          stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <!-- Eyes -->
+                                    <circle cx="45" cy="40" r="1.5" fill="white"/>
+                                    <circle cx="55" cy="40" r="1.5" fill="white"/>
+                                </svg>
+                                <div class="zodiac-name">ମକର - Capricorn</div>
+                                <div class="zodiac-date-range">Dec 22 - Jan 19</div>
+                                <div class="zodiac-prediction">Discipline brings success today. Stay focused on goals.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">8</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Brown</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Aquarius -->
+                            <div class="zodiac-item zodiac-aquarius" onclick="showHoroscopeDetails('aquarius')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Water waves -->
+                                    <path d="M20 40 Q30 35 40 40 M30 45 Q40 40 50 45 M40 40 Q50 35 60 40 M50 45 Q60 40 70 45 M60 40 Q70 35 80 40" 
+                                          stroke="var(--aquarius-color)" stroke-width="3" stroke-linecap="round"/>
+                                    <!-- Water bearer -->
+                                    <path d="M30 40 L30 60 M40 35 L40 65 M60 35 L60 65 M70 40 L70 60" 
+                                          stroke="white" stroke-width="4" stroke-linecap="round"/>
+                                    <!-- Stars -->
+                                    <circle cx="35" cy="30" r="2" fill="white"/>
+                                    <circle cx="50" cy="25" r="2" fill="white"/>
+                                    <circle cx="65" cy="30" r="2" fill="white"/>
+                                    <!-- Flow lines -->
+                                    <path d="M35 45 Q50 40 65 45 M35 55 Q50 60 65 55" 
+                                          stroke="white" stroke-width="2" fill="none"/>
+                                </svg>
+                                <div class="zodiac-name">କୁମ୍ଭ - Aquarius</div>
+                                <div class="zodiac-date-range">Jan 20 - Feb 18</div>
+                                <div class="zodiac-prediction">Innovation flows through you today. Think outside boundaries.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">4</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Blue</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Pisces -->
+                            <div class="zodiac-item zodiac-pisces" onclick="showHoroscopeDetails('pisces')">
+                                <svg class="zodiac-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Two fish swimming -->
+                                    <path d="M20 40 Q40 30 50 40 Q60 30 80 40" 
+                                          stroke="var(--pisces-color)" stroke-width="3" stroke-linecap="round" fill="none"/>
+                                    <path d="M20 60 Q40 70 50 60 Q60 70 80 60" 
+                                          stroke="var(--pisces-color)" stroke-width="3" stroke-linecap="round" fill="none"/>
+                                    <!-- Fish bodies -->
+                                    <ellipse cx="35" cy="40" rx="8" ry="5" fill="var(--pisces-color)" stroke="white" stroke-width="1"/>
+                                    <ellipse cx="65" cy="40" rx="8" ry="5" fill="var(--pisces-color)" stroke="white" stroke-width="1"/>
+                                    <ellipse cx="35" cy="60" rx="8" ry="5" fill="var(--pisces-color)" stroke="white" stroke-width="1"/>
+                                    <ellipse cx="65" cy="60" rx="8" ry="5" fill="var(--pisces-color)" stroke="white" stroke-width="1"/>
+                                    <!-- Eyes -->
+                                    <circle cx="32" cy="38" r="1" fill="white"/>
+                                    <circle cx="38" cy="38" r="1" fill="white"/>
+                                    <circle cx="62" cy="38" r="1" fill="white"/>
+                                    <circle cx="68" cy="38" r="1" fill="white"/>
+                                    <circle cx="32" cy="62" r="1" fill="white"/>
+                                    <circle cx="38" cy="62" r="1" fill="white"/>
+                                    <circle cx="62" cy="62" r="1" fill="white"/>
+                                    <circle cx="68" cy="62" r="1" fill="white"/>
+                                    <!-- Water currents -->
+                                    <path d="M25 50 Q50 45 75 50 M25 55 Q50 60 75 55" 
+                                          stroke="white" stroke-width="1" fill="none" opacity="0.7"/>
+                                </svg>
+                                <div class="zodiac-name">ମୀନ - Pisces</div>
+                                <div class="zodiac-date-range">Feb 19 - Mar 20</div>
+                                <div class="zodiac-prediction">Creativity flows abundantly today. Trust your artistic vision.</div>
+                                <div class="zodiac-lucky">
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Lucky</span>
+                                        <span class="lucky-value">7</span>
+                                    </div>
+                                    <div class="lucky-item">
+                                        <span class="lucky-label">Color</span>
+                                        <span class="lucky-value">Sea Green</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Festivals -->
+                    <div class="sidebar-section">
+                        <h2 class="sidebar-title">
+                            <i class="fas fa-calendar-star"></i>
+                            Upcoming Festivals
+                        </h2>
+                        <div id="upcomingFestivals">
+                            <div class="festival-item major-festival" onclick="showEventDetails('Nuakhai')">
+                                <div class="font-semibold">ନୂଆଖାଇ - Nuakhai</div>
+                                <div class="text-sm text-gray-600">Sep 4, 2025 - Thursday</div>
+                                <div class="text-xs mt-1">Agricultural festival of Odisha</div>
+                            </div>
+                            <div class="festival-item holiday" onclick="showEventDetails('Radha Ashtami')">
+                                <div class="font-semibold">ରାଧା ଅଷ୍ଟମୀ</div>
+                                <div class="text-sm text-gray-600">Sep 8, 2025 - Monday</div>
+                            </div>
+                            <div class="festival-item special" onclick="showEventDetails('Sunia')">
+                                <div class="font-semibold">ସୁନିଆ</div>
+                                <div class="text-sm text-gray-600">Sep 11, 2025 - Thursday</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panchang Information -->
+                    <div class="sidebar-section">
+                        <h2 class="sidebar-title">
+                            <i class="fas fa-sun"></i>
+                            Today's Panchang
+                        </h2>
+                        <div class="panchang-info">
+                            <span class="panchang-label">Sunrise:</span>
+                            <span class="panchang-value">05:45 AM</span>
+                        </div>
+                        <div class="panchang-info">
+                            <span class="panchang-label">Sunset:</span>
+                            <span class="panchang-value">06:15 PM</span>
+                        </div>
+                        <div class="panchang-info">
+                            <span class="panchang-label odia-font">ତିଥି Tithi:</span>
+                            <span class="panchang-value odia-font">ଦ୍ଵାଦଶୀ</span>
+                        </div>
+                        <div class="panchang-info">
+                            <span class="panchang-label odia-font">ନକ୍ଷତ୍ର Nakshatra:</span>
+                            <span class="panchang-value odia-font">ପୁଷ୍ଟା</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
         </div>
-    </div>
-    
-    <div id="day-detail-modal" class="modal-overlay" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 id="modal-date" style="font-size: 1.125rem; font-weight: 700; color: #334155;"></h2>
-          <button id="modal-close-btn" aria-label="Close" style="border: none; background: transparent; font-size: 1.5rem; line-height: 1; cursor: pointer; color: #64748b; padding: 0.5rem;">&times;</button>
-        </div>
-        <div id="modal-body" class="modal-body"></div>
-      </div>
     </div>
 
-    <div id="settingsPanel" class="hidden" translate="no">
-        <div class="panel-header"><h3>Settings</h3><button id="closeSettingsButton" title="Close">×</button></div>
-        <div class="panel-tabs">
-            <button class="tab-link active" data-tab="download">Download</button>
+    <!-- Event Modal -->
+    <div class="event-modal" id="eventModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeEventModal()">&times;</button>
+            <div id="modalBody">
+                <!-- Event details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Horoscope Details Modal -->
+    <div class="event-modal" id="horoscopeModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeHoroscopeModal()">&times;</button>
+            <div id="horoscopeModalBody">
+                <!-- Horoscope details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settingsPanel">
+        <div class="panel-header">
+            <h2>Settings</h2>
+            <button id="closeSettingsButton">&times;</button>
         </div>
         <div class="panel-content">
-            <div id="tab-download" class="tab-content active">
-                <div class="settings-group"><label>Include Interactive Controls in Downloaded Files</label><div class="checkbox-group"><label><input type="checkbox" id="downloadIncludeSettings" checked> Settings Button</label></div></div>
+            <div class="settings-group">
+                <label for="fontSize">Font Size</label>
+                <select id="fontSize">
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                    <option value="extra-large">Extra Large</option>
+                </select>
+            </div>
+            <div class="settings-group">
+                <label for="theme">Theme</label>
+                <select id="theme">
+                    <option value="light" selected>Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="auto">Auto</option>
+                </select>
+            </div>
+            <div class="settings-group">
+                <label>Calendar Size</label>
+                <select id="calendarSize">
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                    <option value="xlarge">Extra Large</option>
+                </select>
+            </div>
+            <div class="settings-group">
+                <label>Display Options</label>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="showHoroscope" checked>
+                        Show Daily Horoscope
+                    </label>
+                    <label>
+                        <input type="checkbox" id="showTithi" checked>
+                        Show Tithi
+                    </label>
+                    <label>
+                        <input type="checkbox" id="showNakshatra" checked>
+                        Show Nakshatra
+                    </label>
+                    <label>
+                        <input type="checkbox" id="showEvents" checked>
+                        Show Events
+                    </label>
+                    <label>
+                        <input type="checkbox" id="enableAnimations" checked>
+                        Enable Animations
+                    </label>
+                </div>
             </div>
         </div>
-        <div class="panel-footer"><button id="resetSettingsButton">Reset to Defaults</button><button id="applySettingsButton">OK</button></div>
+        <div class="panel-footer">
+            <button class="nav-btn" onclick="resetSettings()">Reset to Default</button>
+            <button class="nav-btn today-btn" onclick="saveSettings()">Save Settings</button>
+        </div>
     </div>
-    <div id="popupSyncIcon"></div>
 
-    <template id="download-template">
-        <div id="download-controls" class="download-controls" translate="no">
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
-                <div class="control-group"><button id="settingsButton"><span>Settings</span></button><button id="hideControlsButton" title="Hide Controls"></button></div>
-                <div class="control-group"><label for="languageToggle">View:</label><select id="languageToggle"><option value="both">Show Both Languages</option><option value="primary">Primary Only</option><option value="secondary">Secondary Only</option><option value="translate">Browser Translation</option></select></div>
-            </div>
-        </div>
-        <button id="show-controls-tab" title="Show Controls"></button>
-        <div id="formattedOutput"></div>
-        <div id="settingsPanel" class="hidden" translate="no"></div>
-        <script id="original-source-data" type="text/plain"></script>
-    </template>
-    
+    <!-- Voice Command Indicator -->
+    <div class="voice-indicator" id="voiceIndicator" onclick="toggleVoiceCommand()">
+        <i class="fas fa-microphone"></i>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner"></div>
+
     <script>
-    const defaultSettings = {
-        download: { includeSettings: true }
-    };
-    let currentSettings = JSON.parse(JSON.stringify(defaultSettings));
-
-    function attachInteractiveFeatures(isDownloadedContext) {
-        const get = (selector, context = document) => context.querySelector(selector);
-        const body = document.body;
-        const languageToggle = get('#languageToggle');
-        const settingsPanel = get('#settingsPanel');
-        
-        const setupLanguageToggle = () => {
-            if (!languageToggle) return;
-            const updateLanguageView = (mode) => {
-                body.classList.remove('hide-bilingual-secondary', 'hide-bilingual-primary', 'show-translation');
-                if (mode === 'primary') body.classList.add('hide-bilingual-secondary');
-                else if (mode === 'secondary') body.classList.add('hide-bilingual-primary');
-                else if (mode === 'translate') body.classList.add('show-translation');
-            };
-            languageToggle.addEventListener('change', (e) => updateLanguageView(e.target.value));
-            updateLanguageView(languageToggle.value);
+        // Horoscope Data
+        const horoscopeData = {
+            aries: {
+                name: 'ମେଷ - Aries',
+                dateRange: 'Mar 21 - Apr 19',
+                prediction: 'Today brings new opportunities for leadership. Your confidence will shine in all endeavors. Take initiative in professional matters.',
+                lucky: { number: 9, color: 'Red', time: '10:00 AM' },
+                element: 'Fire',
+                ruler: 'Mars',
+                compatibility: ['Leo', 'Sagittarius', 'Gemini']
+            },
+            taurus: {
+                name: 'ବୃଷ - Taurus',
+                dateRange: 'Apr 20 - May 20',
+                prediction: 'Financial matters improve today. Stay patient with loved ones and focus on long-term investments.',
+                lucky: { number: 6, color: 'Green', time: '2:00 PM' },
+                element: 'Earth',
+                ruler: 'Venus',
+                compatibility: ['Virgo', 'Capricorn', 'Cancer']
+            },
+            gemini: {
+                name: 'ମିଥୁନ - Gemini',
+                dateRange: 'May 21 - Jun 20',
+                prediction: 'Communication is your strength today. Express yourself clearly in both personal and professional relationships.',
+                lucky: { number: 5, color: 'Yellow', time: '3:00 PM' },
+                element: 'Air',
+                ruler: 'Mercury',
+                compatibility: ['Libra', 'Aquarius', 'Aries']
+            },
+            cancer: {
+                name: 'କର୍କଟ - Cancer',
+                dateRange: 'Jun 21 - Jul 22',
+                prediction: 'Family matters take priority today. Your intuition guides you well in emotional decisions.',
+                lucky: { number: 2, color: 'White', time: '9:00 AM' },
+                element: 'Water',
+                ruler: 'Moon',
+                compatibility: ['Scorpio', 'Pisces', 'Taurus']
+            },
+            leo: {
+                name: 'ସିଂହ - Leo',
+                dateRange: 'Jul 23 - Aug 22',
+                prediction: 'Your charisma attracts attention today. Shine in social settings and take center stage.',
+                lucky: { number: 1, color: 'Gold', time: '1:00 PM' },
+                element: 'Fire',
+                ruler: 'Sun',
+                compatibility: ['Aries', 'Sagittarius', 'Gemini']
+            },
+            virgo: {
+                name: 'କନ୍ଟା - Virgo',
+                dateRange: 'Aug 23 - Sep 22',
+                prediction: 'Attention to detail pays off today. Perfect your skills and focus on quality work.',
+                lucky: { number: 5, color: 'Navy', time: '11:00 AM' },
+                element: 'Earth',
+                ruler: 'Mercury',
+                compatibility: ['Taurus', 'Capricorn', 'Cancer']
+            },
+            libra: {
+                name: 'ତୁଳା - Libra',
+                dateRange: 'Sep 23 - Oct 22',
+                prediction: 'Balance is key today. Seek harmony in relationships and avoid conflicts.',
+                lucky: { number: 6, color: 'Pink', time: '4:00 PM' },
+                element: 'Air',
+                ruler: 'Venus',
+                compatibility: ['Gemini', 'Aquarius', 'Leo']
+            },
+            scorpio: {
+                name: 'ବିଛ - Scorpio',
+                dateRange: 'Oct 23 - Nov 21',
+                prediction: 'Your passion drives success today. Transform challenges into opportunities.',
+                lucky: { number: 8, color: 'Maroon', time: '8:00 PM' },
+                element: 'Water',
+                ruler: 'Pluto',
+                compatibility: ['Cancer', 'Pisces', 'Virgo']
+            },
+            sagittarius: {
+                name: 'ଧନୁ - Sagittarius',
+                dateRange: 'Nov 22 - Dec 21',
+                prediction: 'Adventure calls your name today. Explore new horizons and embrace change.',
+                lucky: { number: 3, color: 'Purple', time: '12:00 PM' },
+                element: 'Fire',
+                ruler: 'Jupiter',
+                compatibility: ['Aries', 'Leo', 'Libra']
+            },
+            capricorn: {
+                name: 'ମକର - Capricorn',
+                dateRange: 'Dec 22 - Jan 19',
+                prediction: 'Hard work brings recognition today. Stay focused on your goals.',
+                lucky: { number: 8, color: 'Brown', time: '7:00 AM' },
+                element: 'Earth',
+                ruler: 'Saturn',
+                compatibility: ['Taurus', 'Virgo', 'Scorpio']
+            },
+            aquarius: {
+                name: 'କୁମ୍ଭ - Aquarius',
+                dateRange: 'Jan 20 - Feb 18',
+                prediction: 'Innovation leads to success today. Think outside the box and share your ideas.',
+                lucky: { number: 4, color: 'Blue', time: '3:00 PM' },
+                element: 'Air',
+                ruler: 'Uranus',
+                compatibility: ['Gemini', 'Libra', 'Sagittarius']
+            },
+            pisces: {
+                name: 'ମୀନ - Pisces',
+                dateRange: 'Feb 19 - Mar 20',
+                prediction: 'Creativity flows today. Trust your artistic instincts and express yourself.',
+                lucky: { number: 7, color: 'Sea Green', time: '5:00 PM' },
+                element: 'Water',
+                ruler: 'Neptune',
+                compatibility: ['Cancer', 'Scorpio', 'Capricorn']
+            }
         };
-        setupLanguageToggle();
-        
-        const loadSettings = () => { try { const saved = localStorage.getItem('formatterSettings'); if(saved) { const parsed = JSON.parse(saved); currentSettings.download = {...defaultSettings.download, ...parsed.download}; } } catch { currentSettings = JSON.parse(JSON.stringify(defaultSettings)); } updateSettingsPanel(); };
-        const saveSettings = () => { localStorage.setItem('formatterSettings', JSON.stringify(currentSettings)); };
-        
-        const updateSettingsPanel = () => {
-            if (!settingsPanel) return;
-            get('#downloadIncludeSettings', settingsPanel).checked = currentSettings.download.includeSettings;
-        };
-        const readSettingsFromPanel = () => {
-            if (!settingsPanel) return;
-            currentSettings.download.includeSettings = get('#downloadIncludeSettings', settingsPanel).checked;
+
+        // Calendar Data
+        const calendarData = {
+            '2025-09-04': {
+                day: 4,
+                weekday: 'Thursday',
+                tithi: 'ପ୍ରତିପଦା',
+                events: [
+                    { type: 'festival', name: 'ନୂଆଖାଇ', nameEn: 'Nuakhai', description: 'Agricultural festival celebrating first rice harvest' }
+                ]
+            },
+            '2025-09-08': {
+                day: 8,
+                weekday: 'Monday',
+                tithi: 'ପଞ୍ଚମୀ',
+                events: [
+                    { type: 'holiday', name: 'ରାଧା ଅଷ୍ଟମୀ', nameEn: 'Radha Ashtami', description: 'Birth celebration of Radha' }
+                ]
+            },
+            '2025-09-11': {
+                day: 11,
+                weekday: 'Thursday',
+                tithi: 'ଅଷ୍ଟମୀ',
+                events: [
+                    { type: 'special', name: 'ସୁନିଆ', nameEn: 'Sunia', description: 'Traditional Odia festival' }
+                ]
+            },
+            '2025-09-14': {
+                day: 14,
+                weekday: 'Sunday',
+                tithi: 'ଏକାଦଶୀ',
+                events: [
+                    { type: 'festival', name: 'ଅନ୍ତ ଚତୁର୍ଦଶୀ', nameEn: 'Anant Chaturdashi', description: 'Festival of eternal god' }
+                ]
+            },
+            '2025-09-30': {
+                day: 30,
+                weekday: 'Tuesday',
+                tithi: 'ତ୍ରଟୋଦଶୀ',
+                events: [
+                    { type: 'festival', name: 'ଦୁର୍ଗା ପୂଜା ଆରମ୍ଭ', nameEn: 'Durga Puja Begins', description: 'Beginning of Durga Puja festival' }
+                ]
+            }
         };
 
-        document.addEventListener('click', (e) => {
-            const target = e.target;
-            const clickHandlers = {
-                '#settingsButton': () => { updateSettingsPanel(); settingsPanel.classList.remove('hidden'); },
-                '#closeSettingsButton': () => settingsPanel.classList.add('hidden'),
-                '#applySettingsButton': () => { readSettingsFromPanel(); saveSettings(); settingsPanel.classList.add('hidden'); },
-                '#resetSettingsButton': () => { currentSettings = JSON.parse(JSON.stringify(defaultSettings)); saveSettings(); updateSettingsPanel(); },
-                '#hideControlsButton': (t) => { const c = t.closest('.download-controls'); if (c) { c.style.display = 'none'; const s = document.getElementById('show-controls-tab'); if(s) s.style.display = 'block'; } },
-                '#show-controls-tab': (t) => { const c = document.getElementById('download-controls'); if (c) { c.style.display = 'flex'; t.style.display = 'none'; } },
-                '#toggleGuideButton': (button) => {
-                    const guide = document.getElementById('formatting-guide');
-                    guide.classList.toggle('visible');
-                    button.classList.toggle('active');
-                    const span = button.querySelector('span');
-                    if (span) span.textContent = guide.classList.contains('visible') ? 'Hide Guide' : 'Show Guide';
-                }
-            };
-            for (const sel in clickHandlers) { const el = target.closest(sel); if (el) { clickHandlers[sel](el); return; } }
-        });
-
-        if (settingsPanel) { 
-            settingsPanel.addEventListener('input', (e) => { 
-                readSettingsFromPanel();
-            }); 
-            settingsPanel.addEventListener('change', (e) => {
-                readSettingsFromPanel();
-            });
-        }
-        
-        if (isDownloadedContext) {
-            const controlsHeader = get('#download-controls');
-            const adjustBodyPadding = () => { if (controlsHeader) document.body.style.paddingTop = `${controlsHeader.offsetHeight}px`; };
-            new ResizeObserver(adjustBodyPadding).observe(controlsHeader); adjustBodyPadding();
-        }
-        loadSettings();
-    }
-
-    (() => { // --- Live Editor Scope ---
-        const App = { dom: {}, config: { debounce: 150 }, state: { debounceTimer: null, uploadedImages: {}, calendarDataStore: {} } };
-        const inlineRules = [ { regex: /\*\*(.*?)\*\*/g, replacement: '<strong>$1</strong>' }, { regex: /(?<!\*|\w)\*([^\s*].*?[^\s*])\*(?!\*|\w)/g, replacement: '<em>$1</em>' } ];
-        
-        const applyInlineStyling = (text) => {
-            if (typeof text !== 'string') return ''; // Bug fix for undefined input
-            return inlineRules.reduce((acc, rule) => acc.replace(rule.regex, rule.replacement), text);
-        }
-        
-        const applyBilingualAndTranslate = (rawText) => { 
-            if (!rawText) return ''; // Bug fix for undefined input
-            const styledHtml = applyInlineStyling(rawText); 
-            const UNI_OPEN = '⦅'; const UNI_CLOSE = '⦆'; 
-            const placeholderText = styledHtml.replace(/\\\[/g, '[').replace(/\\\]/g, ']').replace(/\[/g, UNI_OPEN).replace(/\]/g, UNI_CLOSE); 
-            let finalHtml = `<span class="bilingual-primary-text">${placeholderText}</span>`; 
-            finalHtml = finalHtml.replace(new RegExp(UNI_OPEN, 'g'), '</span><span class="bilingual-spacer"> </span><span class="bilingual-secondary">[').replace(new RegExp(UNI_CLOSE, 'g'), ']</span><span class="bilingual-primary-text">'); 
-            finalHtml = finalHtml.replace(/<span class="bilingual-primary-text"><\/span>/g, ''); 
-            let primaryOnlyText = rawText.replace(/\s*\[[^\]{}]+?\]/g, '').trim(); 
-            const styledPrimaryOnly = applyInlineStyling(primaryOnlyText); 
-            return `<span class="bilingual-container"><span class="bilingual-primary" translate="no">${finalHtml}</span><span class="translatable-text">${styledPrimaryOnly ? `[${styledPrimaryOnly}]` : ''}</span></span>`; 
-        };
-        
-        const generateStyledCalendarHTML = (calendarData, startLineNum) => {
-            const { title, monthName, year, description, holidays, events, panchang, notes, globals } = calendarData;
-            const monthIndex = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'].indexOf(monthName.toLowerCase());
-            if (monthIndex === -1) return `<p class="formatter-error">Invalid month name: ${monthName}</p>`;
+        // Initialize Calendar
+        function initCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const year = 2025;
+            const month = 8; // September (0-indexed)
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
             
-            const firstDay = new Date(year, monthIndex, 1);
-            const lastDay = new Date(year, monthIndex + 1, 0);
-            const firstDayOfWeek = firstDay.getDay();
-            const daysInMonth = lastDay.getDate();
-            const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-            const odiaWeekdays = ['ରବି', 'ସୋମ', 'ମଙ୍ଗଳ', 'ବୁଧ', 'ଗୁରୁ', 'ଶୁକ୍ର', 'ଶନି'];
-
-            const allHolidays = [...holidays, ...Object.entries(globals).map(([key, day]) => {
-                if (key === 'fullMoon' || key === 'newMoon') {
-                    return { day, name: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()) };
-                }
-                return null;
-            }).filter(Boolean)];
-
-            let html = `
-            <div class="app-container" data-calendar-id="${startLineNum}">
-                <header class="calendar-header">
-                    <div class="logo font-oriya">
-                        <span>ଅ</span>ଅକ୍ଷୟ କ୍ୟାଲେଣ୍ଡର
+            grid.innerHTML = '';
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day';
+                grid.appendChild(emptyDay);
+            }
+            
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `2025-09-${day.toString().padStart(2, '0')}`;
+                const dayData = calendarData[dateStr] || {};
+                const isToday = day === 20; // Assuming today is 20th
+                const isSunday = new Date(year, month, day).getDay() === 0;
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = `calendar-day ${isToday ? 'today' : ''} ${isSunday ? 'sunday' : ''}`;
+                dayElement.dataset.date = dateStr;
+                
+                dayElement.innerHTML = `
+                    <div class="day-number">${day}</div>
+                    <div class="tithi odia-font">${dayData.tithi || 'ତିଥି'}</div>
+                    <div class="event-indicator">
+                        ${dayData.events ? dayData.events.map(event => 
+                            `<span class="event-dot ${event.type}-dot" title="${event.nameEn}"></span>`
+                        ).join('') : ''}
                     </div>
-                    <div class="deities">
-                        <div class="deity">ଜଗନ୍ନାଥ</div>
-                        <div class="deity">ବଳଭଦ୍ର</div>
-                        <div class="deity">ସୁଭଦ୍ରା</div>
+                `;
+                
+                dayElement.addEventListener('click', () => showDayDetails(dateStr));
+                grid.appendChild(dayElement);
+            }
+        }
+
+        // Initialize Horoscope
+        function initHoroscope() {
+            updateHoroscopeDate();
+            updateHoroscopePredictions();
+        }
+
+        // Update Horoscope Date
+        function updateHoroscopeDate() {
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = today.toLocaleDateString('en-US', options);
+            document.getElementById('horoscopeDate').textContent = `Today, ${dateStr}`;
+        }
+
+        // Update Horoscope Predictions
+        function updateHoroscopePredictions() {
+            // This would normally fetch from an API
+            // For demo, we're using static data
+        }
+
+        // Show Horoscope Details
+        function showHoroscopeDetails(sign) {
+            const modal = document.getElementById('horoscopeModal');
+            const modalBody = document.getElementById('horoscopeModalBody');
+            const data = horoscopeData[sign];
+            
+            modalBody.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4 odia-font">${data.name}</h2>
+                <div class="mb-4">
+                    <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                        ${data.element} Sign
+                    </span>
+                    <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm ml-2">
+                        Ruler: ${data.ruler}
+                    </span>
+                </div>
+                <p class="text-gray-600 mb-4">${data.dateRange}</p>
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-2 text-lg">Today's Prediction</h3>
+                    <p class="text-gray-700 leading-relaxed">${data.prediction}</p>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="text-center p-3 bg-yellow-50 rounded-lg">
+                        <div class="text-sm text-gray-600">Lucky Number</div>
+                        <div class="text-2xl font-bold text-yellow-600">${data.lucky.number}</div>
                     </div>
-                </header>
-                <div class="shloka">${applyBilingualAndTranslate(description)}</div>
-                <div class="navigation">
-                    <div class="month-heading">
-                        <div class="odia-month font-oriya">${applyBilingualAndTranslate(monthName)} - ${applyBilingualAndTranslate(year.toString())}</div>
-                        <div class="english-month">${title}</div>
+                    <div class="text-center p-3 bg-green-50 rounded-lg">
+                        <div class="text-sm text-gray-600">Lucky Color</div>
+                        <div class="text-lg font-semibold text-green-600">${data.lucky.color}</div>
+                    </div>
+                    <div class="text-center p-3 bg-blue-50 rounded-lg">
+                        <div class="text-sm text-gray-600">Lucky Time</div>
+                        <div class="text-lg font-semibold text-blue-600">${data.lucky.time}</div>
                     </div>
                 </div>
-                ${notes.length > 0 ? `<div class="festival-info"><h3 class="font-bold">${applyBilingualAndTranslate('Month Highlights [ମାସର ମୁଖ୍ୟାଂଶ]')}</h3></div>` : ''}
-                <main class="calendar-main">
-                    <div class="calendar-container">
-                        <div class="weekday-headers">
-                            ${weekdays.map((day, i) => `<div class="weekday-header ${i === 0 ? 'bg-red-700' : 'bg-green-700'}"><span class="font-bold font-oriya text-md">${odiaWeekdays[i]}</span><span class="text-xs opacity-80 block">${day}</span></div>`).join('')}
-                        </div>
-                        <div class="calendar-grid">`;
-
-            for (let i = 0; i < firstDayOfWeek; i++) html += `<div class="bg-transparent rounded-lg"></div>`;
-
-            for (let day = 1; day <= daysInMonth; day++) {
-                const isSunday = (firstDayOfWeek + day - 1) % 7 === 0;
-                const dayHolidays = holidays.filter(h => h.day === day);
-                const dayEvents = events.filter(e => e.day === day);
-                const isSpecial = dayHolidays.some(h => h.isSpecial);
-                const dayHasEntry = dayHolidays.length > 0 || dayEvents.length > 0;
-
-                let dayClasses = 'calendar-day aspect-square p-2 flex flex-col relative transition duration-200 ease-in-out cursor-pointer hover:bg-yellow-100/50 hover:shadow-lg transform hover:scale-105 z-10';
-                if (isSunday) dayClasses += ' sunday';
-                if (isSpecial || (dayHasEntry && !isSunday)) dayClasses += ' special-day';
-                if (!dayHasEntry && !isSunday) dayClasses += ' bg-white';
-                
-                const allDayEntries = [...dayHolidays, ...dayEvents];
-
-                html += `<div data-date="${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}" class="${dayClasses}" role="button" tabindex="0" aria-label="Date ${day}, ${allDayEntries.map(e => e.name || e.title).join(', ')}">
-                    <div class="flex justify-between items-start">
-                        <div class="day-number text-xl md:text-2xl font-bold font-oriya ${isSunday ? 'text-red-700' : 'text-gray-800'}">${day}</div>
+                <div class="mb-4">
+                    <h3 class="font-semibold mb-2">Compatible Signs</h3>
+                    <div class="flex flex-wrap gap-2">
+                        ${data.compatibility.map(sign => 
+                            `<span class="px-3 py-1 bg-gray-100 rounded-full text-sm">${sign}</span>`
+                        ).join('')}
                     </div>
-                    <div class="flex-grow flex flex-col justify-end">
-                        <div class="day-indicators flex flex-wrap gap-1 mt-auto pt-1">
-                        ${dayHasEntry ? `<div class="indicator" title="${allDayEntries.map(e => e.name || e.title).join(', ')}"></div>` : ''}
-                        </div>
-                    </div>
-                </div>`;
+                </div>
+                <div class="text-sm text-gray-500 italic">
+                    <p>Daily horoscopes are for entertainment purposes. For important decisions, consult professional astrologers.</p>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        // Close Horoscope Modal
+        function closeHoroscopeModal() {
+            document.getElementById('horoscopeModal').classList.remove('active');
+        }
+
+        // Admin Panel Functions
+        document.getElementById('openFileButton').addEventListener('click', () => {
+            document.getElementById('fileUploadInput').click();
+        });
+
+        document.getElementById('fileUploadInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('rawInput').value += e.target.result + '\n\n';
+                    processInput();
+                };
+                reader.readAsText(file);
             }
+        });
 
-            const totalCells = firstDayOfWeek + daysInMonth;
-            const remainingCells = (7 - (totalCells % 7)) % 7;
-            for (let i = 0; i < remainingCells; i++) html += `<div class="bg-transparent rounded-lg"></div>`;
+        document.getElementById('uploadImageButton').addEventListener('click', () => {
+            document.getElementById('imageUploadInput').click();
+        });
 
-            html += `</div></div>
-                <aside class="calendar-sidebar">
-                    <div class="sidebar-section mb-6">
-                        <h2 class="text-xl font-bold mb-3 text-red-800 font-oriya border-b-2 border-red-200 pb-2">${applyBilingualAndTranslate('Festivals [ପର୍ବ ଓ ଉତ୍ସବ]')}</h2>
-                        <div class="space-y-3">
-                            ${allHolidays.map(h => `<div class="p-3 rounded-lg bg-red-100/50 border-l-4 border-red-500 shadow-sm transition-transform hover:scale-105 hover:shadow-md"><div class="flex justify-between items-center"><p class="font-semibold text-red-900">${applyBilingualAndTranslate(h.name)}</p><p class="text-xl font-bold text-red-700 font-oriya ml-2 flex-shrink-0">${h.day}</p></div></div>`).join('')}
-                        </div>
-                    </div>
-                    ${notes.length > 0 ? `
-                    <div class="sidebar-section">
-                        <h2 class="text-xl font-bold mb-3 text-amber-800 font-oriya border-b-2 border-amber-200 pb-2">${applyBilingualAndTranslate('Notes [ଟୀକା]')}</h2>
-                        <div class="notes-list space-y-4">
-                            ${notes.map(note => `<div class="p-3 rounded-lg border-l-4 bg-amber-100/50 border-amber-500 shadow-sm"><h3 class="font-bold text-amber-900">${applyBilingualAndTranslate(note.title)}</h3><div class="text-sm text-gray-700 mt-1">${note.content}</div></div>`).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                </aside>
-            </main></div>`;
-            return html;
-        };
-        const parseCalendarContent = (lines, startLineNum) => {
-            // FIX: Handle empty or headerless blocks gracefully
-            if (lines.length === 0) { return `<p class="formatter-error" data-source-line-start="${startLineNum}">Calendar block cannot be empty. It requires a header like '++ Month Year ++'.</p>`; }
-            const headerLine = lines.shift();
-            const headerMatch = headerLine.trim().match(/^\+\+\s*(.*?)\s*\+\+$/);
-            if (!headerMatch) { return `<p class="formatter-error" data-source-line-start="${startLineNum}">Calendar block requires a header like '++ Month Year ++' on the first line.</p>`; }
+        document.getElementById('downloadHtmlButton').addEventListener('click', () => {
+            const content = document.getElementById('formattedOutput').innerHTML;
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'calendar.html';
+            a.click();
+        });
 
-            const [_, monthYearStr] = headerMatch;
-            const monthYearParts = monthYearStr.trim().split(/\s+/);
-            const year = parseInt(monthYearParts.pop(), 10);
-            const monthName = monthYearParts.join(' ');
+        document.getElementById('downloadTxtButton').addEventListener('click', () => {
+            const content = document.getElementById('rawInput').value;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'calendar.txt';
+            a.click();
+        });
 
-            if (isNaN(year) || !monthName) return `<p class="formatter-error" data-source-line-start="${startLineNum}">Invalid calendar header format. Use '++ Month Year ++'.</p>`;
+        document.getElementById('clearButton').addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all input?')) {
+                document.getElementById('rawInput').value = '';
+                document.getElementById('formattedOutput').innerHTML = '';
+            }
+        });
 
-            const calendarData = { title: `${monthName.toUpperCase()} - ${year}`, monthName, year, description: '', holidays: [], events: [], panchang: [], notes: [], globals: {} };
-            let currentDay = null;
-            let inNotesBlock = false;
-            let currentNote = null;
-            const eventTagRegex = /\s*\((Holiday|Health|Family|Work|Finance)\)$/i;
+        document.getElementById('toggleGuideButton').addEventListener('click', () => {
+            const guide = document.getElementById('formatting-guide');
+            guide.classList.toggle('visible');
+            const btn = document.getElementById('toggleGuideButton');
+            btn.innerHTML = guide.classList.contains('visible') ? 
+                '<i class="fas fa-book-open"></i> Hide Guide' : 
+                '<i class="fas fa-book"></i> Show Guide';
+        });
 
-            for (const line of lines) {
-                const trimmedLine = line.trim();
-                if (trimmedLine.startsWith('::: notes')) { inNotesBlock = true; continue; }
-                if (inNotesBlock) {
-                    const noteTitleMatch = trimmedLine.match(/^\+\+\s*(.*?)\s*\+\+$/);
-                    if (noteTitleMatch) {
-                        if (currentNote) calendarData.notes.push(currentNote);
-                        currentNote = { title: noteTitleMatch[1], content: '' };
-                    } else if (currentNote) {
-                        currentNote.content += (currentNote.content ? '<br/>' : '') + trimmedLine.replace(/^- /, '');
-                    }
-                    continue;
+        document.getElementById('settingsButton').addEventListener('click', () => {
+            document.getElementById('settingsPanel').style.display = 'flex';
+        });
+
+        document.getElementById('closeSettingsButton').addEventListener('click', () => {
+            document.getElementById('settingsPanel').style.display = 'none';
+        });
+
+        // Process input and update output
+        function processInput() {
+            const input = document.getElementById('rawInput').value;
+            // Process input and update formatted output
+            initCalendar();
+            initHoroscope();
+        }
+
+        // Calendar Navigation Functions
+        function previousMonth() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+            }, 500);
+        }
+
+        function nextMonth() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+            }, 500);
+        }
+
+        function goToToday() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                highlightToday();
+            }, 500);
+        }
+
+        // Event Details
+        function showEventDetails(eventName) {
+            const modal = document.getElementById('eventModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            const eventData = {
+                'Nuakhai': {
+                    title: 'ନୂଆଖାଇ - Nuakhai',
+                    date: 'September 4, 2025',
+                    type: 'Major Agricultural Festival',
+                    description: 'Nuakhai is most important social festival of Western Odisha and Sambalpur region.',
+                    significance: 'The word "Nua" means new and "Khai" means food.',
+                    rituals: [
+                        'People offer new rice to presiding deity',
+                        'Family members gather for a feast',
+                        'Traditional songs and dances are performed'
+                    ]
                 }
+            };
+            
+            const event = eventData[eventName] || {};
+            
+            modalBody.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4 odia-font">${event.title}</h2>
+                <div class="mb-4">
+                    <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
+                        ${event.type}
+                    </span>
+                </div>
+                <p class="text-gray-600 mb-4">${event.date}</p>
+                <p class="mb-4">${event.description}</p>
+                <div class="mb-4">
+                    <h3 class="font-semibold mb-2">Significance:</h3>
+                    <p class="text-gray-700">${event.significance}</p>
+                </div>
+                <div class="mb-4">
+                    <h3 class="font-semibold mb-2">Rituals:</h3>
+                    <ul class="list-disc list-inside text-gray-700">
+                        ${event.rituals ? event.rituals.map(r => `<li>${r}</li>`).join('') : ''}
+                    </ul>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
 
-                const globalMatch = trimmedLine.match(/^(Full Moon|New Moon|Description):\s*(.*)$/i);
-                if (globalMatch) {
-                    const key = globalMatch[1].toLowerCase().replace(' ', '');
-                    calendarData[key] = globalMatch[2].trim();
-                    if(key !== 'description') calendarData.globals[key] = parseInt(globalMatch[2], 10);
-                    continue;
-                }
-                
-                if (trimmedLine === '') { currentDay = null; continue; }
-                
-                const dayEntryMatch = line.match(/^(\s*)(\d{1,2})?\s*([!>~*@])\s*(.*)/);
-                if (dayEntryMatch) {
-                    const [_, indent, dayStr, prefix, content] = dayEntryMatch;
-                    if (dayStr) currentDay = parseInt(dayStr, 10);
-                    else if (indent.length === 0) currentDay = null;
-                    if (!currentDay) continue;
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('active');
+        }
 
-                    if (!calendarData.days) calendarData.days = {};
-                    if (calendarData.days[currentDay] === undefined) calendarData.days[currentDay] = { content: [] };
+        function showDayDetails(dateStr) {
+            const dayData = calendarData[dateStr];
+            if (dayData && dayData.events) {
+                showEventDetails(dayData.events[0].nameEn);
+            }
+        }
+
+        // Search Functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const days = document.querySelectorAll('.calendar-day');
+            
+            days.forEach(day => {
+                const dateStr = day.dataset.date;
+                const dayData = calendarData[dateStr];
+                
+                if (dayData && dayData.events) {
+                    const hasMatch = dayData.events.some(event => 
+                        event.name.toLowerCase().includes(searchTerm) ||
+                        event.nameEn.toLowerCase().includes(searchTerm)
+                    );
                     
-                    let text = content.trim();
-                    let tagHtml = '';
-                    const tagMatch = text.match(eventTagRegex);
-                    if (tagMatch) {
-                        const tag = tagMatch[1].toLowerCase();
-                        tagHtml = `<span class="event-tag event-tag-${tag}">${tagMatch[1]}</span>`;
-                        text = text.replace(eventTagRegex, '').trim();
-                    }
+                    day.style.opacity = hasMatch || searchTerm === '' ? '1' : '0.3';
+                }
+            });
+        });
+
+        // Filter Functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                const days = document.querySelectorAll('.calendar-day');
+                
+                days.forEach(day => {
+                    const dateStr = day.dataset.date;
+                    const dayData = calendarData[dateStr];
                     
-                    switch (prefix) {
-                        case '!': calendarData.holidays.push({ day: currentDay, name: text, isSpecial: true }); break;
-                        case '>': calendarData.events.push({ day: currentDay, title: text, tag: tagHtml }); break;
-                        case '*': calendarData.holidays.push({ day: currentDay, name: text, isSpecial: true }); break;
-                        case '~': calendarData.events.push({ day: currentDay, title: text, tag: '', isTithi: true }); break;
-                        case '@':
-                            const [key, ...valParts] = text.split(':');
-                            let panchangDay = calendarData.panchang.find(p => p.day === currentDay);
-                            if (!panchangDay) {
-                                panchangDay = { day: currentDay, details: {} };
-                                calendarData.panchang.push(panchangDay);
-                            }
-                            panchangDay.details[key.trim().toLowerCase()] = valParts.join(':').trim();
-                            break;
-                    }
-                }
-            }
-            if (currentNote) calendarData.notes.push(currentNote);
-            App.state.calendarDataStore[startLineNum] = calendarData;
-            return generateStyledCalendarHTML(calendarData, startLineNum);
-        };
-
-        const processList = (prevLevel, line, lineIndex) => { const currentLevel = Math.floor((line.match(/^(\s*)/)?.[1].length ?? 0) / 2); const m = line.trim().match(/^- (.*)/); if (!m) return { html: '', listLvl: prevLevel }; let html = ''; if (prevLevel === -1) html += '<ul>'.repeat(currentLevel + 1); else { if (currentLevel > prevLevel) html += '<ul>'.repeat(currentLevel - prevLevel); if (currentLevel < prevLevel) html += '</ul>'.repeat(prevLevel - currentLevel); } html += `<li data-level="${currentLevel}" data-source-line="${lineIndex}">${applyBilingualAndTranslate(m[1].trim())}</li>`; return { html, listLvl: currentLevel }; };
-        const processLine = (l, n) => { let m; if((m=l.trim().match(/^!\[(.*?)\]\((.*?)\)(?:\[(.*?)\])?$/))){ const a=m[1]||'Image'; let u=m[2]; const c=m[3]; if(u.startsWith('local-image://')&&App.state.uploadedImages[u]){u=App.state.uploadedImages[u]} return`<figure class="image-container" data-source-line="${n}"><img src="${u}" alt="${a}" loading="lazy" decoding="async">${c?`<figcaption>${applyBilingualAndTranslate(c)}</figcaption>`:''}</figure>`} if((m=l.trim().match(/^\+\+\s*(.*?)\s*\+\+$/))) return `<h1 data-source-line="${n}">${applyBilingualAndTranslate(m[1].toUpperCase())}</h1>`; if((m=l.trim().match(/^##\s+(.*)/))) return `<h2 data-source-line="${n}">${applyBilingualAndTranslate(m[1])}</h2>`; if((m=l.trim().match(/^###\s+(.*)/))) return `<h3 data-source-line="${n}">${applyBilingualAndTranslate(m[1])}</h3>`; if(l.trim().match(/^---$/)) return `<hr data-source-line="${n}">`; if(l.trim()) return `<p data-source-line="${n}">${applyBilingualAndTranslate(l.trim())}</p>`; return '' };
-        
-        App.parser = (text) => {
-            const lines = text.split('\n'); let html = '', currentListLevel = -1, lineNum = 0;
-            while (lines.length > 0) {
-                const line = lines.shift();
-                if (line.trim().match(/^::: calendar/i)) {
-                    currentListLevel = currentListLevel > -1 ? -1 + (html += '</ul>'.repeat(currentListLevel + 1)) : -1;
-                    const blockLines = [];
-                    let consumedLines = 1;
-                    while (lines.length > 0 && !lines[0].trim().match(/^:::$/)) {
-                        blockLines.push(lines.shift());
-                        consumedLines++;
-                    }
-                    if (lines.length > 0) { lines.shift(); consumedLines++; }
-                    html += parseCalendarContent(blockLines, lineNum);
-                    lineNum += consumedLines;
-                } else if (/^- /.test(line.trim())) {
-                    const res = processList(currentListLevel, line, lineNum); html += res.html; currentListLevel = res.listLvl; lineNum++;
-                } else {
-                    currentListLevel = currentListLevel > -1 ? -1 + (html += '</ul>'.repeat(currentListLevel + 1)) : -1;
-                    html += processLine(line, lineNum);
-                    lineNum++;
-                }
-            }
-            return currentListLevel > -1 ? html + '</ul>'.repeat(currentListLevel + 1) : html;
-        };
-
-        const formatText = () => { try { const newHtml = App.parser(App.dom.rawInput.value); if (App.dom.formattedOutput.children.length === 0 && newHtml.trim() === '') return; morphdom(App.dom.formattedOutput, `<div>${newHtml}</div>`, { childrenOnly: true }); } catch (error) { console.error("Formatting Error:", error); App.dom.formattedOutput.innerHTML = `<p class="formatter-error">A formatting error occurred: ${error.message}.<br>Please check your syntax and the browser console for details.</p>`; } };
-        
-        const createDownloadableHtml = () => {
-            const languageMode = App.dom.languageToggle.value;
-            const title = App.dom.formattedOutput.querySelector('h1, h2, .calendar-header h2')?.textContent.trim() || 'Formatted Document';
-            
-            const doc = document.implementation.createHTMLDocument(title);
-            doc.head.innerHTML = document.head.innerHTML;
-            
-            const template = document.getElementById('download-template').content.cloneNode(true);
-            doc.body.appendChild(template);
-            doc.body.className = `downloaded-content ${document.body.className}`;
-            
-            const outputContainer = doc.getElementById('formattedOutput');
-            outputContainer.innerHTML = App.parser(App.dom.rawInput.value);
-            
-            if (languageMode === 'translate') {
-                doc.querySelector('#languageToggle')?.closest('.control-group').remove();
-                doc.querySelectorAll('.bilingual-container').forEach(container => {
-                    const translatableSpan = container.querySelector('.translatable-text');
-                    if (translatableSpan) {
-                         const contentNodes = Array.from(translatableSpan.childNodes);
-                         if (contentNodes.length === 1 && contentNodes[0].nodeType === Node.TEXT_NODE && contentNodes[0].textContent.startsWith('[') && contentNodes[0].textContent.endsWith(']')) {
-                            container.replaceWith(document.createTextNode(contentNodes[0].textContent.slice(1, -1)));
-                         } else {
-                            container.replaceWith(...contentNodes);
-                         }
+                    if (filter === 'all') {
+                        day.style.display = 'block';
+                    } else if (dayData && dayData.events) {
+                        const hasFilter = dayData.events.some(e => e.type === filter);
+                        day.style.display = hasFilter ? 'block' : 'none';
+                    } else {
+                        day.style.display = 'none';
                     }
                 });
+            });
+        });
+
+        // Settings Functions
+        function saveSettings() {
+            const settings = {
+                fontSize: document.getElementById('fontSize').value,
+                theme: document.getElementById('theme').value,
+                calendarSize: document.getElementById('calendarSize').value,
+                showHoroscope: document.getElementById('showHoroscope').checked,
+                showTithi: document.getElementById('showTithi').checked,
+                showNakshatra: document.getElementById('showNakshatra').checked,
+                showEvents: document.getElementById('showEvents').checked,
+                enableAnimations: document.getElementById('enableAnimations').checked
+            };
+            localStorage.setItem('calendarSettings', JSON.stringify(settings));
+            document.getElementById('settingsPanel').style.display = 'none';
+            applySettings(settings);
+        }
+
+        function resetSettings() {
+            localStorage.removeItem('calendarSettings');
+            document.getElementById('fontSize').value = 'medium';
+            document.getElementById('theme').value = 'light';
+            document.getElementById('calendarSize').value = 'medium';
+            document.getElementById('showHoroscope').checked = true;
+            document.getElementById('showTithi').checked = true;
+            document.getElementById('showNakshatra').checked = true;
+            document.getElementById('showEvents').checked = true;
+            document.getElementById('enableAnimations').checked = true;
+        }
+
+        function applySettings(settings) {
+            // Apply font size
+            document.body.style.fontSize = {
+                'small': '14px',
+                'medium': '15px',
+                'large': '16px',
+                'extra-large': '18px'
+            }[settings.fontSize] || '15px';
+            
+            // Apply theme
+            if (settings.theme === 'dark') {
+                document.body.classList.add('dark-theme');
             } else {
-                 const downloadedToggle = doc.getElementById('languageToggle');
-                 if(downloadedToggle) downloadedToggle.value = languageMode;
-            }
-
-            if (!currentSettings.download.includePrint) doc.querySelector('#printOutputButton')?.remove();
-            if (!currentSettings.download.includeSettings) doc.querySelector('#settingsButton')?.remove();
-            
-            const scriptToEmbed = `const defaultSettings = ${JSON.stringify(defaultSettings)}; let currentSettings = ${JSON.stringify(currentSettings)};\n${attachInteractiveFeatures.toString()}\nattachInteractiveFeatures(true);`;
-            const finalScript = doc.createElement('script');
-            finalScript.textContent = scriptToEmbed;
-            doc.body.appendChild(finalScript);
-
-            return `<!DOCTYPE html>${doc.documentElement.outerHTML}`;
-        };
-
-        const handleFileOpen = async (event) => { const file = event.target.files[0]; if (file) { const text = await file.text(); App.dom.rawInput.value = text; formatText(); } event.target.value = null; };
-        const handleImageFiles = async (files) => { if (!files || files.length === 0) return; const imagePromises = Array.from(files).filter(f => f.type.startsWith('image/')).map(file => new Promise((resolve) => { const reader = new FileReader(); reader.onload = e => { const dataUrl = e.target.result; const imageKey = `local-image://${file.name}-${Date.now()}`; App.state.uploadedImages[imageKey] = dataUrl; const caption = prompt(`Enter caption for "${file.name}" (optional):`, ""); resolve(`![${file.name.split('.')[0] || 'image'}](${imageKey})${caption ? `[${caption}]` : ''}`); }; reader.readAsDataURL(file); })); try { const markdownStrings = await Promise.all(imagePromises); if (markdownStrings.length > 0) { const textToInsert = '\n' + markdownStrings.join('\n\n') + '\n'; App.dom.rawInput.focus(); App.dom.rawInput.setRangeText(textToInsert, App.dom.rawInput.selectionStart, App.dom.rawInput.selectionEnd, 'end'); App.dom.rawInput.dispatchEvent(new Event('input', { bubbles: true })); } } catch (error) { console.error("Image Processing Error:", error); alert("Error processing one or more images."); } };
-        
-        App.init = () => {
-            const ids = ['rawInput', 'formattedOutput', 'popupSyncIcon', 'fileUploadInput', 'imageUploadInput', 'dragDropOverlay', 'formatting-guide', 'languageToggle'];
-            ids.forEach(id => App.dom[id] = document.getElementById(id));
-            App.dom.rawInput.addEventListener('input', () => { clearTimeout(App.state.debounceTimer); App.state.debounceTimer = setTimeout(formatText, App.config.debounce); });
-            App.dom.fileUploadInput.addEventListener('change', handleFileOpen);
-            App.dom.imageUploadInput.addEventListener('change', (e) => handleImageFiles(e.target.files));
-            const inputPane = App.dom.rawInput.closest('.input-pane');
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => { inputPane.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); }); });
-            ['dragenter', 'dragover'].forEach(evt => inputPane.addEventListener(evt, () => App.dom.dragDropOverlay.style.display = 'flex'));
-            ['dragleave', 'drop'].forEach(evt => inputPane.addEventListener(evt, () => App.dom.dragDropOverlay.style.display = 'none'));
-            inputPane.addEventListener('drop', (e) => { handleFileOpen({ target: e.dataTransfer }); handleImageFiles(e.dataTransfer.files); });
-            
-            document.querySelector('.controls').addEventListener('click', (e) => {
-                const button = e.target.closest('button'); if (!button) return;
-                const downloadFile = (c, f, t) => { const u = URL.createObjectURL(new Blob([c],{type:t})); const a=document.createElement('a'); a.href=u; a.download=f; a.click(); a.remove(); URL.revokeObjectURL(u); };
-                const getSanitizedFilename = (t,d) => (t||d).toLowerCase().replace(/\[.*?\]/g,'').replace(/[^\w\s-]/g,'').replace(/\s+/g,'_').substring(0,50)||d;
-                switch (button.id) {
-                    case 'openFileButton': App.dom.fileUploadInput.click(); break;
-                    case 'uploadImageButton': App.dom.imageUploadInput.click(); break;
-                    case 'clearButton': App.dom.rawInput.value = ''; App.state.uploadedImages = {}; formatText(); App.dom.rawInput.focus(); break;
-                    case 'downloadHtmlButton': downloadFile(createDownloadableHtml(), getSanitizedFilename(App.dom.formattedOutput.querySelector('h1, h2, .calendar-header h2')?.textContent, 'formatted_output') + '.html', 'text/html;charset=utf-8'); break;
-                    case 'downloadTxtButton': downloadFile('\uFEFF'+App.dom.rawInput.value.replace(/^!\[.*?\]\(local-image:\/\/.*?\)(?:\[.*?\])?\s*(\r\n|\n)?/gm, ''), getSanitizedFilename(App.dom.rawInput.value.split('\n')[0], 'raw_text') + '.txt', 'text/plain;charset=utf-8'); break;
-                }
-            });
-
-            attachInteractiveFeatures(false);
-
-            const modal = document.getElementById('day-detail-modal');
-            const modalDateEl = document.getElementById('modal-date');
-            const modalBodyEl = document.getElementById('modal-body');
-            const modalCloseBtn = document.getElementById('modal-close-btn');
-            
-            function openModal(dateStr, calendarId) {
-                const calendarData = App.state.calendarDataStore[calendarId];
-                if (!calendarData) return;
-                
-                const date = new Date(dateStr);
-                date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
-                
-                modalDateEl.textContent = `${date.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}`;
-                
-                const dayOfMonth = date.getDate();
-                const dayHolidays = calendarData.holidays.filter(h => h.day === dayOfMonth);
-                const dayEvents = calendarData.events.filter(e => e.day === dayOfMonth);
-                const dayPanchang = calendarData.panchang.find(p => p.day === dayOfMonth);
-                
-                let html = '<div class="space-y-6">';
-                if (dayHolidays.length > 0) {
-                    html += `<div class="detail-section"><h3 class="holiday-header">${applyBilingualAndTranslate('Holidays [ପର୍ବ]')}</h3><div class="space-y-2 mt-3">${dayHolidays.map(h => `<div class="detail-item holiday-item">${applyBilingualAndTranslate(h.name)}</div>`).join('')}</div></div>`;
-                }
-                if (dayEvents.length > 0) {
-                    html += `<div class="detail-section"><h3 class="event-header">${applyBilingualAndTranslate('Events [ଘଟଣା]')}</h3><div class="space-y-3 mt-3">${dayEvents.map(e => `<div class="detail-item event-item"><p class="font-semibold text-slate-800">${applyBilingualAndTranslate(e.title)}${e.tag}</p></div>`).join('')}</div></div>`;
-                }
-                if (dayPanchang && Object.keys(dayPanchang.details).length > 0) {
-                    html += `<div class="detail-section"><h3 class="panchang-header">${applyBilingualAndTranslate('Panchang [ପଞ୍ଚାଙ୍ଗ]')}</h3><div class="detail-item panchang-item space-y-2 mt-3">${Object.entries(dayPanchang.details).map(([key, value]) => `<p><strong>${applyBilingualAndTranslate(key.charAt(0).toUpperCase() + key.slice(1))}:</strong> ${applyBilingualAndTranslate(value)}</p>`).join('')}</div></div>`;
-                }
-                html += '</div>';
-
-                if (dayHolidays.length === 0 && dayEvents.length === 0 && (!dayPanchang || Object.keys(dayPanchang.details).length === 0)) {
-                    html = '<p class="text-center text-slate-500 py-8">No entries for this day.</p>';
-                }
-                
-                modalBodyEl.innerHTML = html;
-                modal.style.display = 'flex';
-                setTimeout(() => modal.classList.add('visible'), 10); 
-            }
-
-            function closeModal() {
-                modal.classList.remove('visible');
-                setTimeout(() => { modal.style.display = 'none'; }, 200);
+                document.body.classList.remove('dark-theme');
             }
             
-            App.dom.formattedOutput.addEventListener('click', (e) => {
-                const dayCell = e.target.closest('.calendar-day[data-date]');
-                if (dayCell) {
-                    const calendarId = dayCell.closest('.app-container')?.dataset.calendarId;
-                    if (calendarId) {
-                        openModal(dayCell.dataset.date, calendarId);
-                    }
+            // Apply calendar size
+            const calendarMain = document.querySelector('.calendar-main');
+            if (calendarMain) {
+                // Remove all size classes first
+                calendarMain.classList.remove('calendar-size-small', 'calendar-size-medium', 'calendar-size-large', 'calendar-size-xlarge');
+                // Add the selected size class
+                calendarMain.classList.add(`calendar-size-${settings.calendarSize || 'medium'}`);
+            }
+            
+            // Show/hide sections
+            const horoscopeSection = document.querySelector('.horoscope-section');
+            if (horoscopeSection) {
+                horoscopeSection.style.display = settings.showHoroscope ? 'block' : 'none';
+            }
+        }
+
+        // Loading States
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        // Highlight Today
+        function highlightToday() {
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+            const todayElement = document.querySelector(`[data-date="${todayStr}"]`);
+            
+            if (todayElement) {
+                todayElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                todayElement.style.animation = 'pulse 2s ease-in-out 3';
+            }
+        }
+
+        // Accessibility
+        function toggleAccessibility() {
+            document.body.classList.toggle('high-contrast');
+            document.body.classList.toggle('large-text');
+        }
+
+        // Voice Command
+        let voiceActive = false;
+        function toggleVoiceCommand() {
+            const indicator = document.getElementById('voiceIndicator');
+            voiceActive = !voiceActive;
+            
+            if (voiceActive) {
+                indicator.classList.add('listening');
+                // Initialize voice recognition if available
+                if ('webkitSpeechRecognition' in window) {
+                    const recognition = new webkitSpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+                    
+                    recognition.onresult = function(event) {
+                        const command = event.results[0][0].transcript.toLowerCase();
+                        processVoiceCommand(command);
+                    };
+                    
+                    recognition.start();
                 }
-            });
+            } else {
+                indicator.classList.remove('listening');
+            }
+        }
 
-            modalCloseBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
-            document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.classList.contains('visible')) closeModal(); });
+        function processVoiceCommand(command) {
+            if (command.includes('today')) {
+                goToToday();
+            } else if (command.includes('next month')) {
+                nextMonth();
+            } else if (command.includes('previous month')) {
+                previousMonth();
+            } else if (command.includes('horoscope')) {
+                // Find user's zodiac sign and show details
+                const signs = Object.keys(horoscopeData);
+                const randomSign = signs[Math.floor(Math.random() * signs.length)];
+                showHoroscopeDetails(randomSign);
+            }
+        }
 
-            formatText();
-        };
+        // Drag and Drop
+        const inputPane = document.querySelector('.input-pane');
+        const dragDropOverlay = document.getElementById('dragDropOverlay');
 
-        App.init();
-    })();
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            inputPane.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            inputPane.addEventListener(eventName, () => {
+                inputPane.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            inputPane.addEventListener(eventName, () => {
+                inputPane.classList.remove('drag-over');
+            }, false);
+        });
+
+        inputPane.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('rawInput').value += e.target.result + '\n\n';
+                    processInput();
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Initialize on Load
+        document.addEventListener('DOMContentLoaded', function() {
+            initCalendar();
+            initHoroscope();
+            
+            // Load saved settings
+            const savedSettings = localStorage.getItem('calendarSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                applySettings(settings);
+            }
+            
+            // Process initial input
+            processInput();
+        });
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEventModal();
+                closeHoroscopeModal();
+                document.getElementById('settingsPanel').style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
