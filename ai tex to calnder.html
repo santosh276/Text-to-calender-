@@ -1660,20 +1660,32 @@ New Moon: 24
                             Today's Panchang
                         </h2>
                         <div class="panchang-info">
+                            <span class="panchang-label">Date:</span>
+                            <span class="panchang-value" id="panchangDate">--</span>
+                        </div>
+                        <div class="panchang-info">
                             <span class="panchang-label">Sunrise:</span>
-                            <span class="panchang-value">05:45 AM</span>
+                            <span class="panchang-value" id="panchangSunrise">--</span>
                         </div>
                         <div class="panchang-info">
                             <span class="panchang-label">Sunset:</span>
-                            <span class="panchang-value">06:15 PM</span>
+                            <span class="panchang-value" id="panchangSunset">--</span>
                         </div>
                         <div class="panchang-info">
                             <span class="panchang-label odia-font">ତିଥି Tithi:</span>
-                            <span class="panchang-value odia-font">ଦ୍ଵାଦଶୀ</span>
+                            <span class="panchang-value odia-font" id="panchangTithi">--</span>
                         </div>
                         <div class="panchang-info">
                             <span class="panchang-label odia-font">ନକ୍ଷତ୍ର Nakshatra:</span>
-                            <span class="panchang-value odia-font">ପୁଷ୍ଟା</span>
+                            <span class="panchang-value odia-font" id="panchangNakshatra">--</span>
+                        </div>
+                        <div class="panchang-info">
+                            <span class="panchang-label odia-font">ଯୋଗ Yoga:</span>
+                            <span class="panchang-value odia-font" id="panchangYoga">--</span>
+                        </div>
+                         <div class="panchang-info">
+                            <span class="panchang-label odia-font">କରଣ Karana:</span>
+                            <span class="panchang-value odia-font" id="panchangKarana">--</span>
                         </div>
                     </div>
                 </aside>
@@ -1770,6 +1782,280 @@ New Moon: 24
     <div class="loading-spinner" id="loadingSpinner"></div>
 
     <script>
+        // Panchangam Calculation Class
+        class Panchangam {
+            constructor() {
+            }
+
+            // Convert Date to Julian Day
+            toJulianDay(date) {
+                let year = date.getFullYear();
+                let month = date.getMonth() + 1;
+                let day = date.getDate();
+                let hour = date.getHours(); // Local time roughly, or assume UTC if input is UTC. 
+                // For better accuracy in calendar generation, we use 12:00 PM (noon) to get the day's prevailing Tithi
+                hour = 12; 
+                let minute = 0;
+                let second = 0;
+
+                if (month <= 2) {
+                    year -= 1;
+                    month += 12;
+                }
+
+                let A = Math.floor(year / 100);
+                let B = 2 - A + Math.floor(A / 4);
+
+                let JD = Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+                JD += (hour + minute / 60 + second / 3600) / 24;
+
+                return JD;
+            }
+
+            // Normalize angle to 0-360
+            normalize(angle) {
+                angle = angle % 360;
+                return angle < 0 ? angle + 360 : angle;
+            }
+
+            // Calculate Sun's position (simplified)
+            getSunLong(jd) {
+                const D = jd - 2451545.0;
+                // Mean longitude of Sun
+                let L = this.normalize(280.46646 + 0.98564736 * D);
+                // Mean anomaly of Sun
+                let g = this.normalize(357.52911 + 0.98560028 * D);
+
+                // Sun's equation of center
+                let C = (1.914602 - 0.004817 * D / 36525) * Math.sin(g * Math.PI / 180) +
+                        (0.019993 - 0.000101 * D / 36525) * Math.sin(2 * g * Math.PI / 180) +
+                        0.000289 * Math.sin(3 * g * Math.PI / 180);
+
+                let trueLong = L + C;
+                return trueLong;
+            }
+
+            // Calculate Moon's position (simplified but with major perturbations)
+            getMoonLong(jd) {
+                const D = jd - 2451545.0; // Days since J2000
+
+                // Mean longitude of Moon
+                let L = this.normalize(218.3164477 + 13.17639648 * D);
+                // Mean anomaly of Moon
+                let Mm = this.normalize(134.9629814 + 13.06499295 * D);
+                // Mean distance of Moon from Ascending Node
+                let F = this.normalize(93.2719193 + 13.22935026 * D);
+                // Mean elongation of Moon
+                let Dm = this.normalize(297.8503631 + 12.19074912 * D);
+                // Mean anomaly of Sun
+                let M = this.normalize(357.5291092 + 0.98560028 * D);
+
+                // Convert to radians
+                const r = Math.PI / 180;
+
+                // Perturbations in Longitude (Major terms)
+                let long = L;
+                
+                // Evection
+                long += 1.27407 * Math.sin((2 * Dm - Mm) * r);
+                // Variation
+                long += 0.65834 * Math.sin(2 * Dm * r);
+                // Annual Equation
+                long -= 0.18511 * Math.sin(M * r);
+                // Equation of Center
+                long += 6.28877 * Math.sin(Mm * r);
+                long += 0.21362 * Math.sin(2 * Mm * r);
+                long -= 0.11434 * Math.sin(2 * F * r); // Reduction to ecliptic approx
+                // ... there are many more terms, but these cover the largest errors
+
+                return this.normalize(long);
+            }
+
+            // Calculate Lahiri Ayanamsa
+            getAyanamsa(jd) {
+                // J2000 Ayanamsa approx 23.85 degrees
+                // Precession rate approx 50.27 arcsec/year
+                let d = jd - 2451545.0;
+                let ayanamsa = 23.855555 + d * 3.823e-5; 
+                return ayanamsa;
+            }
+            
+            // Calculate Sunrise and Sunset
+            getSunriseSunset(date, lat, lng) {
+                // Date to Julian Day
+                const jd = this.toJulianDay(date);
+                
+                // J2000 Cycle number
+                // Rounding to nearest integer cycle
+                const n = Math.round(jd - 2451545.0 - lng / 360);
+                
+                // Mean solar noon
+                const j_star = n - lng / 360;
+                
+                // Solar mean anomaly
+                const M = (357.5291 + 0.98560028 * j_star) % 360;
+                
+                // Equation of the center
+                const C = 1.9148 * Math.sin(M * Math.PI / 180) + 0.0200 * Math.sin(2 * M * Math.PI / 180) + 0.0003 * Math.sin(3 * M * Math.PI / 180);
+                
+                // Ecliptic longitude
+                const lambda = (M + C + 180 + 102.9372) % 360;
+                
+                // Solar transit
+                const J_transit = 2451545.0 + j_star + 0.0053 * Math.sin(M * Math.PI / 180) - 0.0069 * Math.sin(2 * lambda * Math.PI / 180);
+                
+                // Declination of Sun
+                const delta = Math.asin(Math.sin(lambda * Math.PI / 180) * Math.sin(23.44 * Math.PI / 180));
+                
+                // Hour angle
+                // cos(omega) = (sin(-0.83) - sin(lat) * sin(delta)) / (cos(lat) * cos(delta))
+                // -0.83 degrees is the standard atmospheric refraction correction for sunrise/sunset
+                const cosOmega = (Math.sin(-0.83 * Math.PI / 180) - Math.sin(lat * Math.PI / 180) * Math.sin(delta)) / (Math.cos(lat * Math.PI / 180) * Math.cos(delta));
+                
+                let sunrise, sunset;
+                
+                if (cosOmega > 1 || cosOmega < -1) {
+                    // Sun never rises or sets (polar regions)
+                    return { sunrise: null, sunset: null };
+                }
+                
+                const omega = Math.acos(cosOmega) * 180 / Math.PI;
+                
+                const J_rise = J_transit - omega / 360;
+                const J_set = J_transit + omega / 360;
+                
+                // Convert JD back to time
+                // Function to format time
+                const jdToTime = (j) => {
+                    const z = Math.floor(j + 0.5);
+                    const f = (j + 0.5) - z;
+                    // f is fraction of day (0 to 1)
+                    let hours = (f * 24);
+                    // Add offset for India Standard Time (IST) if needed. 
+                    // But toJulianDay uses UTC based calculations usually. 
+                    // However, JS Date objects are local. 
+                    // The calculations above give results in Julian Day (Universal Time).
+                    // We need to add +5.5 hours for IST.
+                    
+                    hours += 5.5; 
+                    if (hours >= 24) hours -= 24;
+                    if (hours < 0) hours += 24;
+                    
+                    const h = Math.floor(hours);
+                    const m = Math.floor((hours - h) * 60);
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    const h12 = h % 12 || 12;
+                    return `${h12.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
+                };
+                
+                return {
+                    sunrise: jdToTime(J_rise),
+                    sunset: jdToTime(J_set)
+                };
+            }
+
+            // Calculate Panchangam elements
+            calculate(date) {
+                const jd = this.toJulianDay(date);
+                const ayanamsa = this.getAyanamsa(jd);
+                
+                // Tropical positions
+                let sunLongTrop = this.getSunLong(jd);
+                let moonLongTrop = this.getMoonLong(jd);
+                
+                // Sidereal positions (Nirayana)
+                let sunLongSid = this.normalize(sunLongTrop - ayanamsa);
+                let moonLongSid = this.normalize(moonLongTrop - ayanamsa);
+                
+                // Tithi
+                // Difference between Moon and Sun longitudes divided by 12 degrees
+                let diff = this.normalize(moonLongSid - sunLongSid);
+                let tithiIndex = Math.floor(diff / 12) + 1; // 1-30
+                
+                // Nakshatra
+                // Moon longitude divided by 13deg 20min (13.3333 degrees)
+                let nakshatraIndex = Math.floor(moonLongSid / 13.333333) + 1; // 1-27
+                
+                // Yoga
+                // Sum of Sun and Moon longitudes divided by 13deg 20min
+                let sum = this.normalize(sunLongSid + moonLongSid);
+                let yogaIndex = Math.floor(sum / 13.333333) + 1; // 1-27
+                
+                // Karana
+                // Half of Tithi (6 degrees)
+                let karanaIndex = Math.floor(diff / 6) + 1; // 1-60
+                
+                // Vara (Day of week)
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                let vara = days[date.getDay()];
+                
+                // Sunrise/Sunset for Bhubaneswar
+                // 20.2961 N, 85.8245 E
+                const sunTimes = this.getSunriseSunset(date, 20.2961, 85.8245);
+
+                return {
+                    tithi: tithiIndex,
+                    nakshatra: nakshatraIndex,
+                    yoga: yogaIndex,
+                    karana: karanaIndex,
+                    vara: vara,
+                    sunLong: sunLongSid,
+                    moonLong: moonLongSid,
+                    ayanamsa: ayanamsa,
+                    sunrise: sunTimes.sunrise,
+                    sunset: sunTimes.sunset
+                };
+            }
+            
+            // Get Names
+            getTithiName(index) {
+                const tithis = [
+                    "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami",
+                    "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami",
+                    "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima",
+                    "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami",
+                    "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami",
+                    "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"
+                ];
+                return tithis[index - 1] || "Unknown";
+            }
+            
+            getNakshatraName(index) {
+                const nakshatras = [
+                    "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", 
+                    "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", 
+                    "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", 
+                    "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishtha", 
+                    "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+                ];
+                return nakshatras[index - 1] || "Unknown";
+            }
+
+            getYogaName(index) {
+                const yogas = [
+                    "Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda",
+                    "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva",
+                    "Vyaghata", "Harshan", "Vajra", "Siddhi", "Vyatipata", "Variyan",
+                    "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla",
+                    "Brahma", "Indra", "Vaidhriti"
+                ];
+                return yogas[index - 1] || "Unknown";
+            }
+
+            getKaranaName(index) {
+                if (index === 1) return "Kinstughna";
+                if (index >= 58) {
+                    if (index === 58) return "Shakuni";
+                    if (index === 59) return "Chatushpada";
+                    if (index === 60) return "Naga";
+                }
+                const movable = ["Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti"];
+                return movable[(index - 2) % 7] || "Unknown";
+            }
+        }
+
+        const panchangam = new Panchangam();
+
         // Horoscope Data
         const horoscopeData = {
             aries: {
@@ -1945,10 +2231,15 @@ New Moon: 24
             
             // Add days of month
             for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `2025-09-${day.toString().padStart(2, '0')}`;
+                const currentDate = new Date(year, month, day);
+                const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
                 const dayData = calendarData[dateStr] || {};
                 const isToday = day === 20; // Assuming today is 20th
-                const isSunday = new Date(year, month, day).getDay() === 0;
+                const isSunday = currentDate.getDay() === 0;
+                
+                // Calculate Panchangam for this day
+                const panchangData = panchangam.calculate(currentDate);
+                const tithiName = panchangam.getTithiName(panchangData.tithi);
                 
                 const dayElement = document.createElement('div');
                 dayElement.className = `calendar-day ${isToday ? 'today' : ''} ${isSunday ? 'sunday' : ''}`;
@@ -1956,7 +2247,7 @@ New Moon: 24
                 
                 dayElement.innerHTML = `
                     <div class="day-number">${day}</div>
-                    <div class="tithi odia-font">${dayData.tithi || 'ତିଥି'}</div>
+                    <div class="tithi odia-font">${dayData.tithi || tithiName}</div>
                     <div class="event-indicator">
                         ${dayData.events ? dayData.events.map(event => 
                             `<span class="event-dot ${event.type}-dot" title="${event.nameEn}"></span>`
@@ -1964,9 +2255,45 @@ New Moon: 24
                     </div>
                 `;
                 
-                dayElement.addEventListener('click', () => showDayDetails(dateStr));
+                dayElement.addEventListener('click', () => {
+                    showDayDetails(dateStr);
+                    updateSidebarPanchang(currentDate);
+                });
                 grid.appendChild(dayElement);
             }
+            
+            // Update sidebar for "today" (or the simulated today)
+            updateSidebarPanchang(new Date(year, month, 20));
+        }
+
+        // Update Sidebar Panchang
+        function updateSidebarPanchang(date) {
+            const data = panchangam.calculate(date);
+            
+            // Format Date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = date.toLocaleDateString('en-US', options);
+            
+            const dateEl = document.getElementById('panchangDate');
+            if(dateEl) dateEl.textContent = dateStr;
+
+            const sunriseEl = document.getElementById('panchangSunrise');
+            if(sunriseEl) sunriseEl.textContent = data.sunrise || '--';
+
+            const sunsetEl = document.getElementById('panchangSunset');
+            if(sunsetEl) sunsetEl.textContent = data.sunset || '--';
+            
+            const tithiEl = document.getElementById('panchangTithi');
+            if(tithiEl) tithiEl.textContent = panchangam.getTithiName(data.tithi) + ` (${data.tithi})`;
+            
+            const nakshatraEl = document.getElementById('panchangNakshatra');
+            if(nakshatraEl) nakshatraEl.textContent = panchangam.getNakshatraName(data.nakshatra);
+            
+            const yogaEl = document.getElementById('panchangYoga');
+            if(yogaEl) yogaEl.textContent = panchangam.getYogaName(data.yoga);
+            
+            const karanaEl = document.getElementById('panchangKarana');
+            if(karanaEl) karanaEl.textContent = panchangam.getKaranaName(data.karana);
         }
 
         // Initialize Horoscope
