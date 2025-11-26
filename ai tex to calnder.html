@@ -261,7 +261,7 @@
                 <div class="flex items-center gap-3 mt-1">
                     <span class="text-sm font-bold text-gray-500 uppercase tracking-wider">VIEW:</span>
                     <div class="relative flex-grow">
-                        <select id="view-toggle" class="w-full appearance-none bg-gray-800 border border-gray-700 text-gray-300 py-2 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:border-gray-500 text-sm font-semibold shadow-sm">
+                        <select id="view-toggle" onchange="render()" class="w-full appearance-none bg-gray-800 border border-gray-700 text-gray-300 py-2 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:border-gray-500 text-sm font-semibold shadow-sm">
                             <option>Show Both Languages</option>
                             <option>English Only</option>
                             <option>Odia Only</option>
@@ -1015,6 +1015,30 @@ The word "Nua" means new and "Khai" means food.
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
+        function getEventHtml(event, viewMode, isSidebar) {
+            const englishName = isSidebar ? `<div class="font-semibold text-gray-800 text-sm">${event.engName}</div>` : `<span class="block truncate">${event.engName}</span>`;
+            const odiaName = isSidebar ? `<div class="text-xs text-gray-500 font-oriya">${event.locName || ''}</div>` : `<span class="block truncate font-oriya opacity-90 text-[10px]">${event.locName}</span>`;
+
+            if (viewMode === 'English Only') {
+                return isSidebar ? `<div class="leading-tight">${englishName}</div>` : englishName;
+            } else if (viewMode === 'Odia Only') {
+                if (event.locName) {
+                    return isSidebar ? `<div class="leading-tight">${odiaName}</div>` : odiaName;
+                } else {
+                    return isSidebar ? `<div class="leading-tight">${englishName}</div>` : englishName; // Fallback
+                }
+            } else { // 'Show Both Languages'
+                if (isSidebar) {
+                    return `<div class="leading-tight">${englishName}${odiaName}</div>`;
+                }
+                let html = englishName;
+                if (event.locName) {
+                    html += odiaName;
+                }
+                return html;
+            }
+        }
+
         function render() {
             const currentData = appState.monthsData[appState.activeMonthIndex];
             if (!currentData) return;
@@ -1134,6 +1158,7 @@ The word "Nua" means new and "Khai" means food.
                 if (isToday) dateNum.classList.add('text-deepred', 'underline');
                 dateNum.innerText = toNativeNum(d, currentLang);
                 contentWrapper.appendChild(dateNum);
+                const viewMode = document.getElementById('view-toggle').value;
                 const dayEvents = data.events.filter(e => e.date === d);
                 dayEvents.forEach(ev => {
                     const evDiv = document.createElement('div');
@@ -1142,9 +1167,8 @@ The word "Nua" means new and "Khai" means food.
                     else if (ev.symbol === '*') evDiv.className += ' bg-deepred text-white';
                     else if (ev.symbol === '^') evDiv.className += ' bg-indigoblue text-white';
                     else evDiv.className += ' bg-gray-100 text-gray-800 border border-gray-200';
-                    let html = `<span class="block truncate">${ev.engName}</span>`;
-                    if (ev.locName) html += `<span class="block truncate font-oriya opacity-90 text-[10px]">${ev.locName}</span>`;
-                    evDiv.innerHTML = html;
+
+                    evDiv.innerHTML = getEventHtml(ev, viewMode, false);
                     contentWrapper.appendChild(evDiv);
                 });
                 cell.appendChild(contentWrapper);
@@ -1201,6 +1225,7 @@ The word "Nua" means new and "Khai" means food.
             
             list.className = "space-y-2 text-sm"; 
             
+            const viewMode = document.getElementById('view-toggle').value;
             const filteredEvents = data.events.filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*') && activeFilters.has(e.symbol)).sort((a, b) => a.date - b.date);
             if (filteredEvents.length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-center py-4">No events found.</li>'; return; }
             filteredEvents.forEach(ev => {
@@ -1210,7 +1235,9 @@ The word "Nua" means new and "Khai" means food.
                 let badgeColor = "bg-gray-500";
                 if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
                 const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
+
+                const content = getEventHtml(ev, viewMode, true);
+
                 li.innerHTML = dateBadge + content;
                 list.appendChild(li);
             });
