@@ -461,7 +461,7 @@ The word "Nua" means new and "Khai" means food.
                             <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
                             <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
                                 <h2 id="cal-month-year" class="text-2xl md:text-3xl font-bold text-deepred uppercase tracking-wider leading-none">JANUARY 2025</h2>
-                                <p class="text-gray-500 text-sm mt-1 font-oriya leading-tight">English / Odia Calendar View</p>
+                                <p id="cal-indian-month" class="text-lg font-bold text-amber-600 bg-amber-100 px-3 py-1 rounded-full mt-2 font-oriya leading-tight shadow-sm border border-amber-200">Pausha / Magha</p>
                                 
                                 <!-- MOVED: Go to Today Button (Centered Below Title) -->
                                 <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-xs font-bold hover:bg-orange-200 transition items-center gap-2 animate-pulse shadow-sm border border-orange-200 whitespace-nowrap">
@@ -706,6 +706,22 @@ The word "Nua" means new and "Khai" means food.
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        // NEW: Indian Month Mapping (Gregorian approximation)
+        const indianMonths = [
+            "Pausha / Magha",       // January
+            "Magha / Phalguna",     // February
+            "Phalguna / Chaitra",   // March
+            "Chaitra / Vaishakha",  // April
+            "Vaishakha / Jyeshtha", // May
+            "Jyeshtha / Ashadha",   // June
+            "Ashadha / Shravana",   // July
+            "Shravana / Bhadra",    // August
+            "Bhadra / Ashvina",     // September
+            "Ashvina / Kartika",    // October
+            "Kartika / Margashirsha", // November
+            "Margashirsha / Pausha"   // December
+        ];
         const zodiacIcons = { 'aries': 'fa-regular fa-star', 'taurus': 'fa-solid fa-bullseye', 'gemini': 'fa-solid fa-user-group', 'cancer': 'fa-solid fa-moon', 'leo': 'fa-solid fa-crown', 'virgo': 'fa-solid fa-leaf', 'libra': 'fa-solid fa-scale-balanced', 'scorpio': 'fa-solid fa-spider', 'sagittarius': 'fa-solid fa-arrow-up', 'capricorn': 'fa-solid fa-mountain', 'aquarius': 'fa-solid fa-water', 'pisces': 'fa-solid fa-fish' };
 
         function toggleSyntaxGuide() {
@@ -1030,6 +1046,7 @@ The word "Nua" means new and "Khai" means food.
             }
 
             document.getElementById('cal-month-year').innerText = `${months[currentData.month]} ${currentData.year}`;
+            document.getElementById('cal-indian-month').innerText = indianMonths[currentData.month];
             
             const btnToday = document.getElementById('btn-today');
             if (appState.todayIndex !== -1 && appState.activeMonthIndex !== appState.todayIndex) {
