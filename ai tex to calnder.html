@@ -666,26 +666,185 @@ The word "Nua" means new and "Khai" means food.
             config: { title: 'Panchang App', logoUrl: null, language: 'en' }
         };
 
+        const seasonIcons = {
+    "sun_cloud": "data:image/png;base64,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",
+    "rain": "data:image/png;base64,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",
+    "sun": "data:image/png;base64,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",
+    "snow": "data:image/png;base64,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",
+};
+
         const langData = {
             en: { 
                 days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
                 nums: ["0","1","2","3","4","5","6","7","8","9"], 
                 filters: ["Festivals", "Auspicious", "Holidays"], 
-                horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" }
+                horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
+                indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
+                indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
+                paksha: ["Shukla Paksha", "Krishna Paksha"],
+                tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
             },
-            // Note: North/West/East Indian languages use the Lunar Calendar month names
-            hi: { days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], nums: ["०","१","२","३","४","५","६","७","८","९"], filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ"], horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" }, indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्र", "भाद्र / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"] },
-            bn: { days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], filters: ["উৎসব", "শুভ দিন", "ছুটি"], horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृশ্চিক", sagittarius: "धनु", capricorn: "मकर", aquarius: "কুম্ভ", pisces: "মীন" }, indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"] },
-            or: { days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ"], horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" }, indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟେଷ୍ଠ", "ଜ୍ୟେଷ୍ଠ / ଆଷାଢ", "ଆଷାଢ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ର", "ଭାଦ୍ର / ଆଶ୍ଵିନ", "ଆଶ୍ଵିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"] },
-            mr: { days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], nums: ["०","१","२","३","४","५","६","७","८","९"], filters: ["सण", "शुभ दिवस", "सुट्ट्या"], horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" }, indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्र", "भाद्र / अश्विन", "अश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"] },
-            gu: { days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ"], horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચิก", sagittarius: "ધનુ", capricorn: "मकर", aquarius: "કુંભ", pisces: "મીન" }, indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"] },
-            pa: { days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿନ", "ਛੁੱਟੀਆਂ"], horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" }, indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵਿਸਾਖ", "ਵਿਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤક / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"] },
-            // Note: South Indian languages use the Solar Calendar month names
-            ta: { days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை"], horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" }, indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"] },
-            te: { days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు"], horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" }, indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"] },
-            kn: { days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು"], horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" }, indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"] },
-            ml: { days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി"], horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" }, indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"] }
+            hi: {
+                days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"],
+                nums: ["०","१","२","३","४","५","६","७","८","९"],
+                filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ"],
+                horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
+                indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
+                indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
+                paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
+                tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
+            },
+            or: {
+                days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"],
+                nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"],
+                filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ"],
+                horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" },
+                indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ", "ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼", "ଆଷାଢ଼ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ରବ", "ଭାଦ୍ରବ / ଆଶ୍ୱିନ", "ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"],
+                indianSeasons: ["ବସନ୍ତ", "ଗ୍ରୀଷ୍ମ", "ବର୍ଷା", "ଶରତ", "ହେମନ୍ତ", "ଶିଶିର"],
+                paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
+                tithis: ["ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ଅମାବାସ୍ୟା"]
+            },
+            bn: {
+                days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"],
+                nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"],
+                filters: ["উৎসব", "শুভ দিন", "ছুটি"],
+                horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "সিংহ", virgo: "কন্যা", libra: "তুলা", scorpio: "বৃশ্চিক", sagittarius: "ধনু", capricorn: "মकर", aquarius: "কুম্ভ", pisces: "মীন" },
+                indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
+                indianSeasons: ["বসন্ত", "গ্রীষ্ম", "বর্ষা", "শরৎ", "হেমন্ত", "শিশির"],
+                paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
+                tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
+            },
+            mr: {
+                days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"],
+                nums: ["०","१","२","३","४","५","६","७","८","९"],
+                filters: ["सण", "शुभ दिवस", "सुट्ट्या"],
+                horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
+                indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
+                indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
+                paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
+                tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
+            },
+            gu: {
+                days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"],
+                nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"],
+                filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ"],
+                horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચિક", sagittarius: "ધનુ", capricorn: "મકર", aquarius: "કુંભ", pisces: "મીન" },
+                indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"],
+                indianSeasons: ["વસંત", "ગ્રીષ્મ", "વર્ષા", "શરદ", "હેમંત", "શિશિર"],
+                paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
+                tithis: ["પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "પૂનમ", "પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "અમાસ"]
+            },
+            pa: {
+                days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"],
+                nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"],
+                filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ"],
+                horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" },
+                indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
+                indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"],
+                paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
+                tithis: ["ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਮਾਸ਼ੀ", "ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਮੱਸਿਆ"]
+            },
+            ta: {
+                days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"],
+                nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"],
+                filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை"],
+                horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" },
+                indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"],
+                indianSeasons: ["இளவேனில்", "முதுவேனில்", "கார்", "குளிர்", "முன்பனி", "பின்பனி"],
+                paksha: ["வளர்பிறை", "தேய்பிறை"],
+                tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "அமாவாசை"]
+            },
+            te: {
+                days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"],
+                nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"],
+                filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు"],
+                horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" },
+                indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"],
+                indianSeasons: ["వసంత", "గ్రీష్మ", "వర్ష", "శరత్", "హేమంత", "శిశిర"],
+                paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
+                tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "అమావాస్య"]
+            },
+            kn: {
+                days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"],
+                nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"],
+                filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು"],
+                horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" },
+                indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"],
+                indianSeasons: ["ವಸಂತ", "ಗ್ರೀಷ್ಮ", "ವರ್ಷ", "ಶರತ್", "ಹೇಮಂತ", "ಶಿಶಿರ"],
+                paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
+                tithis: ["ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಅಮಾವಾಸ್ಯೆ"]
+            },
+            ml: {
+                days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"],
+                nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"],
+                filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി"],
+                horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" },
+                indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"],
+                indianSeasons: ["വസന്തം", "ഗ്രീഷ്മം", "വർഷം", "ശരത്", "ഹേമന്തം", "ശിശിരം"],
+                paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
+                tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "പൗർണ്ണമി", "പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "അമാവാസി"]
+            }
         };
+
+        function calculateTithi(dateObj) {
+            // Use 06:00 AM Local Time for Tithi calculation to approximate Sunrise Tithi
+            // This ensures the Tithi is consistent for the "day".
+            const targetDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), 6, 0, 0);
+
+            // 1. Convert to Julian Day (J2000.0)
+            const msPerDay = 86400000;
+            const jd = (targetDate.getTime() / msPerDay) + 2440587.5;
+            const d = jd - 2451545.0; // Days since J2000
+
+            // Helper: Normalize to 0-360
+            function normalize(deg) {
+                deg = deg % 360;
+                if (deg < 0) deg += 360;
+                return deg;
+            }
+            // Helper: Degrees to Radians
+            function rad(deg) { return deg * (Math.PI / 180); }
+            // Helper: Sin in degrees
+            function sind(deg) { return Math.sin(rad(deg)); }
+
+            // --- SUN COORDINATES (Low Precision) ---
+            const L_sun = normalize(280.460 + 0.9856474 * d);
+            const g_sun = normalize(357.528 + 0.9856003 * d);
+            const lambda_sun = normalize(L_sun + 1.915 * sind(g_sun) + 0.020 * sind(2 * g_sun));
+
+            // --- MOON COORDINATES (Low Precision - Major Terms) ---
+            const L_moon = normalize(218.316 + 13.176396 * d);
+            const M_moon = normalize(134.963 + 13.064993 * d);
+            const F_moon = normalize(93.272 + 13.229350 * d);
+            const D_elong = normalize(297.850 + 12.190749 * d);
+
+            let lambda_moon = L_moon;
+            lambda_moon += 6.289 * sind(M_moon);             // Equation of Center
+            lambda_moon -= 1.274 * sind(M_moon - 2 * D_elong); // Evection
+            lambda_moon += 0.658 * sind(2 * D_elong);        // Variation
+            lambda_moon -= 0.185 * sind(g_sun);              // Annual Equation
+            lambda_moon -= 0.114 * sind(2 * F_moon);
+            lambda_moon -= 0.058 * sind(2 * (M_moon - 2 * D_elong));
+            lambda_moon = normalize(lambda_moon);
+
+            // --- TITHI CALCULATION ---
+            // Tithi = (MoonLong - SunLong) / 12
+            let diff = normalize(lambda_moon - lambda_sun);
+            const tithiIndex = Math.floor(diff / 12); // 0 to 29
+
+            // Determine Data
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+
+            // Safe index fetch (0-29)
+            const safeIndex = tithiIndex % 30;
+            const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
+
+            // 0-14 is Shukla (Waxing), 15-29 is Krishna (Waning)
+            const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
+
+            return { tithi: tithiName, paksha: pakshaName, index: safeIndex };
+        }
 
         function toNativeNum(num, langCode) {
             if (langCode === 'en' || !langData[langCode]) return num;
@@ -1152,6 +1311,22 @@ The word "Nua" means new and "Khai" means food.
                 if (isToday) dateNum.classList.add('text-deepred', 'underline');
                 dateNum.innerText = toNativeNum(d, currentLang);
                 contentWrapper.appendChild(dateNum);
+
+                // --- Tithi Icon Logic ---
+                const dateObj = new Date(data.year, data.month, d);
+                const tithiInfo = calculateTithi(dateObj);
+
+                let iconHtml = '';
+                if (tithiInfo.index === 14) { // Purnima
+                    iconHtml = `<i class="fa-solid fa-circle text-amber-400 text-lg absolute top-1 right-1 drop-shadow-md" title="Purnima"></i>`;
+                } else if (tithiInfo.index === 29) { // Amavasya
+                    iconHtml = `<i class="fa-solid fa-circle text-black text-lg absolute top-1 right-1" title="Amavasya"></i>`;
+                } else if (tithiInfo.index === 10 || tithiInfo.index === 25) { // Ekadashi (Shukla=10, Krishna=25)
+                    iconHtml = `<i class="fa-solid fa-moon text-indigo-400 text-sm absolute top-1 right-1" title="Ekadashi"></i>`;
+                }
+                if (iconHtml) contentWrapper.innerHTML += iconHtml;
+                // ------------------------
+
                 const dayEvents = data.events.filter(e => e.date === d);
                 dayEvents.forEach(ev => {
                     const evDiv = document.createElement('div');
@@ -1175,7 +1350,52 @@ The word "Nua" means new and "Khai" means food.
             const list = document.getElementById('panchang-list');
             pillsContainer.innerHTML = '';
             list.innerHTML = '';
-            if (Object.keys(data.panchang).length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-xs">No Panchang data.</li>'; return; }
+
+            // 1. Display Season (Ritu)
+            const seasonIndex = Math.floor((data.month + 10) % 12 / 2);
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+            const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
+
+            if (seasonName) {
+                const seasonDiv = document.createElement('div');
+                seasonDiv.className = "w-full bg-orange-50 border border-orange-200 rounded p-2 mb-2 flex items-center justify-center gap-3 shadow-sm";
+
+                // Map seasonIndex (0-5) to Icon Key
+                const iconKeys = ['sun_cloud', 'sun', 'rain', 'sun_cloud', 'snow', 'snow'];
+                const iconKey = iconKeys[seasonIndex];
+                const iconSrc = seasonIcons[iconKey];
+
+                seasonDiv.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-white border border-orange-100 flex items-center justify-center shadow-sm overflow-hidden shrink-0">
+                        <img src="${iconSrc}" class="w-8 h-8 object-contain opacity-90">
+                    </div>
+                    <div class="flex flex-col items-start">
+                         <span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider leading-none mb-0.5">Season</span>
+                         <span class="text-lg font-bold text-deepred font-oriya leading-none">${seasonName}</span>
+                    </div>`;
+                list.appendChild(seasonDiv);
+            }
+
+            // 2. Calculated Tithi (for the month view)
+            const today = new Date();
+            let targetDate;
+            if (data.month === today.getMonth() && data.year === today.getFullYear()) {
+                targetDate = today;
+            } else {
+                targetDate = new Date(data.year, data.month, 1);
+            }
+            const tithiInfo = calculateTithi(targetDate);
+
+            const tithiDiv = document.createElement('div');
+            tithiDiv.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
+            tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
+            list.appendChild(tithiDiv);
+
+            if (Object.keys(data.panchang).length === 0) {
+                // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>';
+            }
+
             const iconMap = { 'tithi': 'fa-moon', 'nakshatra': 'fa-star', 'yoga': 'fa-bahai', 'karana': 'fa-hourglass-half', 'sunrise': 'fa-sun', 'sunset': 'fa-cloud-sun', 'month': 'fa-calendar' };
             for (const [key, value] of Object.entries(data.panchang)) {
                 const lowerKey = key.toLowerCase();
@@ -1298,6 +1518,12 @@ The word "Nua" means new and "Khai" means food.
             document.getElementById('modal-month-short').innerText = shortMonths[monthData.month];
             document.getElementById('modal-date-num').innerText = day;
             document.getElementById('modal-full-date').innerText = `${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}`;
+
+            // --- INJECT TITHI/PAKSHA ---
+            const tithiInfo = calculateTithi(dateObj);
+            const tithiBlock = `<div class="mt-2 text-[#F5E6CA] opacity-90 text-xs uppercase tracking-wide font-semibold"><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</div>`;
+            // ---------------------------
+
             const richDetail = appState.details[dateKey];
             const dayEvents = monthData.events.filter(e => e.date === day);
             const bodyContainer = document.getElementById('modal-rich-body');
@@ -1314,6 +1540,8 @@ The word "Nua" means new and "Khai" means food.
                     const tagText = richDetail.tags[0]; 
                     tagPillContainer.innerHTML = `<span class="bg-[#F5E6CA] text-[#5D4037] text-[11px] font-bold px-3 py-1 rounded-full shadow-sm border border-white/20">${tagText}</span>`;
                 }
+                tagPillContainer.innerHTML += tithiBlock; // Append Tithi block
+
                 if (richDetail.bannerUrl && headerEl) { 
                     const imgUrl = resolveImageUrls(richDetail.bannerUrl);
                     headerEl.style.backgroundImage = `linear-gradient(90deg, rgba(66, 32, 6, 0.95) 0%, rgba(66, 32, 6, 0.6) 50%, rgba(66, 32, 6, 0.2) 100%), url('${imgUrl}')`;
@@ -1327,6 +1555,8 @@ The word "Nua" means new and "Khai" means food.
                 if (dayEvents.length > 0) {
                     titleEl.innerText = dayEvents[0].engName;
                     tagPillContainer.innerHTML = `<span class="bg-white/20 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">Event</span>`;
+                    tagPillContainer.innerHTML += tithiBlock; // Append Tithi block
+
                     dayEvents.forEach(ev => {
                         const div = document.createElement('div');
                         div.className = "p-4 bg-gray-50 rounded-xl border border-gray-200 mb-3 shadow-sm";
@@ -1335,6 +1565,7 @@ The word "Nua" means new and "Khai" means food.
                     });
                 } else {
                     titleEl.innerText = "No Major Events";
+                    tagPillContainer.innerHTML += tithiBlock; // Append Tithi block (even if empty events)
                     bodyContainer.innerHTML = `<p class="text-gray-400 italic text-sm mt-4 text-center">No specific details or events found for this date.</p>`;
                 }
             }
