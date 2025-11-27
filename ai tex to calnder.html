@@ -675,6 +675,7 @@ The word "Nua" means new and "Khai" means food.
                 indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
                 indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"]
             },
+            // Note: North/West/East Indian languages use the Lunar Calendar month names
             hi: {
                 days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"],
                 nums: ["०","१","२","३","४","५","६","७","८","९"],
@@ -723,6 +724,7 @@ The word "Nua" means new and "Khai" means food.
                 indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
                 indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"]
             },
+            // Note: South Indian languages use the Solar Calendar month names
             ta: {
                 days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"],
                 nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"],
@@ -1247,18 +1249,26 @@ The word "Nua" means new and "Khai" means food.
             pillsContainer.innerHTML = '';
             list.innerHTML = '';
 
-            // --- NEW: Calculate and Inject Season (Ritu) ---
-            // 0:Vasant, 1:Grishma, 2:Varsha, 3:Sharad, 4:Hemant, 5:Shishir
-            // Mapping Gregorian Month Index (0=Jan) to Indian Season Index
-            // Jan(0)=5, Feb(1)=5, Mar(2)=0, Apr(3)=0, May(4)=1, Jun(5)=1,
-            // Jul(6)=2, Aug(7)=2, Sep(8)=3, Oct(9)=3, Nov(10)=4, Dec(11)=4
-            const seasonMap = [5, 5, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4];
-            const currentSeasonIndex = seasonMap[data.month]; // data.month is 0-11
+            // --- Season (Ritu) Logic: Manual Override OR Automatic Calculation ---
+            let seasonName = null;
 
-            const currentLang = appState.config.language || 'en';
-            const seasonName = (langData[currentLang] && langData[currentLang].indianSeasons)
-                                ? langData[currentLang].indianSeasons[currentSeasonIndex]
-                                : langData['en'].indianSeasons[currentSeasonIndex];
+            // Check if user manually provided 'Season' in the input text
+            const manualSeasonKey = Object.keys(data.panchang).find(k => k.toLowerCase() === 'season');
+
+            if (manualSeasonKey) {
+                seasonName = data.panchang[manualSeasonKey];
+            } else {
+                // Automatic Calculation
+                // 0:Vasant, 1:Grishma, 2:Varsha, 3:Sharad, 4:Hemant, 5:Shishir
+                // Mapping Gregorian Month Index (0=Jan) to Indian Season Index
+                const seasonMap = [5, 5, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4];
+                const currentSeasonIndex = seasonMap[data.month]; // data.month is 0-11
+
+                const currentLang = appState.config.language || 'en';
+                seasonName = (langData[currentLang] && langData[currentLang].indianSeasons)
+                                    ? langData[currentLang].indianSeasons[currentSeasonIndex]
+                                    : langData['en'].indianSeasons[currentSeasonIndex];
+            }
 
             // Create the Season List Item (Always shown at top)
             const seasonLi = document.createElement('div');
@@ -1278,8 +1288,9 @@ The word "Nua" means new and "Khai" means food.
             for (const [key, value] of Object.entries(data.panchang)) {
                 const lowerKey = key.toLowerCase();
 
-                // SKIP 'Month' key if user typed it, because we replaced it with 'Season'
-                if (lowerKey === 'month') continue;
+                // SKIP 'Month' key as we replaced it with Season.
+                // SKIP 'Season' key because we already rendered it at the top.
+                if (lowerKey === 'month' || lowerKey === 'season') continue;
 
                 let iconClass = iconMap[lowerKey] || 'fa-circle-info';
 
