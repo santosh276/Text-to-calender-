@@ -667,25 +667,95 @@ The word "Nua" means new and "Khai" means food.
         };
 
         const langData = {
-            en: { 
-                days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
-                nums: ["0","1","2","3","4","5","6","7","8","9"], 
-                filters: ["Festivals", "Auspicious", "Holidays"], 
-                horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" }
-            },
-            // Note: North/West/East Indian languages use the Lunar Calendar month names
-            hi: { days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], nums: ["०","१","२","३","४","५","६","७","८","९"], filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ"], horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" }, indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्र", "भाद्र / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"] },
-            bn: { days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], filters: ["উৎসব", "শুভ দিন", "ছুটি"], horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृশ্চিক", sagittarius: "धनु", capricorn: "मकर", aquarius: "কুম্ভ", pisces: "মীন" }, indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"] },
-            or: { days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ"], horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" }, indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟେଷ୍ଠ", "ଜ୍ୟେଷ୍ଠ / ଆଷାଢ", "ଆଷାଢ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ର", "ଭାଦ୍ର / ଆଶ୍ଵିନ", "ଆଶ୍ଵିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"] },
-            mr: { days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], nums: ["०","१","२","३","४","५","६","७","८","९"], filters: ["सण", "शुभ दिवस", "सुट्ट्या"], horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" }, indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्र", "भाद्र / अश्विन", "अश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"] },
-            gu: { days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ"], horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચิก", sagittarius: "ધનુ", capricorn: "मकर", aquarius: "કુંભ", pisces: "મીન" }, indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"] },
-            pa: { days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿନ", "ਛੁੱਟੀਆਂ"], horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" }, indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵਿਸਾਖ", "ਵਿਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤક / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"] },
-            // Note: South Indian languages use the Solar Calendar month names
-            ta: { days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை"], horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" }, indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"] },
-            te: { days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు"], horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" }, indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"] },
-            kn: { days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು"], horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" }, indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"] },
-            ml: { days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി"], horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" }, indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"] }
-        };
+    en: {
+        days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"],
+        nums: ["0","1","2","3","4","5","6","7","8","9"],
+        filters: ["Festivals", "Auspicious", "Holidays"],
+        horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
+        indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
+        indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"]
+    },
+    hi: {
+        days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"],
+        nums: ["०","१","२","३","४","५","६","७","८","९"],
+        filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ"],
+        horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
+        indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
+        indianSeasons: ["वसंत (Spring)", "ग्रीष्म (Summer)", "वर्षा (Monsoon)", "शरद (Autumn)", "हेमंत (Pre-Winter)", "शिशिर (Winter)"]
+    },
+    bn: {
+        days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"],
+        nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"],
+        filters: ["উৎসব", "শুভ দিন", "ছুটি"],
+        horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "সিংহ", virgo: "कन्या", libra: "তুলা", scorpio: "বৃশ্চিক", sagittarius: "ধনু", capricorn: "মकर", aquarius: "কুম্ভ", pisces: "মীন" },
+        indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
+        indianSeasons: ["বসন্ত (Spring)", "গ্রীষ্ম (Summer)", "বর্ষা (Monsoon)", "শরৎ (Autumn)", "হেমন্ত (Pre-Winter)", "শিশির (Winter)"]
+    },
+    or: {
+        days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"],
+        nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"],
+        filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ"],
+        horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" },
+        indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲ୍ଗୁନ", "ଫାଲ୍ଗୁନ / ଚୈତ୍ର", "চୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ", "ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼", "ଆଷାଢ଼ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ରବ", "ଭାଦ୍ରବ / ଆଶ୍ୱିନ", "ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର୍ଷ", "ମାର୍ଗଶୀର୍ଷ / ପୌଷ"],
+        indianSeasons: ["ବସନ୍ତ (Spring)", "ଗ୍ରୀଷ୍ମ (Summer)", "ବର୍ଷା (Monsoon)", "ଶରତ (Autumn)", "ହେମନ୍ତ (Pre-Winter)", "ଶିଶିର (Winter)"]
+    },
+    mr: {
+        days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"],
+        nums: ["०","१","२","३","४","५","६","७","८","९"],
+        filters: ["सण", "शुभ दिवस", "सुट्ट्या"],
+        horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
+        indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
+        indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"]
+    },
+    gu: {
+        days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"],
+        nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"],
+        filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ"],
+        horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચિક", sagittarius: "ધનુ", capricorn: "મકર", aquarius: "કુંભ", pisces: "મીન" },
+        indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"],
+        indianSeasons: ["વસંત", "ગ્રીષ્મ", "વર્ષા", "શરદ", "હેમંત", "શિશિર"]
+    },
+    pa: {
+        days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"],
+        nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"],
+        filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ"],
+        horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" },
+        indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
+        indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"]
+    },
+    ta: {
+        days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"],
+        nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"],
+        filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை"],
+        horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" },
+        indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"],
+        indianSeasons: ["இளவேனில்", "முதுவேனில்", "கார்", "குளிர்", "முன்பனி", "பின்பனி"]
+    },
+    te: {
+        days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"],
+        nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"],
+        filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు"],
+        horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" },
+        indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"],
+        indianSeasons: ["వసంత", "గ్రీష్మ", "వర్ష", "శరత్", "హేమంత", "శిశిర"]
+    },
+    kn: {
+        days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"],
+        nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"],
+        filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು"],
+        horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" },
+        indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"],
+        indianSeasons: ["ವಸಂತ", "ಗ್ರೀಷ್ಮ", "ವರ್ಷ", "ಶರತ್", "ಹೇಮಂತ", "ಶಿಶಿರ"]
+    },
+    ml: {
+        days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"],
+        nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"],
+        filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി"],
+        horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" },
+        indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"],
+        indianSeasons: ["വസന്തം", "ഗ്രീഷ്മം", "വർഷം", "ശരത്", "ഹേമന്തം", "ശിശിരം"]
+    }
+};
 
         function toNativeNum(num, langCode) {
             if (langCode === 'en' || !langData[langCode]) return num;
@@ -1173,13 +1243,46 @@ The word "Nua" means new and "Khai" means food.
         function renderPanchang(data) {
             const pillsContainer = document.getElementById('panchang-pills');
             const list = document.getElementById('panchang-list');
+
             pillsContainer.innerHTML = '';
             list.innerHTML = '';
-            if (Object.keys(data.panchang).length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-xs">No Panchang data.</li>'; return; }
-            const iconMap = { 'tithi': 'fa-moon', 'nakshatra': 'fa-star', 'yoga': 'fa-bahai', 'karana': 'fa-hourglass-half', 'sunrise': 'fa-sun', 'sunset': 'fa-cloud-sun', 'month': 'fa-calendar' };
+
+            // --- NEW: Calculate and Inject Season (Ritu) ---
+            // 0:Vasant, 1:Grishma, 2:Varsha, 3:Sharad, 4:Hemant, 5:Shishir
+            // Mapping Gregorian Month Index (0=Jan) to Indian Season Index
+            // Jan(0)=5, Feb(1)=5, Mar(2)=0, Apr(3)=0, May(4)=1, Jun(5)=1,
+            // Jul(6)=2, Aug(7)=2, Sep(8)=3, Oct(9)=3, Nov(10)=4, Dec(11)=4
+            const seasonMap = [5, 5, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4];
+            const currentSeasonIndex = seasonMap[data.month]; // data.month is 0-11
+
+            const currentLang = appState.config.language || 'en';
+            const seasonName = (langData[currentLang] && langData[currentLang].indianSeasons)
+                                ? langData[currentLang].indianSeasons[currentSeasonIndex]
+                                : langData['en'].indianSeasons[currentSeasonIndex];
+
+            // Create the Season List Item (Always shown at top)
+            const seasonLi = document.createElement('div');
+            seasonLi.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1 bg-orange-50 rounded";
+            seasonLi.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-cloud-sun-rain text-saffron w-5 text-center mr-1"></i>Season:</span> <span class="text-deepred font-bold text-right">${seasonName}</span>`;
+            list.appendChild(seasonLi);
+
+            // ------------------------------------------------
+
+            if (Object.keys(data.panchang).length === 0) {
+                // Keep Season even if no other data
+                return;
+            }
+
+            const iconMap = { 'tithi': 'fa-moon', 'nakshatra': 'fa-star', 'yoga': 'fa-bahai', 'karana': 'fa-hourglass-half', 'sunrise': 'fa-sun', 'sunset': 'fa-cloud-sun', 'season': 'fa-leaf' };
+
             for (const [key, value] of Object.entries(data.panchang)) {
                 const lowerKey = key.toLowerCase();
+
+                // SKIP 'Month' key if user typed it, because we replaced it with 'Season'
+                if (lowerKey === 'month') continue;
+
                 let iconClass = iconMap[lowerKey] || 'fa-circle-info';
+
                 if (lowerKey === 'sunrise' || lowerKey === 'sunset') {
                     const pill = document.createElement('div');
                     pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
