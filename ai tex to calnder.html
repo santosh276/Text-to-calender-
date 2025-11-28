@@ -236,7 +236,7 @@
             align-items: center;
             gap: 24px;
             width: 100%; /* Fitted to container */
-            cursor: pointer;
+            /* cursor: pointer; removed */
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
@@ -244,9 +244,7 @@
             margin-bottom: 1rem;
         }
 
-        .season-ui-card:active {
-            transform: scale(0.98);
-        }
+        /* Active state removed */
 
         .season-ui-icon-container {
             width: 64px;
@@ -874,42 +872,7 @@ The word "Nua" means new and "Khai" means food.
             { name: "Shishir (Winter)", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
         ];
 
-        function cycleSeasonCard() {
-            const card = document.getElementById('seasonCard');
-            if(!card) return;
-            let idx = parseInt(card.dataset.index);
-            idx = (idx + 1) % 6;
-            card.dataset.index = idx;
-            updateSeasonCardUI(idx);
-        }
-
-        function updateSeasonCardUI(index) {
-            const config = seasonUIConfig[index]; 
-            const currentLang = appState.config.language || 'en';
-            const langObj = langData[currentLang] || langData['en'];
-            const name = langObj.indianSeasons[index];
-
-            const titleEl = document.getElementById('seasonTitle');
-            const iconEl = document.getElementById('seasonIcon');
-            
-            if(titleEl) {
-                titleEl.textContent = name;
-                titleEl.style.color = config.color;
-                // Animation Reset
-                titleEl.classList.remove('fade-enter-active');
-                void titleEl.offsetWidth; 
-                titleEl.classList.add('fade-enter-active');
-            }
-            if(iconEl) {
-                iconEl.innerHTML = config.icon;
-                iconEl.style.transform = "scale(0.8) rotate(-10deg)";
-                iconEl.style.opacity = "0";
-                setTimeout(() => {
-                    iconEl.style.transform = "scale(1) rotate(0deg)";
-                    iconEl.style.opacity = "1";
-                }, 50);
-            }
-        }
+        // cycleSeasonCard removed to enforce strict month-season linkage
 
         const editor = document.getElementById('editor');
         let appState = {
@@ -1613,7 +1576,7 @@ The word "Nua" means new and "Khai" means food.
                 // Using new UI Classes
                 cardDiv.className = "season-ui-card";
                 cardDiv.id = "seasonCard";
-                cardDiv.onclick = cycleSeasonCard;
+                // cardDiv.onclick = cycleSeasonCard; // Removed manual cycle
                 cardDiv.dataset.index = seasonIndex;
                 
                 cardDiv.innerHTML = `
@@ -1624,7 +1587,7 @@ The word "Nua" means new and "Khai" means food.
                         <span class="season-ui-label">Season</span>
                         <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
                     </div>
-                    <div class="season-ui-hint">Tap to explore</div>
+                    <!-- Hint removed -->
                 `;
                 list.appendChild(cardDiv);
             }
@@ -1652,12 +1615,15 @@ The word "Nua" means new and "Khai" means food.
             for (const [key, value] of Object.entries(data.panchang)) {
                 const lowerKey = key.toLowerCase();
                 let iconClass = iconMap[lowerKey] || 'fa-circle-info';
-                if (lowerKey === 'sunrise' || lowerKey === 'sunset') {
+                if (lowerKey === 'sunrise') {
                     const pill = document.createElement('div');
                     pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    let timeIcon = lowerKey === 'sunrise' ? 'fa-sun' : 'fa-cloud-sun';
-                    let label = lowerKey === 'sunrise' ? 'SUNRISE' : 'SUNSET';
-                    pill.innerHTML = `<i class="fa-solid ${timeIcon} text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">${label}</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
+                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
+                    pillsContainer.appendChild(pill);
+                } else if (lowerKey === 'sunset') {
+                    const pill = document.createElement('div');
+                    pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
+                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else {
                     const li = document.createElement('div');
