@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -224,6 +225,96 @@
             @apply flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-gray-300 bg-gray-800 border border-gray-700 rounded-lg shadow-sm hover:bg-gray-700 hover:text-white transition-all duration-150 transform active:scale-95 whitespace-nowrap;
         }
         .header-btn i { @apply text-base text-inherit; }
+
+        /* SEASON UI COMPONENT STYLES */
+        .season-ui-card {
+            background-color: #FFFBF5;
+            border: 2px solid #FAE0C8;
+            border-radius: 16px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            width: 100%; /* Fitted to container */
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .season-ui-card:active {
+            transform: scale(0.98);
+        }
+
+        .season-ui-icon-container {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent; 
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .season-ui-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .season-ui-label {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #8B4513;
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .season-ui-title {
+            font-family: 'Nunito', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #D60000;
+            line-height: 1.1;
+            transition: opacity 300ms, transform 300ms;
+        }
+
+        .season-ui-hint {
+            position: absolute;
+            bottom: 4px;
+            right: 8px;
+            font-size: 9px;
+            color: #aaa;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* ANIMATION UTILITIES */
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-exit-active {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        /* --- SVG ANIMATIONS (Subtle & Clean) --- */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes rain { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -655,6 +746,171 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <script>
+        // Season UI Component Data
+        const SeasonIcons = {
+            // Sun behind small cloud
+            hemant: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="sunGradH" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#FFD54F;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#FFB300;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Sun (Spinning slowly) -->
+                    <g style="transform-origin: 32px 32px; animation: spin 12s linear infinite;">
+                        <circle cx="32" cy="32" r="14" fill="url(#sunGradH)" />
+                        <path d="M32 6V10 M32 54V58 M58 32H54 M10 32H6 M53 11L50 14 M14 50L11 53 M53 53L50 50 M14 14L11 11" stroke="#FFB300" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                    <!-- Cloud (Floating) -->
+                    <g style="animation: float 4s ease-in-out infinite;">
+                        <path transform="translate(-6, 6)" d="M44 44H20C15.58 44 12 40.42 12 36C12 31.58 15.58 28 20 28C20.6 28 21.18 28.08 21.74 28.22C22.82 24.32 26.4 21.5 30.6 21.5C35.75 21.5 40 25.4 40.5 30.3C44.92 30.3 48.5 33.88 48.5 38.3C48.5 41.5 46.5 44 44 44Z" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1.5"/>
+                    </g>
+                </svg>`,
+            
+            // Detailed Snowflake
+            shishir: `
+                <svg width="100" height="115" style="transform: translateY(12px);" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Snowflake Arm Definition -->
+                        <g id="snowflake-arm">
+                            <!-- Main Stem -->
+                            <line x1="0" y1="0" x2="0" y2="-38" />
+                            <!-- Inner Branch -->
+                            <path d="M-9 -14 L0 -6 L9 -14" />
+                            <!-- Outer Branch -->
+                            <path d="M-9 -28 L0 -20 L9 -28" />
+                        </g>
+                        <!-- Sparkle Definition -->
+                        <path id="sparkle" d="M0 -7 C1 -2 2 -1 7 0 C 2 1 1 2 0 7 C -1 2 -2 1 -7 0 C -2 -1 -1 -2 0 -7 Z" />
+                    </defs>
+                    <!-- Group for Main Content to Center it -->
+                    <g transform="translate(70, 65)">
+                        <!-- Snowflake -->
+                        <g stroke="#1F3B6F" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                            <use href="#snowflake-arm" />
+                            <use href="#snowflake-arm" transform="rotate(60)" />
+                            <use href="#snowflake-arm" transform="rotate(120)" />
+                            <use href="#snowflake-arm" transform="rotate(180)" />
+                            <use href="#snowflake-arm" transform="rotate(240)" />
+                            <use href="#snowflake-arm" transform="rotate(300)" />
+                        </g>
+                        <!-- Sparkles -->
+                        <g fill="#2D9CDB">
+                            <!-- Top Left -->
+                            <use href="#sparkle" transform="translate(-40, -45) scale(1.2)" />
+                            <!-- Middle Right -->
+                            <use href="#sparkle" transform="translate(48, -5) scale(1.1)" />
+                            <!-- Bottom Left -->
+                            <use href="#sparkle" transform="translate(-38, 35) scale(1.1)" />
+                        </g>
+                    </g>
+                </svg>`,
+            
+            // Flower with leaves
+            vasant: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Stem -->
+                    <path d="M32 60V40" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M32 50Q42 45 42 35" stroke="#4CAF50" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M32 50Q22 45 22 35" stroke="#4CAF50" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Petals -->
+                    <circle cx="32" cy="18" r="6" fill="#FF8A80"/>
+                    <circle cx="32" cy="38" r="6" fill="#FF8A80"/>
+                    <circle cx="42" cy="28" r="6" fill="#FF8A80"/>
+                    <circle cx="22" cy="28" r="6" fill="#FF8A80"/>
+                    <circle cx="39" cy="21" r="6" fill="#FF8A80"/>
+                    <circle cx="25" cy="21" r="6" fill="#FF8A80"/>
+                    <circle cx="39" cy="35" r="6" fill="#FF8A80"/>
+                    <circle cx="25" cy="35" r="6" fill="#FF8A80"/>
+                    <!-- Center -->
+                    <circle cx="32" cy="28" r="8" fill="#FFD54F" stroke="#FFA000" stroke-width="1"/>
+                </svg>`,
+            
+            // Bright Sun
+            grishma: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="14" fill="#FF9800"/>
+                    <circle cx="32" cy="32" r="14" fill="url(#sunGradient)"/>
+                    <path d="M32 8L32 4M32 60L32 56M56 32L60 32M4 32L8 32M49 15L52 12M12 52L15 49M49 49L52 52M12 12L15 15" stroke="#FF9800" stroke-width="5" stroke-linecap="round"/>
+                    <defs>
+                        <radialGradient id="sunGradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(32 32) rotate(90) scale(14)">
+                            <stop stop-color="#FFEB3B"/>
+                            <stop offset="1" stop-color="#FF9800"/>
+                        </radialGradient>
+                    </defs>
+                </svg>`,
+            
+            // Cloud with Rain Drops
+            varsha: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M24 48V56" stroke="#42A5F5" stroke-width="3" stroke-linecap="round" style="animation: rain 0.8s infinite linear;"/>
+                     <path d="M32 48V56" stroke="#42A5F5" stroke-width="3" stroke-linecap="round" style="animation: rain 0.8s infinite linear 0.2s;"/>
+                     <path d="M40 48V56" stroke="#42A5F5" stroke-width="3" stroke-linecap="round" style="animation: rain 0.8s infinite linear 0.4s;"/>
+                     <path d="M48 42H20C15 42 12 38 12 34C12 29 16 26 20 26C21 26 22 26 23 26C24 22 28 19 32 19C37 19 41 23 42 27C46 27 50 30 50 35C50 39 48 42 42 42" fill="#7E57C2"/>
+                </svg>`,
+            
+            // Autumn Leaf
+            sharad: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 58C32 58 32 40 32 30" stroke="#795548" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M32 54C22 52 14 42 14 30C14 18 24 10 32 6C40 10 50 18 50 30C50 42 42 52 32 54Z" fill="#FF7043"/>
+                    <path d="M32 6V54" stroke="#D84315" stroke-width="1.5"/>
+                    <path d="M32 36L44 26" stroke="#D84315" stroke-width="1.5"/>
+                    <path d="M32 36L20 26" stroke="#D84315" stroke-width="1.5"/>
+                    <path d="M32 22L40 16" stroke="#D84315" stroke-width="1.5"/>
+                    <path d="M32 22L24 16" stroke="#D84315" stroke-width="1.5"/>
+                    <path d="M32 46L42 40" stroke="#D84315" stroke-width="1.5"/>
+                    <path d="M32 46L22 40" stroke="#D84315" stroke-width="1.5"/>
+                </svg>`
+        };
+
+        const seasonUIConfig = [
+            { name: "Vasant (Spring)", color: "#388E3C", icon: SeasonIcons.vasant },   // 0
+            { name: "Grishma (Summer)", color: "#E65100", icon: SeasonIcons.grishma },  // 1
+            { name: "Varsha (Monsoon)", color: "#4527A0", icon: SeasonIcons.varsha },   // 2
+            { name: "Sharad (Autumn)", color: "#BF360C", icon: SeasonIcons.sharad },    // 3
+            { name: "Hemant (Pre-Winter)", color: "#D60000", icon: SeasonIcons.hemant },// 4
+            { name: "Shishir (Winter)", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
+        ];
+
+        function cycleSeasonCard() {
+            const card = document.getElementById('seasonCard');
+            if(!card) return;
+            let idx = parseInt(card.dataset.index);
+            idx = (idx + 1) % 6;
+            card.dataset.index = idx;
+            updateSeasonCardUI(idx);
+        }
+
+        function updateSeasonCardUI(index) {
+            const config = seasonUIConfig[index]; 
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+            const name = langObj.indianSeasons[index];
+
+            const titleEl = document.getElementById('seasonTitle');
+            const iconEl = document.getElementById('seasonIcon');
+            
+            if(titleEl) {
+                titleEl.textContent = name;
+                titleEl.style.color = config.color;
+                // Animation Reset
+                titleEl.classList.remove('fade-enter-active');
+                void titleEl.offsetWidth; 
+                titleEl.classList.add('fade-enter-active');
+            }
+            if(iconEl) {
+                iconEl.innerHTML = config.icon;
+                iconEl.style.transform = "scale(0.8) rotate(-10deg)";
+                iconEl.style.opacity = "0";
+                setTimeout(() => {
+                    iconEl.style.transform = "scale(1) rotate(0deg)";
+                    iconEl.style.opacity = "1";
+                }, 50);
+            }
+        }
+
         const editor = document.getElementById('editor');
         let appState = {
             activeMonthIndex: 0,
@@ -1351,10 +1607,26 @@ The word "Nua" means new and "Khai" means food.
             const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
             
             if (seasonName) {
-                const seasonDiv = document.createElement('div');
-                seasonDiv.className = "w-full bg-orange-50 border border-orange-200 rounded p-2 mb-2 text-center";
-                seasonDiv.innerHTML = `<span class="text-xs font-bold text-orange-800 uppercase tracking-widest block">Season</span><span class="text-lg font-bold text-deepred font-oriya">${seasonName}</span>`;
-                list.appendChild(seasonDiv);
+                const config = seasonUIConfig[seasonIndex] || seasonUIConfig[0];
+                const cardDiv = document.createElement('div');
+                
+                // Using new UI Classes
+                cardDiv.className = "season-ui-card";
+                cardDiv.id = "seasonCard";
+                cardDiv.onclick = cycleSeasonCard;
+                cardDiv.dataset.index = seasonIndex;
+                
+                cardDiv.innerHTML = `
+                    <div class="season-ui-icon-container" id="seasonIcon" style="transform: scale(1) rotate(0deg); opacity: 1;">
+                        ${config.icon}
+                    </div>
+                    <div class="season-ui-content">
+                        <span class="season-ui-label">Season</span>
+                        <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
+                    </div>
+                    <div class="season-ui-hint">Tap to explore</div>
+                `;
+                list.appendChild(cardDiv);
             }
 
             // 2. Calculated Tithi (for the month view)
