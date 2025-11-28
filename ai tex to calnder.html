@@ -1652,12 +1652,15 @@ The word "Nua" means new and "Khai" means food.
             for (const [key, value] of Object.entries(data.panchang)) {
                 const lowerKey = key.toLowerCase();
                 let iconClass = iconMap[lowerKey] || 'fa-circle-info';
-                if (lowerKey === 'sunrise' || lowerKey === 'sunset') {
+                if (lowerKey === 'sunrise') {
                     const pill = document.createElement('div');
                     pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    let timeIcon = lowerKey === 'sunrise' ? 'fa-sun' : 'fa-cloud-sun';
-                    let label = lowerKey === 'sunrise' ? 'SUNRISE' : 'SUNSET';
-                    pill.innerHTML = `<i class="fa-solid ${timeIcon} text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">${label}</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
+                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
+                    pillsContainer.appendChild(pill);
+                } else if (lowerKey === 'sunset') {
+                    const pill = document.createElement('div');
+                    pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
+                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else {
                     const li = document.createElement('div');
