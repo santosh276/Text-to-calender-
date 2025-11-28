@@ -287,18 +287,6 @@
             transition: opacity 300ms, transform 300ms;
         }
 
-        .season-ui-hint {
-            position: absolute;
-            bottom: 4px;
-            right: 8px;
-            font-size: 9px;
-            color: #aaa;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 600;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
         /* ANIMATION UTILITIES */
         .fade-enter-active {
             opacity: 1;
@@ -1624,7 +1612,6 @@ The word "Nua" means new and "Khai" means food.
                         <span class="season-ui-label">Season</span>
                         <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
                     </div>
-                    <div class="season-ui-hint">Tap to explore</div>
                 `;
                 list.appendChild(cardDiv);
             }
