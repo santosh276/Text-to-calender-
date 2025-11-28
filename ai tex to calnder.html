@@ -287,18 +287,6 @@
             transition: opacity 300ms, transform 300ms;
         }
 
-        .season-ui-hint {
-            position: absolute;
-            bottom: 4px;
-            right: 8px;
-            font-size: 9px;
-            color: #aaa;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 600;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
         /* ANIMATION UTILITIES */
         .fade-enter-active {
             opacity: 1;
@@ -874,13 +862,36 @@ The word "Nua" means new and "Khai" means food.
             { name: "Shishir (Winter)", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
         ];
 
+        function getSeasonIndex(month) {
+             return Math.floor((month + 10) % 12 / 2);
+        }
+
         function cycleSeasonCard() {
-            const card = document.getElementById('seasonCard');
-            if(!card) return;
-            let idx = parseInt(card.dataset.index);
-            idx = (idx + 1) % 6;
-            card.dataset.index = idx;
-            updateSeasonCardUI(idx);
+            if (!appState.monthsData || appState.monthsData.length === 0) return;
+
+            const currentMonthData = appState.monthsData[appState.activeMonthIndex];
+            const currentSeason = getSeasonIndex(currentMonthData.month);
+
+            for (let i = 1; i <= 6; i++) {
+                const targetSeason = (currentSeason + i) % 6;
+
+                // Find a month with this season, preferring the "next" one in the list
+                let foundIndex = -1;
+                for (let j = 1; j <= appState.monthsData.length; j++) {
+                    const checkIndex = (appState.activeMonthIndex + j) % appState.monthsData.length;
+                    const mData = appState.monthsData[checkIndex];
+                    if (getSeasonIndex(mData.month) === targetSeason) {
+                        foundIndex = checkIndex;
+                        break;
+                    }
+                }
+
+                if (foundIndex !== -1) {
+                    appState.activeMonthIndex = foundIndex;
+                    render();
+                    return;
+                }
+            }
         }
 
         function updateSeasonCardUI(index) {
@@ -1601,7 +1612,7 @@ The word "Nua" means new and "Khai" means food.
             list.innerHTML = '';
             
             // 1. Display Season (Ritu)
-            const seasonIndex = Math.floor((data.month + 10) % 12 / 2);
+            const seasonIndex = getSeasonIndex(data.month);
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
             const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
@@ -1624,7 +1635,6 @@ The word "Nua" means new and "Khai" means food.
                         <span class="season-ui-label">Season</span>
                         <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
                     </div>
-                    <div class="season-ui-hint">Tap to explore</div>
                 `;
                 list.appendChild(cardDiv);
             }
