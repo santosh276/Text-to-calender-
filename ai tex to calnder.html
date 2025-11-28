@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Oriya:wght@400;700&family=Nunito:wght@700;800&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -224,6 +224,68 @@
             @apply flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-gray-300 bg-gray-800 border border-gray-700 rounded-lg shadow-sm hover:bg-gray-700 hover:text-white transition-all duration-150 transform active:scale-95 whitespace-nowrap;
         }
         .header-btn i { @apply text-base text-inherit; }
+
+        /* --- SEASON CARD STYLES --- */
+        .season-card {
+            background-color: #FFFBF5;
+            border: 2px solid #FAE0C8;
+            width: 100%;
+            height: 96px;
+            border-radius: 12px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: default;
+            user-select: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .season-card .icon-wrapper {
+            width: 54px;
+            height: 54px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .season-card .text-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .season-card .label {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #8B4513;
+            margin-bottom: 4px;
+        }
+
+        .season-card .season-title {
+            font-family: 'Nunito', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.1;
+            white-space: nowrap;
+            /* Animation Props */
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* --- SVG ANIMATIONS --- */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes rain { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -867,6 +929,84 @@ The word "Nua" means new and "Khai" means food.
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const zodiacIcons = { 'aries': 'fa-regular fa-star', 'taurus': 'fa-solid fa-bullseye', 'gemini': 'fa-solid fa-user-group', 'cancer': 'fa-solid fa-moon', 'leo': 'fa-solid fa-crown', 'virgo': 'fa-solid fa-leaf', 'libra': 'fa-solid fa-scale-balanced', 'scorpio': 'fa-solid fa-spider', 'sagittarius': 'fa-solid fa-arrow-up', 'capricorn': 'fa-solid fa-mountain', 'aquarius': 'fa-solid fa-water', 'pisces': 'fa-solid fa-fish' };
 
+        const seasonsData = [
+            {
+                name: "Hemant (Pre-Winter)",
+                color: "#D60000",
+                svg: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Sun -->
+                    <circle cx="32" cy="32" r="14" fill="#FFC107"/>
+                    <g stroke="#FFB300" stroke-width="3" stroke-linecap="round">
+                        <path d="M32 10V6 M32 58V54 M54 32H58 M6 32H10"/>
+                        <path d="M48 16L51 13 M13 51L16 48 M48 48L51 51 M13 13L16 16"/>
+                    </g>
+                    <!-- Cloud Overlay -->
+                    <path d="M46 46H20C15 46 12 42 12 38C12 34 15 30 20 30C21 30 22 30 22 30C24 25 29 23 33 23C38 23 42 27 42 32C46 32 49 35 49 39C49 43 47 46 46 46Z" fill="#E3F2FD" stroke="#90CAF9" stroke-width="2"/>
+                </svg>`
+            },
+            {
+                name: "Shishir (Winter)",
+                color: "#0277BD", // Icy Blue
+                svg: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g style="transform-origin: 32px 32px; animation: spin 10s linear infinite;">
+                        <path d="M32 4V60 M4 32H60 M12 12L52 52 M52 12L12 52" stroke="#4FC3F7" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="32" cy="32" r="6" fill="#E1F5FE" stroke="#0288D1" stroke-width="2"/>
+                        <path d="M32 4V14 M32 50V60 M4 32H14 M50 32H60" stroke="#0277BD" stroke-width="2"/>
+                    </g>
+                </svg>`
+            },
+            {
+                name: "Vasant (Spring)",
+                color: "#2E7D32", // Green
+                svg: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 58V34" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M32 46C32 46 42 42 42 36" stroke="#4CAF50" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M32 46C32 46 22 42 22 36" stroke="#4CAF50" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="32" cy="24" r="8" fill="#FFEB3B"/>
+                    <circle cx="32" cy="10" r="6" fill="#F06292"/>
+                    <circle cx="32" cy="38" r="6" fill="#F06292"/>
+                    <circle cx="46" cy="24" r="6" fill="#F06292"/>
+                    <circle cx="18" cy="24" r="6" fill="#F06292"/>
+                </svg>`
+            },
+            {
+                name: "Grishma (Summer)",
+                color: "#E65100", // Bright Orange
+                svg: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="14" fill="#FF9800"/>
+                    <g style="transform-origin: 32px 32px; animation: spin 15s linear infinite;">
+                         <path d="M32 8L32 2 M32 62L32 56 M56 32L62 32 M2 32L8 32" stroke="#FF9800" stroke-width="4" stroke-linecap="round"/>
+                         <path d="M49 15L53 11 M11 53L15 49 M49 49L53 53 M11 11L15 15" stroke="#FFA726" stroke-width="4" stroke-linecap="round"/>
+                    </g>
+                </svg>`
+            },
+            {
+                name: "Varsha (Monsoon)",
+                color: "#4527A0", // Purple
+                svg: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M24 48V56" stroke="#42A5F5" stroke-width="3" stroke-linecap="round" style="animation: rain 0.8s infinite linear;"/>
+                     <path d="M32 48V56" stroke="#42A5F5" stroke-width="3" stroke-linecap="round" style="animation: rain 0.8s infinite linear 0.2s;"/>
+                     <path d="M40 48V56" stroke="#42A5F5" stroke-width="3" stroke-linecap="round" style="animation: rain 0.8s infinite linear 0.4s;"/>
+                     <path d="M48 42H20C15 42 12 38 12 34C12 29 16 26 20 26C21 26 22 26 23 26C24 22 28 19 32 19C37 19 41 23 42 27C46 27 50 30 50 35C50 39 48 42 42 42" fill="#7E57C2"/>
+                </svg>`
+            },
+            {
+                name: "Sharad (Autumn)",
+                color: "#BF360C", // Rust
+                svg: `
+                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 58C32 58 32 40 32 30" stroke="#795548" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M32 54C22 52 14 42 14 30C14 18 24 10 32 6C40 10 50 18 50 30C50 42 42 52 32 54Z" fill="#FF7043"/>
+                    <path d="M32 6V54 M32 36L44 26 M32 36L20 26 M32 22L40 16 M32 22L24 16" stroke="#D84315" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>`
+            }
+        ];
+
         function toggleSyntaxGuide() {
             const guide = document.getElementById('syntax-guide');
             guide.classList.toggle('open');
@@ -1348,12 +1488,37 @@ The word "Nua" means new and "Khai" means food.
             const seasonIndex = Math.floor((data.month + 10) % 12 / 2);
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
-            const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
             
-            if (seasonName) {
+            // Map 0-5 seasonIndex (Vasant..Shishir) to 0-5 seasonsData index
+            // seasonIndex: 0=Vasant, 1=Grishma, 2=Varsha, 3=Sharad, 4=Hemant, 5=Shishir
+            // seasonsData: 0=Hemant, 1=Shishir, 2=Vasant, 3=Grishma, 4=Varsha, 5=Sharad
+            // Mapping: 0->2, 1->3, 2->4, 3->5, 4->0, 5->1
+            const mapping = [2, 3, 4, 5, 0, 1];
+            const visualIndex = mapping[seasonIndex];
+            const visualSeason = seasonsData[visualIndex];
+
+            // Localized Name
+            const localizedSeasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : (visualSeason ? visualSeason.name : "");
+
+            if (visualSeason) {
+                const seasonDiv = document.createElement('div');
+                seasonDiv.className = "season-card";
+
+                seasonDiv.innerHTML = `
+                    <div class="icon-wrapper">
+                        ${visualSeason.svg}
+                    </div>
+                    <div class="text-wrapper">
+                        <span class="label">Season</span>
+                        <div class="season-title" style="color: ${visualSeason.color};">${localizedSeasonName}</div>
+                    </div>
+                `;
+                list.appendChild(seasonDiv);
+            } else if (localizedSeasonName) {
+                // Fallback to old style if data missing
                 const seasonDiv = document.createElement('div');
                 seasonDiv.className = "w-full bg-orange-50 border border-orange-200 rounded p-2 mb-2 text-center";
-                seasonDiv.innerHTML = `<span class="text-xs font-bold text-orange-800 uppercase tracking-widest block">Season</span><span class="text-lg font-bold text-deepred font-oriya">${seasonName}</span>`;
+                seasonDiv.innerHTML = `<span class="text-xs font-bold text-orange-800 uppercase tracking-widest block">Season</span><span class="text-lg font-bold text-deepred font-oriya">${localizedSeasonName}</span>`;
                 list.appendChild(seasonDiv);
             }
 
