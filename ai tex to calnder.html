@@ -287,18 +287,6 @@
             transition: opacity 300ms, transform 300ms;
         }
 
-        .season-ui-hint {
-            position: absolute;
-            bottom: 4px;
-            right: 8px;
-            font-size: 9px;
-            color: #aaa;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 600;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
         /* ANIMATION UTILITIES */
         .fade-enter-active {
             opacity: 1;
@@ -874,13 +862,36 @@ The word "Nua" means new and "Khai" means food.
             { name: "Shishir (Winter)", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
         ];
 
+        function getSeasonIndex(month) {
+             return Math.floor((month + 10) % 12 / 2);
+        }
+
         function cycleSeasonCard() {
-            const card = document.getElementById('seasonCard');
-            if(!card) return;
-            let idx = parseInt(card.dataset.index);
-            idx = (idx + 1) % 6;
-            card.dataset.index = idx;
-            updateSeasonCardUI(idx);
+            if (!appState.monthsData || appState.monthsData.length === 0) return;
+
+            const currentMonthData = appState.monthsData[appState.activeMonthIndex];
+            const currentSeason = getSeasonIndex(currentMonthData.month);
+
+            for (let i = 1; i <= 6; i++) {
+                const targetSeason = (currentSeason + i) % 6;
+
+                // Find a month with this season, preferring the "next" one in the list
+                let foundIndex = -1;
+                for (let j = 1; j <= appState.monthsData.length; j++) {
+                    const checkIndex = (appState.activeMonthIndex + j) % appState.monthsData.length;
+                    const mData = appState.monthsData[checkIndex];
+                    if (getSeasonIndex(mData.month) === targetSeason) {
+                        foundIndex = checkIndex;
+                        break;
+                    }
+                }
+
+                if (foundIndex !== -1) {
+                    appState.activeMonthIndex = foundIndex;
+                    render();
+                    return;
+                }
+            }
         }
 
         function updateSeasonCardUI(index) {
@@ -930,6 +941,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
                 indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
                 indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["Shukla Paksha", "Krishna Paksha"],
                 tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
             },
@@ -940,6 +952,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
                 indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
                 indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
+                seasonDescriptions: ["नए पत्ते और फूल खिल रहे हैं", "गर्म दिन, तेज धूप और गर्मी", "बादल छाए रहेंगे और भारी बारिश होगी", "सुहावने दिन और साफ आसमान", "ठंडी हवा और सुहावनी ठंड", "ठंडी हवाएं और धुंध भरी सुबह"],
                 paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
                 tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
             },
@@ -950,6 +963,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" },
                 indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ", "ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼", "ଆଷାଢ଼ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ରବ", "ଭାଦ୍ରବ / ଆଶ୍ୱିନ", "ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"],
                 indianSeasons: ["ବସନ୍ତ", "ଗ୍ରୀଷ୍ମ", "ବର୍ଷା", "ଶରତ", "ହେମନ୍ତ", "ଶିଶିର"],
+                seasonDescriptions: ["ନୂଆ ପତ୍ର ଏବଂ ଫୁଲ ଫୁଟୁଛି", "ଗରମ ଦିନ, ଉଜ୍ଜ୍ୱଳ ସୂର୍ଯ୍ୟ ଏବଂ ଉତ୍ତାପ", "ମେଘୁଆ ଆକାଶ ସହିତ ପ୍ରବଳ ବର୍ଷା", "ମନୋରମ ଦିନ ଏବଂ ସଫା ଆକାଶ", "ଥଣ୍ଡା ପବନ ଏବଂ ମନୋରମ ଶୀତ", "ଥଣ୍ଡା ପବନ ଏବଂ କୁହୁଡି ସକାଳ"],
                 paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
                 tithis: ["ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ଅମାବାସ୍ୟା"]
             },
@@ -960,6 +974,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "সিংহ", virgo: "কন্যা", libra: "তুলা", scorpio: "বৃশ্চিক", sagittarius: "ধনু", capricorn: "মकर", aquarius: "কুম্ভ", pisces: "মীন" },
                 indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
                 indianSeasons: ["বসন্ত", "গ্রীষ্ম", "বর্ষা", "শরৎ", "হেমন্ত", "শিশির"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
                 tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
             },
@@ -970,6 +985,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
                 indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
                 indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
                 tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
             },
@@ -980,6 +996,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચિક", sagittarius: "ધનુ", capricorn: "મકર", aquarius: "કુંભ", pisces: "મીન" },
                 indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"],
                 indianSeasons: ["વસંત", "ગ્રીષ્મ", "વર્ષા", "શરદ", "હેમંત", "શિશિર"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
                 tithis: ["પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "પૂનમ", "પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "અમાસ"]
             },
@@ -990,6 +1007,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" },
                 indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
                 indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
                 tithis: ["ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਮਾਸ਼ੀ", "ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਮੱਸਿਆ"]
             },
@@ -1000,6 +1018,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" },
                 indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"],
                 indianSeasons: ["இளவேனில்", "முதுவேனில்", "கார்", "குளிர்", "முன்பனி", "பின்பனி"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["வளர்பிறை", "தேய்பிறை"],
                 tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "அமாவாசை"]
             },
@@ -1010,6 +1029,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" },
                 indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"],
                 indianSeasons: ["వసంత", "గ్రీష్మ", "వర్ష", "శరత్", "హేమంత", "శిశిర"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
                 tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "అమావాస్య"]
             },
@@ -1020,6 +1040,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" },
                 indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"],
                 indianSeasons: ["ವಸಂತ", "ಗ್ರೀಷ್ಮ", "ವರ್ಷ", "ಶರತ್", "ಹೇಮಂತ", "ಶಿಶಿರ"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
                 tithis: ["ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಅಮಾವಾಸ್ಯೆ"]
             },
@@ -1030,6 +1051,7 @@ The word "Nua" means new and "Khai" means food.
                 horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" },
                 indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"],
                 indianSeasons: ["വസന്തം", "ഗ്രീഷ്മം", "വർഷം", "ശരത്", "ഹേമന്തം", "ശിശിരം"],
+                seasonDescriptions: ["New leaves & flowers blooming", "Hot days, bright sun & warmth", "Cloudy skies with heavy rains", "Pleasant days & clear skies", "Cool breeze & pleasant cold", "Cold winds & foggy mornings"],
                 paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
                 tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "പൗർണ്ണമി", "പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "അമാവാസി"]
             }
@@ -1601,10 +1623,11 @@ The word "Nua" means new and "Khai" means food.
             list.innerHTML = '';
             
             // 1. Display Season (Ritu)
-            const seasonIndex = Math.floor((data.month + 10) % 12 / 2);
+            const seasonIndex = getSeasonIndex(data.month);
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
             const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
+            const seasonDesc = langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "";
             
             if (seasonName) {
                 const config = seasonUIConfig[seasonIndex] || seasonUIConfig[0];
@@ -1620,11 +1643,13 @@ The word "Nua" means new and "Khai" means food.
                     <div class="season-ui-icon-container" id="seasonIcon" style="transform: scale(1) rotate(0deg); opacity: 1;">
                         ${config.icon}
                     </div>
-                    <div class="season-ui-content">
+                    <div class="season-ui-content flex-grow">
                         <span class="season-ui-label">Season</span>
-                        <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
+                        <div class="flex items-center justify-between w-full">
+                             <span class="season-ui-title fade-enter-active whitespace-nowrap" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
+                             <span class="text-xs text-gray-400 font-medium text-right ml-4 leading-tight max-w-[120px]" id="seasonDesc">${seasonDesc}</span>
+                        </div>
                     </div>
-                    <div class="season-ui-hint">Tap to explore</div>
                 `;
                 list.appendChild(cardDiv);
             }
