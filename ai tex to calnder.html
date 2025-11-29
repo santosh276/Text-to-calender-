@@ -328,6 +328,7 @@
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
                     <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                    <button onclick="openLinkModal()" class="header-btn flex-1"><i class="fa-solid fa-link"></i> Insert Link</button>
                 </div>
                 <div class="flex gap-3">
                     <button onclick="downloadCalendar()" class="header-btn flex-1"><i class="fa-solid fa-download"></i> Download HTML</button>
@@ -685,6 +686,55 @@ The word "Nua" means new and "Khai" means food.
                             <i class="fa-solid fa-check"></i> Crop & Insert
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INSERT LINK MODAL -->
+    <div id="link-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+        <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeLinkModal()"></div>
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col">
+            <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-gray-700"><i class="fa-solid fa-link mr-2 text-blue-500"></i>Insert Image Link</h3>
+                <button onclick="closeLinkModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="p-6 flex flex-col gap-4 overflow-y-auto">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Image URL</label>
+                    <input type="text" id="link-url-input" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="https://example.com/image.jpg">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Placement</label>
+                    <div class="space-y-3">
+                        <div class="radio-option selected" onclick="updateLinkType('logo')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm">App Logo</span>
+                            </div>
+                        </div>
+                        <div class="radio-option" onclick="updateLinkType('gridbg')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm">Grid Background</span>
+                            </div>
+                        </div>
+                        <div class="radio-option" onclick="updateLinkType('banner')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm">Day Banner</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="link-date-container" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
+                    <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
+                </div>
+                <div class="mt-4">
+                    <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Insert Link
+                    </button>
                 </div>
             </div>
         </div>
@@ -1151,6 +1201,7 @@ The word "Nua" means new and "Khai" means food.
         }
 
         let tempImageState = { key: null, originalUrl: null, selectedType: 'logo', cropper: null };
+        let tempLinkState = { selectedType: 'logo' };
         let activeFilters = new Set(['!', '^', '*']); 
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -1256,39 +1307,127 @@ The word "Nua" means new and "Khai" means food.
             setTimeout(() => { modal.style.display = 'none'; if (tempImageState.cropper) tempImageState.cropper.destroy(); }, 300);
         }
 
-        function performCropAndInsert() {
-            if (!tempImageState.cropper) return;
-            const canvas = tempImageState.cropper.getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 });
-            const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
-            const { key, selectedType } = tempImageState;
-            appState.images[key] = croppedDataUrl;
+        function insertImageToEditor(url, type, date) {
             let newText = editor.value;
-            if (selectedType === 'logo') {
+            if (type === 'logo') {
                 const configBlockRegex = /::: config([\s\S]*?):::/;
-                const logoLine = `@ Logo : ![App Logo](${key})`;
+                const logoLine = `@ Logo : ![App Logo](${url})`;
                 if (configBlockRegex.test(newText)) {
                     newText = newText.replace(configBlockRegex, (match, content) => {
                         if (content.match(/@\s*Logo\s*:/)) { return match.replace(/@\s*Logo\s*:.*(\r?\n|$)/, `${logoLine}\n`); } 
                         else { return `::: config\n${logoLine}${content}:::`; }
                     });
                 } else { newText = `::: config\n${logoLine}\n:::\n\n` + newText; }
-                appState.config.logoUrl = key;
-                editor.value = newText;
-                parseInput(newText);
-                render();
-            } else if (selectedType === 'banner' || selectedType === 'gridbg') {
-                const dropdownId = selectedType === 'banner' ? 'banner-date-select' : 'gridbg-date-select';
-                const date = document.getElementById(dropdownId).value;
+                appState.config.logoUrl = url;
+            } else if (type === 'banner' || type === 'gridbg') {
                 if (!date) { alert("Please select a date."); return; }
                 const dateHeaderRegex = new RegExp(`(>>\\s+${date})`);
-                const tagLine = selectedType === 'banner' ? `![Banner](${key})` : `![GridBg](${key})`;
+                const tagLine = type === 'banner' ? `![Banner](${url})` : `![GridBg](${url})`;
                 if(newText.match(dateHeaderRegex)) { newText = newText.replace(dateHeaderRegex, `$1\n${tagLine}`); } 
                 else { newText += `\n\n::: details\n>> ${date}\n${tagLine}\n@ Tag : New Event\n:::`; }
-                editor.value = newText;
-                parseInput(newText);
-                render();
-            } 
+            }
+            editor.value = newText;
+            parseInput(newText);
+            render();
+        }
+
+        function performCropAndInsert() {
+            if (!tempImageState.cropper) return;
+            const canvas = tempImageState.cropper.getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 });
+            const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            const { key, selectedType } = tempImageState;
+            appState.images[key] = croppedDataUrl;
+
+            let date = null;
+            if (selectedType === 'banner' || selectedType === 'gridbg') {
+                const dropdownId = selectedType === 'banner' ? 'banner-date-select' : 'gridbg-date-select';
+                date = document.getElementById(dropdownId).value;
+            }
+
+            insertImageToEditor(key, selectedType, date);
             closeCropModal();
+        }
+
+        function openLinkModal() {
+            const modal = document.getElementById('link-modal');
+            let year = new Date().getFullYear();
+            let month = new Date().getMonth();
+            if (appState.monthsData && appState.monthsData.length > 0) {
+                const currentData = appState.monthsData[appState.activeMonthIndex];
+                if (currentData) { year = currentData.year; month = currentData.month; }
+            }
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const dropdown = document.getElementById('link-date-select');
+            dropdown.innerHTML = '<option value="" disabled selected>Select Date</option>';
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${String(d).padStart(2, '0')}-${String(month + 1).padStart(2, '0')}-${year}`;
+                const dateObj = new Date(year, month, d);
+                const dayName = daysOfWeek[dateObj.getDay()];
+                const option = document.createElement('option');
+                option.value = dateStr;
+                option.text = `${dateStr} (${dayName})`;
+                dropdown.appendChild(option);
+            }
+            updateLinkType('logo');
+            document.getElementById('link-url-input').value = '';
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.remove('modal-hidden'), 10);
+        }
+
+        function closeLinkModal() {
+            const modal = document.getElementById('link-modal');
+            modal.classList.add('modal-hidden');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function updateLinkType(type) {
+            tempLinkState.selectedType = type;
+            document.querySelectorAll('#link-modal .radio-option').forEach(el => el.classList.remove('selected'));
+            const selectedEl = document.querySelector(`#link-modal .radio-option[onclick="updateLinkType('${type}')"]`);
+            if(selectedEl) selectedEl.classList.add('selected');
+
+            const dateContainer = document.getElementById('link-date-container');
+            if(type === 'banner' || type === 'gridbg') {
+                dateContainer.classList.remove('hidden');
+            } else {
+                dateContainer.classList.add('hidden');
+            }
+        }
+
+        function convertGoogleDriveLink(url) {
+            // 1. Check for /file/d/ID pattern (supports trailing slash, question mark, or end of line)
+            const fileIdRegex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
+            let match = url.match(fileIdRegex);
+
+            // 2. Check for id=ID pattern (e.g. open?id=, uc?id=)
+            if (!match) {
+                const idParamRegex = /[?&]id=([a-zA-Z0-9_-]+)/;
+                match = url.match(idParamRegex);
+            }
+
+            if (match && match[1]) {
+                // Use the thumbnail endpoint with a large size (w4096) to ensure high resolution
+                // This approach bypasses the 'Virus Scan' warning page that breaks 'uc?export=view' for large files
+                return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w4096`;
+            }
+            return url;
+        }
+
+        function performLinkInsert() {
+            let url = document.getElementById('link-url-input').value.trim();
+            if (!url) { alert("Please enter a URL."); return; }
+
+            // Convert Google Drive Links to Direct View Links
+            url = convertGoogleDriveLink(url);
+
+            const type = tempLinkState.selectedType;
+            let date = null;
+            if (type === 'banner' || type === 'gridbg') {
+                date = document.getElementById('link-date-select').value;
+                if (!date) { alert("Please select a date."); return; }
+            }
+            insertImageToEditor(url, type, date);
+            closeLinkModal();
         }
         
         function downloadTxtFile() {
@@ -1627,18 +1766,11 @@ The word "Nua" means new and "Khai" means food.
                 const detail = appState.details[dateKey];
                 const cell = document.createElement('div');
                 
-                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
-                
-                if (detail && detail.gridBgUrl) {
-                    const bgUrl = resolveImageUrls(detail.gridBgUrl);
-                    cell.classList.add('has-bg-image');
-                    cell.innerHTML += `<div class="grid-cell-bg-wrapper"><img src="${bgUrl}" class="grid-cell-bg-img"><div class="grid-cell-overlay"></div></div>`;
-                }
-                cell.onclick = () => openDayModal(d, data);
-                if (isSunday && !detail?.gridBgUrl) cell.classList.add('bg-red-50');
-                if (isToday) cell.classList.add('today-glow', 'border-orange-400');
+                // Determine Background Class (Mutually Exclusive)
+                let bgClass = 'bg-white';
+                if (isSunday) bgClass = 'bg-red-50';
 
-                // Determine primary event for total grid glow
+                // Determine primary event
                 const dayEvents = data.events.filter(e => e.date === d);
                 let primaryEvent = null;
                 if (dayEvents.length > 0) {
@@ -1648,15 +1780,25 @@ The word "Nua" means new and "Khai" means food.
                     else if (dayEvents.some(e => e.symbol === '>')) primaryEvent = '>';
                 }
 
-                if (primaryEvent && !isToday && !detail?.gridBgUrl) {
-                    // Remove default Sunday background if present to ensure clear event color
-                    if (cell.classList.contains('bg-red-50')) cell.classList.remove('bg-red-50');
-                    
-                    if (primaryEvent === '!') cell.classList.add('bg-red-100');
-                    else if (primaryEvent === '^') cell.classList.add('bg-green-100');
-                    else if (primaryEvent === '*') cell.classList.add('bg-blue-100');
-                    else if (primaryEvent === '>') cell.classList.add('bg-gray-100');
+                if (primaryEvent && !isToday) {
+                    if (primaryEvent === '!') bgClass = 'bg-red-100';
+                    else if (primaryEvent === '^') bgClass = 'bg-green-100';
+                    else if (primaryEvent === '*') bgClass = 'bg-blue-100';
+                    else if (primaryEvent === '>') bgClass = 'bg-gray-100';
                 }
+
+                if (detail && detail.gridBgUrl) bgClass = 'bg-white'; // Reset if image exists
+
+                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative ${bgClass} hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
+
+                if (detail && detail.gridBgUrl) {
+                    const bgUrl = resolveImageUrls(detail.gridBgUrl);
+                    cell.classList.add('has-bg-image');
+                    cell.innerHTML += `<div class="grid-cell-bg-wrapper"><img src="${bgUrl}" class="grid-cell-bg-img"><div class="grid-cell-overlay"></div></div>`;
+                }
+                cell.onclick = () => openDayModal(d, data);
+                // Note: bg-red-50 for Sunday is already handled in bgClass logic
+                if (isToday) cell.classList.add('today-glow', 'border-orange-400');
 
                 const contentWrapper = document.createElement('div');
                 contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full items-center justify-center';
