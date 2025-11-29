@@ -1343,6 +1343,7 @@ The word "Nua" means new and "Khai" means food.
             let currentDetailKey = null;
             let currentHoroSign = null;
             let parsedSeasonDescs = {};
+            let currentSeasonIdx = -1;
             
             let tempConfig = { title: 'Panchang App', logoUrl: null, language: 'en' };
 
@@ -1429,10 +1430,11 @@ The word "Nua" means new and "Khai" means food.
                     }
                 }
                 else if (currentBlock === 'seasons') {
-                    const match = line.match(/^@\s*(.+?)\s*:\s*(.+)/);
+                    const match = line.match(/^@\s*(.+?)\s*:\s*(.*)/);
                     if (match) {
                         const key = match[1].trim().toLowerCase();
-                        const val = match[2].trim();
+                        let val = match[2].trim();
+
                         let idx = -1;
                         if (key.includes('spring') || key.includes('vasant')) idx = 0;
                         else if (key.includes('summer') || key.includes('grishma')) idx = 1;
@@ -1441,7 +1443,15 @@ The word "Nua" means new and "Khai" means food.
                         else if (key.includes('pre-winter') || key.includes('hemant')) idx = 4;
                         else if (key.includes('winter') || key.includes('shishir')) idx = 5;
                         
-                        if (idx !== -1) parsedSeasonDescs[idx] = val;
+                        if (idx !== -1) {
+                            currentSeasonIdx = idx;
+                            parsedSeasonDescs[idx] = [];
+                            if (val) parsedSeasonDescs[idx].push(val);
+                        } else {
+                            currentSeasonIdx = -1;
+                        }
+                    } else if (currentSeasonIdx !== -1 && line.trim() !== '') {
+                        parsedSeasonDescs[currentSeasonIdx].push(line.trim());
                     }
                 }
                 else if (currentBlock === 'panchang') {
@@ -1522,10 +1532,14 @@ The word "Nua" means new and "Khai" means food.
             renderHoroscope(currentData);
         }
 
-        function toggleSeasonDescription(event) {
+        function toggleSeasonDescription(btn, event) {
             event.stopPropagation();
-            const desc = document.getElementById('season-desc-container');
-            const icon = document.getElementById('season-toggle-icon');
+            const card = btn.closest('.season-ui-card');
+            if (!card) return;
+
+            const desc = card.querySelector('.season-desc-container');
+            const icon = btn.querySelector('.season-toggle-icon') || btn.querySelector('i');
+
             if (desc) {
                 desc.classList.toggle('hidden');
                 if (icon) {
@@ -1623,10 +1637,29 @@ The word "Nua" means new and "Khai" means food.
                 cell.onclick = () => openDayModal(d, data);
                 if (isSunday && !detail?.gridBgUrl) cell.classList.add('bg-red-50');
                 if (isToday) cell.classList.add('today-glow', 'border-orange-400');
+
+                // Determine primary event for total grid glow
+                const dayEvents = data.events.filter(e => e.date === d);
+                let primaryEvent = null;
+                if (dayEvents.length > 0) {
+                    if (dayEvents.some(e => e.symbol === '!')) primaryEvent = '!';
+                    else if (dayEvents.some(e => e.symbol === '^')) primaryEvent = '^';
+                    else if (dayEvents.some(e => e.symbol === '*')) primaryEvent = '*';
+                    else if (dayEvents.some(e => e.symbol === '>')) primaryEvent = '>';
+                }
+
+                if (primaryEvent && !isToday && !detail?.gridBgUrl) {
+                    if (primaryEvent === '!') cell.classList.add('shadow-[inset_0_0_15px_rgba(239,68,68,0.25)]'); // Red glow
+                    else if (primaryEvent === '^') cell.classList.add('shadow-[inset_0_0_15px_rgba(34,197,94,0.25)]'); // Green glow
+                    else if (primaryEvent === '*') cell.classList.add('shadow-[inset_0_0_15px_rgba(59,130,246,0.25)]'); // Blue glow
+                    else if (primaryEvent === '>') cell.classList.add('shadow-[inset_0_0_15px_rgba(156,163,175,0.25)]'); // Gray glow
+                }
+
                 const contentWrapper = document.createElement('div');
-                contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full';
+                contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full items-center justify-center';
+
                 const dateNum = document.createElement('span');
-                dateNum.className = `text-base md:text-2xl font-bold ${isSunday ? 'text-deepred' : 'text-gray-700'}`;
+                dateNum.className = `text-lg md:text-2xl font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'}`;
                 if (isToday) dateNum.classList.add('text-deepred', 'underline');
                 dateNum.innerText = toNativeNum(d, currentLang);
                 contentWrapper.appendChild(dateNum);
@@ -1637,28 +1670,20 @@ The word "Nua" means new and "Khai" means food.
                 
                 let iconHtml = '';
                 if (tithiInfo.index === 14) { // Purnima
-                    iconHtml = `<i class="fa-solid fa-circle text-amber-400 text-lg absolute top-1 right-1 drop-shadow-md" title="Purnima"></i>`;
+                    iconHtml = `<i class="fa-solid fa-circle text-amber-400 text-xs md:text-base absolute top-0 right-0 p-0.5 drop-shadow-md" title="Purnima"></i>`;
                 } else if (tithiInfo.index === 29) { // Amavasya
-                    iconHtml = `<i class="fa-solid fa-circle text-black text-lg absolute top-1 right-1" title="Amavasya"></i>`;
+                    iconHtml = `<i class="fa-solid fa-circle text-black text-xs md:text-base absolute top-0 right-0 p-0.5" title="Amavasya"></i>`;
                 } else if (tithiInfo.index === 10 || tithiInfo.index === 25) { // Ekadashi (Shukla=10, Krishna=25)
-                    iconHtml = `<i class="fa-solid fa-moon text-indigo-400 text-sm absolute top-1 right-1" title="Ekadashi"></i>`;
+                    iconHtml = `<i class="fa-solid fa-moon text-indigo-400 text-[10px] md:text-sm absolute top-0 right-0 p-0.5" title="Ekadashi"></i>`;
                 }
-                if (iconHtml) contentWrapper.innerHTML += iconHtml;
+
+                if (iconHtml) {
+                    const iconSpan = document.createElement('span');
+                    iconSpan.innerHTML = iconHtml;
+                    contentWrapper.appendChild(iconSpan);
+                }
                 // ------------------------
 
-                const dayEvents = data.events.filter(e => e.date === d);
-                dayEvents.forEach(ev => {
-                    const evDiv = document.createElement('div');
-                    evDiv.className = 'mt-1 text-xs p-1 rounded truncate';
-                    if (ev.symbol === '!') evDiv.className += ' bg-saffron text-white font-bold shadow-sm';
-                    else if (ev.symbol === '*') evDiv.className += ' bg-deepred text-white';
-                    else if (ev.symbol === '^') evDiv.className += ' bg-indigoblue text-white';
-                    else evDiv.className += ' bg-gray-100 text-gray-800 border border-gray-200';
-                    let html = `<span class="block truncate">${ev.engName}</span>`;
-                    if (ev.locName) html += `<span class="block truncate font-oriya opacity-90 text-[10px]">${ev.locName}</span>`;
-                    evDiv.innerHTML = html;
-                    contentWrapper.appendChild(evDiv);
-                });
                 cell.appendChild(contentWrapper);
                 grid.appendChild(cell);
             }
@@ -1675,9 +1700,10 @@ The word "Nua" means new and "Khai" means food.
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
             const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
-            const seasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex]) 
+            const rawSeasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex])
                                ? appState.customSeasonDescriptions[seasonIndex] 
                                : (langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "");
+            const seasonDescHtml = formatSeasonDescription(rawSeasonDesc);
             
             if (seasonName) {
                 const config = seasonUIConfig[seasonIndex] || seasonUIConfig[0];
@@ -1699,12 +1725,12 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="season-ui-label">Season</span>
                                 <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
                             </div>
-                            <button onclick="toggleSeasonDescription(event)" class="md:hidden text-gray-400 hover:text-gray-600 p-2 -mr-2 -mt-2 transition-transform active:scale-95 focus:outline-none">
-                                <i class="fa-solid fa-chevron-down text-sm" id="season-toggle-icon"></i>
+                            <button onclick="toggleSeasonDescription(this, event)" class="md:hidden text-gray-400 hover:text-gray-600 p-2 -mr-2 -mt-2 transition-transform active:scale-95 focus:outline-none">
+                                <i class="fa-solid fa-chevron-down text-sm season-toggle-icon"></i>
                             </button>
                         </div>
-                        <div id="season-desc-container" class="mt-3 text-[11px] md:text-xs text-gray-600 leading-relaxed hidden md:block w-full border-t md:border-t-0 border-gray-100 pt-2 md:pt-1 font-sans">
-                            ${seasonDesc}
+                        <div class="season-desc-container mt-3 text-[11px] md:text-xs text-gray-600 leading-relaxed hidden md:block w-full border-t md:border-t-0 border-gray-100 pt-2 md:pt-1 font-sans">
+                            ${seasonDescHtml}
                         </div>
                     </div>
                 `;
@@ -1811,6 +1837,33 @@ The word "Nua" means new and "Khai" means food.
                 btn.onclick = () => openHoroscopeModal(h.sign, h.text);
                 grid.appendChild(btn);
             });
+        }
+
+        function formatSeasonDescription(desc) {
+            if (!desc) return '';
+            const lines = Array.isArray(desc) ? desc : [desc];
+            let html = '';
+            let inList = false;
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
+                    if (!inList) {
+                        html += '<ul class="list-disc pl-5 mb-2 text-gray-600">';
+                        inList = true;
+                    }
+                    html += `<li>${trimmed.substring(1).trim()}</li>`;
+                } else {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (trimmed) html += `<p class="mb-2 last:mb-0">${trimmed}</p>`;
+                }
+            });
+
+            if (inList) html += '</ul>';
+            return html;
         }
 
         function renderRichBody(container, lines) {
