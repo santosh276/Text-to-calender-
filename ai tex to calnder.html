@@ -422,6 +422,17 @@ Makar Sankranti is a major harvest festival.
                     </div>
 
                     <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 6. Custom Season Descriptions</div>
+                        <div class="code-block">
+::: seasons
+@ Spring : <span class="hl-string">Nature blooms, flowers everywhere.</span>
+@ Summer : <span class="hl-string">It's getting hot in here.</span>
+:::
+                        </div>
+                        <p class="code-annotation">Customize descriptions for Vasant (Spring), Grishma (Summer), Varsha (Monsoon), Sharad (Autumn), Hemant (Pre-Winter), Shishir (Winter).</p>
+                    </div>
+
+                    <div class="guide-section">
                         <div class="guide-title"><i class="fa-solid fa-star"></i> 5. Horoscope (Short & Detail)</div>
                         <div class="code-block">
 <span class="hl-comment"># Short (Sidebar)</span>
@@ -929,6 +940,7 @@ The word "Nua" means new and "Khai" means food.
             todayIndex: -1,
             details: {}, 
             horoscopeDetails: {},
+            customSeasonDescriptions: {},
             images: {}, 
             config: { title: 'Panchang App', logoUrl: null, language: 'en' }
         };
@@ -1330,6 +1342,7 @@ The word "Nua" means new and "Khai" means food.
             let parsedHoroDetails = {};
             let currentDetailKey = null;
             let currentHoroSign = null;
+            let parsedSeasonDescs = {};
             
             let tempConfig = { title: 'Panchang App', logoUrl: null, language: 'en' };
 
@@ -1415,6 +1428,22 @@ The word "Nua" means new and "Khai" means food.
                         }
                     }
                 }
+                else if (currentBlock === 'seasons') {
+                    const match = line.match(/^@\s*(.+?)\s*:\s*(.+)/);
+                    if (match) {
+                        const key = match[1].trim().toLowerCase();
+                        const val = match[2].trim();
+                        let idx = -1;
+                        if (key.includes('spring') || key.includes('vasant')) idx = 0;
+                        else if (key.includes('summer') || key.includes('grishma')) idx = 1;
+                        else if (key.includes('monsoon') || key.includes('varsha')) idx = 2;
+                        else if (key.includes('autumn') || key.includes('sharad')) idx = 3;
+                        else if (key.includes('pre-winter') || key.includes('hemant')) idx = 4;
+                        else if (key.includes('winter') || key.includes('shishir')) idx = 5;
+                        
+                        if (idx !== -1) parsedSeasonDescs[idx] = val;
+                    }
+                }
                 else if (currentBlock === 'panchang') {
                     const panMatch = line.match(/^@\s+(.+?)\s*:\s*(.+)/);
                     if (panMatch && currentMonthObj) currentMonthObj.panchang[panMatch[1]] = panMatch[2];
@@ -1428,6 +1457,7 @@ The word "Nua" means new and "Khai" means food.
             appState.monthsData = parsedMonths;
             appState.details = parsedDetails;
             appState.horoscopeDetails = parsedHoroDetails;
+            appState.customSeasonDescriptions = parsedSeasonDescs;
             appState.config = tempConfig;
             
             findTodayIndex();
@@ -1645,7 +1675,9 @@ The word "Nua" means new and "Khai" means food.
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
             const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
-            const seasonDesc = langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "";
+            const seasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex]) 
+                               ? appState.customSeasonDescriptions[seasonIndex] 
+                               : (langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "");
             
             if (seasonName) {
                 const config = seasonUIConfig[seasonIndex] || seasonUIConfig[0];
