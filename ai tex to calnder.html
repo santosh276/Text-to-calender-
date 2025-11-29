@@ -1627,18 +1627,11 @@ The word "Nua" means new and "Khai" means food.
                 const detail = appState.details[dateKey];
                 const cell = document.createElement('div');
                 
-                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
-                
-                if (detail && detail.gridBgUrl) {
-                    const bgUrl = resolveImageUrls(detail.gridBgUrl);
-                    cell.classList.add('has-bg-image');
-                    cell.innerHTML += `<div class="grid-cell-bg-wrapper"><img src="${bgUrl}" class="grid-cell-bg-img"><div class="grid-cell-overlay"></div></div>`;
-                }
-                cell.onclick = () => openDayModal(d, data);
-                if (isSunday && !detail?.gridBgUrl) cell.classList.add('bg-red-50');
-                if (isToday) cell.classList.add('today-glow', 'border-orange-400');
+                // Determine Background Class (Mutually Exclusive)
+                let bgClass = 'bg-white';
+                if (isSunday) bgClass = 'bg-red-50';
 
-                // Determine primary event for total grid glow
+                // Determine primary event
                 const dayEvents = data.events.filter(e => e.date === d);
                 let primaryEvent = null;
                 if (dayEvents.length > 0) {
@@ -1648,15 +1641,25 @@ The word "Nua" means new and "Khai" means food.
                     else if (dayEvents.some(e => e.symbol === '>')) primaryEvent = '>';
                 }
 
-                if (primaryEvent && !isToday && !detail?.gridBgUrl) {
-                    // Remove default Sunday background if present to ensure clear event color
-                    if (cell.classList.contains('bg-red-50')) cell.classList.remove('bg-red-50');
-                    
-                    if (primaryEvent === '!') cell.classList.add('bg-red-100');
-                    else if (primaryEvent === '^') cell.classList.add('bg-green-100');
-                    else if (primaryEvent === '*') cell.classList.add('bg-blue-100');
-                    else if (primaryEvent === '>') cell.classList.add('bg-gray-100');
+                if (primaryEvent && !isToday) {
+                    if (primaryEvent === '!') bgClass = 'bg-red-100';
+                    else if (primaryEvent === '^') bgClass = 'bg-green-100';
+                    else if (primaryEvent === '*') bgClass = 'bg-blue-100';
+                    else if (primaryEvent === '>') bgClass = 'bg-gray-100';
                 }
+
+                if (detail && detail.gridBgUrl) bgClass = 'bg-white'; // Reset if image exists
+
+                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative ${bgClass} hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
+
+                if (detail && detail.gridBgUrl) {
+                    const bgUrl = resolveImageUrls(detail.gridBgUrl);
+                    cell.classList.add('has-bg-image');
+                    cell.innerHTML += `<div class="grid-cell-bg-wrapper"><img src="${bgUrl}" class="grid-cell-bg-img"><div class="grid-cell-overlay"></div></div>`;
+                }
+                cell.onclick = () => openDayModal(d, data);
+                // Note: bg-red-50 for Sunday is already handled in bgClass logic
+                if (isToday) cell.classList.add('today-glow', 'border-orange-400');
 
                 const contentWrapper = document.createElement('div');
                 contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full items-center justify-center';
