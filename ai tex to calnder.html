@@ -303,6 +303,96 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* BANNER CAROUSEL STYLES */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background-color: #fff;
+            margin-bottom: 1rem;
+            display: none; /* Hidden by default */
+            aspect-ratio: 16 / 5;
+        }
+        @media (max-width: 768px) {
+            .carousel-container { aspect-ratio: 16 / 8; margin-bottom: 0.5rem; }
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px 20px 10px 20px;
+            color: white;
+            pointer-events: none;
+        }
+
+        .carousel-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s;
+            z-index: 10;
+        }
+        .carousel-nav-btn:hover { background: rgba(0, 0, 0, 0.6); }
+        .carousel-prev { left: 10px; }
+        .carousel-next { right: 10px; }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .carousel-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -568,6 +658,18 @@ The word "Nua" means new and "Khai" means food.
                         </div>
                     </div>
 
+                    <!-- BANNER CAROUSEL COMPONENT -->
+                    <div id="banner-carousel" class="carousel-container">
+                        <div class="carousel-track" id="carousel-track"></div>
+                        <button class="carousel-nav-btn carousel-prev" onclick="moveCarousel(-1)">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-nav-btn carousel-next" onclick="moveCarousel(1)">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="carousel-dots" id="carousel-dots"></div>
+                    </div>
+
                     <div class="bg-white rounded-xl shadow-lg p-2 md:p-4">
                         <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
                         <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
@@ -635,6 +737,17 @@ The word "Nua" means new and "Khai" means food.
                         <option value="kn">Kannada (ಕನ್ನಡ)</option>
                         <option value="ml">Malayalam (മലയാളം)</option>
                     </select>
+                </div>
+
+                <div class="flex items-center justify-between border-t border-gray-100 pt-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700">Month Banner Carousel</label>
+                        <p class="text-xs text-gray-500">Show aggregated day banners at the top of the grid.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="banner-carousel-toggle" class="sr-only peer" onchange="toggleBannerCarousel(this)">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                    </label>
                 </div>
             </div>
         </div>
@@ -1186,10 +1299,23 @@ The word "Nua" means new and "Khai" means food.
 
         function openSettingsModal() {
             document.getElementById('language-select').value = appState.config.language || 'en';
+
+            // Set Checkbox State
+            const bannerToggle = document.getElementById('banner-carousel-toggle');
+            if (bannerToggle) {
+                bannerToggle.checked = appState.config.showCarousel !== false; // Default true
+            }
+
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
         }
+
+        function toggleBannerCarousel(checkbox) {
+            appState.config.showCarousel = checkbox.checked;
+            render();
+        }
+
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
             modal.classList.add('modal-hidden');
@@ -1198,6 +1324,130 @@ The word "Nua" means new and "Khai" means food.
         function changeLanguage(langCode) {
             appState.config.language = langCode;
             render();
+        }
+
+        // CAROUSEL LOGIC
+        let carouselInterval;
+        let currentSlide = 0;
+        let totalSlides = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function renderBannerCarousel(data) {
+            const container = document.getElementById('banner-carousel');
+            const track = document.getElementById('carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+
+            // 1. Collect Banners
+            const banners = [];
+            const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${data.year}-${data.month}-${d}`;
+                const detail = appState.details[dateKey];
+
+                if (detail && detail.bannerUrl) {
+                    // Get event title for overlay
+                    const dayEvents = data.events.filter(e => e.date === d);
+                    let title = "Event";
+                    if (dayEvents.length > 0) title = dayEvents[0].engName;
+
+                    banners.push({
+                        date: d,
+                        url: resolveImageUrls(detail.bannerUrl),
+                        title: title
+                    });
+                }
+            }
+
+            // Check settings (default to true if undefined)
+            const showCarousel = appState.config.showCarousel !== false;
+
+            if (banners.length === 0 || !showCarousel) {
+                container.style.display = 'none';
+                clearInterval(carouselInterval);
+                return;
+            }
+
+            container.style.display = 'block';
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            totalSlides = banners.length;
+            currentSlide = 0; // Reset to first slide on re-render
+
+            banners.forEach((b, index) => {
+                // Slide
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                slide.onclick = () => openDayModal(b.date, data);
+                slide.innerHTML = `
+                    <img src="${b.url}" class="carousel-image">
+                    <div class="carousel-overlay">
+                        <div class="text-xs font-bold uppercase tracking-wider opacity-80 mb-1">${shortMonths[data.month]} ${b.date}</div>
+                        <div class="text-xl md:text-2xl font-bold leading-tight shadow-black drop-shadow-md">${b.title}</div>
+                    </div>
+                `;
+                track.appendChild(slide);
+
+                // Dot
+                const dot = document.createElement('div');
+                dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+                dot.onclick = (e) => { e.stopPropagation(); goToSlide(index); };
+                dotsContainer.appendChild(dot);
+            });
+
+            // Initialize Touch
+            track.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            track.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, {passive: true});
+
+            updateCarousel();
+            startAutoPlay();
+        }
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) moveCarousel(1);
+            if (touchEndX > touchStartX + 50) moveCarousel(-1);
+        }
+
+        function moveCarousel(direction) {
+            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+            updateCarousel();
+            resetAutoPlay();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+            resetAutoPlay();
+        }
+
+        function updateCarousel() {
+            const track = document.getElementById('carousel-track');
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((d, i) => {
+                if(i === currentSlide) d.classList.add('active');
+                else d.classList.remove('active');
+            });
+        }
+
+        function startAutoPlay() {
+            clearInterval(carouselInterval);
+            carouselInterval = setInterval(() => {
+                moveCarousel(1);
+            }, 5000);
+        }
+
+        function resetAutoPlay() {
+            clearInterval(carouselInterval);
+            startAutoPlay();
         }
 
         let tempImageState = { key: null, originalUrl: null, selectedType: 'logo', cropper: null };
@@ -1665,6 +1915,7 @@ The word "Nua" means new and "Khai" means food.
                 btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
             }
 
+            renderBannerCarousel(currentData);
             renderCalendarGrid(currentData);
             renderPanchang(currentData);
             renderFestivals(currentData);
