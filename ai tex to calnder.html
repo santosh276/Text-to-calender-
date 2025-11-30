@@ -287,6 +287,113 @@
             transition: opacity 300ms, transform 300ms;
         }
 
+        /* BANNER CAROUSEL STYLES */
+        .banner-container {
+            position: relative;
+            width: 100%;
+            padding-top: 45%; /* Aspect Ratio for Mobile */
+            overflow: hidden;
+            border-radius: 12px;
+            background-color: #f3f4f6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: none; /* Hidden by default */
+        }
+        .banner-container.visible { display: block; }
+
+        @media (min-width: 768px) {
+            .banner-container {
+                padding-top: 25%; /* Widescreen for Desktop */
+            }
+        }
+
+        .banner-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            z-index: 1;
+            cursor: pointer;
+        }
+        .banner-slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 20px 24px;
+            color: white;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .banner-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .banner-nav:hover { background: rgba(255, 255, 255, 0.4); transform: translateY(-50%) scale(1.1); }
+        .banner-prev { left: 12px; }
+        .banner-next { right: 12px; }
+
+        .banner-dots {
+            position: absolute;
+            bottom: 12px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+        }
+        .banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .banner-dot.active {
+            background: #FF9933;
+            transform: scale(1.3);
+            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+        }
+        .banner-date-badge {
+            background-color: #CC0000;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            align-self: flex-start;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
         /* ANIMATION UTILITIES */
         .fade-enter-active {
             opacity: 1;
@@ -510,9 +617,17 @@ Financial matters improve today. Stay patient with loved ones and focus on long-
 
 ::: details
 >> 21-11-2025
+![Banner](https://images.unsplash.com/photo-1561582200-a4d33a1a1f34?q=80&w=1000&auto=format&fit=crop)
 @ Tag : Major Agricultural Festival
 
 Nuakhai is the most important social festival of Western Odisha and Sambalpur region.
+
+::: details
+>> 25-11-2025
+![Banner](https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop)
+@ Tag : Office Holiday
+
+Office is closed for annual maintenance.
 
 # Significance
 The word "Nua" means new and "Khai" means food.
@@ -567,6 +682,9 @@ The word "Nua" means new and "Khai" means food.
                             <i class="fa-solid fa-calendar-days text-4xl text-saffron"></i>
                         </div>
                     </div>
+
+                    <!-- MONTH BANNER CAROUSEL -->
+                    <div id="month-banner-container" class="banner-container"></div>
 
                     <div class="bg-white rounded-xl shadow-lg p-2 md:p-4">
                         <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
@@ -983,6 +1101,149 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        // --- BANNER CAROUSEL LOGIC ---
+        const BannerCarousel = {
+            currentSlide: 0,
+            slides: [],
+            autoPlayTimer: null,
+            container: null,
+            handlers: {}, // Store handlers for cleanup
+
+            init(containerId, slidesData) {
+                const newContainer = document.getElementById(containerId);
+                if(!newContainer) return;
+
+                // Cleanup previous listeners if re-initializing on same container
+                if (this.container && this.container === newContainer) {
+                    this.cleanup();
+                }
+                this.container = newContainer;
+
+                this.slides = slidesData;
+                this.currentSlide = 0;
+                this.stopAutoPlay();
+
+                if (slidesData.length === 0) {
+                    this.container.classList.remove('visible');
+                    this.container.innerHTML = '';
+                    return;
+                }
+
+                this.container.classList.add('visible');
+                this.renderHTML();
+                this.showSlide(0);
+                this.startAutoPlay();
+
+                // Define handlers
+                let touchStartX = 0;
+                let touchEndX = 0;
+
+                this.handlers.touchstart = (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    this.stopAutoPlay();
+                };
+
+                this.handlers.touchend = (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    this.handleSwipe(touchStartX, touchEndX);
+                    this.startAutoPlay();
+                };
+
+                this.handlers.mouseenter = () => this.stopAutoPlay();
+                this.handlers.mouseleave = () => this.startAutoPlay();
+
+                // Attach listeners
+                this.container.addEventListener('touchstart', this.handlers.touchstart, {passive: true});
+                this.container.addEventListener('touchend', this.handlers.touchend, {passive: true});
+                this.container.addEventListener('mouseenter', this.handlers.mouseenter);
+                this.container.addEventListener('mouseleave', this.handlers.mouseleave);
+            },
+
+            cleanup() {
+                if (!this.container) return;
+                if (this.handlers.touchstart) this.container.removeEventListener('touchstart', this.handlers.touchstart);
+                if (this.handlers.touchend) this.container.removeEventListener('touchend', this.handlers.touchend);
+                if (this.handlers.mouseenter) this.container.removeEventListener('mouseenter', this.handlers.mouseenter);
+                if (this.handlers.mouseleave) this.container.removeEventListener('mouseleave', this.handlers.mouseleave);
+                this.handlers = {};
+            },
+
+            renderHTML() {
+                let html = '';
+                // Slides
+                this.slides.forEach((slide, idx) => {
+                    // Safe onclick call
+                    html += `
+                        <div class="banner-slide" id="banner-slide-${idx}"
+                             style="background-image: url('${slide.url}');"
+                             onclick="openDayModal(${slide.date}, appState.monthsData[appState.activeMonthIndex])">
+                            <div class="banner-overlay">
+                                <span class="banner-date-badge">${slide.dateDisplay}</span>
+                                <h3 class="text-xl md:text-2xl font-bold leading-tight drop-shadow-md text-white">${slide.title}</h3>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Navigation (only if > 1 slide)
+                if (this.slides.length > 1) {
+                    html += `
+                        <button class="banner-nav banner-prev" onclick="BannerCarousel.prev(event)"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="banner-nav banner-next" onclick="BannerCarousel.next(event)"><i class="fa-solid fa-chevron-right"></i></button>
+                        <div class="banner-dots">
+                            ${this.slides.map((_, i) => `<div class="banner-dot" id="banner-dot-${i}" onclick="BannerCarousel.showSlide(${i})"></div>`).join('')}
+                        </div>
+                    `;
+                }
+
+                this.container.innerHTML = html;
+            },
+
+            showSlide(index) {
+                if (this.slides.length === 0) return;
+                if (index >= this.slides.length) index = 0;
+                if (index < 0) index = this.slides.length - 1;
+                this.currentSlide = index;
+
+                const allSlides = this.container.querySelectorAll('.banner-slide');
+                allSlides.forEach((el, i) => {
+                    if (i === index) el.classList.add('active');
+                    else el.classList.remove('active');
+                });
+
+                const allDots = this.container.querySelectorAll('.banner-dot');
+                allDots.forEach((el, i) => {
+                    if (i === index) el.classList.add('active');
+                    else el.classList.remove('active');
+                });
+            },
+
+            next(e) {
+                if(e) e.stopPropagation();
+                this.showSlide(this.currentSlide + 1);
+            },
+
+            prev(e) {
+                if(e) e.stopPropagation();
+                this.showSlide(this.currentSlide - 1);
+            },
+
+            handleSwipe(start, end) {
+                if (start - end > 50) this.next();
+                if (end - start > 50) this.prev();
+            },
+
+            startAutoPlay() {
+                if (this.slides.length <= 1) return;
+                this.stopAutoPlay();
+                this.autoPlayTimer = setInterval(() => this.next(), 5000);
+            },
+
+            stopAutoPlay() {
+                if (this.autoPlayTimer) clearInterval(this.autoPlayTimer);
+            }
+        };
+
         const editor = document.getElementById('editor');
         let appState = {
             activeMonthIndex: 0,
@@ -992,6 +1253,7 @@ The word "Nua" means new and "Khai" means food.
             horoscopeDetails: {},
             customSeasonDescriptions: {},
             images: {}, 
+            cachedImages: {},
             config: { title: 'Panchang App', logoUrl: null, language: 'en' }
         };
 
@@ -1203,6 +1465,141 @@ The word "Nua" means new and "Khai" means food.
         let tempImageState = { key: null, originalUrl: null, selectedType: 'logo', cropper: null };
         let tempLinkState = { selectedType: 'logo' };
         let activeFilters = new Set(['!', '^', '*']); 
+
+        // --- IMAGE CACHING SYSTEM (IndexedDB) ---
+        const ImageCacheDB = {
+            dbName: 'PanchangImageCache',
+            version: 1,
+            db: null,
+
+            async init() {
+                if (!window.indexedDB) return;
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(this.dbName, this.version);
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('images')) {
+                            db.createObjectStore('images', { keyPath: 'url' });
+                        }
+                    };
+                    request.onsuccess = (e) => {
+                        this.db = e.target.result;
+                        resolve();
+                    };
+                    request.onerror = (e) => {
+                         console.warn("ImageCacheDB Init Failed", e);
+                         reject(e);
+                    };
+                });
+            },
+
+            async get(url) {
+                if (!this.db) await this.init();
+                if (!this.db) return null;
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['images'], 'readonly');
+                    const store = transaction.objectStore('images');
+                    const request = store.get(url);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            },
+
+            async put(url, blob) {
+                if (!this.db) await this.init();
+                if (!this.db) return;
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['images'], 'readwrite');
+                    const store = transaction.objectStore('images');
+                    // Store as Blob to save space and keep format
+                    const request = store.put({ url, blob, timestamp: Date.now() });
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        };
+
+        const ImageLoader = {
+            queue: [],
+            attempted: new Set(), // Track attempted URLs to avoid retry loops
+            processing: false,
+            batchSize: 2,
+
+            scan() {
+                const urls = new Set();
+                if (appState.config.logoUrl) urls.add(appState.config.logoUrl);
+
+                Object.values(appState.details).forEach(d => {
+                    if (d.bannerUrl) urls.add(d.bannerUrl);
+                    if (d.gridBgUrl) urls.add(d.gridBgUrl);
+                    d.bodyLines.forEach(line => {
+                        const match = line.match(/!\[.*?\]\((.*?)\)/);
+                        if (match) urls.add(match[1]);
+                    });
+                });
+
+                urls.forEach(url => {
+                    // Check if already cached OR already attempted this session
+                    if (url && url.startsWith('http') && !appState.cachedImages[url] && !this.attempted.has(url)) {
+                         this.addToQueue(url);
+                    }
+                });
+            },
+
+            addToQueue(url) {
+                if (!this.queue.includes(url)) {
+                    this.queue.push(url);
+                    this.processQueue();
+                }
+            },
+
+            async processQueue() {
+                if (this.processing || this.queue.length === 0) return;
+                this.processing = true;
+
+                const batch = this.queue.splice(0, this.batchSize);
+
+                await Promise.allSettled(batch.map(url => this.fetchAndCache(url)));
+
+                setTimeout(() => {
+                    this.processing = false;
+                    if (this.queue.length > 0) this.processQueue();
+                }, 1500);
+            },
+
+            async fetchAndCache(url) {
+                this.attempted.add(url); // Mark as attempted immediately
+
+                // 1. Check IndexedDB first
+                try {
+                    const cached = await ImageCacheDB.get(url);
+                    if (cached) {
+                        const objUrl = URL.createObjectURL(cached.blob);
+                        appState.cachedImages[url] = objUrl;
+                        render();
+                        return;
+                    }
+                } catch (e) { }
+
+                // 2. Fetch from Network
+                try {
+                    const fetchUrl = convertGoogleDriveLink(url);
+                    const response = await fetch(fetchUrl);
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        await ImageCacheDB.put(url, blob);
+                        const objUrl = URL.createObjectURL(blob);
+                        appState.cachedImages[url] = objUrl;
+                        render();
+                    } else {
+                        await fetch(fetchUrl, { mode: 'no-cors' });
+                    }
+                } catch (err) {
+                    try { await fetch(url, { mode: 'no-cors' }); } catch (e) {}
+                }
+            }
+        };
+
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -1458,6 +1855,8 @@ The word "Nua" means new and "Khai" means food.
         if (window.exportedData) {
             appState = window.exportedData;
             if (!appState.images) appState.images = {};
+            // Reset cachedImages for session
+            appState.cachedImages = {};
             if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en' };
             const editorPanel = document.getElementById('editor-panel');
             if (editorPanel) editorPanel.style.display = 'none';
@@ -1467,6 +1866,8 @@ The word "Nua" means new and "Khai" means food.
             findTodayIndex();
             if (appState.todayIndex !== -1) appState.activeMonthIndex = appState.todayIndex;
             render(); 
+            // Trigger background caching
+            setTimeout(() => ImageLoader.scan(), 1000);
         } else if (editor) {
             editor.addEventListener('input', (e) => { parseInput(e.target.value); });
             parseInput(editor.value);
@@ -1613,6 +2014,9 @@ The word "Nua" means new and "Khai" means food.
             if (appState.activeMonthIndex >= appState.monthsData.length) appState.activeMonthIndex = 0;
             if (appState.todayIndex !== -1 && appState.activeMonthIndex === 0) appState.activeMonthIndex = appState.todayIndex;
             render();
+
+            // Trigger background caching
+            ImageLoader.scan();
         }
 
         function findTodayIndex() {
@@ -1628,7 +2032,16 @@ The word "Nua" means new and "Khai" means food.
             if (appState.todayIndex !== -1) { appState.activeMonthIndex = appState.todayIndex; render(); }
         }
         function resolveImageUrls(text) {
-            return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
+            // 1. Local Images
+            text = text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
+
+            // 2. Cached External Images
+            // If the text is exactly a URL that we have cached
+            if (appState.cachedImages && appState.cachedImages[text]) {
+                return appState.cachedImages[text];
+            }
+
+            return text;
         }
 
         function render() {
@@ -1665,10 +2078,38 @@ The word "Nua" means new and "Khai" means food.
                 btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
             }
 
+            renderMonthBanner(currentData);
             renderCalendarGrid(currentData);
             renderPanchang(currentData);
             renderFestivals(currentData);
             renderHoroscope(currentData);
+        }
+
+        function renderMonthBanner(data) {
+            // Find all banners for this month
+            const slides = [];
+            const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${data.year}-${data.month}-${d}`;
+                const detail = appState.details[dateKey];
+
+                if (detail && detail.bannerUrl) {
+                    const event = data.events.find(e => e.date === d);
+                    let title = "Special Day";
+                    if (event) title = event.engName;
+                    else if (detail.tags.length > 0) title = detail.tags[0];
+
+                    slides.push({
+                        url: resolveImageUrls(detail.bannerUrl),
+                        date: d,
+                        dateDisplay: `${shortMonths[data.month]} ${d}`,
+                        title: title
+                    });
+                }
+            }
+
+            BannerCarousel.init('month-banner-container', slides);
         }
 
         function toggleSeasonDescription(btn, event) {
