@@ -992,6 +992,7 @@ The word "Nua" means new and "Khai" means food.
             horoscopeDetails: {},
             customSeasonDescriptions: {},
             images: {}, 
+            cachedImages: {},
             config: { title: 'Panchang App', logoUrl: null, language: 'en' }
         };
 
@@ -1203,6 +1204,141 @@ The word "Nua" means new and "Khai" means food.
         let tempImageState = { key: null, originalUrl: null, selectedType: 'logo', cropper: null };
         let tempLinkState = { selectedType: 'logo' };
         let activeFilters = new Set(['!', '^', '*']); 
+
+        // --- IMAGE CACHING SYSTEM (IndexedDB) ---
+        const ImageCacheDB = {
+            dbName: 'PanchangImageCache',
+            version: 1,
+            db: null,
+
+            async init() {
+                if (!window.indexedDB) return;
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(this.dbName, this.version);
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('images')) {
+                            db.createObjectStore('images', { keyPath: 'url' });
+                        }
+                    };
+                    request.onsuccess = (e) => {
+                        this.db = e.target.result;
+                        resolve();
+                    };
+                    request.onerror = (e) => {
+                         console.warn("ImageCacheDB Init Failed", e);
+                         reject(e);
+                    };
+                });
+            },
+
+            async get(url) {
+                if (!this.db) await this.init();
+                if (!this.db) return null;
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['images'], 'readonly');
+                    const store = transaction.objectStore('images');
+                    const request = store.get(url);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            },
+
+            async put(url, blob) {
+                if (!this.db) await this.init();
+                if (!this.db) return;
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['images'], 'readwrite');
+                    const store = transaction.objectStore('images');
+                    // Store as Blob to save space and keep format
+                    const request = store.put({ url, blob, timestamp: Date.now() });
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        };
+
+        const ImageLoader = {
+            queue: [],
+            attempted: new Set(), // Track attempted URLs to avoid retry loops
+            processing: false,
+            batchSize: 2,
+
+            scan() {
+                const urls = new Set();
+                if (appState.config.logoUrl) urls.add(appState.config.logoUrl);
+
+                Object.values(appState.details).forEach(d => {
+                    if (d.bannerUrl) urls.add(d.bannerUrl);
+                    if (d.gridBgUrl) urls.add(d.gridBgUrl);
+                    d.bodyLines.forEach(line => {
+                        const match = line.match(/!\[.*?\]\((.*?)\)/);
+                        if (match) urls.add(match[1]);
+                    });
+                });
+
+                urls.forEach(url => {
+                    // Check if already cached OR already attempted this session
+                    if (url && url.startsWith('http') && !appState.cachedImages[url] && !this.attempted.has(url)) {
+                         this.addToQueue(url);
+                    }
+                });
+            },
+
+            addToQueue(url) {
+                if (!this.queue.includes(url)) {
+                    this.queue.push(url);
+                    this.processQueue();
+                }
+            },
+
+            async processQueue() {
+                if (this.processing || this.queue.length === 0) return;
+                this.processing = true;
+
+                const batch = this.queue.splice(0, this.batchSize);
+
+                await Promise.allSettled(batch.map(url => this.fetchAndCache(url)));
+
+                setTimeout(() => {
+                    this.processing = false;
+                    if (this.queue.length > 0) this.processQueue();
+                }, 1500);
+            },
+
+            async fetchAndCache(url) {
+                this.attempted.add(url); // Mark as attempted immediately
+
+                // 1. Check IndexedDB first
+                try {
+                    const cached = await ImageCacheDB.get(url);
+                    if (cached) {
+                        const objUrl = URL.createObjectURL(cached.blob);
+                        appState.cachedImages[url] = objUrl;
+                        render();
+                        return;
+                    }
+                } catch (e) { }
+
+                // 2. Fetch from Network
+                try {
+                    const fetchUrl = convertGoogleDriveLink(url);
+                    const response = await fetch(fetchUrl);
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        await ImageCacheDB.put(url, blob);
+                        const objUrl = URL.createObjectURL(blob);
+                        appState.cachedImages[url] = objUrl;
+                        render();
+                    } else {
+                        await fetch(fetchUrl, { mode: 'no-cors' });
+                    }
+                } catch (err) {
+                    try { await fetch(url, { mode: 'no-cors' }); } catch (e) {}
+                }
+            }
+        };
+
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -1458,6 +1594,8 @@ The word "Nua" means new and "Khai" means food.
         if (window.exportedData) {
             appState = window.exportedData;
             if (!appState.images) appState.images = {};
+            // Reset cachedImages for session
+            appState.cachedImages = {};
             if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en' };
             const editorPanel = document.getElementById('editor-panel');
             if (editorPanel) editorPanel.style.display = 'none';
@@ -1467,6 +1605,8 @@ The word "Nua" means new and "Khai" means food.
             findTodayIndex();
             if (appState.todayIndex !== -1) appState.activeMonthIndex = appState.todayIndex;
             render(); 
+            // Trigger background caching
+            setTimeout(() => ImageLoader.scan(), 1000);
         } else if (editor) {
             editor.addEventListener('input', (e) => { parseInput(e.target.value); });
             parseInput(editor.value);
@@ -1613,6 +1753,9 @@ The word "Nua" means new and "Khai" means food.
             if (appState.activeMonthIndex >= appState.monthsData.length) appState.activeMonthIndex = 0;
             if (appState.todayIndex !== -1 && appState.activeMonthIndex === 0) appState.activeMonthIndex = appState.todayIndex;
             render();
+
+            // Trigger background caching
+            ImageLoader.scan();
         }
 
         function findTodayIndex() {
@@ -1628,7 +1771,16 @@ The word "Nua" means new and "Khai" means food.
             if (appState.todayIndex !== -1) { appState.activeMonthIndex = appState.todayIndex; render(); }
         }
         function resolveImageUrls(text) {
-            return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
+            // 1. Local Images
+            text = text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
+
+            // 2. Cached External Images
+            // If the text is exactly a URL that we have cached
+            if (appState.cachedImages && appState.cachedImages[text]) {
+                return appState.cachedImages[text];
+            }
+
+            return text;
         }
 
         function render() {
