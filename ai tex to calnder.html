@@ -992,8 +992,145 @@ The word "Nua" means new and "Khai" means food.
             horoscopeDetails: {},
             customSeasonDescriptions: {},
             images: {}, 
+            cachedImages: {},
             config: { title: 'Panchang App', logoUrl: null, language: 'en' }
         };
+
+        // --- IMAGE CACHING & BATCH LOADING SYSTEM ---
+        const ImageCacheDB = {
+            dbName: 'PanchangImageCache',
+            storeName: 'images',
+            db: null,
+            async open() {
+                if (this.db) return this.db;
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open(this.dbName, 1);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains(this.storeName)) {
+                            db.createObjectStore(this.storeName);
+                        }
+                    };
+                    req.onsuccess = (e) => { this.db = e.target.result; resolve(this.db); };
+                    req.onerror = (e) => reject(e);
+                });
+            },
+            async put(url, blob) {
+                const db = await this.open();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(this.storeName, 'readwrite');
+                    tx.objectStore(this.storeName).put(blob, url);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = (e) => reject(e);
+                });
+            },
+            async loadAll(targetCache) {
+                const db = await this.open();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(this.storeName, 'readonly');
+                    const req = tx.objectStore(this.storeName).openCursor();
+                    req.onsuccess = (e) => {
+                        const cursor = e.target.result;
+                        if (cursor) {
+                            targetCache[cursor.key] = URL.createObjectURL(cursor.value);
+                            cursor.continue();
+                        } else {
+                            resolve();
+                        }
+                    };
+                    req.onerror = () => resolve(); // Fail gracefully
+                });
+            }
+        };
+
+        const ImageLoader = {
+            queue: [],
+            processing: false,
+            batchSize: 2,
+            attempted: new Set(),
+
+            addToQueue(urls) {
+                let added = false;
+                urls.forEach(url => {
+                    if (!url || this.attempted.has(url)) return;
+                    // Check if already cached in appState
+                    if (appState.cachedImages && appState.cachedImages[url]) return;
+
+                    this.attempted.add(url);
+                    this.queue.push(url);
+                    added = true;
+                });
+                if (added) this.processQueue();
+            },
+
+            async processQueue() {
+                if (this.processing || this.queue.length === 0) return;
+                this.processing = true;
+
+                const batch = this.queue.splice(0, this.batchSize);
+
+                const promises = batch.map(url => this.fetchOne(url));
+                await Promise.allSettled(promises);
+
+                // Trigger re-render to show newly cached images
+                render();
+
+                if (this.queue.length > 0) {
+                    setTimeout(() => {
+                        this.processing = false;
+                        this.processQueue();
+                    }, 1000); // 1s delay between batches to unblock UI
+                } else {
+                    this.processing = false;
+                }
+            },
+
+            async fetchOne(url) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`Status ${response.status}`);
+                    const blob = await response.blob();
+                    await ImageCacheDB.put(url, blob);
+
+                    if (!appState.cachedImages) appState.cachedImages = {};
+                    appState.cachedImages[url] = URL.createObjectURL(blob);
+                } catch (e) {
+                    console.warn(`[ImageLoader] Failed to cache ${url}:`, e);
+                }
+            }
+        };
+
+        async function initImageSystem() {
+            if (!appState.cachedImages) appState.cachedImages = {};
+            try {
+                await ImageCacheDB.loadAll(appState.cachedImages);
+            } catch(e) { console.error("Cache init failed", e); }
+            scanAndFetchImages();
+            render(); // Render once after cache load
+        }
+
+        function scanAndFetchImages() {
+             const urls = new Set();
+             const add = (u) => {
+                if (!u || u.startsWith('local-image://')) return;
+                urls.add(convertGoogleDriveLink(u));
+            };
+
+            if (appState.config && appState.config.logoUrl) add(appState.config.logoUrl);
+            if (appState.details) {
+                Object.values(appState.details).forEach(d => {
+                    add(d.bannerUrl);
+                    add(d.gridBgUrl);
+                    if (d.bodyLines) {
+                        d.bodyLines.forEach(line => {
+                             const m = line.match(/!\[.*?\]\((.*?)\)/);
+                             if (m) add(m[1]);
+                        });
+                    }
+                });
+            }
+            ImageLoader.addToQueue(Array.from(urls));
+        }
 
         const langData = {
             en: { 
@@ -1458,7 +1595,13 @@ The word "Nua" means new and "Khai" means food.
         if (window.exportedData) {
             appState = window.exportedData;
             if (!appState.images) appState.images = {};
+            // Reset cachedImages as Blob URLs are not persistent across sessions
+            appState.cachedImages = {};
             if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en' };
+
+            // Init Image Cache
+            initImageSystem();
+
             const editorPanel = document.getElementById('editor-panel');
             if (editorPanel) editorPanel.style.display = 'none';
             const previewPanel = document.getElementById('preview-container');
@@ -1468,6 +1611,9 @@ The word "Nua" means new and "Khai" means food.
             if (appState.todayIndex !== -1) appState.activeMonthIndex = appState.todayIndex;
             render(); 
         } else if (editor) {
+            // Init Image Cache for Editor Mode
+            initImageSystem();
+
             editor.addEventListener('input', (e) => { parseInput(e.target.value); });
             parseInput(editor.value);
         }
@@ -1612,6 +1758,10 @@ The word "Nua" means new and "Khai" means food.
             findTodayIndex();
             if (appState.activeMonthIndex >= appState.monthsData.length) appState.activeMonthIndex = 0;
             if (appState.todayIndex !== -1 && appState.activeMonthIndex === 0) appState.activeMonthIndex = appState.todayIndex;
+
+            // Scan for new images to fetch
+            scanAndFetchImages();
+
             render();
         }
 
@@ -1628,7 +1778,23 @@ The word "Nua" means new and "Khai" means food.
             if (appState.todayIndex !== -1) { appState.activeMonthIndex = appState.todayIndex; render(); }
         }
         function resolveImageUrls(text) {
-            return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
+            if (!text) return '';
+
+            // 1. Local Image Key (Uploaded Crops)
+            if (text.startsWith('local-image://')) {
+                return appState.images[text] || text;
+            }
+
+            // 2. Normalize URL (e.g. Drive Links)
+            const normalized = convertGoogleDriveLink(text);
+
+            // 3. Check Cache (Blob URL)
+            if (appState.cachedImages && appState.cachedImages[normalized]) {
+                return appState.cachedImages[normalized];
+            }
+
+            // 4. Return Normalized URL (Fallback to Network)
+            return normalized;
         }
 
         function render() {
