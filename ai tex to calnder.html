@@ -1714,7 +1714,10 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function dismissBanner(e) {
-            if (e) e.stopPropagation();
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             isBannerDismissed = true;
             stopBannerAutoPlay();
             const container = document.getElementById('month-banner-container');
