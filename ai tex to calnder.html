@@ -577,8 +577,8 @@ The word "Nua" means new and "Khai" means food.
                         <button id="banner-prev" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-left"></i></button>
                         <button id="banner-next" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-right"></i></button>
                         
-                        <!-- Close Button -->
-                        <button onclick="dismissBanner(event)" class="absolute right-2 top-2 bg-black/30 hover:bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center transition z-30 backdrop-blur-sm"><i class="fa-solid fa-times text-xs"></i></button>
+                        <!-- Collapse/Expand Button -->
+                        <button onclick="toggleBannerCollapse(event)" id="banner-collapse-btn" class="absolute right-2 top-2 bg-black/30 hover:bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center transition z-30 backdrop-blur-sm"><i class="fa-solid fa-chevron-up text-xs"></i></button>
 
                         <!-- Dots -->
                         <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
@@ -1022,6 +1022,7 @@ The word "Nua" means new and "Khai" means food.
         let bannerCurrentIndex = 0;
         let currentBannerDataHash = "";
         let isBannerDismissed = false;
+        let isBannerCollapsed = false;
 
         const langData = {
             en: { 
@@ -1713,12 +1714,10 @@ The word "Nua" means new and "Khai" means food.
             renderMonthBanner(currentData);
         }
 
-        function dismissBanner(e) {
+        function toggleBannerCollapse(e) {
             if (e) e.stopPropagation();
-            isBannerDismissed = true;
-            stopBannerAutoPlay();
-            const container = document.getElementById('month-banner-container');
-            if (container) container.classList.add('hidden');
+            isBannerCollapsed = !isBannerCollapsed;
+            renderMonthBanner(appState.monthsData[appState.activeMonthIndex]);
         }
 
         function renderMonthBanner(data) {
@@ -1731,6 +1730,10 @@ The word "Nua" means new and "Khai" means food.
 
             const slidesContainer = document.getElementById('banner-slides');
             const dotsContainer = document.getElementById('banner-dots');
+            const toggleBtn = document.getElementById('banner-collapse-btn');
+            const toggleIcon = toggleBtn ? toggleBtn.querySelector('i') : null;
+            const prevBtn = document.getElementById('banner-prev');
+            const nextBtn = document.getElementById('banner-next');
             
             // Collect banners for the current month
             const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
@@ -1756,8 +1759,8 @@ The word "Nua" means new and "Khai" means food.
                 }
             }
 
-            // Optimization: If banners list is same, don't rebuild DOM
-            const newHash = JSON.stringify(banners);
+            // Optimization: If banners list is same and collapse state hasn't changed, don't rebuild DOM
+            const newHash = JSON.stringify(banners) + `-${isBannerCollapsed}`;
             if (newHash === currentBannerDataHash) {
                 if (banners.length === 0) {
                      container.classList.add('hidden');
@@ -1768,7 +1771,7 @@ The word "Nua" means new and "Khai" means food.
             }
             currentBannerDataHash = newHash;
 
-            // Clear previous
+            // Clear previous content
             slidesContainer.innerHTML = '';
             dotsContainer.innerHTML = '';
             clearInterval(bannerInterval);
@@ -1780,68 +1783,121 @@ The word "Nua" means new and "Khai" means food.
             }
 
             container.classList.remove('hidden');
-            slidesContainer.style.transform = `translateX(0)`;
 
-            // Render slides
-            banners.forEach((banner, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'w-full flex-shrink-0 h-full relative cursor-pointer';
-                slide.onclick = () => openDayModal(banner.date, data); // Click banner to open day
+            // Handle Collapsed vs Expanded State
+            if (isBannerCollapsed) {
+                // Collapsed Styles
+                container.classList.remove('aspect-[4/1]', 'md:aspect-[8/1]');
+                container.classList.add('h-12', 'flex', 'items-center', 'justify-between', 'px-4');
                 
-                slide.innerHTML = `
-                    <img src="${banner.url}" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 md:p-6 text-white pt-10">
-                        <div class="font-bold text-lg md:text-2xl drop-shadow-sm">${banner.caption}</div>
-                        <div class="text-xs md:text-sm opacity-90 font-semibold uppercase tracking-wide bg-black/30 inline-block px-2 py-0.5 rounded mt-1 backdrop-blur-sm border border-white/20">${months[data.month]} ${banner.date}</div>
-                    </div>
-                `;
-                slidesContainer.appendChild(slide);
+                // Hide Carousel Elements
+                slidesContainer.classList.add('hidden');
+                dotsContainer.classList.add('hidden');
+                if(prevBtn) { prevBtn.classList.add('hidden'); prevBtn.classList.remove('md:flex'); }
+                if(nextBtn) { nextBtn.classList.add('hidden'); nextBtn.classList.remove('md:flex'); }
 
-                // Dot
-                const dot = document.createElement('button');
-                dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/80'}`;
-                dot.onclick = (e) => { e.stopPropagation(); goToBannerSlide(index, banners.length); };
-                dotsContainer.appendChild(dot);
-            });
+                // Update Toggle Icon
+                if(toggleIcon) toggleIcon.className = 'fa-solid fa-chevron-down text-sm';
 
-            // Initialize Swipe & Auto-play
-            startBannerAutoPlay(banners.length);
-            
-            // Swipe support (Touch)
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            container.ontouchstart = (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-                stopBannerAutoPlay();
-            };
-            
-            container.ontouchend = (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleBannerSwipe(banners.length, touchStartX, touchEndX);
-                startBannerAutoPlay(banners.length);
-            };
+                // Add/Show Label
+                let label = document.getElementById('banner-collapsed-label');
+                if (!label) {
+                    label = document.createElement('div');
+                    label.id = 'banner-collapsed-label';
+                    label.className = 'font-bold text-gray-500 text-sm uppercase tracking-wide';
+                    label.innerText = 'Daily Overview';
+                    container.prepend(label);
+                }
+                label.classList.remove('hidden');
 
-            // Arrow Listeners
-            const prevBtn = document.getElementById('banner-prev');
-            const nextBtn = document.getElementById('banner-next');
-            
-            // Cloning to remove old event listeners if any (though we rebuild the DOM logic, buttons are static)
-            // Actually buttons are static in HTML, so we should assign onclick carefully.
-            // Since this function runs often, we are reassigning onclick.
-            
-            prevBtn.onclick = (e) => {
-                e.stopPropagation();
+                // Ensure toggle button is properly positioned and styled
+                if(toggleBtn) {
+                    toggleBtn.classList.remove('top-2', 'text-white', 'bg-black/30', 'hover:bg-black/50');
+                    toggleBtn.classList.add('top-1/2', '-translate-y-1/2', 'text-gray-500', 'hover:bg-gray-200');
+                }
+
                 stopBannerAutoPlay();
-                prevBannerSlide(banners.length);
+
+            } else {
+                // Expanded Styles
+                container.classList.add('aspect-[4/1]', 'md:aspect-[8/1]');
+                container.classList.remove('h-12', 'flex', 'items-center', 'justify-between', 'px-4');
+
+                // Show Carousel Elements
+                slidesContainer.classList.remove('hidden');
+                dotsContainer.classList.remove('hidden');
+                if(prevBtn) { prevBtn.classList.remove('hidden'); prevBtn.classList.add('hidden', 'md:flex'); } // Restore original responsive classes
+                if(nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.classList.add('hidden', 'md:flex'); }
+
+                // Update Toggle Icon
+                if(toggleIcon) toggleIcon.className = 'fa-solid fa-chevron-up text-sm';
+
+                // Hide Label
+                const label = document.getElementById('banner-collapsed-label');
+                if (label) label.classList.add('hidden');
+
+                // Restore toggle button position and style
+                if(toggleBtn) {
+                    toggleBtn.classList.add('top-2', 'text-white', 'bg-black/30', 'hover:bg-black/50');
+                    toggleBtn.classList.remove('top-1/2', '-translate-y-1/2', 'text-gray-500', 'hover:bg-gray-200');
+                }
+
+                slidesContainer.style.transform = `translateX(0)`;
+
+                // Render slides
+                banners.forEach((banner, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'w-full flex-shrink-0 h-full relative cursor-pointer';
+                    slide.onclick = () => openDayModal(banner.date, data); // Click banner to open day
+
+                    slide.innerHTML = `
+                        <img src="${banner.url}" class="w-full h-full object-cover">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 md:p-6 text-white pt-10">
+                            <div class="font-bold text-lg md:text-2xl drop-shadow-sm">${banner.caption}</div>
+                            <div class="text-xs md:text-sm opacity-90 font-semibold uppercase tracking-wide bg-black/30 inline-block px-2 py-0.5 rounded mt-1 backdrop-blur-sm border border-white/20">${months[data.month]} ${banner.date}</div>
+                        </div>
+                    `;
+                    slidesContainer.appendChild(slide);
+
+                    // Dot
+                    const dot = document.createElement('button');
+                    dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/80'}`;
+                    dot.onclick = (e) => { e.stopPropagation(); goToBannerSlide(index, banners.length); };
+                    dotsContainer.appendChild(dot);
+                });
+
+                // Initialize Swipe & Auto-play
                 startBannerAutoPlay(banners.length);
-            };
-            nextBtn.onclick = (e) => {
-                e.stopPropagation();
-                stopBannerAutoPlay();
-                nextBannerSlide(banners.length);
-                startBannerAutoPlay(banners.length);
-            };
+
+                // Swipe support (Touch)
+                let touchStartX = 0;
+                let touchEndX = 0;
+
+                container.ontouchstart = (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    stopBannerAutoPlay();
+                };
+
+                container.ontouchend = (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleBannerSwipe(banners.length, touchStartX, touchEndX);
+                    startBannerAutoPlay(banners.length);
+                };
+
+                // Arrow Listeners
+                if(prevBtn) prevBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    stopBannerAutoPlay();
+                    prevBannerSlide(banners.length);
+                    startBannerAutoPlay(banners.length);
+                };
+                if(nextBtn) nextBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    stopBannerAutoPlay();
+                    nextBannerSlide(banners.length);
+                    startBannerAutoPlay(banners.length);
+                };
+            }
         }
 
         function updateBannerSlidePosition() {
