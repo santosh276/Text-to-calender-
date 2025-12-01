@@ -544,7 +544,7 @@ The word "Nua" means new and "Khai" means food.
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
             <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
-                <div class="flex-grow lg:w-3/4 space-y-6 w-full">
+                <div class="flex-grow lg:w-3/4 space-y-3 w-full">
                     <!-- Calendar Header -->
                     <div class="bg-white rounded-xl shadow-lg border-t-4 border-saffron p-4 md:p-6 relative z-10">
                          <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
@@ -569,7 +569,7 @@ The word "Nua" means new and "Khai" means food.
                     </div>
 
                     <!-- MONTH BANNER CAROUSEL -->
-                    <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[16/9] md:aspect-[3/1] bg-gray-100 mb-6 border-4 border-white">
+                    <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[4/1] md:aspect-[8/1] bg-gray-100 border-4 border-white">
                         <!-- Slides Wrapper -->
                         <div id="banner-slides" class="flex transition-transform duration-500 ease-out h-full"></div>
                         
@@ -577,6 +577,9 @@ The word "Nua" means new and "Khai" means food.
                         <button id="banner-prev" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-left"></i></button>
                         <button id="banner-next" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-right"></i></button>
                         
+                        <!-- Close Button -->
+                        <button onclick="dismissBanner(event)" class="absolute right-2 top-2 bg-black/30 hover:bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center transition z-30 backdrop-blur-sm"><i class="fa-solid fa-times text-xs"></i></button>
+
                         <!-- Dots -->
                         <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
                     </div>
@@ -648,6 +651,13 @@ The word "Nua" means new and "Khai" means food.
                         <option value="kn">Kannada (ಕನ್ನಡ)</option>
                         <option value="ml">Malayalam (മലയാളം)</option>
                     </select>
+                </div>
+                <div class="flex items-center justify-between border-t border-gray-200 pt-4 mt-4">
+                    <label class="text-sm font-bold text-gray-700">Show Daily Overview Banner</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="banner-toggle" class="sr-only peer" onchange="toggleBannerVisibility(this)">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                    </label>
                 </div>
             </div>
         </div>
@@ -1011,6 +1021,7 @@ The word "Nua" means new and "Khai" means food.
         let bannerInterval;
         let bannerCurrentIndex = 0;
         let currentBannerDataHash = "";
+        let isBannerDismissed = false;
 
         const langData = {
             en: { 
@@ -1203,6 +1214,11 @@ The word "Nua" means new and "Khai" means food.
 
         function openSettingsModal() {
             document.getElementById('language-select').value = appState.config.language || 'en';
+            
+            // Update toggle state
+            const toggle = document.getElementById('banner-toggle');
+            if(toggle) toggle.checked = !isBannerDismissed;
+
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
@@ -1214,6 +1230,14 @@ The word "Nua" means new and "Khai" means food.
         }
         function changeLanguage(langCode) {
             appState.config.language = langCode;
+            render();
+        }
+
+        function toggleBannerVisibility(checkbox) {
+            isBannerDismissed = !checkbox.checked;
+            if (isBannerDismissed) {
+                stopBannerAutoPlay();
+            }
             render();
         }
 
@@ -1689,8 +1713,22 @@ The word "Nua" means new and "Khai" means food.
             renderMonthBanner(currentData);
         }
 
+        function dismissBanner(e) {
+            if (e) e.stopPropagation();
+            isBannerDismissed = true;
+            stopBannerAutoPlay();
+            const container = document.getElementById('month-banner-container');
+            if (container) container.classList.add('hidden');
+        }
+
         function renderMonthBanner(data) {
             const container = document.getElementById('month-banner-container');
+            
+            if (isBannerDismissed) {
+                if (container) container.classList.add('hidden');
+                return;
+            }
+
             const slidesContainer = document.getElementById('banner-slides');
             const dotsContainer = document.getElementById('banner-dots');
             
