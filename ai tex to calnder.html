@@ -2168,18 +2168,38 @@ The word "Nua" means new and "Khai" means food.
             const list = document.getElementById('festival-list');
             list.innerHTML = '';
             
-            list.className = "space-y-2 text-sm"; 
+            list.className = "space-y-3 text-sm";
             
             const filteredEvents = data.events.filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*') && activeFilters.has(e.symbol)).sort((a, b) => a.date - b.date);
             if (filteredEvents.length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-center py-4">No events found.</li>'; return; }
             filteredEvents.forEach(ev => {
                 const li = document.createElement('li');
-                li.className = "flex gap-2 items-start p-1 rounded hover:bg-gray-50 transition cursor-pointer";
+                li.className = "flex gap-3 items-center p-2 rounded-xl hover:bg-gray-50 transition cursor-pointer border border-transparent hover:border-gray-100";
                 li.onclick = () => openDayModal(ev.date, data);
-                let badgeColor = "bg-gray-500";
-                if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
-                const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
+
+                let bgClass = "bg-gray-100";
+                let textClass = "text-gray-600";
+
+                if (ev.symbol === '!') {
+                    bgClass = "bg-red-100";
+                    textClass = "text-red-700";
+                } else if (ev.symbol === '^') {
+                    bgClass = "bg-green-100";
+                    textClass = "text-green-700";
+                } else if (ev.symbol === '*') {
+                    bgClass = "bg-blue-100";
+                    textClass = "text-blue-700";
+                }
+
+                const monthName = shortMonths[data.month];
+
+                const dateBadge = `
+                    <div class="flex flex-col items-center justify-center ${bgClass} ${textClass} rounded-lg w-12 h-12 shrink-0">
+                        <span class="text-[10px] font-bold uppercase leading-none opacity-80">${monthName}</span>
+                        <span class="text-xl font-bold leading-none mt-0.5">${ev.date}</span>
+                    </div>`;
+
+                const content = `<div class="leading-tight flex-grow"><div class="font-bold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya mt-0.5">${ev.locName || ''}</div></div>`;
                 li.innerHTML = dateBadge + content;
                 list.appendChild(li);
             });
