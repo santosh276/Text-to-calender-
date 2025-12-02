@@ -611,6 +611,73 @@ The word "Nua" means new and "Khai" means food.
         </div>
     </div>
 
+    <!-- CARD MAKER MODAL -->
+    <div id="card-maker-modal" class="fixed inset-0 z-[80] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+        <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCardMakerModal()"></div>
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-5xl relative z-10 overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-[650px]">
+            <!-- Preview Section -->
+            <div class="w-full md:w-1/2 bg-gray-900 flex items-center justify-center p-6 relative bg-pattern">
+                 <div class="relative shadow-2xl rounded-xl overflow-hidden border-4 border-white/10" style="width: 400px; height: 400px;">
+                     <canvas id="card-canvas" width="1080" height="1080" class="w-full h-full object-contain bg-white"></canvas>
+                 </div>
+            </div>
+            <!-- Controls Section -->
+            <div class="w-full md:w-1/2 p-6 md:p-8 bg-white flex flex-col overflow-y-auto">
+                <div class="flex justify-between items-center mb-6 shrink-0">
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-2xl flex items-center gap-2"><i class="fa-solid fa-paintbrush text-orange-500"></i> Card Maker</h3>
+                        <p class="text-xs text-gray-500 font-medium uppercase tracking-wider mt-1">Create Viral Social Posts</p>
+                    </div>
+                    <button onclick="closeCardMakerModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition"><i class="fa-solid fa-times text-lg"></i></button>
+                </div>
+
+                <div class="space-y-6 flex-grow">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Message</label>
+                        <textarea id="card-message" class="w-full p-4 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none bg-gray-50 font-medium text-gray-700 resize-none transition" rows="3" placeholder="Write a message..." oninput="drawCard()"></textarea>
+                    </div>
+
+                    <div>
+                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Background Theme</label>
+                         <div class="grid grid-cols-4 gap-3">
+                             <button onclick="setCardTheme('sunrise')" class="h-16 rounded-lg bg-orange-100 hover:ring-2 ring-orange-500 ring-offset-2 bg-cover bg-center transition-all transform active:scale-95 shadow-sm" style="background-image: url('https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=150&q=80')" title="Sunrise"></button>
+                             <button onclick="setCardTheme('temple')" class="h-16 rounded-lg bg-red-100 hover:ring-2 ring-red-500 ring-offset-2 bg-cover bg-center transition-all transform active:scale-95 shadow-sm" style="background-image: url('https://images.unsplash.com/photo-1563492807-6f028131367f?w=150&q=80')" title="Temple"></button>
+                             <button onclick="setCardTheme('flowers')" class="h-16 rounded-lg bg-pink-100 hover:ring-2 ring-pink-500 ring-offset-2 bg-cover bg-center transition-all transform active:scale-95 shadow-sm" style="background-image: url('https://images.unsplash.com/photo-1490750967868-58cb75069ed6?w=150&q=80')" title="Nature"></button>
+                             <button onclick="document.getElementById('card-bg-upload').click()" class="h-16 rounded-lg bg-gray-50 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 hover:border-gray-400 transition-all transform active:scale-95" title="Upload Image">
+                                 <i class="fa-solid fa-cloud-arrow-up text-lg mb-1"></i>
+                                 <span class="text-[9px] font-bold uppercase">Upload</span>
+                             </button>
+                         </div>
+                         <input type="file" id="card-bg-upload" class="hidden" accept="image/*" onchange="handleCardBgUpload(event)">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                         <div>
+                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Text Color</label>
+                             <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-lg border border-gray-200">
+                                 <input type="color" id="card-text-color" value="#ffffff" onchange="drawCard()" class="w-8 h-8 rounded cursor-pointer border-none bg-transparent">
+                                 <span class="text-xs text-gray-500 font-mono" id="card-text-color-val">#FFFFFF</span>
+                             </div>
+                         </div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Overlay Darkening</label>
+                             <input type="range" id="card-overlay-opacity" min="0" max="0.9" step="0.1" value="0.5" oninput="drawCard()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500 mt-3">
+                         </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex gap-3 shrink-0">
+                    <button onclick="downloadCardImage()" class="flex-1 bg-gray-900 text-white py-3.5 rounded-xl font-bold hover:bg-black transition shadow-lg flex items-center justify-center gap-2 group active:scale-95">
+                        <i class="fa-solid fa-download group-hover:animate-bounce"></i> Download
+                    </button>
+                    <button onclick="shareCardImage()" class="flex-1 bg-[#25D366] text-white py-3.5 rounded-xl font-bold hover:bg-[#128C7E] transition shadow-lg flex items-center justify-center gap-2 group active:scale-95">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- CLEAR CONFIRMATION MODAL -->
     <div id="clear-confirmation-modal" class="fixed inset-0 z-[90] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeClearModal()"></div>
@@ -782,9 +849,10 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
             <div id="modal-rich-body" class="rich-content overflow-y-auto p-6 flex-grow"></div>
-            <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50 shrink-0">
-                <button id="share-btn" onclick="handleShare()" class="text-gray-500 hover:text-[#5D4037] text-sm font-semibold flex items-center gap-2 transition active:scale-95"><i class="fa-solid fa-share-nodes text-lg"></i> Share</button>
-                <button onclick="handleLearnMore()" class="bg-[#5D4037] hover:bg-[#4E342E] text-white px-5 py-2 rounded-full text-sm font-bold transition shadow-md active:scale-95">Learn More</button>
+            <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50 shrink-0 gap-2">
+                <button onclick="openCardMakerFromModal()" class="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-md active:scale-95 flex items-center justify-center gap-2"><i class="fa-solid fa-wand-magic-sparkles"></i> Create Card</button>
+                <button id="share-btn" onclick="handleShare()" class="text-gray-500 hover:bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center transition active:scale-95" title="Quick Screenshot Share"><i class="fa-solid fa-share-nodes text-lg"></i></button>
+                <button onclick="handleLearnMore()" class="text-gray-500 hover:bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center transition active:scale-95" title="Learn More"><i class="fa-solid fa-circle-info text-lg"></i></button>
             </div>
         </div>
     </div>
@@ -1022,6 +1090,19 @@ The word "Nua" means new and "Khai" means food.
         let bannerCurrentIndex = 0;
         let currentBannerDataHash = "";
         let isBannerDismissed = false;
+
+        // CARD MAKER STATE
+        let cardState = {
+            day: null,
+            monthData: null,
+            bgImage: null,
+            message: '',
+            theme: 'sunrise',
+            textColor: '#ffffff',
+            overlayOpacity: 0.5,
+            uploadedImage: null
+        };
+        let currentDayContext = null; // Stores data of the currently open day-modal
 
         const langData = {
             en: { 
@@ -2270,6 +2351,8 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function openDayModal(day, monthData) {
+            currentDayContext = { day, monthData }; // SAVE CONTEXT
+
             const modal = document.getElementById('day-modal');
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
@@ -2474,6 +2557,269 @@ The word "Nua" means new and "Khai" means food.
             link.download = `${title}-Card.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
+        }
+
+        // --- CARD MAKER LOGIC ---
+
+        function openCardMakerFromModal() {
+            if (!currentDayContext) return;
+            // Close day modal first to avoid z-index issues or double backdrops
+            // closeDayModal(); // Optional: User might want to go back. But keeping both might be crowded.
+            // Let's keep day modal open but hidden/behind or just close it.
+            // Better to stack on top. Z-index of card modal is 80, day modal is 60. It will stack.
+            openCardMaker(currentDayContext.day, currentDayContext.monthData);
+        }
+
+        function openCardMaker(day, monthData) {
+            const modal = document.getElementById('card-maker-modal');
+            cardState.day = day;
+            cardState.monthData = monthData;
+
+            // Determine default message
+            const dayEvents = monthData.events.filter(e => e.date === day);
+            let defaultMsg = "Subha Sakala! Have a wonderful day.";
+            if (dayEvents.length > 0 && dayEvents[0].symbol === '!') {
+                defaultMsg = `Happy ${dayEvents[0].engName}! Wishing you joy and prosperity on this auspicious occasion.`;
+            }
+            cardState.message = defaultMsg;
+            document.getElementById('card-message').value = defaultMsg;
+
+            // Set Default Theme (Sunrise)
+            setCardTheme('sunrise'); // This will also trigger drawCard via image onload
+
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.remove('modal-hidden'), 10);
+
+            // Initial Draw (might be empty if image not loaded, but setCardTheme handles it)
+        }
+
+        function closeCardMakerModal() {
+            const modal = document.getElementById('card-maker-modal');
+            modal.classList.add('modal-hidden');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function setCardTheme(theme) {
+            cardState.theme = theme;
+            let url = '';
+            if (theme === 'sunrise') url = 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1080&q=80';
+            else if (theme === 'temple') url = 'https://images.unsplash.com/photo-1563492807-6f028131367f?w=1080&q=80';
+            else if (theme === 'flowers') url = 'https://images.unsplash.com/photo-1490750967868-58cb75069ed6?w=1080&q=80';
+
+            // If we have an uploaded image and user didn't select it, we clear it?
+            // Or if user selects 'upload' via button?
+            // The upload button triggers file input.
+
+            cardState.bgImage = new Image();
+            cardState.bgImage.crossOrigin = "Anonymous";
+            cardState.bgImage.src = url;
+            cardState.bgImage.onload = () => drawCard();
+        }
+
+        function handleCardBgUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cardState.bgImage = new Image();
+                cardState.bgImage.src = e.target.result;
+                cardState.bgImage.onload = () => drawCard();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function drawCard() {
+            const canvas = document.getElementById('card-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            // Update State from Inputs
+            cardState.message = document.getElementById('card-message').value;
+            cardState.textColor = document.getElementById('card-text-color').value;
+            cardState.overlayOpacity = document.getElementById('card-overlay-opacity').value;
+            document.getElementById('card-text-color-val').innerText = cardState.textColor.toUpperCase();
+
+            // Clear Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Draw Background
+            if (cardState.bgImage) {
+                // Cover fit
+                const img = cardState.bgImage;
+                const ratio = Math.max(canvas.width / img.width, canvas.height / img.height);
+                const centerShift_x = (canvas.width - img.width * ratio) / 2;
+                const centerShift_y = (canvas.height - img.height * ratio) / 2;
+                ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+            } else {
+                // Fallback Gradient
+                const grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                grd.addColorStop(0, "#FF9933");
+                grd.addColorStop(1, "#CC0000");
+                ctx.fillStyle = grd;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // 2. Draw Overlay
+            ctx.fillStyle = `rgba(0, 0, 0, ${cardState.overlayOpacity})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 3. Draw Border (Ornamental)
+            ctx.strokeStyle = cardState.textColor;
+            ctx.lineWidth = 4;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+            // Corners
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, 50); ctx.lineTo(150, 50);
+            ctx.moveTo(50, 50); ctx.lineTo(50, 150);
+
+            ctx.moveTo(canvas.width-50, 50); ctx.lineTo(canvas.width-150, 50);
+            ctx.moveTo(canvas.width-50, 50); ctx.lineTo(canvas.width-50, 150);
+
+            ctx.moveTo(50, canvas.height-50); ctx.lineTo(150, canvas.height-50);
+            ctx.moveTo(50, canvas.height-50); ctx.lineTo(50, canvas.height-150);
+
+            ctx.moveTo(canvas.width-50, canvas.height-50); ctx.lineTo(canvas.width-150, canvas.height-50);
+            ctx.moveTo(canvas.width-50, canvas.height-50); ctx.lineTo(canvas.width-50, canvas.height-150);
+            ctx.stroke();
+
+            // Text Settings
+            ctx.fillStyle = cardState.textColor;
+            ctx.textAlign = 'center';
+
+            // 4. Header (Date & Tithi)
+            const { day, monthData } = cardState;
+            const dateObj = new Date(monthData.year, monthData.month, day);
+            const dateStr = `${day} ${months[monthData.month]} ${monthData.year}`;
+            const tithiInfo = calculateTithi(dateObj);
+
+            ctx.font = 'bold 36px Inter, sans-serif';
+            ctx.fillText(dateStr.toUpperCase(), canvas.width / 2, 100);
+
+            ctx.font = '28px Inter, sans-serif';
+            ctx.fillStyle = adjustColorOpacity(cardState.textColor, 0.9);
+            ctx.fillText(`${tithiInfo.tithi} • ${tithiInfo.paksha}`, canvas.width / 2, 140);
+
+            // 5. Main Title (Event Name)
+            const dayEvents = monthData.events.filter(e => e.date === day);
+            let mainTitle = "Have a Nice Day";
+            let subTitle = "";
+            if (dayEvents.length > 0) {
+                mainTitle = dayEvents[0].engName;
+                if(dayEvents[0].locName) subTitle = dayEvents[0].locName;
+            }
+
+            // Check for logo
+            // If appState.config.logoUrl exists, maybe draw it small?
+            // Skip for now to keep it clean.
+
+            ctx.shadowColor = "rgba(0,0,0,0.5)";
+            ctx.shadowBlur = 10;
+
+            // Auto-scale font size for title
+            let fontSize = 80;
+            ctx.font = `bold ${fontSize}px "Noto Sans Oriya", serif`;
+            while (ctx.measureText(mainTitle).width > canvas.width - 160 && fontSize > 40) {
+                fontSize -= 5;
+                ctx.font = `bold ${fontSize}px "Noto Sans Oriya", serif`;
+            }
+
+            ctx.fillStyle = cardState.textColor;
+            ctx.fillText(mainTitle, canvas.width / 2, canvas.height / 2 - 80);
+
+            if (subTitle) {
+                ctx.font = 'bold 40px "Noto Sans Oriya", serif';
+                ctx.fillStyle = adjustColorOpacity(cardState.textColor, 0.9);
+                ctx.fillText(subTitle, canvas.width / 2, canvas.height / 2);
+            }
+
+            ctx.shadowBlur = 0; // Reset shadow
+
+            // 6. Message Body
+            const msg = cardState.message;
+            ctx.font = 'italic 32px Inter, serif';
+            ctx.fillStyle = adjustColorOpacity(cardState.textColor, 0.95);
+            wrapText(ctx, msg, canvas.width / 2, canvas.height / 2 + 100, canvas.width - 200, 45);
+
+            // 7. Footer
+            ctx.font = 'bold 24px Inter, sans-serif';
+            ctx.fillStyle = adjustColorOpacity(cardState.textColor, 0.7);
+            ctx.fillText(appState.config.title || "Panchang App", canvas.width / 2, canvas.height - 80);
+
+            ctx.font = '16px Inter, sans-serif';
+            ctx.fillText("Generated with AI Calendar", canvas.width / 2, canvas.height - 50);
+        }
+
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let lineCount = 0;
+            // Limit max lines to prevent overflow
+            const maxLines = 6;
+
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    ctx.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += lineHeight;
+                    lineCount++;
+                } else {
+                    line = testLine;
+                }
+                if (lineCount >= maxLines) break;
+            }
+            ctx.fillText(line, x, y);
+        }
+
+        function adjustColorOpacity(hex, opacity) {
+            // Hex to RGBA
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+opacity+')';
+            }
+            return hex;
+        }
+
+        function downloadCardImage() {
+            const canvas = document.getElementById('card-canvas');
+            const link = document.createElement('a');
+            const fileName = `Card_${new Date().getTime()}.jpg`;
+            link.download = fileName;
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+            showToast('Card Downloaded!');
+        }
+
+        function shareCardImage() {
+            const canvas = document.getElementById('card-canvas');
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+                const file = new File([blob], "festival_card.jpg", { type: "image/jpeg" });
+                const shareData = {
+                    title: 'Festival Greeting',
+                    text: cardState.message + ' #PanchangApp',
+                    files: [file]
+                };
+                if (navigator.canShare && navigator.canShare(shareData)) {
+                    try {
+                        await navigator.share(shareData);
+                        showToast('Shared successfully!');
+                    } catch (err) {
+                        if (err.name !== 'AbortError') console.error(err);
+                    }
+                } else {
+                    downloadCardImage();
+                    showToast('Sharing not supported, downloading instead.');
+                }
+            }, 'image/jpeg', 0.9);
         }
     </script>
 </body>
