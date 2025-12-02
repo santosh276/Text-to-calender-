@@ -659,6 +659,27 @@ The word "Nua" means new and "Khai" means food.
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                     </label>
                 </div>
+
+                <!-- Location Settings -->
+                <div class="border-t border-gray-200 pt-4 mt-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="block text-sm font-bold text-gray-700">Location (for Panchang)</label>
+                        <button id="btn-get-loc" onclick="getUserLocation()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded-full font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-location-crosshairs"></i> Use My Location
+                        </button>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="flex-1">
+                            <label class="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Latitude</label>
+                            <input type="number" step="any" id="settings-lat" placeholder="Latitude" onchange="handleLocationUpdate()" class="w-full p-2 border border-gray-300 rounded bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Longitude</label>
+                            <input type="number" step="any" id="settings-lng" placeholder="Longitude" onchange="handleLocationUpdate()" class="w-full p-2 border border-gray-300 rounded bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-2 italic">Calculates precise Sunrise/Sunset and Tithi timings.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -818,6 +839,91 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <script>
+        // --- SUNRISE/SUNSET CALCULATION UTILITY ---
+        // Simplified implementation of NOAA Solar Calculator logic
+        const SunCalc = {
+            toRad: function(deg) { return deg * Math.PI / 180; },
+            toDeg: function(rad) { return rad * 180 / Math.PI; },
+
+            getTimes: function(date, lat, lng) {
+                // Returns sunrise and sunset Date objects
+                if (!lat || !lng) return null;
+
+                const rad = Math.PI / 180;
+                const deg = 180 / Math.PI;
+
+                // Julian Date
+                const startOfYear = new Date(date.getFullYear(), 0, 1);
+                const dayOfYear = Math.floor((date - startOfYear) / 86400000);
+
+                // Convert time to fractional day (assuming noon calculation for declination)
+                // Using simplified algorithm
+
+                // 1. Calculate the day of the year (n)
+                const n = Math.ceil((date - new Date(date.getFullYear(),0,1)) / 86400000);
+
+                // 2. Convert longitude to hour value and calculate an approximate time
+                const lngHour = lng / 15;
+
+                // Helper to get time
+                const calculate = (isSunrise) => {
+                    const t = n + ((isSunrise ? 6 : 18) - lngHour) / 24;
+
+                    // 3. Calculate the Sun's mean anomaly
+                    const M = (0.9856 * t) - 3.289;
+
+                    // 4. Calculate the Sun's true longitude
+                    let L = M + (1.916 * Math.sin(M * rad)) + (0.020 * Math.sin(2 * M * rad)) + 282.634;
+                    L = (L % 360 + 360) % 360;
+
+                    // 5. Calculate the Sun's right ascension
+                    let RA = Math.atan(0.91764 * Math.tan(L * rad)) * deg;
+                    RA = (RA % 360 + 360) % 360;
+
+                    // Right ascension value needs to be in the same quadrant as L
+                    const Lquadrant  = (Math.floor( L/90)) * 90;
+                    const RAquadrant = (Math.floor(RA/90)) * 90;
+                    RA = RA + (Lquadrant - RAquadrant);
+
+                    // RA needs to be converted into hours
+                    RA = RA / 15;
+
+                    // 6. Calculate the Sun's declination
+                    const sinDec = 0.39782 * Math.sin(L * rad);
+                    const cosDec = Math.cos(Math.asin(sinDec));
+
+                    // 7. Calculate the Sun's local hour angle
+                    const zenith = 90.833; // Civil twilight
+                    const cosH = (Math.cos(zenith * rad) - (sinDec * Math.sin(lat * rad))) / (cosDec * Math.cos(lat * rad));
+
+                    if (cosH >  1) return null; // Sun never rises
+                    if (cosH < -1) return null; // Sun never sets
+
+                    const H = (isSunrise ? (360 - Math.acos(cosH) * deg) : Math.acos(cosH) * deg) / 15;
+
+                    // 8. Calculate local mean time of rising/setting
+                    const T = H + RA - (0.06571 * t) - 6.622;
+
+                    // 9. Adjust back to UTC
+                    let UT = T - lngHour;
+                    UT = (UT % 24 + 24) % 24; // Normalize to 0-24
+
+                    // Convert UT to local time of the date
+                    const result = new Date(date);
+                    result.setUTCHours(Math.floor(UT));
+                    result.setUTCMinutes(Math.floor((UT - Math.floor(UT)) * 60));
+                    result.setUTCSeconds(0);
+
+                    return result;
+                };
+
+                return {
+                    sunrise: calculate(true),
+                    sunset: calculate(false)
+                };
+            }
+        };
+
         // Season UI Component Data
         const SeasonIcons = {
             // Sun behind small cloud
@@ -1148,9 +1254,16 @@ The word "Nua" means new and "Khai" means food.
         };
 
         function calculateTithi(dateObj) {
-            // Use 06:00 AM Local Time for Tithi calculation to approximate Sunrise Tithi
-            // This ensures the Tithi is consistent for the "day".
-            const targetDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), 6, 0, 0);
+            // Determine Sunrise Time
+            // If location is available, calculate actual sunrise. Otherwise default to 06:00 AM.
+            let targetDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), 6, 0, 0);
+
+            if (appState.config.location && appState.config.location.lat) {
+                const sunTimes = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+                if (sunTimes && sunTimes.sunrise) {
+                    targetDate = sunTimes.sunrise;
+                }
+            }
 
             // 1. Convert to Julian Day (J2000.0)
             const msPerDay = 86400000;
@@ -1219,9 +1332,73 @@ The word "Nua" means new and "Khai" means food.
             const toggle = document.getElementById('banner-toggle');
             if(toggle) toggle.checked = !isBannerDismissed;
 
+            // Location Logic
+            const latInput = document.getElementById('settings-lat');
+            const lngInput = document.getElementById('settings-lng');
+            if (appState.config.location) {
+                latInput.value = appState.config.location.lat;
+                lngInput.value = appState.config.location.lng;
+            } else {
+                latInput.value = '';
+                lngInput.value = '';
+            }
+
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
+        }
+
+        function handleLocationUpdate() {
+             const lat = parseFloat(document.getElementById('settings-lat').value);
+             const lng = parseFloat(document.getElementById('settings-lng').value);
+
+             if (!isNaN(lat) && !isNaN(lng)) {
+                 appState.config.location = { lat, lng };
+                 render(); // Re-render to update Panchang & Tithis
+                 showToast('Location updated!');
+             } else {
+                 // If cleared
+                 if (document.getElementById('settings-lat').value === '') {
+                     delete appState.config.location;
+                     render();
+                 }
+             }
+        }
+
+        function getUserLocation() {
+            const btn = document.getElementById('btn-get-loc');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Locating...';
+            btn.disabled = true;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(4);
+                        const lng = position.coords.longitude.toFixed(4);
+
+                        document.getElementById('settings-lat').value = lat;
+                        document.getElementById('settings-lng').value = lng;
+
+                        appState.config.location = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        showToast('Location found & applied!');
+                        render();
+                    },
+                    (error) => {
+                        console.error("Error getting location: ", error);
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        alert("Unable to retrieve your location. Please ensure location permission is granted.");
+                    }
+                );
+            } else {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                alert("Geolocation is not supported by this browser.");
+            }
         }
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
@@ -2063,6 +2240,32 @@ The word "Nua" means new and "Khai" means food.
             pillsContainer.innerHTML = '';
             list.innerHTML = '';
             
+            // Calculate Sunrise/Sunset dynamically if location is set
+            let dynSunrise = null;
+            let dynSunset = null;
+            if (appState.config.location && appState.config.location.lat) {
+                // Use 1st of month as reference, or today if current month
+                const today = new Date();
+                let refDate = new Date(data.year, data.month, 1);
+                if (today.getMonth() === data.month && today.getFullYear() === data.year) {
+                    refDate = today;
+                }
+                const times = SunCalc.getTimes(refDate, appState.config.location.lat, appState.config.location.lng);
+                if (times) {
+                    const formatTime = (date) => {
+                         let hours = date.getHours();
+                         const minutes = date.getMinutes();
+                         const ampm = hours >= 12 ? 'PM' : 'AM';
+                         hours = hours % 12;
+                         hours = hours ? hours : 12; // the hour '0' should be '12'
+                         const strMinutes = minutes < 10 ? '0'+minutes : minutes;
+                         return hours + ':' + strMinutes + ' ' + ampm;
+                    };
+                    dynSunrise = formatTime(times.sunrise);
+                    dynSunset = formatTime(times.sunset);
+                }
+            }
+
             // 1. Display Season (Ritu)
             const seasonIndex = getSeasonIndex(data.month);
             const currentLang = appState.config.language || 'en';
@@ -2125,7 +2328,13 @@ The word "Nua" means new and "Khai" means food.
             }
             
             const iconMap = { 'tithi': 'fa-moon', 'nakshatra': 'fa-star', 'yoga': 'fa-bahai', 'karana': 'fa-hourglass-half', 'sunrise': 'fa-sun', 'sunset': 'fa-cloud-sun', 'month': 'fa-calendar' };
-            for (const [key, value] of Object.entries(data.panchang)) {
+
+            // Merge dynamic data with manual data (Dynamic takes precedence for display)
+            const displayData = { ...data.panchang };
+            if (dynSunrise) displayData['Sunrise'] = dynSunrise + " (Loc)";
+            if (dynSunset) displayData['Sunset'] = dynSunset + " (Loc)";
+
+            for (const [key, value] of Object.entries(displayData)) {
                 const lowerKey = key.toLowerCase();
                 let iconClass = iconMap[lowerKey] || 'fa-circle-info';
                 if (lowerKey === 'sunrise') {
