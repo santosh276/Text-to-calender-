@@ -2247,6 +2247,14 @@ The word "Nua" means new and "Khai" means food.
             tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
             list.appendChild(tithiDiv);
 
+            // 3. Location Display in List
+            if (appState.config.location && appState.config.location.name) {
+                const locDiv = document.createElement('div');
+                locDiv.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
+                locDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-location-dot text-saffron w-5 text-center mr-1"></i>Location:</span> <span class="text-gray-800 font-medium text-right text-xs max-w-[50%] truncate" title="${appState.config.location.name}">${appState.config.location.name}</span>`;
+                list.appendChild(locDiv);
+            }
+
             if (Object.keys(data.panchang).length === 0) { 
                 // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>'; 
             }
@@ -2277,8 +2285,8 @@ The word "Nua" means new and "Khai" means food.
                         m = m < 10 ? '0'+m : m;
                         return `${h}:${m} ${ampm}`;
                     };
-                    calculatedPanchang['Sunrise'] = fmt(times.sunrise) + " (GPS)";
-                    calculatedPanchang['Sunset'] = fmt(times.sunset) + " (GPS)";
+                    calculatedPanchang['Sunrise'] = fmt(times.sunrise);
+                    calculatedPanchang['Sunset'] = fmt(times.sunset);
                 }
             }
             
