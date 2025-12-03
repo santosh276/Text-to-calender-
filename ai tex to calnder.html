@@ -1102,6 +1102,8 @@ The word "Nua" means new and "Khai" means food.
             images: {}, 
             config: { title: 'Panchang App', logoUrl: null, language: 'en', location: null }
         };
+        // Expose to window for debugging/testing
+        window.appState = appState;
         
         let bannerInterval;
         let bannerCurrentIndex = 0;
@@ -2246,6 +2248,14 @@ The word "Nua" means new and "Khai" means food.
             tithiDiv.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
             tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
             list.appendChild(tithiDiv);
+
+            if (appState.config.location) {
+                 const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
+                 const locLi = document.createElement('div');
+                 locLi.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
+                 locLi.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-location-dot text-saffron w-5 text-center mr-1"></i>Location:</span> <span class="text-gray-800 font-medium text-right truncate max-w-[150px]" title="${locName}">${locName}</span>`;
+                 list.appendChild(locLi);
+            }
 
             if (Object.keys(data.panchang).length === 0) { 
                 // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>'; 
