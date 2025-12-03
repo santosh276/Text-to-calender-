@@ -1102,6 +1102,8 @@ The word "Nua" means new and "Khai" means food.
             images: {}, 
             config: { title: 'Panchang App', logoUrl: null, language: 'en', location: null }
         };
+        // Expose to window for debugging/testing
+        window.appState = appState;
         
         let bannerInterval;
         let bannerCurrentIndex = 0;
@@ -2247,6 +2249,14 @@ The word "Nua" means new and "Khai" means food.
             tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
             list.appendChild(tithiDiv);
 
+            if (appState.config.location) {
+                 const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
+                 const locLi = document.createElement('div');
+                 locLi.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
+                 locLi.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-location-dot text-saffron w-5 text-center mr-1"></i>Location:</span> <span class="text-gray-800 font-medium text-right truncate max-w-[150px]" title="${locName}">${locName}</span>`;
+                 list.appendChild(locLi);
+            }
+
             if (Object.keys(data.panchang).length === 0) { 
                 // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>'; 
             }
@@ -2277,8 +2287,8 @@ The word "Nua" means new and "Khai" means food.
                         m = m < 10 ? '0'+m : m;
                         return `${h}:${m} ${ampm}`;
                     };
-                    calculatedPanchang['Sunrise'] = fmt(times.sunrise) + " (GPS)";
-                    calculatedPanchang['Sunset'] = fmt(times.sunset) + " (GPS)";
+                    calculatedPanchang['Sunrise'] = fmt(times.sunrise);
+                    calculatedPanchang['Sunset'] = fmt(times.sunset);
                 }
             }
             
@@ -2288,13 +2298,15 @@ The word "Nua" means new and "Khai" means food.
                 let iconClass = iconMap[lowerKey] || 'fa-circle-info';
                 if (lowerKey === 'sunrise') {
                     const pill = document.createElement('div');
+                    const label = appState.config.location ? "SUNRISE (GPS)" : "SUNRISE";
                     pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
+                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">${label}</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else if (lowerKey === 'sunset') {
                     const pill = document.createElement('div');
+                    const label = appState.config.location ? "SUNSET (GPS)" : "SUNSET";
                     pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
+                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">${label}</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else {
                     const li = document.createElement('div');
