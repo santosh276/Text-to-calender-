@@ -820,27 +820,70 @@ The word "Nua" means new and "Khai" means food.
     <script>
         // Season UI Component Data
         
-        // Minimal SunCalc Implementation
-        const SunCalc = (function() {
-            var J1970 = 2440588, dayMs = 1000 * 60 * 60 * 24, J2000 = 2451545, rad = Math.PI / 180, e = rad, J0 = 0.0009;
+        // High-Precision SunCalc Implementation (NOAA / Jean Meeus)
+        const SunCalc = (function () {
+            const PI = Math.PI;
+            const rad = PI / 180;
+            const dayMs = 1000 * 60 * 60 * 24;
+            const J1970 = 2440588;
+            const J2000 = 2451545;
+
             function toJulian(date) { return date.valueOf() / dayMs - 0.5 + J1970; }
             function fromJulian(j) { return new Date((j + 0.5 - J1970) * dayMs); }
             function toDays(date) { return toJulian(date) - J2000; }
+
             function getSolarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
-            function getEquationOfCenter(M) { return rad * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M)); }
-            function getEclipticLongitude(M) { var C = getEquationOfCenter(M), P = rad * 102.9372; return M + C + P + Math.PI; }
-            function getSunCoords(d) { 
-                var M = getSolarMeanAnomaly(d), L = getEclipticLongitude(M); 
-                return { dec: Math.asin(Math.sin(L) * Math.sin(rad * 23.4397)), ra: Math.atan2(Math.cos(rad * 23.4397) * Math.sin(L), Math.cos(L)) }; 
+
+            function getEquationOfCenter(M) {
+                return rad * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M));
             }
+
+            function getEclipticLongitude(M) {
+                var C = getEquationOfCenter(M);
+                var P = rad * 102.9372; // Perihelion of the Earth
+                return M + C + P + PI;
+            }
+
+            function getSunCoords(d) {
+                var M = getSolarMeanAnomaly(d);
+                var L = getEclipticLongitude(M);
+                return {
+                    dec: Math.asin(Math.sin(L) * Math.sin(rad * 23.4397)),
+                    ra: Math.atan2(Math.cos(rad * 23.4397) * Math.sin(L), Math.cos(L))
+                };
+            }
+
             function getTimes(date, lat, lng) {
-                var lw = rad * -lng, phi = rad * lat, d = toDays(date), n = Math.round(d - J0 - lw / (2 * Math.PI)), ds = J0 + lw / (2 * Math.PI) + n, M = getSolarMeanAnomaly(ds), L = getEclipticLongitude(M), dec = Math.asin(Math.sin(L) * Math.sin(rad * 23.4397)), Jnoon = 2451545 + ds + 0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * L);
-                function getRiseSetJ(h) { var w = Math.acos((Math.sin(h) - Math.sin(phi) * Math.sin(dec)) / (Math.cos(phi) * Math.cos(dec))); return w; }
+                var lw = rad * -lng;
+                var phi = rad * lat;
+                var d = toDays(date);
+
+                var n = Math.round(d - 0.0009 - lw / (2 * PI));
+                var ds = 0.0009 + lw / (2 * PI) + n;
+
+                var M = getSolarMeanAnomaly(ds);
+                var L = getEclipticLongitude(M);
+                var dec = Math.asin(Math.sin(L) * Math.sin(rad * 23.4397));
+
+                var Jnoon = J2000 + ds + 0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * L);
+
+                // Standard atmospheric refraction: -0.833 degrees
+                var h = -0.833 * rad;
+
+                var w = Math.acos((Math.sin(h) - Math.sin(phi) * Math.sin(dec)) / (Math.cos(phi) * Math.cos(dec)));
+                var Jset = Jnoon + w / (2 * PI);
+                var Jrise = Jnoon - w / (2 * PI);
+
                 try {
-                    var w = getRiseSetJ(-0.833 * rad);
-                    return { sunrise: fromJulian(Jnoon - w / (2 * Math.PI)), sunset: fromJulian(Jnoon + w / (2 * Math.PI)) };
-                } catch(e) { return { sunrise: null, sunset: null }; } // Polar night/day
+                    return {
+                        sunrise: fromJulian(Jrise),
+                        sunset: fromJulian(Jset)
+                    };
+                } catch (e) {
+                    return { sunrise: null, sunset: null };
+                }
             }
+
             return { getTimes: getTimes };
         })();
 
@@ -1102,6 +1145,8 @@ The word "Nua" means new and "Khai" means food.
             images: {}, 
             config: { title: 'Panchang App', logoUrl: null, language: 'en', location: null }
         };
+        // Expose to window for debugging/testing
+        window.appState = appState;
         
         let bannerInterval;
         let bannerCurrentIndex = 0;
@@ -2247,6 +2292,14 @@ The word "Nua" means new and "Khai" means food.
             tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
             list.appendChild(tithiDiv);
 
+            if (appState.config.location) {
+                 const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
+                 const locLi = document.createElement('div');
+                 locLi.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
+                 locLi.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-location-dot text-saffron w-5 text-center mr-1"></i>Location:</span> <span class="text-gray-800 font-medium text-right truncate max-w-[150px]" title="${locName}">${locName}</span>`;
+                 list.appendChild(locLi);
+            }
+
             if (Object.keys(data.panchang).length === 0) { 
                 // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>'; 
             }
@@ -2277,8 +2330,8 @@ The word "Nua" means new and "Khai" means food.
                         m = m < 10 ? '0'+m : m;
                         return `${h}:${m} ${ampm}`;
                     };
-                    calculatedPanchang['Sunrise'] = fmt(times.sunrise) + " (GPS)";
-                    calculatedPanchang['Sunset'] = fmt(times.sunset) + " (GPS)";
+                    calculatedPanchang['Sunrise'] = fmt(times.sunrise);
+                    calculatedPanchang['Sunset'] = fmt(times.sunset);
                 }
             }
             
@@ -2288,13 +2341,15 @@ The word "Nua" means new and "Khai" means food.
                 let iconClass = iconMap[lowerKey] || 'fa-circle-info';
                 if (lowerKey === 'sunrise') {
                     const pill = document.createElement('div');
+                    const label = appState.config.location ? "SUNRISE (GPS)" : "SUNRISE";
                     pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
+                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">${label}</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else if (lowerKey === 'sunset') {
                     const pill = document.createElement('div');
+                    const label = appState.config.location ? "SUNSET (GPS)" : "SUNSET";
                     pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
+                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">${label}</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else {
                     const li = document.createElement('div');
