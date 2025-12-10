@@ -180,7 +180,26 @@
         .text-val-blue { color: #2563eb; }
         .compat-pill { background-color: #f3f4f6; color: #374151; font-size: 0.8rem; font-weight: 500; padding: 6px 14px; border-radius: 9999px; display: inline-block; }
         .custom-modal-border { border-top: 8px solid #FF9933; border-bottom: 1px solid #fed7aa; border-left: 1px solid #fed7aa; border-right: 1px solid #fed7aa; border-radius: 24px; }
-        .premium-header-bg { background: linear-gradient(135deg, #78350f 0%, #92400e 100%); position: relative; overflow: hidden; }
+
+        @keyframes aurora-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .aurora-bg {
+            background: linear-gradient(-45deg, #CC0000, #FF9933, #D4AF37, #CC0000);
+            background-size: 200% 200%;
+            animation: aurora-flow 10s ease infinite;
+        }
+
+        .premium-header-bg {
+            background: linear-gradient(-45deg, #CC0000, #FF9933, #D4AF37, #CC0000);
+            background-size: 200% 200%;
+            animation: aurora-flow 10s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
         .premium-header-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 30%); pointer-events: none; }
         #app-logo-img { height: 40px; width: auto; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         
@@ -288,7 +307,7 @@
 <body class="h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
-    <nav class="bg-deepred text-white px-4 py-3 shadow-lg flex flex-wrap justify-between items-center z-20 shrink-0 gap-3 relative z-50">
+    <nav class="aurora-bg text-white px-4 py-3 shadow-lg flex flex-wrap justify-between items-center z-20 shrink-0 gap-3 relative z-50">
         <div class="flex items-center gap-3">
             <div id="logo-container"><i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i></div>
             <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span></h1>
