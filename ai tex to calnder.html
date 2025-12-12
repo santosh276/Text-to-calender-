@@ -2471,41 +2471,51 @@ The word "Nua" means new and "Khai" means food.
         function renderHoroscope(data) {
             const grid = document.getElementById('horoscope-grid');
             grid.innerHTML = '';
-            // Update grid to 2 columns for larger items
-            grid.className = "grid grid-cols-2 gap-3";
-            
-            if (data.horoscope.length === 0) { 
-                grid.innerHTML = '<div class="col-span-2 text-gray-400 italic text-sm text-center py-4">No horoscope data available.</div>'; 
-                return; 
-            }
+            // Update grid to 3 columns for circle layout (3D Circle Style)
+            grid.className = "grid grid-cols-3 gap-y-4 gap-x-2 p-1";
             
             const currentLang = appState.config.language || 'en';
             const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
             
-            data.horoscope.forEach(h => {
+            const signKeys = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+
+            signKeys.forEach(signKey => {
+                // Find prediction text if available in data.horoscope
+                const predictionItem = data.horoscope.find(h => h.sign.toLowerCase() === signKey);
+                const predictionText = predictionItem ? predictionItem.text : "No specific prediction available for today.";
+
                 const btn = document.createElement('button');
-                const signKey = h.sign.toLowerCase();
                 let iconHtml = '';
                 
                 // Check for custom icon
                 const details = appState.horoscopeDetails[signKey];
                 if (details && details.icon) {
                     const iconUrl = resolveImageUrls(details.icon);
-                    // Increased image size
-                    iconHtml = `<img src="${iconUrl}" class="w-12 h-12 object-contain mb-2 rounded-full border-2 border-white shadow-sm group-hover:scale-110 transition-transform duration-300">`;
+                    // Image fits inside the circle
+                    iconHtml = `<img src="${iconUrl}" class="w-10 h-10 object-contain rounded-full group-hover:scale-110 transition-transform duration-300">`;
                 } else {
                     let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
-                    // Increased icon size to text-3xl
-                    iconHtml = `<i class="${iconClass} text-purple-600 text-3xl mb-2 group-hover:text-purple-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i>`;
+                    // Colored icons to look better in white circle
+                    // Using purple-600 to match theme
+                    iconHtml = `<i class="${iconClass} text-2xl text-purple-600 group-hover:text-purple-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i>`;
                 }
 
-                const localizedName = localizedHoroscopes[signKey] || h.sign;
+                const localizedName = localizedHoroscopes[signKey] || signKey.charAt(0).toUpperCase() + signKey.slice(1);
+
+                // 3D Circle Style Layout
+                // Button container
+                btn.className = "flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200";
+
+                // Circle Wrapper with Shadow (3D effect)
+                const circleClass = "w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-purple-200 relative overflow-hidden ring-1 ring-black/5";
+
+                const innerContent = `<div class="${circleClass}">${iconHtml}</div>`;
+                const labelHtml = `<span class="text-[10px] md:text-xs font-bold text-gray-700 uppercase tracking-wide group-hover:text-purple-700 transition-colors text-center leading-tight mt-1">${localizedName}</span>`;
                 
-                // Enhanced card styling with gradient and better shadow
-                btn.className = "group bg-gradient-to-br from-purple-50 to-white hover:from-purple-100 hover:to-purple-50 border border-purple-100 hover:border-purple-300 p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 min-h-[100px]";
+                btn.innerHTML = innerContent + labelHtml;
                 
-                btn.innerHTML = `${iconHtml}<span class="text-xs font-bold uppercase text-purple-900 tracking-wider w-full text-center group-hover:text-purple-700">${localizedName}</span>`;
-                btn.onclick = () => openHoroscopeModal(h.sign, h.text);
+                const displaySign = signKey.charAt(0).toUpperCase() + signKey.slice(1);
+                btn.onclick = () => openHoroscopeModal(displaySign, predictionText);
                 grid.appendChild(btn);
             });
         }
