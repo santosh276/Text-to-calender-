@@ -682,6 +682,28 @@ The word "Nua" means new and "Khai" means food.
                                     <select id="banner-date-select" class="mt-2 w-full text-xs p-1.5 border rounded bg-white hidden" onclick="event.stopPropagation()"></select>
                                 </div>
                             </div>
+                            <div class="radio-option" onclick="updateCropRatio('horoscope')">
+                                <div class="radio-circle"><div class="radio-dot"></div></div>
+                                <div class="flex-1">
+                                    <span class="block font-bold text-gray-700 text-sm">Horoscope Icon</span>
+                                    <span class="block text-xs text-gray-500">Square (1:1)</span>
+                                    <select id="crop-horoscope-select" class="mt-2 w-full text-xs p-1.5 border rounded bg-white hidden" onclick="event.stopPropagation()">
+                                        <option value="" disabled selected>Select Sign</option>
+                                        <option value="Aries">Aries</option>
+                                        <option value="Taurus">Taurus</option>
+                                        <option value="Gemini">Gemini</option>
+                                        <option value="Cancer">Cancer</option>
+                                        <option value="Leo">Leo</option>
+                                        <option value="Virgo">Virgo</option>
+                                        <option value="Libra">Libra</option>
+                                        <option value="Scorpio">Scorpio</option>
+                                        <option value="Sagittarius">Sagittarius</option>
+                                        <option value="Capricorn">Capricorn</option>
+                                        <option value="Aquarius">Aquarius</option>
+                                        <option value="Pisces">Pisces</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="mt-auto pt-4">
@@ -728,11 +750,34 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="block font-bold text-gray-700 text-sm">Day Banner</span>
                             </div>
                         </div>
+                        <div class="radio-option" onclick="updateLinkType('horoscope')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm">Horoscope Icon</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="link-date-container" class="hidden">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
                     <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
+                </div>
+                <div id="link-horoscope-container" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Sign</label>
+                    <select id="link-horoscope-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+                        <option value="Aries">Aries</option>
+                        <option value="Taurus">Taurus</option>
+                        <option value="Gemini">Gemini</option>
+                        <option value="Cancer">Cancer</option>
+                        <option value="Leo">Leo</option>
+                        <option value="Virgo">Virgo</option>
+                        <option value="Libra">Libra</option>
+                        <option value="Scorpio">Scorpio</option>
+                        <option value="Sagittarius">Sagittarius</option>
+                        <option value="Capricorn">Capricorn</option>
+                        <option value="Aquarius">Aquarius</option>
+                        <option value="Pisces">Pisces</option>
+                    </select>
                 </div>
                 <div class="mt-4">
                     <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
@@ -1408,12 +1453,16 @@ The word "Nua" means new and "Khai" means food.
             if(selectedEl) selectedEl.classList.add('selected');
             document.getElementById('banner-date-select').classList.add('hidden');
             document.getElementById('gridbg-date-select').classList.add('hidden');
+            document.getElementById('crop-horoscope-select').classList.add('hidden');
+
             if(type === 'banner') document.getElementById('banner-date-select').classList.remove('hidden');
             if(type === 'gridbg') document.getElementById('gridbg-date-select').classList.remove('hidden');
+            if(type === 'horoscope') document.getElementById('crop-horoscope-select').classList.remove('hidden');
+
             const image = document.getElementById('cropper-img');
             if (tempImageState.cropper) tempImageState.cropper.destroy();
             let aspectRatio = NaN; 
-            if (type === 'logo' || type === 'gridbg') aspectRatio = 1;
+            if (type === 'logo' || type === 'gridbg' || type === 'horoscope') aspectRatio = 1;
             if (type === 'banner') aspectRatio = 16 / 9;
             tempImageState.cropper = new Cropper(image, { aspectRatio: aspectRatio, viewMode: 1, autoCropArea: 1 });
         }
@@ -1424,7 +1473,7 @@ The word "Nua" means new and "Khai" means food.
             setTimeout(() => { modal.style.display = 'none'; if (tempImageState.cropper) tempImageState.cropper.destroy(); }, 300);
         }
 
-        function insertImageToEditor(url, type, date) {
+        function insertImageToEditor(url, type, extraParam) {
             let newText = editor.value;
             if (type === 'logo') {
                 const configBlockRegex = /::: config([\s\S]*?):::/;
@@ -1436,7 +1485,84 @@ The word "Nua" means new and "Khai" means food.
                     });
                 } else { newText = `::: config\n${logoLine}\n:::\n\n` + newText; }
                 appState.config.logoUrl = url;
+            } else if (type === 'horoscope') {
+                const sign = extraParam;
+                if (!sign) { alert("Please select a Zodiac Sign."); return; }
+                const iconLine = `@ Icon : ![Icon](${url})`;
+
+                // Construct a regex to find the horoscope block for this sign
+                // Logic: Find "::: horoscope_details", then inside it find ">> Sign"
+                // Since JS regex doesn't support easy "find block X then inside find Y", we parse simply.
+                // We'll search for the Sign Header `>> Sign` and inject/replace Icon line after it.
+
+                const signRegex = new RegExp(`^>>\\s+${sign}$`, 'im');
+                const signMatch = newText.match(signRegex);
+
+                if (signMatch) {
+                    // Sign header exists.
+                    // Check if it's inside a horoscope_details block?
+                    // Assuming structure is correct, we find the header.
+                    // We need to insert @ Icon after it, or replace existing @ Icon
+
+                    const matchIndex = signMatch.index + signMatch[0].length;
+                    const afterHeader = newText.substring(matchIndex);
+
+                    // Look for existing Icon line in the subsequent lines until next block or header
+                    // We can split afterHeader by lines
+                    const lines = afterHeader.split('\n');
+                    let replaced = false;
+                    let insertionIndex = -1;
+
+                    // Count length to reconstruct string
+                    let currentOffset = matchIndex;
+
+                    // Check if next line is a newline
+                    if (lines.length > 0 && lines[0].trim() === '') {
+                        // Skip empty line?
+                    }
+
+                    // We just want to check if the NEXT property lines contain Icon
+                    // Only scan until next '>>', ':::', or end
+                    for (let i = 0; i < lines.length; i++) {
+                        const line = lines[i];
+                        if (line.trim().startsWith('>>') || line.trim().startsWith(':::')) {
+                            // End of section for this sign
+                            insertionIndex = i; // Insert before this line
+                            break;
+                        }
+                        if (line.match(/^@\s*Icon\s*:/i)) {
+                            // Found existing icon, replace it
+                            // We need to do a string replacement on the whole text to be safe or reconstruct
+                            // Let's use string replace with a specific localized regex
+                            const blockStart = newText.substring(0, matchIndex);
+                            const blockEnd = newText.substring(matchIndex);
+                            // Replace first occurrence of Icon line in blockEnd
+                            newText = blockStart + blockEnd.replace(/^@\s*Icon\s*:.*$/m, iconLine);
+                            replaced = true;
+                            break;
+                        }
+                    }
+
+                    if (!replaced) {
+                        // Insert immediately after header
+                        newText = newText.slice(0, matchIndex) + `\n${iconLine}` + newText.slice(matchIndex);
+                    }
+                } else {
+                    // Sign header doesn't exist.
+                    // Check if any horoscope_details block exists to append to
+                    if (newText.includes('::: horoscope_details')) {
+                        newText = newText.replace(/::: horoscope_details([\s\S]*?):::/, (match, content) => {
+                            // Append to the end of the first horoscope_details block found
+                            return `::: horoscope_details${content}\n\n>> ${sign}\n${iconLine}\n:::`;
+                        });
+                    } else {
+                        // Create new block
+                        newText += `\n\n::: horoscope_details\n>> ${sign}\n${iconLine}\n:::`;
+                    }
+                }
+
             } else if (type === 'banner' || type === 'gridbg') {
+                const date = extraParam;
                 if (!date) { alert("Please select a date."); return; }
                 const dateHeaderRegex = new RegExp(`(>>\\s+${date})`);
                 const tagLine = type === 'banner' ? `![Banner](${url})` : `![GridBg](${url})`;
@@ -1455,13 +1581,15 @@ The word "Nua" means new and "Khai" means food.
             const { key, selectedType } = tempImageState;
             appState.images[key] = croppedDataUrl;
             
-            let date = null;
+            let extraParam = null;
             if (selectedType === 'banner' || selectedType === 'gridbg') {
                 const dropdownId = selectedType === 'banner' ? 'banner-date-select' : 'gridbg-date-select';
-                date = document.getElementById(dropdownId).value;
+                extraParam = document.getElementById(dropdownId).value;
+            } else if (selectedType === 'horoscope') {
+                extraParam = document.getElementById('crop-horoscope-select').value;
             }
             
-            insertImageToEditor(key, selectedType, date);
+            insertImageToEditor(key, selectedType, extraParam);
             closeCropModal();
         }
 
@@ -1504,10 +1632,15 @@ The word "Nua" means new and "Khai" means food.
             if(selectedEl) selectedEl.classList.add('selected');
             
             const dateContainer = document.getElementById('link-date-container');
+            const horoContainer = document.getElementById('link-horoscope-container');
+
+            dateContainer.classList.add('hidden');
+            horoContainer.classList.add('hidden');
+
             if(type === 'banner' || type === 'gridbg') {
                 dateContainer.classList.remove('hidden');
-            } else {
-                dateContainer.classList.add('hidden');
+            } else if (type === 'horoscope') {
+                horoContainer.classList.remove('hidden');
             }
         }
 
@@ -1538,12 +1671,15 @@ The word "Nua" means new and "Khai" means food.
             url = convertGoogleDriveLink(url);
 
             const type = tempLinkState.selectedType;
-            let date = null;
+            let extraParam = null;
             if (type === 'banner' || type === 'gridbg') {
-                date = document.getElementById('link-date-select').value;
-                if (!date) { alert("Please select a date."); return; }
+                extraParam = document.getElementById('link-date-select').value;
+                if (!extraParam) { alert("Please select a date."); return; }
+            } else if (type === 'horoscope') {
+                extraParam = document.getElementById('link-horoscope-select').value;
+                if (!extraParam) { alert("Please select a Zodiac Sign."); return; }
             }
-            insertImageToEditor(url, type, date);
+            insertImageToEditor(url, type, extraParam);
             closeLinkModal();
         }
         
@@ -1700,6 +1836,10 @@ The word "Nua" means new and "Khai" means food.
                             else if (key.includes('lucky color')) parsedHoroDetails[currentHoroSign].lucky.color = val;
                             else if (key.includes('lucky time')) parsedHoroDetails[currentHoroSign].lucky.time = val;
                             else if (key.includes('compatible')) parsedHoroDetails[currentHoroSign].compatible = val.split(',').map(s => s.trim());
+                            else if (key.includes('icon')) {
+                                const iconMatch = val.match(/!\[(.*?)\]\((.*?)\)/);
+                                if (iconMatch) parsedHoroDetails[currentHoroSign].icon = iconMatch[2];
+                            }
                         } else {
                             parsedHoroDetails[currentHoroSign].bodyLines.push(line);
                         }
@@ -2336,10 +2476,22 @@ The word "Nua" means new and "Khai" means food.
             const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
             data.horoscope.forEach(h => {
                 const btn = document.createElement('button');
-                let iconClass = zodiacIcons[h.sign.toLowerCase()] || 'fa-solid fa-star';
-                const localizedName = localizedHoroscopes[h.sign.toLowerCase()] || h.sign;
+                const signKey = h.sign.toLowerCase();
+                let iconHtml = '';
+
+                // Check for custom icon
+                const details = appState.horoscopeDetails[signKey];
+                if (details && details.icon) {
+                    const iconUrl = resolveImageUrls(details.icon);
+                    iconHtml = `<img src="${iconUrl}" class="w-8 h-8 object-contain mb-1 rounded-full border border-purple-200 shadow-sm">`;
+                } else {
+                    let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
+                    iconHtml = `<i class="${iconClass} text-purple-600 text-lg mb-1"></i>`;
+                }
+
+                const localizedName = localizedHoroscopes[signKey] || h.sign;
                 btn.className = "bg-purple-50 hover:bg-purple-100 border border-purple-200 p-2 rounded flex flex-col items-center gap-1 transition";
-                btn.innerHTML = `<i class="${iconClass} text-purple-600 text-lg"></i><span class="text-[10px] font-bold uppercase text-purple-800 truncate w-full text-center">${localizedName}</span>`;
+                btn.innerHTML = `${iconHtml}<span class="text-[10px] font-bold uppercase text-purple-800 truncate w-full text-center">${localizedName}</span>`;
                 btn.onclick = () => openHoroscopeModal(h.sign, h.text);
                 grid.appendChild(btn);
             });
