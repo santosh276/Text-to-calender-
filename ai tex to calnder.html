@@ -2471,9 +2471,17 @@ The word "Nua" means new and "Khai" means food.
         function renderHoroscope(data) {
             const grid = document.getElementById('horoscope-grid');
             grid.innerHTML = '';
-            if (data.horoscope.length === 0) { grid.innerHTML = '<div class="col-span-3 text-gray-400 italic text-xs text-center">No horoscope data.</div>'; return; }
+            // Update grid to 2 columns for larger items
+            grid.className = "grid grid-cols-2 gap-3";
+
+            if (data.horoscope.length === 0) {
+                grid.innerHTML = '<div class="col-span-2 text-gray-400 italic text-sm text-center py-4">No horoscope data available.</div>';
+                return;
+            }
+
             const currentLang = appState.config.language || 'en';
             const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
+
             data.horoscope.forEach(h => {
                 const btn = document.createElement('button');
                 const signKey = h.sign.toLowerCase();
@@ -2483,15 +2491,20 @@ The word "Nua" means new and "Khai" means food.
                 const details = appState.horoscopeDetails[signKey];
                 if (details && details.icon) {
                     const iconUrl = resolveImageUrls(details.icon);
-                    iconHtml = `<img src="${iconUrl}" class="w-8 h-8 object-contain mb-1 rounded-full border border-purple-200 shadow-sm">`;
+                    // Increased image size
+                    iconHtml = `<img src="${iconUrl}" class="w-12 h-12 object-contain mb-2 rounded-full border-2 border-white shadow-sm group-hover:scale-110 transition-transform duration-300">`;
                 } else {
                     let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
-                    iconHtml = `<i class="${iconClass} text-purple-600 text-lg mb-1"></i>`;
+                    // Increased icon size to text-3xl
+                    iconHtml = `<i class="${iconClass} text-purple-600 text-3xl mb-2 group-hover:text-purple-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i>`;
                 }
 
                 const localizedName = localizedHoroscopes[signKey] || h.sign;
-                btn.className = "bg-purple-50 hover:bg-purple-100 border border-purple-200 p-2 rounded flex flex-col items-center gap-1 transition";
-                btn.innerHTML = `${iconHtml}<span class="text-[10px] font-bold uppercase text-purple-800 truncate w-full text-center">${localizedName}</span>`;
+
+                // Enhanced card styling with gradient and better shadow
+                btn.className = "group bg-gradient-to-br from-purple-50 to-white hover:from-purple-100 hover:to-purple-50 border border-purple-100 hover:border-purple-300 p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 min-h-[100px]";
+
+                btn.innerHTML = `${iconHtml}<span class="text-xs font-bold uppercase text-purple-900 tracking-wider w-full text-center group-hover:text-purple-700">${localizedName}</span>`;
                 btn.onclick = () => openHoroscopeModal(h.sign, h.text);
                 grid.appendChild(btn);
             });
@@ -2629,35 +2642,58 @@ The word "Nua" means new and "Khai" means food.
 
         function openHoroscopeModal(sign, defaultText) {
             const modal = document.getElementById('horoscope-modal');
-            const details = appState.horoscopeDetails[sign.toLowerCase()];
+            const signKey = sign.toLowerCase();
+            const details = appState.horoscopeDetails[signKey];
             const signTitle = sign.charAt(0).toUpperCase() + sign.slice(1);
             const currentLang = appState.config.language || 'en';
             const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
-            const localizedName = localizedHoroscopes[sign.toLowerCase()] || signTitle;
-            const displayTitle = currentLang === 'en' ? signTitle : `${localizedName} - ${signTitle}`;
-            document.getElementById('horo-modal-title').innerText = displayTitle;
+            const localizedName = localizedHoroscopes[signKey] || signTitle;
+            const displayTitle = currentLang === 'en' ? signTitle : `${localizedName}`;
+
+            // Inject Title and Icon
+            const titleContainer = document.getElementById('horo-modal-title');
+            let headerIconHtml = '';
+            if (details && details.icon) {
+                const iconUrl = resolveImageUrls(details.icon);
+                headerIconHtml = `<img src="${iconUrl}" class="w-16 h-16 object-contain rounded-full border-4 border-white shadow-md bg-white">`;
+            } else {
+                let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
+                headerIconHtml = `<div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 border-4 border-white shadow-md"><i class="${iconClass} text-4xl"></i></div>`;
+            }
+
+            // Reconstruct Header Content
+            titleContainer.innerHTML = `<div class="flex items-center gap-4">${headerIconHtml}<span>${displayTitle}</span></div>`;
+
             const predictionContainer = document.getElementById('horo-prediction');
             predictionContainer.innerHTML = '';
             if (details && details.bodyLines.length > 0) { renderRichBody(predictionContainer, details.bodyLines); } else { predictionContainer.innerText = defaultText; }
             const badgesContainer = document.getElementById('horo-badges');
             badgesContainer.innerHTML = '';
             if (details) {
-                if (details.element) badgesContainer.innerHTML += `<span class="horo-badge-purple">${details.element}</span>`;
-                if (details.ruler) badgesContainer.innerHTML += `<span class="horo-badge-blue">Ruler: ${details.ruler}</span>`;
+                if (details.element) badgesContainer.innerHTML += `<span class="horo-badge-purple px-3 py-1 text-xs"><i class="fa-solid fa-fire mr-1"></i> ${details.element}</span>`;
+                if (details.ruler) badgesContainer.innerHTML += `<span class="horo-badge-blue px-3 py-1 text-xs"><i class="fa-solid fa-crown mr-1"></i> ${details.ruler}</span>`;
                 document.getElementById('horo-date-range').innerText = details.dateRange || "";
-                document.getElementById('horo-lucky-num').innerText = details.lucky.number;
+
+                // Enhanced Lucky Section
+                const luckyNumEl = document.getElementById('horo-lucky-num');
+                luckyNumEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-solid fa-hashtag text-amber-300 text-sm mb-1 opacity-80"></i><span class="text-3xl">${details.lucky.number}</span></div>`;
+
                 const colorEl = document.getElementById('horo-lucky-color');
                 const colorVal = details.lucky.color;
-                colorEl.innerText = colorVal;
                 const colorMap = { 'red': 'text-red-600', 'green': 'text-green-600', 'blue': 'text-blue-600', 'yellow': 'text-yellow-500', 'orange': 'text-orange-600', 'purple': 'text-purple-600', 'pink': 'text-pink-600', 'white': 'text-gray-400', 'black': 'text-gray-900' };
-                colorEl.className = `lucky-value font-bold ${colorMap[colorVal.toLowerCase()] || "text-gray-800"}`;
-                document.getElementById('horo-lucky-time').innerHTML = details.lucky.time.replace(' ', '<br>'); 
+                const textColorClass = colorMap[colorVal.toLowerCase()] || "text-gray-800";
+                colorEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-solid fa-palette text-green-300 text-sm mb-1 opacity-80"></i><span class="text-xl ${textColorClass}">${colorVal}</span></div>`;
+
+                const timeEl = document.getElementById('horo-lucky-time');
+                const timeVal = details.lucky.time.replace(' ', '<br>');
+                timeEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-regular fa-clock text-blue-300 text-sm mb-1 opacity-80"></i><span class="text-lg leading-tight text-blue-600">${timeVal}</span></div>`;
+
                 const compatContainer = document.getElementById('horo-compatible');
                 compatContainer.innerHTML = '';
-                const bgColors = ["bg-pink-100 text-pink-700", "bg-indigo-100 text-indigo-700", "bg-teal-100 text-teal-700", "bg-orange-100 text-orange-700"];
+                const bgColors = ["bg-pink-50 text-pink-700 border border-pink-100", "bg-indigo-50 text-indigo-700 border border-indigo-100", "bg-teal-50 text-teal-700 border border-teal-100", "bg-orange-50 text-orange-700 border border-orange-100"];
                 details.compatible.forEach((c, index) => {
                     const colorClass = bgColors[index % bgColors.length];
-                    compatContainer.innerHTML += `<span class="compat-pill ${colorClass}">${c}</span>`;
+                    compatContainer.innerHTML += `<span class="compat-pill ${colorClass} px-4 py-1.5 text-sm font-bold shadow-sm">${c}</span>`;
                 });
             } else {
                 document.getElementById('horo-date-range').innerText = "";
