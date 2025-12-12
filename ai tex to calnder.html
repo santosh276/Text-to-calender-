@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -283,6 +284,120 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    </style>
+    <style>
+        /* Zodiac Card Styles - Cosmic Theme */
+        .zodiac-card-cosmic {
+            background: rgba(20, 20, 50, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.1);
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            margin-bottom: 12px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .zodiac-card-cosmic:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 200, 255, 0.3);
+            background: rgba(30, 30, 70, 0.8);
+            z-index: 20;
+        }
+        .zodiac-title-cosmic {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            font-size: 1.4rem;
+            margin: 10px 0 5px;
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+        .zodiac-dates-cosmic {
+            font-size: 0.8rem;
+            color: #a0d2eb;
+            margin-bottom: 10px;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .zodiac-symbol-cosmic {
+            width: 80px;
+            height: 80px;
+            margin: 10px 0;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+            transition: transform 0.5s ease;
+        }
+        .zodiac-card-cosmic:hover .zodiac-symbol-cosmic {
+            transform: rotate(5deg) scale(1.1);
+        }
+        .z-element {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .z-fire { background: rgba(255, 80, 80, 0.2); color: #ff5050; border: 1px solid rgba(255, 80, 80, 0.4); }
+        .z-earth { background: rgba(139, 195, 74, 0.2); color: #8bc34a; border: 1px solid rgba(139, 195, 74, 0.4); }
+        .z-air { background: rgba(33, 150, 243, 0.2); color: #2196f3; border: 1px solid rgba(33, 150, 243, 0.4); }
+        .z-water { background: rgba(3, 169, 244, 0.2); color: #03a9f4; border: 1px solid rgba(3, 169, 244, 0.4); }
+
+        .sign-info-cosmic {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #d0eaff;
+            margin-top: 8px;
+            text-align: center;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* Cosmic Container Background */
+        .cosmic-container {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e) !important;
+            border: 2px solid #302b63 !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stars-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star-dot {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        .constellation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .constellation-line {
+            stroke: rgba(0, 150, 255, 0.1);
+            stroke-width: 1;
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -2468,14 +2583,94 @@ The word "Nua" means new and "Khai" means food.
             render(); 
         }
 
+
+        const ZodiacStaticData = {
+            aries: { dates: "March 21 - April 19", element: "Fire", elementClass: "z-fire", svg: '<path fill="none" stroke="#ff5050" stroke-width="5" stroke-linecap="round" d="M30,50 L70,50 M30,30 L50,70 L70,30" />', info: "The Ram represents courage, determination, and confidence. Aries are natural leaders." },
+            taurus: { dates: "April 20 - May 20", element: "Earth", elementClass: "z-earth", svg: '<circle cx="50" cy="50" r="30" fill="none" stroke="#8bc34a" stroke-width="5" /><path fill="none" stroke="#8bc34a" stroke-width="5" d="M30,50 L50,30 L70,50" />', info: "The Bull symbolizes stability, patience, and practicality. Taurus are reliable and persistent." },
+            gemini: { dates: "May 21 - June 20", element: "Air", elementClass: "z-air", svg: '<path fill="none" stroke="#2196f3" stroke-width="5" d="M40,30 L40,70 M60,30 L60,70 M40,30 L60,50 M40,70 L60,50" />', info: "The Twins represent duality, communication, and adaptability. Gemini are versatile and expressive." },
+            cancer: { dates: "June 21 - July 22", element: "Water", elementClass: "z-water", svg: '<path fill="none" stroke="#03a9f4" stroke-width="5" d="M30,50 Q50,30 70,50 Q50,70 30,50" />', info: "The Crab symbolizes emotion, intuition, and nurturing. Cancer are protective and empathetic." },
+            leo: { dates: "July 23 - August 22", element: "Fire", elementClass: "z-fire", svg: '<circle cx="50" cy="40" r="15" fill="none" stroke="#ff5050" stroke-width="5" /><path fill="none" stroke="#ff5050" stroke-width="5" d="M50,55 Q55,70 65,70 Q70,60 75,65" /><path fill="none" stroke="#ff5050" stroke-width="5" d="M50,55 Q45,70 35,70 Q30,60 25,65" />', info: "The Lion represents charisma, leadership, and creativity. Leo are confident and generous." },
+            virgo: { dates: "August 23 - September 22", element: "Earth", elementClass: "z-earth", svg: '<path fill="none" stroke="#8bc34a" stroke-width="5" d="M50,30 L50,70 M40,50 L60,50 M30,35 L50,45 L70,35" />', info: "The Virgin symbolizes precision, practicality, and service. Virgo are analytical and kind." },
+            libra: { dates: "September 23 - October 22", element: "Air", elementClass: "z-air", svg: '<path fill="none" stroke="#2196f3" stroke-width="5" d="M30,50 L70,50 M50,30 L50,70 M40,35 L40,65 M60,35 L60,65" />', info: "The Scales represent balance, harmony, and justice. Libra are diplomatic and social." },
+            scorpio: { dates: "October 23 - November 21", element: "Water", elementClass: "z-water", svg: '<path fill="none" stroke="#03a9f4" stroke-width="5" d="M50,30 L50,70 M50,70 L40,60 M50,70 L60,60 M30,50 L70,50" /><path fill="none" stroke="#03a9f4" stroke-width="5" d="M30,50 L25,55 M70,50 L75,55" />', info: "The Scorpion symbolizes passion, mystery, and transformation. Scorpio are resourceful and brave." },
+            sagittarius: { dates: "November 22 - December 21", element: "Fire", elementClass: "z-fire", svg: '<path fill="none" stroke="#ff5050" stroke-width="5" d="M40,30 L60,50 L40,70" /><path fill="none" stroke="#ff5050" stroke-width="3" d="M60,50 L80,40" />', info: "The Archer represents adventure, optimism, and freedom. Sagittarius are philosophical and enthusiastic." },
+            capricorn: { dates: "December 22 - January 19", element: "Earth", elementClass: "z-earth", svg: '<path fill="none" stroke="#8bc34a" stroke-width="5" d="M40,50 L60,30 L60,70" /><path fill="none" stroke="#8bc34a" stroke-width="3" d="M60,30 L70,25 M60,70 L70,75" />', info: "The Goat symbolizes discipline, responsibility, and ambition. Capricorn are practical and wise." },
+            aquarius: { dates: "January 20 - February 18", element: "Air", elementClass: "z-air", svg: '<path fill="none" stroke="#2196f3" stroke-width="5" d="M35,40 L50,30 L65,40 M35,60 L50,50 L65,60 M35,40 L35,60 M65,40 L65,60" />', info: "The Water Bearer represents innovation, originality, and independence. Aquarius are progressive and humanitarian." },
+            pisces: { dates: "February 19 - March 20", element: "Water", elementClass: "z-water", svg: '<path fill="none" stroke="#03a9f4" stroke-width="5" d="M30,40 Q50,30 70,40 M30,60 Q50,70 70,60 M35,40 L45,60 M65,40 L55,60" />', info: "The Fish symbolize intuition, compassion, and imagination. Pisces are empathetic and artistic." }
+        };
+
         function renderHoroscope(data) {
             const grid = document.getElementById('horoscope-grid');
+            const parent = grid.parentElement;
+
+            // Apply Cosmic Theme to Parent if not already applied
+            if (!parent.classList.contains('cosmic-container')) {
+                parent.className = "cosmic-container rounded-xl shadow-md p-4 relative";
+
+                // Add Star Background
+                const starBg = document.createElement('div');
+                starBg.className = 'stars-bg';
+                parent.appendChild(starBg); // Append first, but z-index handles layering
+
+                // Add Constellation Layer
+                const constelBg = document.createElement('div');
+                constelBg.className = 'constellation';
+                parent.appendChild(constelBg);
+
+                // Generate Stars
+                for (let i = 0; i < 50; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star-dot';
+                    const size = Math.random() * 2 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    star.style.animationDelay = `${Math.random() * 5}s`;
+                    star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                    starBg.appendChild(star);
+                }
+
+                // Generate Constellation Lines
+                const svgNS = "http://www.w3.org/2000/svg";
+                const svg = document.createElementNS(svgNS, "svg");
+                svg.setAttribute("width", "100%");
+                svg.setAttribute("height", "100%");
+
+                for (let i = 0; i < 15; i++) {
+                    const line = document.createElementNS(svgNS, "line");
+                    const x1 = Math.random() * 100;
+                    const y1 = Math.random() * 100;
+                    const x2 = x1 + (Math.random() * 20 - 10);
+                    const y2 = y1 + (Math.random() * 20 - 10);
+
+                    line.setAttribute("x1", `${x1}%`);
+                    line.setAttribute("y1", `${y1}%`);
+                    line.setAttribute("x2", `${x2}%`);
+                    line.setAttribute("y2", `${y2}%`);
+                    line.classList.add("constellation-line");
+                    svg.appendChild(line);
+                }
+                constelBg.appendChild(svg);
+
+                // Update header style
+                const header = parent.querySelector('h3');
+                if (header) {
+                    header.className = "font-bold text-[#00ffff] mb-3 border-b border-[#00ffff]/30 pb-1 flex items-center relative z-20";
+                    header.style.fontFamily = "'Orbitron', sans-serif";
+                    const icon = header.querySelector('i');
+                    if(icon) {
+                        icon.className = "fa-solid fa-star text-[#ff00ff] mr-2";
+                    }
+                }
+            }
+
             grid.innerHTML = '';
-            // Update grid to 2 columns for larger items
-            grid.className = "grid grid-cols-2 gap-3";
+            // Change grid to 1 column for full cards
+            grid.className = "flex flex-col gap-4 relative z-20";
 
             if (data.horoscope.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-gray-400 italic text-sm text-center py-4">No horoscope data available.</div>';
+                grid.innerHTML = '<div class="text-[#a0d2eb] italic text-sm text-center py-4 relative z-20" style="font-family: \'Quicksand\', sans-serif;">No horoscope data available.</div>';
                 return;
             }
 
@@ -2483,32 +2678,29 @@ The word "Nua" means new and "Khai" means food.
             const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
 
             data.horoscope.forEach(h => {
-                const btn = document.createElement('button');
                 const signKey = h.sign.toLowerCase();
-                let iconHtml = '';
+                const staticData = ZodiacStaticData[signKey] || {
+                    dates: "", element: "", elementClass: "z-air", svg: '<circle cx="50" cy="50" r="30" fill="none" stroke="#fff" stroke-width="2" />', info: ""
+                };
 
-                // Check for custom icon
-                const details = appState.horoscopeDetails[signKey];
-                if (details && details.icon) {
-                    const iconUrl = resolveImageUrls(details.icon);
-                    // Increased image size
-                    iconHtml = `<img src="${iconUrl}" class="w-12 h-12 object-contain mb-2 rounded-full border-2 border-white shadow-sm group-hover:scale-110 transition-transform duration-300">`;
-                } else {
-                    let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
-                    // Increased icon size to text-3xl
-                    iconHtml = `<i class="${iconClass} text-purple-600 text-3xl mb-2 group-hover:text-purple-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i>`;
-                }
+                const card = document.createElement('div');
+                card.className = "zodiac-card-cosmic";
 
                 const localizedName = localizedHoroscopes[signKey] || h.sign;
 
-                // Enhanced card styling with gradient and better shadow
-                btn.className = "group bg-gradient-to-br from-purple-50 to-white hover:from-purple-100 hover:to-purple-50 border border-purple-100 hover:border-purple-300 p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 min-h-[100px]";
+                card.innerHTML = `
+                    <svg class="zodiac-symbol-cosmic" viewBox="0 0 100 100">${staticData.svg}</svg>
+                    <h2 class="zodiac-title-cosmic">${localizedName}</h2>
+                    <p class="zodiac-dates-cosmic">${staticData.dates}</p>
+                    <span class="z-element ${staticData.elementClass}">${staticData.element}</span>
+                    <p class="sign-info-cosmic">${h.text}</p>
+                `;
 
-                btn.innerHTML = `${iconHtml}<span class="text-xs font-bold uppercase text-purple-900 tracking-wider w-full text-center group-hover:text-purple-700">${localizedName}</span>`;
-                btn.onclick = () => openHoroscopeModal(h.sign, h.text);
-                grid.appendChild(btn);
+                card.onclick = () => openHoroscopeModal(h.sign, h.text);
+                grid.appendChild(card);
             });
         }
+
 
         function formatSeasonDescription(desc) {
             if (!desc) return '';
