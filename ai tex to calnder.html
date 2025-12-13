@@ -44,7 +44,7 @@
 
 .group:hover .group-hover\:text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12/var(--tw-text-opacity,1))}
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
-@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
+@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}.gap-y-8{row-gap:2rem}.gap-y-10{row-gap:2.5rem}.text-[15px]{font-size:15px}@media (min-width:768px){.md\:gap-y-8{row-gap:2rem}.md\:gap-y-10{row-gap:2.5rem}.md\:text-[15px]{font-size:15px}}.break-all{word-break:break-all}</style>
 <style>
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
@@ -2491,7 +2491,7 @@ The word "Nua" means new and "Khai" means food.
             const grid = document.getElementById('horoscope-grid');
             grid.innerHTML = '';
             // Update grid to 3 columns for circle layout (3D Circle Style)
-            grid.className = "grid grid-cols-3 gap-y-6 gap-x-2 p-1";
+            grid.className = "grid grid-cols-3 gap-y-8 md:gap-y-10 gap-x-2 p-1";
             
             const currentLang = appState.config.language || 'en';
             const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
@@ -2529,7 +2529,7 @@ The word "Nua" means new and "Khai" means food.
                 const circleClass = "w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5";
                 
                 const innerContent = `<div class="${circleClass}">${iconHtml}</div>`;
-                const labelHtml = `<span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">${localizedName}</span>`;
+                const labelHtml = `<span class="text-sm md:text-[15px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-2 whitespace-normal break-all w-full px-0.5">${localizedName}</span>`;
                 
                 btn.innerHTML = innerContent + labelHtml;
                 
