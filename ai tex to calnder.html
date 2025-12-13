@@ -31,6 +31,8 @@
 .gap-y-6{row-gap:1.5rem}
 @media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:1024px){.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
 </style>
 <style>
         /* Custom Scrollbar */
@@ -2478,7 +2480,7 @@ The word "Nua" means new and "Khai" means food.
             const grid = document.getElementById('horoscope-grid');
             grid.innerHTML = '';
             // Update grid to 3 columns for circle layout (3D Circle Style)
-            grid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-y-6 gap-x-4 p-1";
+            grid.className = "grid grid-cols-3 gap-y-6 gap-x-2 p-1";
             
             const currentLang = appState.config.language || 'en';
             const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
@@ -2516,7 +2518,7 @@ The word "Nua" means new and "Khai" means food.
                 const circleClass = "w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-purple-200 relative overflow-hidden ring-1 ring-black/5";
                 
                 const innerContent = `<div class="${circleClass}">${iconHtml}</div>`;
-                const labelHtml = `<span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-purple-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-words w-full px-1">${localizedName}</span>`;
+                const labelHtml = `<span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-purple-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">${localizedName}</span>`;
                 
                 btn.innerHTML = innerContent + labelHtml;
                 
