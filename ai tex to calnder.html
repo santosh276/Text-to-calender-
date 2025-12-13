@@ -2500,7 +2500,7 @@ The word "Nua" means new and "Khai" means food.
                 if (details && details.icon) {
                     const iconUrl = resolveImageUrls(details.icon);
                     // Image fits inside the circle
-                    iconHtml = `<img src="${iconUrl}" class="w-10 h-10 object-contain rounded-full group-hover:scale-110 transition-transform duration-300">`;
+                    iconHtml = `<img src="${iconUrl}" class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-300">`;
                 } else {
                     let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
                     // Colored icons to look better in white circle
