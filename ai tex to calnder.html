@@ -335,6 +335,7 @@
                 </div>
                 <div class="flex gap-3">
                     <button onclick="openSettingsModal()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
+                    <button onclick="insertHoroscopeTemplate()" class="header-btn flex-1"><i class="fa-solid fa-wand-magic-sparkles"></i> Add Horoscopes</button>
                     <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
                 </div>
                 <div class="flex items-center gap-3 mt-1">
@@ -485,7 +486,7 @@ Financial matters improve today. Stay patient with loved ones and focus on long-
 ::: panchang
 @ Tithi : Shukla Paksha
 @ Nakshatra : Rohini
-3 Yoga: Indral
+@ Yoga : Indra
 @ Karana : Bava
 @ Sunrise : 06:20 AM
 @ Sunset : 05:30 PM
@@ -1702,6 +1703,40 @@ The word "Nua" means new and "Khai" means food.
             closeLinkModal();
         }
         
+        function insertHoroscopeTemplate() {
+            const signs = [
+                "Aries", "Taurus", "Gemini", "Cancer",
+                "Leo", "Virgo", "Libra", "Scorpio",
+                "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+            ];
+
+            let template = "\n\n::: horoscope_details\n";
+
+            signs.forEach(sign => {
+                template += `>> ${sign}
+@ Element : -
+@ Ruler : -
+@ DateRange : -
+@ Lucky Number : -
+@ Lucky Color : -
+@ Lucky Time : -
+@ Compatible : -
+
+Enter prediction for ${sign} here...
+
+`;
+            });
+
+            template += ":::";
+
+            editor.value += template;
+            parseInput(editor.value);
+
+            editor.scrollTop = editor.scrollHeight;
+
+            showToast("Horoscope details template added!");
+        }
+
         function downloadTxtFile() {
             const text = editor.value;
             const blob = new Blob([text], { type: "text/plain" });
