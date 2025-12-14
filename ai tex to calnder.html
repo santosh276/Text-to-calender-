@@ -1876,12 +1876,12 @@ The word "Nua" means new and "Khai" means food.
         async function fetchLiveDoc(url) {
             if (!url) return;
 
-            // UI Feedback
+            // UI Feedback (Only if button exists/user clicked)
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
 
-            // Add timestamp to prevent browser caching
+            // Add timestamp to bypass browser caching
             const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
 
             try {
@@ -1890,21 +1890,17 @@ The word "Nua" means new and "Khai" means food.
 
                 const html = await response.text();
 
-                // Parse HTML to get clean text (preserves structure for App Syntax)
+                // Parse HTML to get raw text syntax
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
 
-                // CLEANUP: Remove styling, scripts, and other non-content tags (Copied from fetchPublishedDoc for robustness)
+                // CLEANUP: Remove styling, scripts, etc.
                 const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
                 unwanted.forEach(el => el.remove());
+                const header = doc.querySelector('#header'); if (header) header.remove();
+                const footer = doc.querySelector('#footer'); if (footer) footer.remove();
 
-                // Remove Google banners
-                const header = doc.querySelector('#header');
-                if (header) header.remove();
-                const footer = doc.querySelector('#footer');
-                if (footer) footer.remove();
-
-                // Custom text extractor to preserve structure (shared logic)
+                // Custom text extractor
                 function getText(node) {
                     if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
                     if (node.nodeType === Node.ELEMENT_NODE) {
@@ -1919,25 +1915,42 @@ The word "Nua" means new and "Khai" means food.
 
                 const contentNode = doc.querySelector('#contents') || doc.body;
                 let cleanText = getText(contentNode);
-
-                // Cleanup: Google sometimes adds extra blank lines or header text
                 cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
 
-                // Update the App
-                const editor = document.getElementById('editor');
-                if (editor) {
-                    editor.value = cleanText;
-                    parseInput(cleanText); // Parse the new data
-                    render();              // Refresh Calendar
-                    showToast("Calendar updated from Cloud!");
+                // VALIDATION
+                if (cleanText.length < 10) throw new Error("Doc seems empty");
 
-                    // Optional: Update Title if defined in doc
-                    if (appState.config.title) document.title = appState.config.title;
+                // --- THE MAGIC: Update & Save ---
+
+                // 1. Save to Local Storage (Auto-Save)
+                localStorage.setItem('panchang_autosave_text', cleanText);
+
+                // 2. Update the App Logic
+                const editor = document.getElementById('editor');
+
+                if (editor) {
+                    // SCENARIO A: We are in Editor Mode
+                    if (editor.value !== cleanText) {
+                        editor.value = cleanText;
+                        parseInput(cleanText);
+                        render();
+                        showToast("Calendar updated from Cloud!");
+                    }
+                } else {
+                    // SCENARIO B: We are in Downloaded App Mode (No Editor)
+                    // This was the missing part!
+                    parseInput(cleanText);
+                    render();
+                    // Optional: Update title if changed in config
+                    if (appState.config && appState.config.title) {
+                         const titleEl = document.getElementById('app-title');
+                         if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+                    }
+                    console.log("App updated seamlessly from background cloud fetch.");
                 }
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
-                showToast("Error syncing with Google Doc.");
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
