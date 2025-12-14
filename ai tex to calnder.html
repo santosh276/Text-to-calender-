@@ -325,6 +325,7 @@
             <div class="bg-black border-b border-gray-800 p-4 shrink-0 flex flex-col gap-3 z-50 relative shadow-lg">
                 <div class="flex gap-3">
                     <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
+                    <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
                     <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
@@ -1715,6 +1716,53 @@ The word "Nua" means new and "Khai" means food.
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+
+        // --- NEW FUNCTION: Fetch Text from Google Drive ---
+        async function fetchDriveData() {
+            // 1. Ask user for the link
+            const url = prompt("Paste your Google Drive Sharing Link (.txt files only):");
+            if (!url) return;
+
+            // 2. Extract the File ID using Regex
+            // Matches /d/FILE_ID or id=FILE_ID patterns
+            let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+
+            if (match && match[1]) {
+                const fileId = match[1];
+                const btn = event.target.closest('button'); // Get button to show loading state
+                const originalText = btn ? btn.innerHTML : '';
+
+                if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
+
+                // 3. Construct Proxy URL (Bypasses CORS security block)
+                // We use 'allorigins' proxy to fetch the Google Drive download link
+                const driveDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(driveDownloadUrl)}`;
+
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error("Failed to connect to file.");
+
+                    const text = await response.text();
+
+                    // 4. Update the Editor and App
+                    const editor = document.getElementById('editor');
+                    if (editor) {
+                        editor.value = text;
+                        parseInput(text); // Call your existing parser
+                        render();         // Refresh the view
+                        showToast("Data imported from Google Drive successfully!");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Error: Could not fetch file. Make sure the Drive link is 'Anyone with the link can view' and the file is text.");
+                } finally {
+                    if(btn) btn.innerHTML = originalText;
+                }
+            } else {
+                alert("Invalid Google Drive Link. Please use a standard sharing link.");
+            }
         }
 
         function handleFileUpload(event) {
