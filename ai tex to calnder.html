@@ -378,6 +378,7 @@
 <span class="hl-keyword">++ January 2025 ++</span>
 01 <span class="hl-tag">*</span> New Year's Day [ନୂତନ ବର୍ଷ]
 14 <span class="hl-tag">!</span> Makar Sankranti
+23 <span class="hl-tag">!</span> Saraswati Puja / Netaji Jayanti [ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ]
 26 <span class="hl-tag">^</span> Republic Day
 05 <span class="hl-tag">></span> Office Meeting
 :::
@@ -1816,10 +1817,22 @@ The word "Nua" means new and "Khai" means food.
                         const eventMatch = line.match(/^(\d+)\s+([!^*>])\s+(.+)/);
                         if (eventMatch) {
                             const date = parseInt(eventMatch[1]);
-                            let engName = eventMatch[3], locName = "";
-                            const nameMatch = eventMatch[3].match(/(.*?)\[(.*?)\]/);
-                            if (nameMatch) { engName = nameMatch[1].trim(); locName = nameMatch[2].trim(); }
-                            if(currentMonthObj) currentMonthObj.events.push({ date, symbol: eventMatch[2], engName, locName });
+                            const symbol = eventMatch[2];
+                            let rawText = eventMatch[3];
+                            let engPart = rawText;
+                            let locPart = "";
+                            const nameMatch = rawText.match(/(.*?)\[(.*?)\]/);
+                            if (nameMatch) { engPart = nameMatch[1]; locPart = nameMatch[2]; }
+
+                            const engList = engPart.split('/').map(s => s.trim()).filter(s => s);
+                            const locList = locPart ? locPart.split('/').map(s => s.trim()) : [];
+                            const count = Math.max(engList.length, locList.length);
+
+                            for (let i = 0; i < count; i++) {
+                                const eng = engList[i] || engList[engList.length - 1] || "";
+                                const loc = locList[i] || (locList.length > 0 ? locList[locList.length - 1] : "");
+                                if(currentMonthObj) currentMonthObj.events.push({ date, symbol, engName: eng, locName: loc });
+                            }
                         }
                     }
                 } 
@@ -2643,6 +2656,11 @@ The word "Nua" means new and "Khai" means food.
             currentModalDetails = (detailsRaw && Array.isArray(detailsRaw)) ? detailsRaw : (detailsRaw ? [detailsRaw] : []);
 
             currentModalDayEvents = monthData.events.filter(e => e.date === day);
+
+            if (currentModalDetails.length === 0 && currentModalDayEvents.length > 0) {
+                currentModalDetails = currentModalDayEvents.map(ev => ({ tags: ['Event'], bodyLines: [], bannerUrl: null }));
+            }
+
             currentModalIndex = 0;
 
             const modalContent = modal.querySelector('.modal-content');
