@@ -335,7 +335,7 @@
                 </div>
                 <div class="flex gap-3">
                     <button onclick="openSettingsModal()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
-                    <button onclick="insertHoroscopeTemplate()" class="header-btn flex-1"><i class="fa-solid fa-wand-magic-sparkles"></i> Add Horoscopes</button>
+                    <button onclick="openHoroscopeInputModal()" class="header-btn flex-1"><i class="fa-solid fa-wand-magic-sparkles"></i> Add Horoscopes</button>
                     <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
                 </div>
                 <div class="flex items-center gap-3 mt-1">
@@ -858,6 +858,75 @@ The word "Nua" means new and "Khai" means food.
             <div class="px-6 pb-8">
                 <h3 class="text-[13px] font-bold text-slate-800 uppercase mb-3 tracking-wide">Compatible Signs</h3>
                 <div id="horo-compatible" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOROSCOPE INPUT MODAL -->
+    <div id="horoscope-input-modal" class="fixed inset-0 z-[80] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+        <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHoroscopeInputModal()"></div>
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-gray-700 flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Add Horoscope Details</h3>
+                <button onclick="closeHoroscopeInputModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Zodiac Sign</label>
+                        <select id="input-horo-sign" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none">
+                            <option value="Aries">Aries</option>
+                            <option value="Taurus">Taurus</option>
+                            <option value="Gemini">Gemini</option>
+                            <option value="Cancer">Cancer</option>
+                            <option value="Leo">Leo</option>
+                            <option value="Virgo">Virgo</option>
+                            <option value="Libra">Libra</option>
+                            <option value="Scorpio">Scorpio</option>
+                            <option value="Sagittarius">Sagittarius</option>
+                            <option value="Capricorn">Capricorn</option>
+                            <option value="Aquarius">Aquarius</option>
+                            <option value="Pisces">Pisces</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Element</label>
+                        <input type="text" id="input-horo-element" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none" placeholder="e.g. Fire">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ruler</label>
+                        <input type="text" id="input-horo-ruler" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none" placeholder="e.g. Mars">
+                    </div>
+                     <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Date Range</label>
+                        <input type="text" id="input-horo-range" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none" placeholder="e.g. Mar 21 - Apr 19">
+                    </div>
+                     <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Lucky Number</label>
+                        <input type="text" id="input-horo-number" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none" placeholder="e.g. 7">
+                    </div>
+                     <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Lucky Color</label>
+                        <input type="text" id="input-horo-color" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none" placeholder="e.g. Red">
+                    </div>
+                     <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Lucky Time</label>
+                        <input type="text" id="input-horo-time" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none" placeholder="e.g. 9:00 AM">
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Compatible Signs</label>
+                        <input type="text" id="input-horo-compatible" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none" placeholder="e.g. Leo, Sagittarius">
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Prediction / Message</label>
+                        <textarea id="input-horo-prediction" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-500 outline-none h-24" placeholder="Enter daily horoscope prediction..."></textarea>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-4 border-t border-gray-100">
+                    <button onclick="insertHoroscopeFromModal('single')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded shadow-md transition transform active:scale-95">Insert Details</button>
+                    <button onclick="insertHoroscopeFromModal('all')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded shadow-sm transition transform active:scale-95 text-xs">Insert All Empty</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1703,38 +1772,48 @@ The word "Nua" means new and "Khai" means food.
             closeLinkModal();
         }
         
-        function insertHoroscopeTemplate() {
-            const signs = [
-                "Aries", "Taurus", "Gemini", "Cancer",
-                "Leo", "Virgo", "Libra", "Scorpio",
-                "Sagittarius", "Capricorn", "Aquarius", "Pisces"
-            ];
+        function openHoroscopeInputModal() {
+            const modal = document.getElementById('horoscope-input-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.remove('modal-hidden'), 10);
+        }
 
-            let template = "\n\n::: horoscope_details\n";
+        function closeHoroscopeInputModal() {
+            const modal = document.getElementById('horoscope-input-modal');
+            modal.classList.add('modal-hidden');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
 
-            signs.forEach(sign => {
-                template += `>> ${sign}
-@ Element : -
-@ Ruler : -
-@ DateRange : -
-@ Lucky Number : -
-@ Lucky Color : -
-@ Lucky Time : -
-@ Compatible : -
+        function insertHoroscopeFromModal(mode) {
+            if (mode === 'all') {
+                const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+                let template = "\n\n::: horoscope_details\n";
+                signs.forEach(sign => {
+                    template += `>> ${sign}\n@ Element : -\n@ Ruler : -\n@ DateRange : -\n@ Lucky Number : -\n@ Lucky Color : -\n@ Lucky Time : -\n@ Compatible : -\n\nEnter prediction for ${sign} here...\n\n`;
+                });
+                template += ":::\n";
+                editor.value += template;
+                showToast("All signs template inserted!");
+            } else {
+                const sign = document.getElementById('input-horo-sign').value;
+                const element = document.getElementById('input-horo-element').value || '-';
+                const ruler = document.getElementById('input-horo-ruler').value || '-';
+                const range = document.getElementById('input-horo-range').value || '-';
+                const number = document.getElementById('input-horo-number').value || '-';
+                const color = document.getElementById('input-horo-color').value || '-';
+                const time = document.getElementById('input-horo-time').value || '-';
+                const compatible = document.getElementById('input-horo-compatible').value || '-';
+                const prediction = document.getElementById('input-horo-prediction').value || `Prediction for ${sign}...`;
 
-Enter prediction for ${sign} here...
+                let block = `\n\n::: horoscope_details\n>> ${sign}\n@ Element : ${element}\n@ Ruler : ${ruler}\n@ DateRange : ${range}\n@ Lucky Number : ${number}\n@ Lucky Color : ${color}\n@ Lucky Time : ${time}\n@ Compatible : ${compatible}\n\n${prediction}\n:::`;
 
-`;
-            });
+                editor.value += block;
+                showToast(`${sign} details inserted!`);
+            }
 
-            template += ":::";
-
-            editor.value += template;
             parseInput(editor.value);
-
             editor.scrollTop = editor.scrollHeight;
-
-            showToast("Horoscope details template added!");
+            closeHoroscopeInputModal();
         }
 
         function downloadTxtFile() {
