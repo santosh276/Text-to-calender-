@@ -326,6 +326,7 @@
                 <div class="flex gap-3">
                     <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
                     <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
+                    <button onclick="fetchPublishedDoc()" class="header-btn flex-1 bg-blue-600 text-white border-blue-500 hover:bg-blue-700"><i class="fa-solid fa-file-word"></i> Import Doc</button>
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
                     <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
@@ -1762,6 +1763,58 @@ The word "Nua" means new and "Khai" means food.
                 }
             } else {
                 alert("Invalid Google Drive Link. Please use a standard sharing link.");
+            }
+        }
+
+        // --- NEW FUNCTION: Fetch from Published Google Doc ---
+        async function fetchPublishedDoc() {
+            const url = prompt("Paste your Published Google Doc Link (ending in /pub):");
+            if (!url) return;
+
+            // 1. Use CORS proxy to fetch the HTML source of the doc
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+
+            const btn = event.target.closest('button');
+            const originalText = btn ? btn.innerHTML : '';
+            if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
+
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Failed to load document.");
+
+                const html = await response.text();
+
+                // 2. Parse the HTML to extract text
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // Remove header/footer banner if present (Google adds these to published docs)
+                const header = doc.querySelector('#header');
+                if (header) header.remove();
+                const footer = doc.querySelector('#footer');
+                if (footer) footer.remove();
+
+                // 3. Extract text content
+                // We target the main content wrapper usually found in published docs
+                const contentNode = doc.querySelector('#contents') || doc.body;
+
+                // Use innerText to preserve line breaks, which are crucial for your app
+                const textContent = contentNode.innerText;
+
+                // 4. Update Editor
+                const editor = document.getElementById('editor');
+                if (editor) {
+                    editor.value = textContent;
+                    parseInput(textContent); // Reparse the new data
+                    render();                // Update the UI
+                    showToast("Google Doc imported successfully!");
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Error: Could not fetch document. Ensure the link ends in '/pub'.");
+            } finally {
+                if(btn) btn.innerHTML = originalText;
             }
         }
 
