@@ -2630,6 +2630,75 @@ The word "Nua" means new and "Khai" means food.
         let currentModalDayEvents = [];
         let currentModalTithiBlock = "";
 
+        function distributeDetails(baseDetail, events) {
+            const lines = baseDetail.bodyLines;
+            const eventSections = [];
+
+            lines.forEach((line, idx) => {
+                // Look for headers level 1-6
+                if (line.trim().match(/^#{1,6}\s/)) {
+                    const headerText = line.replace(/^#{1,6}\s+/, '').toLowerCase().trim();
+
+                    let bestMatchIndex = -1;
+                    let maxLen = 0;
+
+                    events.forEach((ev, evIdx) => {
+                        const name = ev.engName.toLowerCase().trim();
+                        // Check English Name
+                        if (name.length > 2 && headerText.includes(name)) {
+                            if (name.length > maxLen) { maxLen = name.length; bestMatchIndex = evIdx; }
+                        }
+                        else if (headerText.length > 2 && name.includes(headerText)) {
+                             if (headerText.length > maxLen) { maxLen = headerText.length; bestMatchIndex = evIdx; }
+                        }
+
+                        // Check Localized Name if exists
+                        if (ev.locName) {
+                            const loc = ev.locName.toLowerCase().trim();
+                            if (loc.length > 2 && headerText.includes(loc)) {
+                                if (loc.length > maxLen) { maxLen = loc.length; bestMatchIndex = evIdx; }
+                            }
+                        }
+                    });
+
+                    if (bestMatchIndex !== -1) {
+                        eventSections.push({ eventIndex: bestMatchIndex, lineIndex: idx });
+                    }
+                }
+            });
+
+            if (eventSections.length === 0) {
+                return events.map(() => JSON.parse(JSON.stringify(baseDetail)));
+            }
+
+            const newBodyLines = events.map(() => []);
+            const firstSectionStart = eventSections[0].lineIndex;
+            const preamble = lines.slice(0, firstSectionStart);
+
+            for(let i=0; i<events.length; i++) {
+                newBodyLines[i] = [...preamble];
+            }
+
+            for (let i = 0; i < eventSections.length; i++) {
+                const currentSec = eventSections[i];
+                const nextSec = eventSections[i+1];
+                const endLine = nextSec ? nextSec.lineIndex : lines.length;
+
+                const sectionLines = lines.slice(currentSec.lineIndex, endLine);
+
+                newBodyLines[currentSec.eventIndex].push(...sectionLines);
+            }
+
+            return events.map((ev, idx) => {
+                return {
+                    tags: baseDetail.tags,
+                    bodyLines: newBodyLines[idx],
+                    bannerUrl: baseDetail.bannerUrl,
+                    gridBgUrl: baseDetail.gridBgUrl
+                };
+            });
+        }
+
         function openDayModal(day, monthData) {
             const modal = document.getElementById('day-modal');
             const dateObj = new Date(monthData.year, monthData.month, day);
@@ -2672,7 +2741,7 @@ The word "Nua" means new and "Khai" means food.
             // Replicate details if we have 1 detail but multiple events (e.g. details block + multiple festivals)
             if (currentModalDetails.length === 1 && currentModalDayEvents.length > 1) {
                 const baseDetail = currentModalDetails[0];
-                currentModalDetails = currentModalDayEvents.map(() => baseDetail);
+                currentModalDetails = distributeDetails(baseDetail, currentModalDayEvents);
             }
 
             if (currentModalDetails.length === 0 && currentModalDayEvents.length > 0) {
