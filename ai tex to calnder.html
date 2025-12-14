@@ -1788,18 +1788,46 @@ The word "Nua" means new and "Khai" means food.
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
 
-                // Remove header/footer banner if present (Google adds these to published docs)
+                // CLEANUP: Remove styling, scripts, and other non-content tags
+                const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
+                unwanted.forEach(el => el.remove());
+
+                // Remove Google banners
                 const header = doc.querySelector('#header');
                 if (header) header.remove();
                 const footer = doc.querySelector('#footer');
                 if (footer) footer.remove();
 
-                // 3. Extract text content
-                // We target the main content wrapper usually found in published docs
-                const contentNode = doc.querySelector('#contents') || doc.body;
+                // 3. Extract text content with structure
+                // innerText on DOMParser nodes is not reliable in all environments for formatting.
+                // We use a custom walker to preserve newlines for block elements.
 
-                // Use innerText to preserve line breaks, which are crucial for your app
-                const textContent = contentNode.innerText;
+                function getText(node) {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        return node.nodeValue;
+                    }
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        let text = '';
+                        // Process children
+                        for (let child of node.childNodes) {
+                            text += getText(child);
+                        }
+
+                        // Add newlines for block elements
+                        const tag = node.tagName.toLowerCase();
+                        if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) {
+                            text += '\n';
+                        }
+                        return text;
+                    }
+                    return '';
+                }
+
+                const contentNode = doc.querySelector('#contents') || doc.body;
+                let textContent = getText(contentNode);
+
+                // Post-process: collapse excessive newlines and trim
+                textContent = textContent.replace(/\n\s*\n/g, '\n\n').trim();
 
                 // 4. Update Editor
                 const editor = document.getElementById('editor');
