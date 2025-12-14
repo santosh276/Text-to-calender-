@@ -2669,6 +2669,12 @@ The word "Nua" means new and "Khai" means food.
                 }
             });
 
+            // Replicate details if we have 1 detail but multiple events (e.g. details block + multiple festivals)
+            if (currentModalDetails.length === 1 && currentModalDayEvents.length > 1) {
+                const baseDetail = currentModalDetails[0];
+                currentModalDetails = currentModalDayEvents.map(() => baseDetail);
+            }
+
             if (currentModalDetails.length === 0 && currentModalDayEvents.length > 0) {
                 currentModalDetails = currentModalDayEvents.map(ev => ({ tags: ['Event'], bodyLines: [], bannerUrl: null }));
             }
@@ -2682,12 +2688,28 @@ The word "Nua" means new and "Khai" means food.
             if (!navContainer) {
                 navContainer = document.createElement('div');
                 navContainer.id = 'modal-nav-container';
-                navContainer.className = "absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2 pointer-events-none z-[100]";
+                navContainer.className = "absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2 pointer-events-none z-[100] transition-opacity duration-300";
 
                 // We append it to the relative parent of header/body, which is .modal-content
                 // Ensure .modal-content is relative (it is in CSS)
                 modalContent.appendChild(navContainer);
+            } else {
+                 navContainer.classList.add('transition-opacity', 'duration-300');
             }
+
+            // Auto-hide logic
+            const resetNavVisibility = () => {
+                navContainer.classList.remove('opacity-0');
+                if (window.modalNavHideTimer) clearTimeout(window.modalNavHideTimer);
+                window.modalNavHideTimer = setTimeout(() => {
+                    navContainer.classList.add('opacity-0');
+                }, 1500);
+            };
+
+            modal.onmousemove = resetNavVisibility;
+            modal.onclick = resetNavVisibility;
+            modal.ontouchstart = resetNavVisibility;
+            resetNavVisibility();
 
             // Render content for the initial slide
             updateModalContent();
@@ -2742,8 +2764,8 @@ The word "Nua" means new and "Khai" means food.
                 // Show Navigation Buttons if multiple
                 if (currentModalDetails.length > 1) {
                     navContainer.innerHTML = `
-                        <button onclick="prevModalSlide(event)" class="pointer-events-auto bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button onclick="nextModalSlide(event)" class="pointer-events-auto bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button onclick="prevModalSlide(event)" class="pointer-events-auto bg-black/20 hover:bg-black/40 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button onclick="nextModalSlide(event)" class="pointer-events-auto bg-black/20 hover:bg-black/40 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-right"></i></button>
                     `;
 
                     // Add dots indicator inside header
