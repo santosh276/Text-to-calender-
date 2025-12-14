@@ -2502,15 +2502,24 @@ The word "Nua" means new and "Khai" means food.
             const filteredEvents = data.events.filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*') && activeFilters.has(e.symbol)).sort((a, b) => a.date - b.date);
             if (filteredEvents.length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-center py-4">No events found.</li>'; return; }
             filteredEvents.forEach(ev => {
-                const li = document.createElement('li');
-                li.className = "flex gap-2 items-start p-1 rounded hover:bg-gray-50 transition cursor-pointer";
-                li.onclick = () => openDayModal(ev.date, data);
-                let badgeColor = "bg-gray-500";
-                if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
-                const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
-                li.innerHTML = dateBadge + content;
-                list.appendChild(li);
+                const engList = ev.engName.split('/').map(s => s.trim()).filter(s => s);
+                const locList = ev.locName ? ev.locName.split('/').map(s => s.trim()) : [];
+                const count = Math.max(engList.length, locList.length);
+
+                for (let i = 0; i < count; i++) {
+                    const eng = engList[i] || engList[0] || ev.engName;
+                    const loc = locList[i] || locList[locList.length - 1] || (i === 0 ? ev.locName : '');
+
+                    const li = document.createElement('li');
+                    li.className = "flex gap-2 items-start p-1 rounded hover:bg-gray-50 transition cursor-pointer";
+                    li.onclick = () => openDayModal(ev.date, data);
+                    let badgeColor = "bg-gray-500";
+                    if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
+                    const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
+                    const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${eng}</div><div class="text-xs text-gray-500 font-oriya">${loc}</div></div>`;
+                    li.innerHTML = dateBadge + content;
+                    list.appendChild(li);
+                }
             });
         }
 
@@ -2655,7 +2664,27 @@ The word "Nua" means new and "Khai" means food.
             const detailsRaw = appState.details[dateKey];
             currentModalDetails = (detailsRaw && Array.isArray(detailsRaw)) ? detailsRaw : (detailsRaw ? [detailsRaw] : []);
 
-            currentModalDayEvents = monthData.events.filter(e => e.date === day);
+            const rawDayEvents = monthData.events.filter(e => e.date === day);
+
+            // Expand slash-separated events for the modal view
+            currentModalDayEvents = [];
+            rawDayEvents.forEach(ev => {
+                const engList = ev.engName.split('/').map(s => s.trim()).filter(s => s);
+                const locList = ev.locName ? ev.locName.split('/').map(s => s.trim()) : [];
+                const count = Math.max(engList.length, locList.length);
+
+                if (count > 1) {
+                    for(let i=0; i<count; i++) {
+                        currentModalDayEvents.push({
+                            ...ev,
+                            engName: engList[i] || engList[0] || ev.engName,
+                            locName: locList[i] || locList[locList.length-1] || (i === 0 ? ev.locName : '')
+                        });
+                    }
+                } else {
+                    currentModalDayEvents.push(ev);
+                }
+            });
 
             if (currentModalDetails.length === 0 && currentModalDayEvents.length > 0) {
                 currentModalDetails = currentModalDayEvents.map(ev => ({ tags: ['Event'], bodyLines: [], bannerUrl: null }));
