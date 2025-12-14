@@ -1999,8 +1999,19 @@ The word "Nua" means new and "Khai" means food.
 
         if (window.exportedData) {
             appState = window.exportedData;
+
+            // --- LIVE SYNC CACHE: Restore from LocalStorage if available ---
+            const cachedSyncData = localStorage.getItem('panchang_autosave_text');
+            if (appState.config && appState.config.liveUrl && cachedSyncData) {
+                console.log("Restoring cached Live Sync data from LocalStorage...");
+                // We use the new safe parseInput which preserves the config
+                parseInput(cachedSyncData);
+            }
+
             if (!appState.images) appState.images = {};
             if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
+            if (appState.activeMonthIndex === undefined || appState.activeMonthIndex === null) appState.activeMonthIndex = 0;
+
             const editorPanel = document.getElementById('editor-panel');
             if (editorPanel) editorPanel.style.display = 'none';
             const previewPanel = document.getElementById('preview-container');
@@ -2026,7 +2037,8 @@ The word "Nua" means new and "Khai" means food.
             let parsedSeasonDescs = {};
             let currentSeasonIdx = -1;
             
-            let tempConfig = { title: 'Panchang App', logoUrl: null, language: 'en', location: appState.config ? appState.config.location : null };
+            // Preserve existing config (Language, Location, LiveUrl) while parsing
+            let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
 
             const createMonth = (mIndex, year) => ({ month: mIndex, year: year, events: [], panchang: {}, horoscope: [] });
             const now = new Date();
