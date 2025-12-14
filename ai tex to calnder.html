@@ -327,6 +327,7 @@
                     <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
                     <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
                     <button onclick="fetchPublishedDoc()" class="header-btn flex-1 bg-blue-600 text-white border-blue-500 hover:bg-blue-700"><i class="fa-solid fa-file-word"></i> Import Doc</button>
+                    <button onclick="configureLiveSync()" class="header-btn flex-1 bg-green-700 text-green-100 border-green-600 hover:bg-green-600"><i class="fa-solid fa-cloud-arrow-down"></i> Live Sync</button>
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
                     <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
@@ -1845,6 +1846,111 @@ The word "Nua" means new and "Khai" means food.
                 if(btn) btn.innerHTML = originalText;
             }
         }
+
+        // --- LIVE GOOGLE DOC SYNC FEATURE ---
+
+        // 1. Configure the Link (User clicks button)
+        function configureLiveSync() {
+            const currentUrl = appState.config.liveUrl || "";
+            const url = prompt("Paste your Published Google Doc Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
+
+            if (url) {
+                if (!url.includes('/pub')) {
+                    alert("Warning: Link does not look like a 'Published to Web' link (should end in /pub).");
+                }
+                // Save to App State (So it persists in Downloaded File)
+                appState.config.liveUrl = url;
+                saveConfigToStorage();
+
+                // Fetch immediately to test
+                fetchLiveDoc(url);
+            } else if (url === "") {
+                // User cleared the input
+                delete appState.config.liveUrl;
+                saveConfigToStorage();
+                showToast("Live Sync removed.");
+            }
+        }
+
+        // 2. The Fetching Logic (Runs on load & update)
+        async function fetchLiveDoc(url) {
+            if (!url) return;
+
+            // UI Feedback
+            const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
+            const originalText = syncBtn ? syncBtn.innerHTML : '';
+            if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
+
+            // Add timestamp to prevent browser caching
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
+
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Connection failed");
+
+                const html = await response.text();
+
+                // Parse HTML to get clean text (preserves structure for App Syntax)
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // CLEANUP: Remove styling, scripts, and other non-content tags (Copied from fetchPublishedDoc for robustness)
+                const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
+                unwanted.forEach(el => el.remove());
+
+                // Remove Google banners
+                const header = doc.querySelector('#header');
+                if (header) header.remove();
+                const footer = doc.querySelector('#footer');
+                if (footer) footer.remove();
+
+                // Custom text extractor to preserve structure (shared logic)
+                function getText(node) {
+                    if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        let text = '';
+                        for (let child of node.childNodes) text += getText(child);
+                        const tag = node.tagName.toLowerCase();
+                        if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) text += '\n';
+                        return text;
+                    }
+                    return '';
+                }
+
+                const contentNode = doc.querySelector('#contents') || doc.body;
+                let cleanText = getText(contentNode);
+
+                // Cleanup: Google sometimes adds extra blank lines or header text
+                cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
+
+                // Update the App
+                const editor = document.getElementById('editor');
+                if (editor) {
+                    editor.value = cleanText;
+                    parseInput(cleanText); // Parse the new data
+                    render();              // Refresh Calendar
+                    showToast("Calendar updated from Cloud!");
+
+                    // Optional: Update Title if defined in doc
+                    if (appState.config.title) document.title = appState.config.title;
+                }
+
+            } catch (e) {
+                console.error("Live Sync Error:", e);
+                showToast("Error syncing with Google Doc.");
+            } finally {
+                if(syncBtn) syncBtn.innerHTML = originalText;
+            }
+        }
+
+        // 3. AUTO-RUN ON LOAD
+        setTimeout(() => {
+            // Check if a Live URL is saved in the config
+            if (appState.config && appState.config.liveUrl) {
+                console.log("Found Live URL, syncing...");
+                fetchLiveDoc(appState.config.liveUrl);
+            }
+        }, 500); // Small delay to ensure UI is ready
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
