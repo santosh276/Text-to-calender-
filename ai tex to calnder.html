@@ -1153,6 +1153,7 @@ The word "Nua" means new and "Khai" means food.
         let bannerCurrentIndex = 0;
         let currentBannerDataHash = "";
         let isBannerDismissed = false;
+        let navHideTimer;
 
         const langData = {
             en: { 
@@ -2630,6 +2631,19 @@ The word "Nua" means new and "Khai" means food.
         let currentModalDayEvents = [];
         let currentModalTithiBlock = "";
 
+        function resetNavVisibility() {
+            const navContainer = document.getElementById('modal-nav-container');
+            if (navContainer) {
+                navContainer.classList.remove('opacity-0');
+                navContainer.classList.add('opacity-100');
+                clearTimeout(navHideTimer);
+                navHideTimer = setTimeout(() => {
+                    navContainer.classList.remove('opacity-100');
+                    navContainer.classList.add('opacity-0');
+                }, 1500);
+            }
+        }
+
         function openDayModal(day, monthData) {
             const modal = document.getElementById('day-modal');
             const dateObj = new Date(monthData.year, monthData.month, day);
@@ -2682,7 +2696,7 @@ The word "Nua" means new and "Khai" means food.
             if (!navContainer) {
                 navContainer = document.createElement('div');
                 navContainer.id = 'modal-nav-container';
-                navContainer.className = "absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2 pointer-events-none z-[100]";
+                navContainer.className = "absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2 pointer-events-none z-[100] transition-opacity duration-500 opacity-100";
                 
                 // We append it to the relative parent of header/body, which is .modal-content
                 // Ensure .modal-content is relative (it is in CSS)
@@ -2696,7 +2710,10 @@ The word "Nua" means new and "Khai" means food.
             let touchStartX = 0;
             let touchEndX = 0;
             
-            const handleTouchStart = (e) => { touchStartX = e.changedTouches[0].screenX; };
+            const handleTouchStart = (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                resetNavVisibility();
+            };
             const handleTouchEnd = (e) => {
                 touchEndX = e.changedTouches[0].screenX;
                 if (currentModalDetails.length > 1) {
@@ -2710,6 +2727,14 @@ The word "Nua" means new and "Khai" means food.
             
             modalContent.addEventListener('touchstart', handleTouchStart, {passive: true});
             modalContent.addEventListener('touchend', handleTouchEnd, {passive: true});
+
+            // Setup Auto-Hide Listeners
+            if (!modalContent.dataset.navListenersAttached) {
+                modalContent.addEventListener('mousemove', resetNavVisibility);
+                modalContent.addEventListener('click', resetNavVisibility);
+                modalContent.dataset.navListenersAttached = "true";
+            }
+            resetNavVisibility();
 
             modal.style.display = 'flex';
             setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
@@ -2742,8 +2767,8 @@ The word "Nua" means new and "Khai" means food.
                 // Show Navigation Buttons if multiple
                 if (currentModalDetails.length > 1) {
                     navContainer.innerHTML = `
-                        <button onclick="prevModalSlide(event)" class="pointer-events-auto bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button onclick="nextModalSlide(event)" class="pointer-events-auto bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button onclick="prevModalSlide(event)" class="pointer-events-auto bg-black/20 hover:bg-black/40 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button onclick="nextModalSlide(event)" class="pointer-events-auto bg-black/20 hover:bg-black/40 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-right"></i></button>
                     `;
                     
                     // Add dots indicator inside header
