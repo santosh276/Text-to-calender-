@@ -2004,6 +2004,25 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+
+        const handleEditorInput = debounce((e) => {
+            const text = e.target.value;
+            try {
+                localStorage.setItem('panchang_autosave_text', text);
+            } catch (err) {
+                console.warn("Local Storage full or inaccessible", err);
+            }
+            parseInput(text);
+        }, 500);
+
         function initAutoSync() {
             // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
             if (window.exportedData) {
@@ -2061,12 +2080,23 @@ The word "Nua" means new and "Khai" means food.
             else {
                 // EDITOR MODE (Normal)
                 if (editor) {
-                    editor.addEventListener('input', (e) => { parseInput(e.target.value); });
-                    // Initial parse
-                    parseInput(editor.value);
+                    // Attach optimized input handler
+                    editor.addEventListener('input', handleEditorInput);
 
-                    // Check if we need to sync
+                    // 1. Restore from Auto-Save if available
+                    const cachedText = localStorage.getItem('panchang_autosave_text');
+                    if (cachedText) {
+                        editor.value = cachedText;
+                        parseInput(cachedText);
+                        console.log("Restored editor content from Local Storage.");
+                    } else {
+                        // Initial parse of default content
+                        parseInput(editor.value);
+                    }
+
+                    // 2. Check for Live Sync
                     if (appState.config && appState.config.liveUrl) {
+                        console.log("Found Live URL configuration, syncing...");
                         fetchLiveDoc(appState.config.liveUrl);
                     }
                 }
