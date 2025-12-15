@@ -2004,15 +2004,6 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        // 3. AUTO-RUN ON LOAD
-        setTimeout(() => {
-            // Check if a Live URL is saved in the config
-            if (appState.config && appState.config.liveUrl) {
-                console.log("Found Live URL, syncing...");
-                fetchLiveDoc(appState.config.liveUrl);
-            }
-        }, 500); // Small delay to ensure UI is ready
-
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -2025,7 +2016,6 @@ The word "Nua" means new and "Khai" means food.
             event.target.value = '';
         }
 
-        
         // Load config from localStorage if available
         try {
             const savedConfig = localStorage.getItem('panchangConfig');
@@ -2047,31 +2037,95 @@ The word "Nua" means new and "Khai" means food.
 
         if (window.exportedData) {
             appState = window.exportedData;
-            
-            // --- LIVE SYNC CACHE: Restore from LocalStorage if available ---
-            const cachedSyncData = localStorage.getItem('panchang_autosave_text');
-            if (appState.config && appState.config.liveUrl && cachedSyncData) {
-                console.log("Restoring cached Live Sync data from LocalStorage...");
-                // We use the new safe parseInput which preserves the config
-                parseInput(cachedSyncData);
-            }
-
+            // Ensure defaults
             if (!appState.images) appState.images = {};
             if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
             if (appState.activeMonthIndex === undefined || appState.activeMonthIndex === null) appState.activeMonthIndex = 0;
 
+            // Adjust layout for App Mode
+            // Note: downloadCalendar removes the editor-panel, so this check is safe
             const editorPanel = document.getElementById('editor-panel');
             if (editorPanel) editorPanel.style.display = 'none';
             const previewPanel = document.getElementById('preview-container');
             if (previewPanel) { previewPanel.classList.remove('md:w-[65%]'); previewPanel.classList.add('w-full'); }
-            // Removed Download App button logic
+
+            // Set Today Index
             findTodayIndex();
             if (appState.todayIndex !== -1) appState.activeMonthIndex = appState.todayIndex;
-            render(); 
-        } else if (editor) {
-            editor.addEventListener('input', (e) => { parseInput(e.target.value); });
-            parseInput(editor.value);
         }
+
+        // Editor Event Listener
+        if (document.getElementById('editor')) {
+            document.getElementById('editor').addEventListener('input', (e) => { parseInput(e.target.value); });
+        }
+
+        // 4. AUTO-RUN INITIALIZATION (Updated for Loading Screen)
+        const CACHE_KEY_TEXT = 'panchang_autosave_text';
+        (function initAutoSync() {
+
+            // Helper to hide loader
+            const hideLoader = () => {
+                const loader = document.getElementById('initial-loader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.remove(), 500);
+                }
+            };
+
+            // Step 1: Check Local Storage first (Fastest)
+            const cachedText = localStorage.getItem(CACHE_KEY_TEXT);
+            let hasData = false;
+
+            if (cachedText) {
+                console.log("Found LocalStorage data. Rendering...");
+                const editor = document.getElementById('editor');
+                if (editor) {
+                    editor.value = cachedText; // For Editor Mode
+                    parseInput(cachedText);
+                } else {
+                    parseInput(cachedText); // For App Mode
+                }
+
+                // Data is ready, render and hide loader
+                setTimeout(() => {
+                    render();
+                    hideLoader();
+                }, 50);
+                hasData = true;
+            } else {
+                 // Fallback for Editor Mode (Default Text) or if no cached data
+                 const editor = document.getElementById('editor');
+                 if (editor && editor.value.trim() !== "") {
+                     parseInput(editor.value);
+                     render();
+                 }
+            }
+
+            // Step 2: Trigger Cloud Sync
+            setTimeout(() => {
+                if (appState.config && appState.config.liveUrl) {
+                    const isEditorMode = document.getElementById('editor') !== null;
+
+                    if (isEditorMode) {
+                        console.log("🚀 Editor Mode: Force Syncing...");
+                        fetchLiveDoc(appState.config.liveUrl);
+                    } else {
+                        console.log("🕰️ App Mode: Checking Timer...");
+
+                        // If we have no data at all (first run of downloaded file), force the fetch
+                        const forceFetch = !hasData;
+
+                        fetchLiveDoc(appState.config.liveUrl, forceFetch).then(() => {
+                            // Ensure loader is hidden after fetch completes (if it wasn't hidden by localStorage)
+                            hideLoader();
+                        });
+                    }
+                } else {
+                    // No Live URL configured? Just hide loader so user sees empty state
+                    hideLoader();
+                }
+            }, 1000);
+        })();
 
         function parseInput(text) {
             const lines = text.split('\n');
@@ -3252,67 +3306,75 @@ The word "Nua" means new and "Khai" means food.
             // 1. Clone the DOM
             const clone = document.documentElement.cloneNode(true);
             
-            // 2. REMOVE EDITOR: Completely remove the editor panel HTML
+            // 2. CLEANUP: Remove Editor & Unwanted Buttons
             const editorPanel = clone.querySelector('#editor-panel');
             if(editorPanel) editorPanel.remove();
             
-            // 3. Adjust Layout for "Standalone App" mode
+            const navBtn = clone.querySelector('#download-btn');
+            if(navBtn) navBtn.remove();
+
+            // 3. LAYOUT: Adjust for Standalone App
             const body = clone.querySelector('body');
             body.classList.remove('h-screen', 'overflow-hidden');
-            body.classList.add('min-h-screen', 'overflow-y-auto', 'bg-[#fdfbf7]'); // Ensure background persists
+            body.classList.add('min-h-screen', 'overflow-y-auto', 'bg-[#fdfbf7]');
 
             const mainWrapper = clone.querySelector('.flex.flex-col.md\\:flex-row');
             if(mainWrapper) mainWrapper.classList.remove('h-full', 'overflow-hidden');
 
             const previewPanel = clone.querySelector('#preview-container');
             if(previewPanel) {
-                // Force full width since editor is gone
                 previewPanel.className = 'w-full h-auto pb-4 p-2 md:p-8 relative z-0';
                 previewPanel.style.overflow = 'visible';
             }
 
-            // 4. Clean up buttons
-            const navBtn = clone.querySelector('#download-btn'); // if exists
-            if(navBtn) navBtn.remove();
-            
-            // Remove "Open File" and other editor-specific buttons if they somehow remained (though they are in editor panel)
-            
-            // 5. LANGUAGE OPTIMIZATION ALGORITHM
+            // 4. INJECT LOADING SCREEN (Visual Feedback for blank file)
+            const loaderHTML = `
+            <div id="initial-loader" style="position:fixed; inset:0; z-index:100; background-color:#fdfbf7; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: opacity 0.5s ease;">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #f97316; margin-bottom: 1rem;"></i>
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: #374151;">Loading Calendar...</h2>
+                <p style="color: #6b7280; margin-top: 0.5rem; font-size: 0.875rem;">Fetching fresh data from cloud</p>
+            </div>`;
+            clone.querySelector('body').insertAdjacentHTML('afterbegin', loaderHTML);
+
+            // 5. DATA STRIPPING (The "Lightweight" Logic)
+            // We create a new object containing ONLY the config (Live URL, Title, Settings)
+            // All data arrays are emptied.
+            const lightState = {
+                config: appState.config, // Keeps the Live Sync URL
+                activeMonthIndex: 0,
+                // EMPTY DATASETS
+                monthsData: [],
+                details: {},
+                horoscopeDetails: {},
+                customSeasonDescriptions: {},
+                images: {} // Images are heavy, so we strip them too. They will reload if they are external links.
+            };
+
+            // 6. Inject the Lightweight State
+            const dataScript = document.createElement('script');
+            dataScript.textContent = `window.exportedData = ${JSON.stringify(lightState)};`;
+            clone.querySelector('body').prepend(dataScript);
+
+            // 7. LANGUAGE OPTIMIZATION (Optional: Keep English + Selected)
             const currentLang = appState.config.language || 'en';
-            
-            // Create a lean version of langData containing ONLY English + Selected Language
             let optimizedLangData = {};
-            if (langData['en']) optimizedLangData['en'] = langData['en']; // Always keep English as fallback
+            if (langData['en']) optimizedLangData['en'] = langData['en'];
             if (currentLang !== 'en' && langData[currentLang]) {
                 optimizedLangData[currentLang] = langData[currentLang];
             }
 
-            // 6. Inject Data & Replace Code
-            const title = clone.querySelector('title');
-            if(title) title.innerText = appState.config.title || "My Panchang App";
-
-            // Inject App State
-            const dataScript = document.createElement('script');
-            dataScript.textContent = `window.exportedData = ${JSON.stringify(appState)};`;
-            clone.querySelector('body').prepend(dataScript);
-
-            // 7. Generate HTML String
             let htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
-
-            // 8. REGEX MAGIC: Replace the massive langData object in the script with the optimized one
-            // We look for "const langData = { ... };" and replace it.
-            // Note: This assumes langData is defined as 'const langData = { ...' in the source.
-            const langDataRegex = /const langData = \{[\s\S]*?\};/;
-            const newLangDataStr = `const langData = ${JSON.stringify(optimizedLangData)};`;
             
-            htmlContent = htmlContent.replace(langDataRegex, newLangDataStr);
+            // Replace Lang Data
+            const langDataRegex = /const langData = \{[\s\S]*?\};/;
+            htmlContent = htmlContent.replace(langDataRegex, `const langData = ${JSON.stringify(optimizedLangData)};`);
 
-            // 9. Download
+            // 8. Download
             const blob = new Blob([htmlContent], { type: "text/html" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Panchang_${currentLang.toUpperCase()}_${appState.monthsData[0]?.year || 2025}.html`;
+            a.download = `Panchang_Lite_${appState.monthsData[0]?.year || 2025}.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
