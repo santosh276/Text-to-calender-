@@ -1,0 +1,8 @@
+::: config
+@ Title : Mock Calendar
+:::
+
+::: calendar
+++ January 2025 ++
+01 * Mock Event
+:::
