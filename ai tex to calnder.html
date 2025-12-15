@@ -1768,6 +1768,20 @@ The word "Nua" means new and "Khai" means food.
             URL.revokeObjectURL(url);
         }
 
+        // --- GITHUB LINK HELPERS ---
+        function isGitHubUrl(url) {
+            return url && (url.includes('github.com') || url.includes('githubusercontent.com'));
+        }
+
+        function getRawGitHubUrl(url) {
+            if (!url) return '';
+            if (url.includes('raw.githubusercontent.com')) return url;
+            if (url.includes('github.com')) {
+                return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+            }
+            return url;
+        }
+
         // --- NEW FUNCTION: Fetch Text from Google Drive ---
         async function fetchDriveData() {
             // 1. Ask user for the link
@@ -1817,66 +1831,76 @@ The word "Nua" means new and "Khai" means food.
 
         // --- NEW FUNCTION: Fetch from Published Google Doc ---
         async function fetchPublishedDoc() {
-            const url = prompt("Paste your Published Google Doc Link (ending in /pub):");
+            const url = prompt("Paste your Published Google Doc Link OR GitHub File Link:");
             if (!url) return;
 
-            // 1. Use CORS proxy to fetch the HTML source of the doc
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+            const isGitHub = isGitHubUrl(url);
+            // Branch: GitHub (Direct) vs Google Doc (Proxy)
+            const fetchUrl = isGitHub ? getRawGitHubUrl(url) : `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
             
             const btn = event.target.closest('button');
             const originalText = btn ? btn.innerHTML : '';
             if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
 
             try {
-                const response = await fetch(proxyUrl);
+                const response = await fetch(fetchUrl);
                 if (!response.ok) throw new Error("Failed to load document.");
 
-                const html = await response.text();
+                let textContent = "";
 
-                // 2. Parse the HTML to extract text
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
+                if (isGitHub) {
+                    // Direct Text Fetch for GitHub
+                    textContent = await response.text();
+                    showToast("GitHub File imported successfully!");
+                } else {
+                    const html = await response.text();
 
-                // CLEANUP: Remove styling, scripts, and other non-content tags
-                const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
-                unwanted.forEach(el => el.remove());
+                    // 2. Parse the HTML to extract text
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
 
-                // Remove Google banners
-                const header = doc.querySelector('#header');
-                if (header) header.remove();
-                const footer = doc.querySelector('#footer');
-                if (footer) footer.remove();
+                    // CLEANUP: Remove styling, scripts, and other non-content tags
+                    const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
+                    unwanted.forEach(el => el.remove());
 
-                // 3. Extract text content with structure
-                // innerText on DOMParser nodes is not reliable in all environments for formatting.
-                // We use a custom walker to preserve newlines for block elements.
-                
-                function getText(node) {
-                    if (node.nodeType === Node.TEXT_NODE) {
-                        return node.nodeValue;
-                    }
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        let text = '';
-                        // Process children
-                        for (let child of node.childNodes) {
-                            text += getText(child);
+                    // Remove Google banners
+                    const header = doc.querySelector('#header');
+                    if (header) header.remove();
+                    const footer = doc.querySelector('#footer');
+                    if (footer) footer.remove();
+
+                    // 3. Extract text content with structure
+                    // innerText on DOMParser nodes is not reliable in all environments for formatting.
+                    // We use a custom walker to preserve newlines for block elements.
+
+                    function getText(node) {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                            return node.nodeValue;
                         }
-                        
-                        // Add newlines for block elements
-                        const tag = node.tagName.toLowerCase();
-                        if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) {
-                            text += '\n';
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            let text = '';
+                            // Process children
+                            for (let child of node.childNodes) {
+                                text += getText(child);
+                            }
+
+                            // Add newlines for block elements
+                            const tag = node.tagName.toLowerCase();
+                            if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) {
+                                text += '\n';
+                            }
+                            return text;
                         }
-                        return text;
+                        return '';
                     }
-                    return '';
+
+                    const contentNode = doc.querySelector('#contents') || doc.body;
+                    textContent = getText(contentNode);
+
+                    // Post-process: collapse excessive newlines and trim
+                    textContent = textContent.replace(/\n\s*\n/g, '\n\n').trim();
+                    showToast("Google Doc imported successfully!");
                 }
-
-                const contentNode = doc.querySelector('#contents') || doc.body;
-                let textContent = getText(contentNode);
-                
-                // Post-process: collapse excessive newlines and trim
-                textContent = textContent.replace(/\n\s*\n/g, '\n\n').trim();
 
                 // 4. Update Editor
                 const editor = document.getElementById('editor');
@@ -1884,12 +1908,11 @@ The word "Nua" means new and "Khai" means food.
                     editor.value = textContent;
                     parseInput(textContent); // Reparse the new data
                     render();                // Update the UI
-                    showToast("Google Doc imported successfully!");
                 }
 
             } catch (err) {
                 console.error(err);
-                alert("Error: Could not fetch document. Ensure the link ends in '/pub'.");
+                alert("Error: Could not fetch document. Check the link and permissions.");
             } finally {
                 if(btn) btn.innerHTML = originalText;
             }
@@ -1900,11 +1923,12 @@ The word "Nua" means new and "Khai" means food.
         // 1. Configure the Link (User clicks button)
         function configureLiveSync() {
             const currentUrl = appState.config.liveUrl || "";
-            const url = prompt("Paste your Published Google Doc Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
+            const url = prompt("Paste your Published Google Doc Link OR GitHub File Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
             
             if (url) {
-                if (!url.includes('/pub')) {
-                    alert("Warning: Link does not look like a 'Published to Web' link (should end in /pub).");
+                const isGitHub = isGitHubUrl(url);
+                if (!url.includes('/pub') && !isGitHub) {
+                    alert("Warning: Link does not look like a 'Published to Web' link (should end in /pub) or a GitHub link.");
                 }
                 // Save to App State (So it persists in Downloaded File)
                 appState.config.liveUrl = url;
@@ -1929,41 +1953,49 @@ The word "Nua" means new and "Khai" means food.
             const originalText = syncBtn ? syncBtn.innerHTML : '';
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
-            // Add timestamp to bypass browser caching
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
+            const isGitHub = isGitHubUrl(url);
+            let fetchUrl = isGitHub ? getRawGitHubUrl(url) : `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+            // Add timestamp to bypass caching
+            fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + `t=${Date.now()}`;
 
             try {
-                const response = await fetch(proxyUrl);
+                const response = await fetch(fetchUrl);
                 if (!response.ok) throw new Error("Connection failed");
 
-                const html = await response.text();
-                
-                // Parse HTML to get raw text syntax
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                
-                // CLEANUP: Remove styling, scripts, etc.
-                const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
-                unwanted.forEach(el => el.remove());
-                const header = doc.querySelector('#header'); if (header) header.remove();
-                const footer = doc.querySelector('#footer'); if (footer) footer.remove();
+                let cleanText = "";
 
-                // Custom text extractor
-                function getText(node) {
-                    if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        let text = '';
-                        for (let child of node.childNodes) text += getText(child);
-                        const tag = node.tagName.toLowerCase();
-                        if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) text += '\n';
-                        return text;
+                if (isGitHub) {
+                    cleanText = await response.text();
+                } else {
+                    const html = await response.text();
+
+                    // Parse HTML to get raw text syntax
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // CLEANUP: Remove styling, scripts, etc.
+                    const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
+                    unwanted.forEach(el => el.remove());
+                    const header = doc.querySelector('#header'); if (header) header.remove();
+                    const footer = doc.querySelector('#footer'); if (footer) footer.remove();
+
+                    // Custom text extractor
+                    function getText(node) {
+                        if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            let text = '';
+                            for (let child of node.childNodes) text += getText(child);
+                            const tag = node.tagName.toLowerCase();
+                            if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) text += '\n';
+                            return text;
+                        }
+                        return '';
                     }
-                    return '';
-                }
 
-                const contentNode = doc.querySelector('#contents') || doc.body;
-                let cleanText = getText(contentNode);
-                cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
+                    const contentNode = doc.querySelector('#contents') || doc.body;
+                    cleanText = getText(contentNode);
+                    cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
+                }
 
                 // VALIDATION
                 if (cleanText.length < 10) throw new Error("Doc seems empty");
