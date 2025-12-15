@@ -328,6 +328,7 @@
                     <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
                     <button onclick="fetchPublishedDoc()" class="header-btn flex-1"><i class="fa-solid fa-file-word"></i> Import Doc</button>
                     <button onclick="configureLiveSync()" class="header-btn flex-1 bg-green-700 text-green-100 border-green-600 hover:bg-green-600"><i class="fa-solid fa-cloud-arrow-down"></i> Live Sync</button>
+                    <button onclick="configureGitHubSync()" class="header-btn flex-1 bg-gray-800 text-white border-gray-700 hover:bg-gray-700"><i class="fa-brands fa-github"></i> Live Sync GitHub</button>
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
                     <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
@@ -1900,16 +1901,18 @@ The word "Nua" means new and "Khai" means food.
         // 1. Configure the Link (User clicks button)
         function configureLiveSync() {
             const currentUrl = appState.config.liveUrl || "";
-            let url = prompt("Paste your Published Google Doc Link OR GitHub File Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
+            let url = prompt("Paste your Published Google Doc Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
             
             if (url) {
                 url = url.trim();
 
-                // GitHub Logic: Smart Conversion
-                if (url.includes('github.com')) {
-                    if (url.includes('/blob/')) {
-                         // Convert standard GitHub UI link to Raw
-                         // e.g. github.com/user/repo/blob/main/data.txt -> raw.githubusercontent.com/user/repo/main/data.txt
+                // GitHub Logic (Redirect to dedicated function if user pastes GitHub here)
+                if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                    // Forward to GitHub config flow with this URL pre-filled?
+                    // No, let's just handle it gracefully or warn.
+                    // But to keep it simple and backwards compatible, we can just process it.
+                    // However, user asked for dedicated workflow. Let's keep this for Google Docs primarily but allow fallback.
+                    if (url.includes('github.com') && url.includes('/blob/')) {
                          url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
                     }
                 }
@@ -1923,7 +1926,11 @@ The word "Nua" means new and "Khai" means food.
                 saveConfigToStorage();
                 
                 // Fetch immediately to test
-                fetchLiveDoc(url);
+                if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                    fetchGitHubData(url);
+                } else {
+                    fetchLiveDoc(url);
+                }
             } else if (url === "") {
                 // User cleared the input
                 delete appState.config.liveUrl;
@@ -1932,103 +1939,155 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        // 2. The Fetching Logic (Runs on load & update)
+        // --- NEW: Configure GitHub Sync ---
+        function configureGitHubSync() {
+            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'))) ? appState.config.liveUrl : "";
+            let url = prompt("Paste your GitHub File Link (e.g., github.com/.../data.txt):", currentUrl);
+
+            if (url) {
+                url = url.trim();
+
+                // Smart Conversion: GitHub Blob -> Raw
+                if (url.includes('github.com') && url.includes('/blob/')) {
+                    url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+                }
+
+                // Save to App State
+                appState.config.liveUrl = url;
+                saveConfigToStorage();
+
+                // Trigger Fetch
+                fetchGitHubData(url);
+
+            } else if (url === "") {
+                delete appState.config.liveUrl;
+                saveConfigToStorage();
+                showToast("GitHub Sync removed.");
+            }
+        }
+
+        // --- NEW: Fetch GitHub Data (Direct) ---
+        async function fetchGitHubData(url) {
+            if (!url) return;
+
+            // UI Feedback (Target specific button if possible, else fallback)
+            const syncBtn = document.querySelector('button[onclick="configureGitHubSync()"]');
+            const originalText = syncBtn ? syncBtn.innerHTML : '';
+            if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
+
+            try {
+                // Add timestamp to bypass caching
+                const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+
+                const response = await fetch(fetchUrl);
+                if (!response.ok) throw new Error(`GitHub Fetch Failed: ${response.status}`);
+
+                const cleanText = await response.text();
+
+                // VALIDATION
+                if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
+
+                // Update & Save Logic (Shared)
+                updateAppWithFetchedData(cleanText);
+
+            } catch (e) {
+                console.error("GitHub Sync Error:", e);
+                showToast("GitHub Sync Error: " + e.message);
+            } finally {
+                if(syncBtn) syncBtn.innerHTML = originalText;
+            }
+        }
+
+        // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
         async function fetchLiveDoc(url) {
             if (!url) return;
             
-            // UI Feedback (Only if button exists/user clicked)
+            // Check if it's actually a GitHub URL that got routed here
+            if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                return fetchGitHubData(url);
+            }
+
+            // UI Feedback
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
             try {
-                let cleanText = "";
+                // Add timestamp to bypass browser caching
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
 
-                // SCENARIO A: GitHub (Direct Fetch)
-                // We check for raw.githubusercontent.com OR github.com (in case user pasted raw link from there)
-                if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                    // Add timestamp to bypass caching
-                    const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Proxy Connection failed");
 
-                    const response = await fetch(fetchUrl);
-                    if (!response.ok) throw new Error(`GitHub Fetch Failed: ${response.status}`);
-                    cleanText = await response.text();
-                }
-                // SCENARIO B: Google Docs (Via Proxy & Parsing)
-                else {
-                    // Add timestamp to bypass browser caching
-                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
+                const html = await response.text();
 
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error("Proxy Connection failed");
+                // Parse HTML to get raw text syntax
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
 
-                    const html = await response.text();
+                // CLEANUP
+                const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
+                unwanted.forEach(el => el.remove());
+                const header = doc.querySelector('#header'); if (header) header.remove();
+                const footer = doc.querySelector('#footer'); if (footer) footer.remove();
 
-                    // Parse HTML to get raw text syntax
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-
-                    // CLEANUP: Remove styling, scripts, etc.
-                    const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
-                    unwanted.forEach(el => el.remove());
-                    const header = doc.querySelector('#header'); if (header) header.remove();
-                    const footer = doc.querySelector('#footer'); if (footer) footer.remove();
-
-                    // Custom text extractor
-                    function getText(node) {
-                        if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            let text = '';
-                            for (let child of node.childNodes) text += getText(child);
-                            const tag = node.tagName.toLowerCase();
-                            if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) text += '\n';
-                            return text;
-                        }
-                        return '';
+                // Custom text extractor
+                function getText(node) {
+                    if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        let text = '';
+                        for (let child of node.childNodes) text += getText(child);
+                        const tag = node.tagName.toLowerCase();
+                        if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) text += '\n';
+                        return text;
                     }
-
-                    const contentNode = doc.querySelector('#contents') || doc.body;
-                    cleanText = getText(contentNode);
-                    cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
+                    return '';
                 }
+
+                const contentNode = doc.querySelector('#contents') || doc.body;
+                let cleanText = getText(contentNode);
+                cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
 
                 // VALIDATION
                 if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
 
-                // --- THE MAGIC: Update & Save ---
-                
-                // 1. Save to Local Storage (Auto-Save)
-                localStorage.setItem('panchang_autosave_text', cleanText);
-
-                // 2. Update the App Logic
-                const editor = document.getElementById('editor');
-                
-                if (editor) {
-                    // SCENARIO A: We are in Editor Mode
-                    if (editor.value !== cleanText) {
-                        editor.value = cleanText;
-                        parseInput(cleanText);
-                        render();
-                        showToast("Calendar updated from Cloud!");
-                    }
-                } else {
-                    // SCENARIO B: We are in Downloaded App Mode (No Editor)
-                    // This was the missing part!
-                    parseInput(cleanText);
-                    render();
-                    // Optional: Update title if changed in config
-                    if (appState.config && appState.config.title) {
-                         const titleEl = document.getElementById('app-title');
-                         if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
-                    }
-                    console.log("App updated seamlessly from background cloud fetch.");
-                }
+                // Update & Save
+                updateAppWithFetchedData(cleanText);
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
                 showToast("Sync Error: " + e.message);
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
+            }
+        }
+
+        // Shared Logic for updating app state from fetched text
+        function updateAppWithFetchedData(cleanText) {
+            // 1. Save to Local Storage (Auto-Save)
+            localStorage.setItem('panchang_autosave_text', cleanText);
+
+            // 2. Update the App Logic
+            const editor = document.getElementById('editor');
+
+            if (editor) {
+                // SCENARIO A: We are in Editor Mode
+                if (editor.value !== cleanText) {
+                    editor.value = cleanText;
+                    parseInput(cleanText);
+                    render();
+                    showToast("Calendar updated from Cloud!");
+                }
+            } else {
+                // SCENARIO B: We are in Downloaded App Mode (No Editor)
+                parseInput(cleanText);
+                render();
+                // Optional: Update title if changed in config
+                if (appState.config && appState.config.title) {
+                     const titleEl = document.getElementById('app-title');
+                     if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+                }
+                console.log("App updated seamlessly from background cloud fetch.");
             }
         }
 
@@ -2065,14 +2124,22 @@ The word "Nua" means new and "Khai" means food.
                     // Background Sync (Update if changed)
                     if (appState.config && appState.config.liveUrl) {
                         console.log("Background syncing...");
-                        fetchLiveDoc(appState.config.liveUrl); 
+                        const url = appState.config.liveUrl;
+                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                            fetchGitHubData(url);
+                        } else {
+                            fetchLiveDoc(url);
+                        }
                     }
                 } 
                 else {
                     // 3. NO LOCAL DATA -> FETCH FROM CLOUD (First Run)
                     if (appState.config && appState.config.liveUrl) {
                         console.log("No local data. Fetching from Cloud...");
-                        fetchLiveDoc(appState.config.liveUrl).then(() => {
+                        const url = appState.config.liveUrl;
+                        const fetchPromise = (url.includes('github.com') || url.includes('raw.githubusercontent.com')) ? fetchGitHubData(url) : fetchLiveDoc(url);
+
+                        fetchPromise.then(() => {
                             // Remove Loader AFTER fetch
                             if (loader) {
                                 loader.style.opacity = '0';
@@ -2095,7 +2162,12 @@ The word "Nua" means new and "Khai" means food.
                     
                     // Check if we need to sync
                     if (appState.config && appState.config.liveUrl) {
-                        fetchLiveDoc(appState.config.liveUrl);
+                        const url = appState.config.liveUrl;
+                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                            fetchGitHubData(url);
+                        } else {
+                            fetchLiveDoc(url);
+                        }
                     }
                 }
             }
