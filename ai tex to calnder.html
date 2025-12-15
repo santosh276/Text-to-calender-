@@ -2005,8 +2005,9 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function initAutoSync() {
-            // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
+            // 1. Determine Mode & Initialize State
             if (window.exportedData) {
+                // APP MODE
                 appState = window.exportedData;
                 
                 // Hide Editor Panel
@@ -2018,7 +2019,31 @@ The word "Nua" means new and "Khai" means food.
                     previewPanel.classList.remove('md:w-[65%]'); 
                     previewPanel.classList.add('w-full'); 
                 }
+            }
 
+            // 2. Load User Preferences (Language, Location) from LocalStorage
+            // This ensures user settings persist across sessions in both modes
+            try {
+                const savedConfig = localStorage.getItem('panchangConfig');
+                if (savedConfig) {
+                    const parsed = JSON.parse(savedConfig);
+                    if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
+
+                    // Merge safely
+                    appState.config = { ...appState.config, ...parsed };
+
+                    // If location exists, trigger a silent update to refresh it
+                    if (appState.config.location) {
+                        setTimeout(() => getUserLocation(), 2000);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load config from localStorage", e);
+            }
+
+            // 3. Load Content Logic
+            if (window.exportedData) {
+                // APP MODE CONTENT LOADING
                 // 2. CHECK LOCAL STORAGE FIRST (Fast Load)
                 const cachedText = localStorage.getItem('panchang_autosave_text');
                 const loader = document.getElementById('app-loader');
@@ -2089,26 +2114,6 @@ The word "Nua" means new and "Khai" means food.
         }
 
         
-        // Load config from localStorage if available
-        try {
-            const savedConfig = localStorage.getItem('panchangConfig');
-            if (savedConfig) {
-                const parsed = JSON.parse(savedConfig);
-                // Merge saved config into defaults
-                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
-                appState.config = { ...appState.config, ...parsed };
-                
-                // If location exists, trigger a silent update to refresh it
-                if (appState.config.location) {
-                    // Slight delay to allow render to happen first
-                    setTimeout(() => getUserLocation(), 2000);
-                }
-            }
-        } catch (e) {
-            console.error("Failed to load config from localStorage", e);
-        }
-
-        // Initialization logic moved to initAutoSync()
 
         function parseInput(text) {
             const lines = text.split('\n');
