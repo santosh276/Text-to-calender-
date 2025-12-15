@@ -327,6 +327,7 @@
                     <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
                     <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
                     <button onclick="fetchPublishedDoc()" class="header-btn flex-1"><i class="fa-solid fa-file-word"></i> Import Doc</button>
+                    <button onclick="fetchGitHubData()" class="header-btn flex-1 bg-gray-900 text-white border-gray-700 hover:bg-black"><i class="fa-brands fa-github"></i> Import GitHub</button>
                     <button onclick="configureLiveSync()" class="header-btn flex-1 bg-green-700 text-green-100 border-green-600 hover:bg-green-600"><i class="fa-solid fa-cloud-arrow-down"></i> Live Sync</button>
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
                     <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
@@ -1766,6 +1767,44 @@ The word "Nua" means new and "Khai" means food.
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+
+        // --- NEW FUNCTION: Fetch Text from GitHub ---
+        async function fetchGitHubData() {
+            const url = prompt("Paste your GitHub File Link (blob or raw):");
+            if (!url) return;
+
+            let rawUrl = url;
+            // Convert blob to raw if needed
+            // Format: https://github.com/user/repo/blob/branch/path/to/file
+            // Target: https://raw.githubusercontent.com/user/repo/branch/path/to/file
+            if (url.includes('github.com') && url.includes('/blob/')) {
+                rawUrl = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+            }
+
+            const btn = event.target.closest('button');
+            const originalText = btn ? btn.innerHTML : '';
+            if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
+
+            try {
+                // Direct fetch for GitHub Raw
+                const response = await fetch(rawUrl);
+                if (!response.ok) throw new Error('Failed to fetch from GitHub: ' + response.statusText);
+                const text = await response.text();
+
+                const editor = document.getElementById('editor');
+                if (editor) {
+                    editor.value = text;
+                    parseInput(text);
+                    render();
+                    showToast("Data imported from GitHub successfully!");
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error fetching from GitHub: ' + error.message);
+            } finally {
+                if(btn) btn.innerHTML = originalText;
+            }
         }
 
         // --- NEW FUNCTION: Fetch Text from Google Drive ---
