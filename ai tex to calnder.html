@@ -325,6 +325,9 @@
             <div class="bg-black border-b border-gray-800 p-4 shrink-0 flex flex-col gap-3 z-50 relative shadow-lg">
                 <div class="flex gap-3">
                     <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
+                    <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
+                    <button onclick="fetchPublishedDoc()" class="header-btn flex-1 bg-blue-600 text-white border-blue-500 hover:bg-blue-700"><i class="fa-solid fa-file-word"></i> Import Doc</button>
+                    <button onclick="configureLiveSync()" class="header-btn flex-1 bg-green-700 text-green-100 border-green-600 hover:bg-green-600"><i class="fa-solid fa-cloud-arrow-down"></i> Live Sync</button>
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
                     <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
@@ -593,17 +596,17 @@ The word "Nua" means new and "Khai" means food.
 
                 <!-- Sidebar Section -->
                 <div class="lg:w-1/4 space-y-6">
-                    <div class="glass rounded-xl shadow-md border-l-4 border-saffron p-4">
+                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300">
                         <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
                         <div id="festival-filters" class="flex gap-2 mb-4 overflow-x-auto pb-2"></div>
                         <ul id="festival-list" class="space-y-2 text-sm"></ul>
                     </div>
-                    <div class="glass rounded-xl shadow-md border-l-4 border-deepred p-4">
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i>Month's Panchang</h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"></div>
                     </div>
-                    <div class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4">
+                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300">
                         <h3 class="font-bold text-amber-800 mb-3 border-b pb-1"><i class="fa-solid fa-hand-sparkles text-amber-500 mr-2"></i>Horoscope</h3>
                         <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
                     </div>
@@ -642,8 +645,8 @@ The word "Nua" means new and "Khai" means food.
                     <select id="language-select" onchange="changeLanguage(this.value)" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition">
                         <option value="en">English</option>
                         <option value="hi">Hindi (हिन्दी)</option>
-                        <option value="bn">Bengali (বাংলা)</option>
                         <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                        <option value="bn">Bengali (বাংলা)</option>
                         <option value="mr">Marathi (मराठी)</option>
                         <option value="gu">Gujarati (ગુજરાતી)</option>
                         <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
@@ -652,7 +655,37 @@ The word "Nua" means new and "Khai" means food.
                         <option value="kn">Kannada (ಕನ್ನಡ)</option>
                         <option value="ml">Malayalam (മലയാളം)</option>
                     </select>
+                    <p class="text-[10px] text-gray-400 mt-1 italic">Note: Downloaded app will only include the selected language.</p>
                 </div>
+
+                <div class="border-t border-gray-200 pt-4 space-y-3">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Display Options</div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Show Festivals</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Show Panchang</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Show Horoscope</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-horoscope" class="sr-only peer" checked onchange="toggleSection('horoscope', this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-between border-t border-gray-200 pt-4 mt-4">
                     <label class="text-sm font-bold text-gray-700">Show Daily Overview Banner</label>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -1027,6 +1060,13 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        function toggleSection(section, isVisible) {
+            if (!appState.config.sections) appState.config.sections = { festivals: true, panchang: true, horoscope: true };
+            appState.config.sections[section] = isVisible;
+            saveConfigToStorage();
+            render();
+        }
+
         function getUserLocation() {
             if (!navigator.geolocation) {
                 showToast("Geolocation is not supported by your browser.");
@@ -1146,7 +1186,13 @@ The word "Nua" means new and "Khai" means food.
             horoscopeDetails: {},
             customSeasonDescriptions: {},
             images: {}, 
-            config: { title: 'Panchang App', logoUrl: null, language: 'en', location: null }
+            config: { 
+                title: 'Panchang App', 
+                logoUrl: null, 
+                language: 'en', 
+                location: null,
+                sections: { festivals: true, panchang: true, horoscope: true }
+            }
         };
         
         let bannerInterval;
@@ -1359,6 +1405,11 @@ The word "Nua" means new and "Khai" means food.
             // Update toggle state
             const toggle = document.getElementById('banner-toggle');
             if(toggle) toggle.checked = !isBannerDismissed;
+
+            const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
+            if(document.getElementById('toggle-festivals')) document.getElementById('toggle-festivals').checked = secs.festivals;
+            if(document.getElementById('toggle-panchang')) document.getElementById('toggle-panchang').checked = secs.panchang;
+            if(document.getElementById('toggle-horoscope')) document.getElementById('toggle-horoscope').checked = secs.horoscope;
 
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
@@ -1717,6 +1768,251 @@ The word "Nua" means new and "Khai" means food.
             URL.revokeObjectURL(url);
         }
 
+        // --- NEW FUNCTION: Fetch Text from Google Drive ---
+        async function fetchDriveData() {
+            // 1. Ask user for the link
+            const url = prompt("Paste your Google Drive Sharing Link (.txt files only):");
+            if (!url) return;
+
+            // 2. Extract the File ID using Regex
+            // Matches /d/FILE_ID or id=FILE_ID patterns
+            let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+
+            if (match && match[1]) {
+                const fileId = match[1];
+                const btn = event.target.closest('button'); // Get button to show loading state
+                const originalText = btn ? btn.innerHTML : '';
+                
+                if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
+
+                // 3. Construct Proxy URL (Bypasses CORS security block)
+                // We use 'allorigins' proxy to fetch the Google Drive download link
+                const driveDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(driveDownloadUrl)}`;
+
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error("Failed to connect to file.");
+                    
+                    const text = await response.text();
+                    
+                    // 4. Update the Editor and App
+                    const editor = document.getElementById('editor');
+                    if (editor) {
+                        editor.value = text;
+                        parseInput(text); // Call your existing parser
+                        render();         // Refresh the view
+                        showToast("Data imported from Google Drive successfully!");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Error: Could not fetch file. Make sure the Drive link is 'Anyone with the link can view' and the file is text.");
+                } finally {
+                    if(btn) btn.innerHTML = originalText;
+                }
+            } else {
+                alert("Invalid Google Drive Link. Please use a standard sharing link.");
+            }
+        }
+
+        // --- NEW FUNCTION: Fetch from Published Google Doc ---
+        async function fetchPublishedDoc() {
+            const url = prompt("Paste your Published Google Doc Link (ending in /pub):");
+            if (!url) return;
+
+            // 1. Use CORS proxy to fetch the HTML source of the doc
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+            
+            const btn = event.target.closest('button');
+            const originalText = btn ? btn.innerHTML : '';
+            if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
+
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Failed to load document.");
+
+                const html = await response.text();
+
+                // 2. Parse the HTML to extract text
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // CLEANUP: Remove styling, scripts, and other non-content tags
+                const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
+                unwanted.forEach(el => el.remove());
+
+                // Remove Google banners
+                const header = doc.querySelector('#header');
+                if (header) header.remove();
+                const footer = doc.querySelector('#footer');
+                if (footer) footer.remove();
+
+                // 3. Extract text content with structure
+                // innerText on DOMParser nodes is not reliable in all environments for formatting.
+                // We use a custom walker to preserve newlines for block elements.
+                
+                function getText(node) {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        return node.nodeValue;
+                    }
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        let text = '';
+                        // Process children
+                        for (let child of node.childNodes) {
+                            text += getText(child);
+                        }
+                        
+                        // Add newlines for block elements
+                        const tag = node.tagName.toLowerCase();
+                        if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) {
+                            text += '\n';
+                        }
+                        return text;
+                    }
+                    return '';
+                }
+
+                const contentNode = doc.querySelector('#contents') || doc.body;
+                let textContent = getText(contentNode);
+                
+                // Post-process: collapse excessive newlines and trim
+                textContent = textContent.replace(/\n\s*\n/g, '\n\n').trim();
+
+                // 4. Update Editor
+                const editor = document.getElementById('editor');
+                if (editor) {
+                    editor.value = textContent;
+                    parseInput(textContent); // Reparse the new data
+                    render();                // Update the UI
+                    showToast("Google Doc imported successfully!");
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Error: Could not fetch document. Ensure the link ends in '/pub'.");
+            } finally {
+                if(btn) btn.innerHTML = originalText;
+            }
+        }
+
+        // --- LIVE GOOGLE DOC SYNC FEATURE ---
+
+        // 1. Configure the Link (User clicks button)
+        function configureLiveSync() {
+            const currentUrl = appState.config.liveUrl || "";
+            const url = prompt("Paste your Published Google Doc Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
+            
+            if (url) {
+                if (!url.includes('/pub')) {
+                    alert("Warning: Link does not look like a 'Published to Web' link (should end in /pub).");
+                }
+                // Save to App State (So it persists in Downloaded File)
+                appState.config.liveUrl = url;
+                saveConfigToStorage();
+                
+                // Fetch immediately to test
+                fetchLiveDoc(url);
+            } else if (url === "") {
+                // User cleared the input
+                delete appState.config.liveUrl;
+                saveConfigToStorage();
+                showToast("Live Sync removed.");
+            }
+        }
+
+        // 2. The Fetching Logic (Runs on load & update)
+        async function fetchLiveDoc(url) {
+            if (!url) return;
+            
+            // UI Feedback (Only if button exists/user clicked)
+            const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
+            const originalText = syncBtn ? syncBtn.innerHTML : '';
+            if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
+            
+            // Add timestamp to bypass browser caching
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
+
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Connection failed");
+
+                const html = await response.text();
+                
+                // Parse HTML to get raw text syntax
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // CLEANUP: Remove styling, scripts, etc.
+                const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
+                unwanted.forEach(el => el.remove());
+                const header = doc.querySelector('#header'); if (header) header.remove();
+                const footer = doc.querySelector('#footer'); if (footer) footer.remove();
+
+                // Custom text extractor
+                function getText(node) {
+                    if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        let text = '';
+                        for (let child of node.childNodes) text += getText(child);
+                        const tag = node.tagName.toLowerCase();
+                        if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) text += '\n';
+                        return text;
+                    }
+                    return '';
+                }
+
+                const contentNode = doc.querySelector('#contents') || doc.body;
+                let cleanText = getText(contentNode);
+                cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
+
+                // VALIDATION
+                if (cleanText.length < 10) throw new Error("Doc seems empty");
+
+                // --- THE MAGIC: Update & Save ---
+                
+                // 1. Save to Local Storage (Auto-Save)
+                localStorage.setItem('panchang_autosave_text', cleanText);
+
+                // 2. Update the App Logic
+                const editor = document.getElementById('editor');
+                
+                if (editor) {
+                    // SCENARIO A: We are in Editor Mode
+                    if (editor.value !== cleanText) {
+                        editor.value = cleanText;
+                        parseInput(cleanText);
+                        render();
+                        showToast("Calendar updated from Cloud!");
+                    }
+                } else {
+                    // SCENARIO B: We are in Downloaded App Mode (No Editor)
+                    // This was the missing part!
+                    parseInput(cleanText);
+                    render();
+                    // Optional: Update title if changed in config
+                    if (appState.config && appState.config.title) {
+                         const titleEl = document.getElementById('app-title');
+                         if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+                    }
+                    console.log("App updated seamlessly from background cloud fetch.");
+                }
+
+            } catch (e) {
+                console.error("Live Sync Error:", e);
+            } finally {
+                if(syncBtn) syncBtn.innerHTML = originalText;
+            }
+        }
+
+        // 3. AUTO-RUN ON LOAD
+        setTimeout(() => {
+            // Check if a Live URL is saved in the config
+            if (appState.config && appState.config.liveUrl) {
+                console.log("Found Live URL, syncing...");
+                fetchLiveDoc(appState.config.liveUrl);
+            }
+        }, 500); // Small delay to ensure UI is ready
+
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1751,8 +2047,19 @@ The word "Nua" means new and "Khai" means food.
 
         if (window.exportedData) {
             appState = window.exportedData;
+            
+            // --- LIVE SYNC CACHE: Restore from LocalStorage if available ---
+            const cachedSyncData = localStorage.getItem('panchang_autosave_text');
+            if (appState.config && appState.config.liveUrl && cachedSyncData) {
+                console.log("Restoring cached Live Sync data from LocalStorage...");
+                // We use the new safe parseInput which preserves the config
+                parseInput(cachedSyncData);
+            }
+
             if (!appState.images) appState.images = {};
             if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
+            if (appState.activeMonthIndex === undefined || appState.activeMonthIndex === null) appState.activeMonthIndex = 0;
+
             const editorPanel = document.getElementById('editor-panel');
             if (editorPanel) editorPanel.style.display = 'none';
             const previewPanel = document.getElementById('preview-container');
@@ -1778,7 +2085,8 @@ The word "Nua" means new and "Khai" means food.
             let parsedSeasonDescs = {};
             let currentSeasonIdx = -1;
             
-            let tempConfig = { title: 'Panchang App', logoUrl: null, language: 'en', location: appState.config ? appState.config.location : null };
+            // Preserve existing config (Language, Location, LiveUrl) while parsing
+            let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
 
             const createMonth = (mIndex, year) => ({ month: mIndex, year: year, events: [], panchang: {}, horoscope: [] });
             const now = new Date();
@@ -1976,6 +2284,17 @@ The word "Nua" means new and "Khai" means food.
             renderFestivals(currentData);
             renderHoroscope(currentData);
             renderMonthBanner(currentData);
+
+            // --- NEW LOGIC: Hide/Show Sections based on Config ---
+            const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
+            
+            const secFest = document.getElementById('sec-festivals');
+            const secPan = document.getElementById('sec-panchang');
+            const secHoro = document.getElementById('sec-horoscope');
+
+            if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
+            if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
+            if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
         }
 
         function dismissBanner(e) {
@@ -2930,41 +3249,70 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function downloadCalendar() {
+            // 1. Clone the DOM
             const clone = document.documentElement.cloneNode(true);
+            
+            // 2. REMOVE EDITOR: Completely remove the editor panel HTML
             const editorPanel = clone.querySelector('#editor-panel');
             if(editorPanel) editorPanel.remove();
             
-            // SCROLL FIX LOGIC
+            // 3. Adjust Layout for "Standalone App" mode
             const body = clone.querySelector('body');
             body.classList.remove('h-screen', 'overflow-hidden');
-            body.classList.add('min-h-screen', 'overflow-y-auto');
+            body.classList.add('min-h-screen', 'overflow-y-auto', 'bg-[#fdfbf7]'); // Ensure background persists
 
             const mainWrapper = clone.querySelector('.flex.flex-col.md\\:flex-row');
-            if(mainWrapper) {
-                mainWrapper.classList.remove('h-full', 'overflow-hidden');
-            }
+            if(mainWrapper) mainWrapper.classList.remove('h-full', 'overflow-hidden');
 
             const previewPanel = clone.querySelector('#preview-container');
             if(previewPanel) {
-                previewPanel.classList.remove('md:w-[65%]', 'h-[38%]', 'md:h-full', 'overflow-y-auto'); 
-                // CHANGE HERE: pb-4 for optimal downloaded view
-                previewPanel.classList.add('w-full', 'h-auto', 'pb-4'); 
+                // Force full width since editor is gone
+                previewPanel.className = 'w-full h-auto pb-4 p-2 md:p-8 relative z-0';
                 previewPanel.style.overflow = 'visible';
-                previewPanel.style.height = 'auto';
             }
-            const navBtn = clone.querySelector('#download-btn');
+
+            // 4. Clean up buttons
+            const navBtn = clone.querySelector('#download-btn'); // if exists
             if(navBtn) navBtn.remove();
+            
+            // Remove "Open File" and other editor-specific buttons if they somehow remained (though they are in editor panel)
+            
+            // 5. LANGUAGE OPTIMIZATION ALGORITHM
+            const currentLang = appState.config.language || 'en';
+            
+            // Create a lean version of langData containing ONLY English + Selected Language
+            let optimizedLangData = {};
+            if (langData['en']) optimizedLangData['en'] = langData['en']; // Always keep English as fallback
+            if (currentLang !== 'en' && langData[currentLang]) {
+                optimizedLangData[currentLang] = langData[currentLang];
+            }
+
+            // 6. Inject Data & Replace Code
             const title = clone.querySelector('title');
-            if(title) title.innerText = "My Panchang Year App";
+            if(title) title.innerText = appState.config.title || "My Panchang App";
+
+            // Inject App State
             const dataScript = document.createElement('script');
             dataScript.textContent = `window.exportedData = ${JSON.stringify(appState)};`;
             clone.querySelector('body').prepend(dataScript);
-            const htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
+
+            // 7. Generate HTML String
+            let htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
+
+            // 8. REGEX MAGIC: Replace the massive langData object in the script with the optimized one
+            // We look for "const langData = { ... };" and replace it.
+            // Note: This assumes langData is defined as 'const langData = { ...' in the source.
+            const langDataRegex = /const langData = \{[\s\S]*?\};/;
+            const newLangDataStr = `const langData = ${JSON.stringify(optimizedLangData)};`;
+            
+            htmlContent = htmlContent.replace(langDataRegex, newLangDataStr);
+
+            // 9. Download
             const blob = new Blob([htmlContent], { type: "text/html" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Panchang_Calendar_App_${appState.monthsData[0]?.year || 2025}.html`;
+            a.download = `Panchang_${currentLang.toUpperCase()}_${appState.monthsData[0]?.year || 2025}.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
