@@ -1920,11 +1920,11 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        // 2. The Fetching Logic (Runs on load & update)
-        async function fetchLiveDoc(url) {
+        // 2. The Fetching Logic (Updated for Timer)
+        async function fetchLiveDoc(url, force = false) {
             if (!url) return;
             
-            // UI Feedback (Only if button exists/user clicked)
+            // UI Feedback (Only if button exists - Editor Mode)
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
@@ -1938,17 +1938,15 @@ The word "Nua" means new and "Khai" means food.
 
                 const html = await response.text();
                 
-                // Parse HTML to get raw text syntax
+                // Parse HTML
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 
-                // CLEANUP: Remove styling, scripts, etc.
                 const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
                 unwanted.forEach(el => el.remove());
                 const header = doc.querySelector('#header'); if (header) header.remove();
                 const footer = doc.querySelector('#footer'); if (footer) footer.remove();
 
-                // Custom text extractor
                 function getText(node) {
                     if (node.nodeType === Node.TEXT_NODE) return node.nodeValue;
                     if (node.nodeType === Node.ELEMENT_NODE) {
@@ -1965,19 +1963,20 @@ The word "Nua" means new and "Khai" means food.
                 let cleanText = getText(contentNode);
                 cleanText = cleanText.replace(/\n\s*\n/g, '\n\n').trim();
 
-                // VALIDATION
                 if (cleanText.length < 10) throw new Error("Doc seems empty");
 
-                // --- THE MAGIC: Update & Save ---
+                // --- UPDATE & SAVE LOGIC ---
                 
-                // 1. Save to Local Storage (Auto-Save)
+                // 1. Save Data
                 localStorage.setItem('panchang_autosave_text', cleanText);
 
-                // 2. Update the App Logic
+                // 2. Save Timestamp (CRITICAL FOR TIMER)
+                localStorage.setItem('panchang_last_sync_ts', Date.now().toString());
+
+                // 3. Update App
                 const editor = document.getElementById('editor');
-                
                 if (editor) {
-                    // SCENARIO A: We are in Editor Mode
+                    // Editor Mode: Always update visually
                     if (editor.value !== cleanText) {
                         editor.value = cleanText;
                         parseInput(cleanText);
@@ -1985,33 +1984,74 @@ The word "Nua" means new and "Khai" means food.
                         showToast("Calendar updated from Cloud!");
                     }
                 } else {
-                    // SCENARIO B: We are in Downloaded App Mode (No Editor)
-                    // This was the missing part!
+                    // Downloaded App Mode: Silent Update
                     parseInput(cleanText);
                     render();
-                    // Optional: Update title if changed in config
                     if (appState.config && appState.config.title) {
                          const titleEl = document.getElementById('app-title');
                          if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
                     }
-                    console.log("App updated seamlessly from background cloud fetch.");
+                    console.log("Background Sync Completed Successfully.");
                 }
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
+                if(syncBtn) showToast("Sync failed");
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
         }
 
-        // 3. AUTO-RUN ON LOAD
+        // Helper to convert config string to milliseconds
+        function getSyncIntervalMs(str) {
+            if (!str) return 24 * 60 * 60 * 1000; // Default 24 hours
+
+            const match = str.match(/(\d+)\s*(minute|hour|day)/i);
+            if (!match) return 24 * 60 * 60 * 1000;
+
+            const val = parseInt(match[1]);
+            const unit = match[2].toLowerCase();
+
+            if (unit.startsWith('minute')) return val * 60 * 1000;
+            if (unit.startsWith('hour')) return val * 60 * 60 * 1000;
+            if (unit.startsWith('day')) return val * 24 * 60 * 60 * 1000;
+
+            return 24 * 60 * 60 * 1000;
+        }
+
+        // 3. AUTO-RUN SMART CHECK
         setTimeout(() => {
-            // Check if a Live URL is saved in the config
+            // Check if we have a Live URL configured
             if (appState.config && appState.config.liveUrl) {
-                console.log("Found Live URL, syncing...");
-                fetchLiveDoc(appState.config.liveUrl);
+
+                // Check if we are in Editor Mode (has #editor) or Downloaded App Mode
+                const isEditorMode = document.getElementById('editor') !== null;
+
+                if (isEditorMode) {
+                    // Editor Mode: Fetch instantly on load to ensure preview is fresh
+                    console.log("Editor Mode: Syncing instantly...");
+                    fetchLiveDoc(appState.config.liveUrl, true);
+                } else {
+                    // Downloaded App Mode: Check Timer
+                    const lastSyncStr = localStorage.getItem('panchang_last_sync_ts');
+                    const lastSync = lastSyncStr ? parseInt(lastSyncStr) : 0;
+                    const now = Date.now();
+
+                    // Get interval from config (e.g., "24 hours", "30 minutes")
+                    const intervalStr = appState.config.syncInterval || '24 hours';
+                    const intervalMs = getSyncIntervalMs(intervalStr);
+
+                    const elapsed = now - lastSync;
+
+                    if (elapsed > intervalMs) {
+                        console.log(`Sync Timer: Time expired (${Math.round(elapsed/60000)} mins elapsed). Fetching update...`);
+                        fetchLiveDoc(appState.config.liveUrl, false);
+                    } else {
+                        console.log(`Sync Timer: Using Local Storage. Next sync in ${Math.round((intervalMs - elapsed)/60000)} minutes.`);
+                    }
+                }
             }
-        }, 500); // Small delay to ensure UI is ready
+        }, 1000);
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
@@ -2107,8 +2147,11 @@ The word "Nua" means new and "Khai" means food.
                 if (currentBlock === 'config') {
                     const titleMatch = line.match(/^@\s*Title\s*:\s*(.+)/i);
                     const logoMatch = line.match(/^@\s*Logo\s*:\s*!\[(.*?)\]\((.*?)\)/i);
+                    const syncTimeMatch = line.match(/^@\s*Docs\s*Sync\s*trigger\s*in\s*every\s*:\s*(.+)/i);
+
                     if (titleMatch) tempConfig.title = titleMatch[1];
                     if (logoMatch) tempConfig.logoUrl = logoMatch[2];
+                    if (syncTimeMatch) tempConfig.syncInterval = syncTimeMatch[1].trim();
                 }
                 else if (currentBlock === 'calendar') {
                     const headerMatch = line.match(/\+\+\s+(\w+)\s+(\d{4})\s+\+\+/);
