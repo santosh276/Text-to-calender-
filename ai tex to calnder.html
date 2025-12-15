@@ -1895,6 +1895,48 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+
+        // --- NEW HELPER: Parse Sync Interval ---
+        function parseSyncInterval(text) {
+            const match = text.match(/@\s*Docs Sync trigger in every\s*:\s*(.+)/i);
+            if (!match) return 24 * 60 * 60 * 1000; // Default: 24 hours
+
+            const valStr = match[1].trim().toLowerCase();
+            const val = parseFloat(valStr);
+            if (isNaN(val)) return 24 * 60 * 60 * 1000;
+
+            if (valStr.includes('minute')) return val * 60 * 1000;
+            if (valStr.includes('hour')) return val * 60 * 60 * 1000;
+            if (valStr.includes('day')) return val * 24 * 60 * 60 * 1000;
+
+            return 24 * 60 * 60 * 1000; // Default fallback
+        }
+
+        // --- NEW LOGIC: Check Background Sync ---
+        function checkBackgroundSync(currentText, isEditorMode) {
+            const liveUrl = appState.config.liveUrl;
+            if (!liveUrl) return;
+
+            // EDITOR MODE: Always force fetch
+            if (isEditorMode) {
+                console.log("Editor Mode: Forcing background sync...");
+                fetchLiveDoc(liveUrl, true);
+                return;
+            }
+
+            // APP MODE: Check Timer
+            const lastSync = localStorage.getItem('panchang_last_sync_ts');
+            const interval = parseSyncInterval(currentText);
+            const now = Date.now();
+
+            if (!lastSync || (now - parseInt(lastSync) > interval)) {
+                console.log("Sync Timer Expired. Fetching in background...");
+                fetchLiveDoc(liveUrl, true);
+            } else {
+                console.log("Sync Timer Valid. Using cached data.");
+            }
+        }
+
         // --- LIVE GOOGLE DOC SYNC FEATURE ---
 
         // 1. Configure the Link (User clicks button)
@@ -1910,8 +1952,8 @@ The word "Nua" means new and "Khai" means food.
                 appState.config.liveUrl = url;
                 saveConfigToStorage();
                 
-                // Fetch immediately to test
-                fetchLiveDoc(url);
+                // Fetch immediately to test (Foreground)
+                fetchLiveDoc(url, false);
             } else if (url === "") {
                 // User cleared the input
                 delete appState.config.liveUrl;
@@ -1921,13 +1963,13 @@ The word "Nua" means new and "Khai" means food.
         }
 
         // 2. The Fetching Logic (Runs on load & update)
-        async function fetchLiveDoc(url) {
+        async function fetchLiveDoc(url, isBackground = false) {
             if (!url) return;
             
-            // UI Feedback (Only if button exists/user clicked)
+            // UI Feedback (Only if NOT background)
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
-            if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
+            if(!isBackground && syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
             // Add timestamp to bypass browser caching
             const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
@@ -1970,44 +2012,57 @@ The word "Nua" means new and "Khai" means food.
 
                 // --- THE MAGIC: Update & Save ---
                 
-                // 1. Save to Local Storage (Auto-Save)
-                localStorage.setItem('panchang_autosave_text', cleanText);
-
-                // 2. Update the App Logic
-                const editor = document.getElementById('editor');
+                // Check if data changed
+                const currentText = localStorage.getItem('panchang_autosave_text') || "";
                 
-                if (editor) {
-                    // SCENARIO A: We are in Editor Mode
-                    if (editor.value !== cleanText) {
+                if (cleanText !== currentText) {
+                    // 1. Save to Local Storage (Auto-Save)
+                    localStorage.setItem('panchang_autosave_text', cleanText);
+                    localStorage.setItem('panchang_last_sync_ts', Date.now()); // Update timestamp
+
+                    // 2. Update the App Logic
+                    const editor = document.getElementById('editor');
+
+                    if (editor) {
+                        // SCENARIO A: Editor Mode
                         editor.value = cleanText;
                         parseInput(cleanText);
                         render();
-                        showToast("Calendar updated from Cloud!");
+                        if (isBackground) showToast("Calendar updated from Cloud!");
+                    } else {
+                        // SCENARIO B: Downloaded App Mode
+                        parseInput(cleanText);
+                        render();
+                        if (appState.config && appState.config.title) {
+                             const titleEl = document.getElementById('app-title');
+                             if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+                        }
+                        if (isBackground) showToast("Calendar updated from Cloud!");
+                        console.log("App updated seamlessly from background cloud fetch.");
                     }
                 } else {
-                    // SCENARIO B: We are in Downloaded App Mode (No Editor)
-                    // This was the missing part!
-                    parseInput(cleanText);
-                    render();
-                    // Optional: Update title if changed in config
-                    if (appState.config && appState.config.title) {
-                         const titleEl = document.getElementById('app-title');
-                         if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
-                    }
-                    console.log("App updated seamlessly from background cloud fetch.");
+                    console.log("Data is same. Updating timestamp.");
+                    localStorage.setItem('panchang_last_sync_ts', Date.now());
                 }
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
+                if (!isBackground) alert("Sync Failed: " + e.message);
             } finally {
-                if(syncBtn) syncBtn.innerHTML = originalText;
+                if(!isBackground && syncBtn) syncBtn.innerHTML = originalText;
             }
         }
 
         function initAutoSync() {
             // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
-            if (window.exportedData) {
+            const isAppMode = !!window.exportedData;
+            const editor = document.getElementById('editor');
+
+            if (isAppMode) {
                 appState = window.exportedData;
+                if (typeof appState.activeMonthIndex === 'undefined') {
+                    appState.activeMonthIndex = 0;
+                }
                 
                 // Hide Editor Panel
                 const editorPanel = document.getElementById('editor-panel');
@@ -2018,61 +2073,71 @@ The word "Nua" means new and "Khai" means food.
                     previewPanel.classList.remove('md:w-[65%]'); 
                     previewPanel.classList.add('w-full'); 
                 }
+            }
 
-                // 2. CHECK LOCAL STORAGE FIRST (Fast Load)
-                const cachedText = localStorage.getItem('panchang_autosave_text');
-                const loader = document.getElementById('app-loader');
+            // 2. INSTANT LOAD (Priority #1)
+            const cachedText = localStorage.getItem('panchang_autosave_text');
+            const loader = document.getElementById('app-loader');
 
-                if (cachedText) {
-                    console.log("Restoring from Local Storage...");
-                    parseInput(cachedText); // This populates appState.monthsData, etc.
-                    render();
-                    
-                    // Remove Loader immediately
-                    if (loader) {
-                        loader.style.opacity = '0';
-                        setTimeout(() => loader.remove(), 500);
-                    }
-                    
-                    // Background Sync (Update if changed)
+            if (cachedText) {
+                console.log("Instant Load: Rendering from Local Storage...");
+                parseInput(cachedText);
+                render();
+
+                // Update Editor if present
+                if (editor && editor.value !== cachedText) {
+                    editor.value = cachedText;
+                }
+
+                // Remove Loader IMMEDIATELY
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.remove(), 300);
+                }
+
+                // 3. BACKGROUND VALIDATION (The "Smart" Part)
+                checkBackgroundSync(cachedText, !isAppMode);
+
+            } else {
+                // No Local Data found
+                if (isAppMode) {
+                    // App Mode: If config URL exists, fetch it (Blocking or Fast?)
+                    // Requirement says "Instant Load". If no data, we MUST wait for fetch or show empty.
+                    // We'll treat this as "Expired Timer" effectively.
                     if (appState.config && appState.config.liveUrl) {
-                        console.log("Background syncing...");
-                        fetchLiveDoc(appState.config.liveUrl); 
-                    }
-                } 
-                else {
-                    // 3. NO LOCAL DATA -> FETCH FROM CLOUD (First Run)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("No local data. Fetching from Cloud...");
-                        fetchLiveDoc(appState.config.liveUrl).then(() => {
-                            // Remove Loader AFTER fetch
-                            if (loader) {
-                                loader.style.opacity = '0';
-                                setTimeout(() => loader.remove(), 500);
-                            }
+                        console.log("No local data. First-time fetch...");
+                        fetchLiveDoc(appState.config.liveUrl, false).then(() => { // false = Foreground (keeps loader logic inside if we wanted, but here we handle loader removal)
+                             if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 300); }
                         });
                     } else {
-                        // No Data, No URL -> Just Remove Loader (Empty App)
+                        // Empty App
                         if (loader) loader.remove();
                         render();
                     }
-                }
-            } 
-            else {
-                // EDITOR MODE (Normal)
-                if (editor) {
-                    editor.addEventListener('input', (e) => { parseInput(e.target.value); });
-                    // Initial parse
-                    parseInput(editor.value);
-                    
-                    // Check if we need to sync
-                    if (appState.config && appState.config.liveUrl) {
-                        fetchLiveDoc(appState.config.liveUrl);
+                } else {
+                    // Editor Mode: Initial Parse of default text
+                    if (editor) {
+                        parseInput(editor.value);
+                        // Check sync if configured
+                        if (appState.config && appState.config.liveUrl) {
+                            checkBackgroundSync(editor.value, true);
+                        }
                     }
                 }
             }
+
+            // Setup Editor Listener
+            if (editor) {
+                editor.addEventListener('input', (e) => {
+                    const text = e.target.value;
+                    // Debounce save?
+                    // Existing logic was simple parse. We should update localStorage too for "Autosave" feel in Editor
+                    localStorage.setItem('panchang_autosave_text', text);
+                    parseInput(text);
+                });
+            }
         }
-        
+
         // Start Up
         initAutoSync();
 
