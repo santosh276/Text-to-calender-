@@ -326,7 +326,6 @@
                 <div class="flex gap-3">
                     <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
                     <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
-                    <button onclick="fetchPublishedDoc()" class="header-btn flex-1"><i class="fa-solid fa-file-word"></i> Import Doc</button>
                     <button onclick="fetchGitHubData()" class="header-btn flex-1 bg-gray-900 text-white border-gray-700 hover:bg-black"><i class="fa-brands fa-github"></i> Import GitHub</button>
                     <button onclick="configureLiveSync()" class="header-btn flex-1 bg-green-700 text-green-100 border-green-600 hover:bg-green-600"><i class="fa-solid fa-cloud-arrow-down"></i> Live Sync</button>
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
@@ -1851,86 +1850,6 @@ The word "Nua" means new and "Khai" means food.
                 }
             } else {
                 alert("Invalid Google Drive Link. Please use a standard sharing link.");
-            }
-        }
-
-        // --- NEW FUNCTION: Fetch from Published Google Doc ---
-        async function fetchPublishedDoc() {
-            const url = prompt("Paste your Published Google Doc Link (ending in /pub):");
-            if (!url) return;
-
-            // 1. Use CORS proxy to fetch the HTML source of the doc
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-            
-            const btn = event.target.closest('button');
-            const originalText = btn ? btn.innerHTML : '';
-            if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
-
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error("Failed to load document.");
-
-                const html = await response.text();
-
-                // 2. Parse the HTML to extract text
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-
-                // CLEANUP: Remove styling, scripts, and other non-content tags
-                const unwanted = doc.querySelectorAll('style, script, link, meta, title, noscript, svg');
-                unwanted.forEach(el => el.remove());
-
-                // Remove Google banners
-                const header = doc.querySelector('#header');
-                if (header) header.remove();
-                const footer = doc.querySelector('#footer');
-                if (footer) footer.remove();
-
-                // 3. Extract text content with structure
-                // innerText on DOMParser nodes is not reliable in all environments for formatting.
-                // We use a custom walker to preserve newlines for block elements.
-                
-                function getText(node) {
-                    if (node.nodeType === Node.TEXT_NODE) {
-                        return node.nodeValue;
-                    }
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        let text = '';
-                        // Process children
-                        for (let child of node.childNodes) {
-                            text += getText(child);
-                        }
-                        
-                        // Add newlines for block elements
-                        const tag = node.tagName.toLowerCase();
-                        if (['p', 'div', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) {
-                            text += '\n';
-                        }
-                        return text;
-                    }
-                    return '';
-                }
-
-                const contentNode = doc.querySelector('#contents') || doc.body;
-                let textContent = getText(contentNode);
-                
-                // Post-process: collapse excessive newlines and trim
-                textContent = textContent.replace(/\n\s*\n/g, '\n\n').trim();
-
-                // 4. Update Editor
-                const editor = document.getElementById('editor');
-                if (editor) {
-                    editor.value = textContent;
-                    parseInput(textContent); // Reparse the new data
-                    render();                // Update the UI
-                    showToast("Google Doc imported successfully!");
-                }
-
-            } catch (err) {
-                console.error(err);
-                alert("Error: Could not fetch document. Ensure the link ends in '/pub'.");
-            } finally {
-                if(btn) btn.innerHTML = originalText;
             }
         }
 
