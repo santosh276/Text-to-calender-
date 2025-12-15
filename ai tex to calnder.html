@@ -596,17 +596,17 @@ The word "Nua" means new and "Khai" means food.
 
                 <!-- Sidebar Section -->
                 <div class="lg:w-1/4 space-y-6">
-                    <div class="glass rounded-xl shadow-md border-l-4 border-saffron p-4">
+                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300">
                         <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
                         <div id="festival-filters" class="flex gap-2 mb-4 overflow-x-auto pb-2"></div>
                         <ul id="festival-list" class="space-y-2 text-sm"></ul>
                     </div>
-                    <div class="glass rounded-xl shadow-md border-l-4 border-deepred p-4">
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i>Month's Panchang</h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"></div>
                     </div>
-                    <div class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4">
+                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300">
                         <h3 class="font-bold text-amber-800 mb-3 border-b pb-1"><i class="fa-solid fa-hand-sparkles text-amber-500 mr-2"></i>Horoscope</h3>
                         <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
                     </div>
@@ -645,8 +645,8 @@ The word "Nua" means new and "Khai" means food.
                     <select id="language-select" onchange="changeLanguage(this.value)" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition">
                         <option value="en">English</option>
                         <option value="hi">Hindi (हिन्दी)</option>
-                        <option value="bn">Bengali (বাংলা)</option>
                         <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                        <option value="bn">Bengali (বাংলা)</option>
                         <option value="mr">Marathi (मराठी)</option>
                         <option value="gu">Gujarati (ગુજરાતી)</option>
                         <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
@@ -655,7 +655,37 @@ The word "Nua" means new and "Khai" means food.
                         <option value="kn">Kannada (ಕನ್ನಡ)</option>
                         <option value="ml">Malayalam (മലയാളം)</option>
                     </select>
+                    <p class="text-[10px] text-gray-400 mt-1 italic">Note: Downloaded app will only include the selected language.</p>
                 </div>
+
+                <div class="border-t border-gray-200 pt-4 space-y-3">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Display Options</div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Show Festivals</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Show Panchang</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Show Horoscope</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-horoscope" class="sr-only peer" checked onchange="toggleSection('horoscope', this.checked)">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-between border-t border-gray-200 pt-4 mt-4">
                     <label class="text-sm font-bold text-gray-700">Show Daily Overview Banner</label>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -1030,6 +1060,13 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        function toggleSection(section, isVisible) {
+            if (!appState.config.sections) appState.config.sections = { festivals: true, panchang: true, horoscope: true };
+            appState.config.sections[section] = isVisible;
+            saveConfigToStorage();
+            render();
+        }
+
         function getUserLocation() {
             if (!navigator.geolocation) {
                 showToast("Geolocation is not supported by your browser.");
@@ -1149,7 +1186,13 @@ The word "Nua" means new and "Khai" means food.
             horoscopeDetails: {},
             customSeasonDescriptions: {},
             images: {}, 
-            config: { title: 'Panchang App', logoUrl: null, language: 'en', location: null }
+            config: {
+                title: 'Panchang App',
+                logoUrl: null,
+                language: 'en',
+                location: null,
+                sections: { festivals: true, panchang: true, horoscope: true }
+            }
         };
         
         let bannerInterval;
@@ -1362,6 +1405,11 @@ The word "Nua" means new and "Khai" means food.
             // Update toggle state
             const toggle = document.getElementById('banner-toggle');
             if(toggle) toggle.checked = !isBannerDismissed;
+
+            const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
+            if(document.getElementById('toggle-festivals')) document.getElementById('toggle-festivals').checked = secs.festivals;
+            if(document.getElementById('toggle-panchang')) document.getElementById('toggle-panchang').checked = secs.panchang;
+            if(document.getElementById('toggle-horoscope')) document.getElementById('toggle-horoscope').checked = secs.horoscope;
 
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
@@ -2236,6 +2284,17 @@ The word "Nua" means new and "Khai" means food.
             renderFestivals(currentData);
             renderHoroscope(currentData);
             renderMonthBanner(currentData);
+
+            // --- NEW LOGIC: Hide/Show Sections based on Config ---
+            const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
+
+            const secFest = document.getElementById('sec-festivals');
+            const secPan = document.getElementById('sec-panchang');
+            const secHoro = document.getElementById('sec-horoscope');
+
+            if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
+            if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
+            if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
         }
 
         function dismissBanner(e) {
@@ -3190,41 +3249,70 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function downloadCalendar() {
+            // 1. Clone the DOM
             const clone = document.documentElement.cloneNode(true);
+
+            // 2. REMOVE EDITOR: Completely remove the editor panel HTML
             const editorPanel = clone.querySelector('#editor-panel');
             if(editorPanel) editorPanel.remove();
             
-            // SCROLL FIX LOGIC
+            // 3. Adjust Layout for "Standalone App" mode
             const body = clone.querySelector('body');
             body.classList.remove('h-screen', 'overflow-hidden');
-            body.classList.add('min-h-screen', 'overflow-y-auto');
+            body.classList.add('min-h-screen', 'overflow-y-auto', 'bg-[#fdfbf7]'); // Ensure background persists
 
             const mainWrapper = clone.querySelector('.flex.flex-col.md\\:flex-row');
-            if(mainWrapper) {
-                mainWrapper.classList.remove('h-full', 'overflow-hidden');
-            }
+            if(mainWrapper) mainWrapper.classList.remove('h-full', 'overflow-hidden');
 
             const previewPanel = clone.querySelector('#preview-container');
             if(previewPanel) {
-                previewPanel.classList.remove('md:w-[65%]', 'h-[38%]', 'md:h-full', 'overflow-y-auto'); 
-                // CHANGE HERE: pb-4 for optimal downloaded view
-                previewPanel.classList.add('w-full', 'h-auto', 'pb-4'); 
+                // Force full width since editor is gone
+                previewPanel.className = 'w-full h-auto pb-4 p-2 md:p-8 relative z-0';
                 previewPanel.style.overflow = 'visible';
-                previewPanel.style.height = 'auto';
             }
-            const navBtn = clone.querySelector('#download-btn');
+
+            // 4. Clean up buttons
+            const navBtn = clone.querySelector('#download-btn'); // if exists
             if(navBtn) navBtn.remove();
+
+            // Remove "Open File" and other editor-specific buttons if they somehow remained (though they are in editor panel)
+
+            // 5. LANGUAGE OPTIMIZATION ALGORITHM
+            const currentLang = appState.config.language || 'en';
+
+            // Create a lean version of langData containing ONLY English + Selected Language
+            let optimizedLangData = {};
+            if (langData['en']) optimizedLangData['en'] = langData['en']; // Always keep English as fallback
+            if (currentLang !== 'en' && langData[currentLang]) {
+                optimizedLangData[currentLang] = langData[currentLang];
+            }
+
+            // 6. Inject Data & Replace Code
             const title = clone.querySelector('title');
-            if(title) title.innerText = "My Panchang Year App";
+            if(title) title.innerText = appState.config.title || "My Panchang App";
+
+            // Inject App State
             const dataScript = document.createElement('script');
             dataScript.textContent = `window.exportedData = ${JSON.stringify(appState)};`;
             clone.querySelector('body').prepend(dataScript);
-            const htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
+
+            // 7. Generate HTML String
+            let htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
+
+            // 8. REGEX MAGIC: Replace the massive langData object in the script with the optimized one
+            // We look for "const langData = { ... };" and replace it.
+            // Note: This assumes langData is defined as 'const langData = { ...' in the source.
+            const langDataRegex = /const langData = \{[\s\S]*?\};/;
+            const newLangDataStr = `const langData = ${JSON.stringify(optimizedLangData)};`;
+
+            htmlContent = htmlContent.replace(langDataRegex, newLangDataStr);
+
+            // 9. Download
             const blob = new Blob([htmlContent], { type: "text/html" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Panchang_Calendar_App_${appState.monthsData[0]?.year || 2025}.html`;
+            a.download = `Panchang_${currentLang.toUpperCase()}_${appState.monthsData[0]?.year || 2025}.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
