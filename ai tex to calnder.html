@@ -1194,6 +1194,66 @@ The word "Nua" means new and "Khai" means food.
                 sections: { festivals: true, panchang: true, horoscope: true }
             }
         };
+
+        // ============================================================
+        //  LIGHTNING FAST CACHE SYSTEM (JSON State Architecture)
+        // ============================================================
+
+        const CACHE_KEY_STATE = 'panchang_cached_state'; // Stores the calculated JSON
+        const CACHE_KEY_TEXT = 'panchang_autosave_text'; // Stores the raw text
+        const CACHE_KEY_TIME = 'panchang_last_sync_ts';  // Stores timestamp
+
+        // A. Save Calculated State (Call this AFTER every successful render)
+        function saveStateToCache() {
+            try {
+                // We only save essential data to keep it fast
+                const stateToSave = {
+                    activeMonthIndex: appState.activeMonthIndex,
+                    monthsData: appState.monthsData,
+                    details: appState.details,
+                    horoscopeDetails: appState.horoscopeDetails,
+                    config: appState.config,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(CACHE_KEY_STATE, JSON.stringify(stateToSave));
+                console.log("⚡ State cached successfully.");
+            } catch (e) {
+                console.error("Cache Save Error:", e);
+            }
+        }
+
+        // B. Load State on Startup (Skips parsing entirely)
+        function loadStateFromCache() {
+            try {
+                const cached = localStorage.getItem(CACHE_KEY_STATE);
+                if (!cached) return false;
+
+                const parsedState = JSON.parse(cached);
+
+                // Merge cached state into appState
+                appState = { ...appState, ...parsedState };
+
+                console.log("⚡ JSON Cache hit! Loading instantly...");
+                return true;
+            } catch (e) {
+                console.error("Cache Load Error:", e);
+                return false;
+            }
+        }
+
+        function getSyncIntervalMs(intervalStr) {
+            if (!intervalStr) return 24 * 60 * 60 * 1000; // Default 24 hours
+            const parts = intervalStr.split(' ');
+            const value = parseInt(parts[0]) || 24;
+            const unit = parts[1] ? parts[1].toLowerCase() : 'hours';
+
+            let multiplier = 60 * 60 * 1000; // Default hour
+            if (unit.startsWith('minute')) multiplier = 60 * 1000;
+            else if (unit.startsWith('hour')) multiplier = 60 * 60 * 1000;
+            else if (unit.startsWith('day')) multiplier = 24 * 60 * 60 * 1000;
+
+            return value * multiplier;
+        }
         
         let bannerInterval;
         let bannerCurrentIndex = 0;
@@ -1885,35 +1945,70 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        // --- NEW: Fetch GitHub Data (Direct) ---
-        async function fetchGitHubData(url) {
+        // ============================================================
+        //  OPTIMIZED GITHUB SYNC (Smart Diffing)
+        // ============================================================
+
+        async function fetchGitHubData(url, forceInstant = false) {
             if (!url) return;
-            
-            // UI Feedback (Target specific button if possible, else fallback)
+
+            // 1. CHECK TIMER (Skip if too soon)
+            if (!forceInstant) {
+                const lastSync = parseInt(localStorage.getItem(CACHE_KEY_TIME) || '0');
+                const intervalStr = appState.config.syncInterval || '24 hours';
+                const intervalMs = getSyncIntervalMs(intervalStr);
+
+                if ((Date.now() - lastSync) < intervalMs) {
+                    console.log("⏳ Timer Valid. Skipping network check.");
+                    return;
+                }
+            }
+
+            // UI Feedback (Editor Mode only)
             const syncBtn = document.querySelector('button[onclick="configureGitHubSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
-            if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
-            
-            try {
-                // Add timestamp to bypass caching
-                const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
-                
-                const response = await fetch(fetchUrl);
-                if (!response.ok) throw new Error(`GitHub Fetch Failed: ${response.status}`);
-                
-                const cleanText = await response.text();
-                
-                // VALIDATION
-                if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
+            if (syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Checking...';
 
-                // Update & Save Logic (Shared)
-                updateAppWithFetchedData(cleanText);
+            try {
+                // 2. FETCH RAW TEXT
+                // Note: Using 'cache: no-store' to ensure we get the real latest version from GitHub
+                const response = await fetch(url, { cache: "no-store" });
+                if (!response.ok) throw new Error("GitHub Connection Failed");
+                
+                const fetchedText = await response.text();
+                
+                // 3. SMART DIFFING (The Speed Trick)
+                const currentText = localStorage.getItem(CACHE_KEY_TEXT);
+                
+                if (fetchedText === currentText && !forceInstant) {
+                    console.log("🛑 Data is identical to cache. STOPPING execution.");
+                    // Just update the timestamp so we don't check again too soon
+                    localStorage.setItem(CACHE_KEY_TIME, Date.now().toString());
+                    return;
+                }
+
+                console.log("↻ Data changed! processing update...");
+
+                // 4. PROCESS UPDATE (Only runs if data actually changed)
+                localStorage.setItem(CACHE_KEY_TEXT, fetchedText);
+                localStorage.setItem(CACHE_KEY_TIME, Date.now().toString());
+
+                // Update View (Non-blocking)
+                const editor = document.getElementById('editor');
+                if (editor) editor.value = fetchedText;
+
+                // Use requestAnimationFrame to keep UI smooth during heavy parse
+                requestAnimationFrame(() => {
+                    parseInput(fetchedText);
+                    render();
+                    // Optional: Show toast only if it's a background update
+                    if (!syncBtn) showToast("New calendar data downloaded!");
+                });
 
             } catch (e) {
-                console.error("GitHub Sync Error:", e);
-                showToast("GitHub Sync Error: " + e.message);
+                console.error("Sync Error:", e);
             } finally {
-                if(syncBtn) syncBtn.innerHTML = originalText;
+                if (syncBtn) syncBtn.innerHTML = originalText;
             }
         }
 
@@ -2010,90 +2105,83 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        function initAutoSync() {
-            // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
+        // ============================================================
+        //  APP INITIALIZATION (The "Fastly Lord" Sequence)
+        // ============================================================
+
+        (function initApp() {
+
+            // Handle Downloaded App Mode (Static skeleton override)
             if (window.exportedData) {
-                appState = window.exportedData;
+                // Only merge basics, let cache override state if fresher
+                appState = { ...appState, ...window.exportedData };
                 
-                // Hide Editor Panel
+                // Hide Editor
                 const editorPanel = document.getElementById('editor-panel');
                 if (editorPanel) editorPanel.style.display = 'none';
-                
                 const previewPanel = document.getElementById('preview-container');
                 if (previewPanel) { 
                     previewPanel.classList.remove('md:w-[65%]'); 
                     previewPanel.classList.add('w-full'); 
                 }
 
-                // 2. CHECK LOCAL STORAGE FIRST (Fast Load)
-                const cachedText = localStorage.getItem('panchang_autosave_text');
+                // Remove loader if JSON load succeeds quickly
                 const loader = document.getElementById('app-loader');
+                if(loader) setTimeout(() => { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 500); }, 300);
+            }
 
-                if (cachedText) {
-                    console.log("Restoring from Local Storage...");
-                    parseInput(cachedText); // This populates appState.monthsData, etc.
-                    render();
-                    
-                    // Remove Loader immediately
-                    if (loader) {
-                        loader.style.opacity = '0';
-                        setTimeout(() => loader.remove(), 500);
-                    }
-                    
-                    // Background Sync (Update if changed)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("Background syncing...");
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
-                    }
-                } 
-                else {
-                    // 3. NO LOCAL DATA -> FETCH FROM CLOUD (First Run)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("No local data. Fetching from Cloud...");
-                        const url = appState.config.liveUrl;
-                        const fetchPromise = (url.includes('github.com') || url.includes('raw.githubusercontent.com')) ? fetchGitHubData(url) : fetchLiveDoc(url);
-                        
-                        fetchPromise.then(() => {
-                            // Remove Loader AFTER fetch
-                            if (loader) {
-                                loader.style.opacity = '0';
-                                setTimeout(() => loader.remove(), 500);
-                            }
-                        });
-                    } else {
-                        // No Data, No URL -> Just Remove Loader (Empty App)
-                        if (loader) loader.remove();
-                        render();
-                    }
-                }
+            // STEP 1: TRY JSON CACHE (Fastest - < 10ms)
+            // If this works, the user sees the calendar immediately.
+            const jsonLoaded = loadStateFromCache();
+
+            if (jsonLoaded) {
+                // Render UI immediately using the loaded state
+                // We use setTimeout 0 to let the browser paint the frame first
+                setTimeout(render, 0);
             } 
             else {
-                // EDITOR MODE (Normal)
-                if (editor) {
-                    editor.addEventListener('input', (e) => { parseInput(e.target.value); });
-                    // Initial parse
-                    parseInput(editor.value);
+                // STEP 2: FALLBACK TO TEXT CACHE (Slower - ~500ms)
+                // Only runs if JSON cache is missing or broken
+                const cachedText = localStorage.getItem(CACHE_KEY_TEXT);
+                if (cachedText) {
+                    console.log("⚠️ JSON Cache missing. Parsing text cache...");
+                    const editor = document.getElementById('editor');
+                    if (editor) editor.value = cachedText;
                     
-                    // Check if we need to sync
-                    if (appState.config && appState.config.liveUrl) {
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
-                    }
+                    parseInput(cachedText);
+                    setTimeout(render, 0);
+                } else if (!window.exportedData) {
+                    // Editor Mode with no cache - just parse initial editor value
+                    const editor = document.getElementById('editor');
+                    if (editor) parseInput(editor.value);
+                    render();
                 }
             }
-        }
-        
-        // Start Up
-        initAutoSync();
+
+            // Setup Editor Listener (if exists)
+            const editor = document.getElementById('editor');
+            if (editor) {
+                editor.addEventListener('input', (e) => {
+                    parseInput(e.target.value);
+                    // Debounce saving text
+                    clearTimeout(window.saveTextTimeout);
+                    window.saveTextTimeout = setTimeout(() => {
+                        localStorage.setItem(CACHE_KEY_TEXT, e.target.value);
+                    }, 500);
+                });
+            }
+
+            // STEP 3: BACKGROUND SYNC (Invisible)
+            // Runs after 2 seconds to let the UI finish animations completely
+            setTimeout(() => {
+                if (appState.config && appState.config.liveUrl) {
+                    const isEditor = document.getElementById('editor-panel') && document.getElementById('editor-panel').style.display !== 'none';
+                    // Editor = Force Check, App = Check Timer
+                    fetchGitHubData(appState.config.liveUrl, !!isEditor);
+                }
+            }, 2000);
+
+        })();
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
@@ -2351,6 +2439,10 @@ The word "Nua" means new and "Khai" means food.
             if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
             if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
             if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
+
+            // ADD THIS AT THE VERY END:
+            // Save the new state to cache whenever the view updates
+            saveStateToCache();
         }
 
         function dismissBanner(e) {
