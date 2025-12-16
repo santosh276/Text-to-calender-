@@ -1819,7 +1819,10 @@ The word "Nua" means new and "Khai" means food.
 
         // 1. Configure the Link (User clicks button)
         function configureLiveSync() {
-            const currentUrl = appState.config.liveUrl || "";
+            // Memory: Use stored Docs URL, or fallback to liveUrl if it's NOT a GitHub link
+            const currentUrl = appState.config.syncDocsUrl ||
+                              ((appState.config.liveUrl && !appState.config.liveUrl.includes('github') && !appState.config.liveUrl.includes('raw.githubusercontent')) ? appState.config.liveUrl : "");
+
             let url = prompt("Paste your Published Google Doc Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
             
             if (url) {
@@ -1841,7 +1844,8 @@ The word "Nua" means new and "Khai" means food.
                 }
 
                 // Save to App State (So it persists in Downloaded File)
-                appState.config.liveUrl = url;
+                appState.config.syncDocsUrl = url; // Memorize independently
+                appState.config.liveUrl = url;     // Set as active
                 saveConfigToStorage();
                 
                 // Fetch immediately to test
@@ -1852,6 +1856,7 @@ The word "Nua" means new and "Khai" means food.
                 }
             } else if (url === "") {
                 // User cleared the input
+                appState.config.syncDocsUrl = "";
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
                 showToast("Live Sync removed.");
@@ -1860,7 +1865,10 @@ The word "Nua" means new and "Khai" means food.
 
         // --- NEW: Configure GitHub Sync ---
         function configureGitHubSync() {
-            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'))) ? appState.config.liveUrl : "";
+            // Memory: Use stored GitHub URL, or fallback to liveUrl if it IS a GitHub link
+            const currentUrl = appState.config.syncGitHubUrl ||
+                              ((appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'))) ? appState.config.liveUrl : "");
+
             let url = prompt("Paste your GitHub File Link (e.g., github.com/.../data.txt):", currentUrl);
             
             if (url) {
@@ -1872,13 +1880,15 @@ The word "Nua" means new and "Khai" means food.
                 }
                 
                 // Save to App State
-                appState.config.liveUrl = url;
+                appState.config.syncGitHubUrl = url; // Memorize independently
+                appState.config.liveUrl = url;       // Set as active
                 saveConfigToStorage();
                 
                 // Trigger Fetch
                 fetchGitHubData(url);
                 
             } else if (url === "") {
+                appState.config.syncGitHubUrl = "";
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
                 showToast("GitHub Sync removed.");
