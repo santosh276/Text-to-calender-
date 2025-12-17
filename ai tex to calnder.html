@@ -2080,6 +2080,14 @@ The word "Nua" means new and "Khai" means food.
                 // VALIDATION
                 if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
 
+                // Smart Diffing
+                const cachedString = localStorage.getItem('panchang_autosave_text');
+                if (cachedString && cleanText === cachedString) {
+                     console.log("Smart Diff: Data is identical. Skipping parse & render.");
+                     showToast("Sync: No changes found.");
+                     return;
+                }
+
                 // Update & Save
                 updateAppWithFetchedData(cleanText);
 
