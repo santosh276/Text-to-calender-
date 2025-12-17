@@ -1989,31 +1989,6 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        function saveStateToCache() {
-            try {
-                const jsonString = JSON.stringify(appState);
-                localStorage.setItem('panchang_cached_state', jsonString);
-            } catch (e) {
-                console.error("Failed to cache state", e);
-            }
-        }
-
-        function loadStateFromCache() {
-            try {
-                const cached = localStorage.getItem('panchang_cached_state');
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    if (parsed && parsed.monthsData) {
-                        appState = parsed;
-                        return true;
-                    }
-                }
-            } catch (e) {
-                console.error("Failed to load state from cache", e);
-            }
-            return false;
-        }
-
         // Shared Logic for updating app state from fetched text
         function updateAppWithFetchedData(cleanText) {
             // 1. Save to Local Storage (Auto-Save)
@@ -3399,6 +3374,31 @@ The word "Nua" means new and "Khai" means food.
             const modal = document.getElementById('horoscope-modal');
             modal.classList.add('modal-hidden');
             setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        function saveStateToCache() {
+            try {
+                const jsonString = JSON.stringify(appState);
+                localStorage.setItem('panchang_cached_state', jsonString);
+            } catch (e) {
+                console.error("Failed to cache state", e);
+            }
+        }
+
+        function loadStateFromCache() {
+            try {
+                const cached = localStorage.getItem('panchang_cached_state');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.monthsData) {
+                        appState = parsed;
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load state from cache", e);
+            }
+            return false;
         }
 
         function downloadCalendar() {
