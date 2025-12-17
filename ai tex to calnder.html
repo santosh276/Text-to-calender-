@@ -1896,7 +1896,11 @@ The word "Nua" means new and "Khai" means food.
 
         // 1. Configure the Link (User clicks button)
         function configureLiveSync() {
-            const currentUrl = appState.config.liveUrl || "";
+            // Priority: Active Live URL -> Saved Docs URL -> Empty
+            const currentUrl = (appState.config.liveUrl && !appState.config.liveUrl.includes('github'))
+                             ? appState.config.liveUrl
+                             : (appState.config.syncDocsUrl || "");
+
             let url = prompt("Paste your Published Google Doc Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
             
             if (url) {
@@ -1955,7 +1959,11 @@ The word "Nua" means new and "Khai" means food.
 
         // --- NEW: Configure GitHub Sync ---
         function configureGitHubSync() {
-            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'))) ? appState.config.liveUrl : "";
+            // Priority: Active Live URL -> Saved GitHub URL -> Empty
+            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent')))
+                             ? appState.config.liveUrl
+                             : (appState.config.syncGitHubUrl || "");
+
             let url = prompt("Paste your GitHub File Link (e.g., github.com/.../data.txt):", currentUrl);
             
             if (url) {
