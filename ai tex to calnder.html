@@ -686,6 +686,26 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
 
+                <div class="border-t border-gray-200 pt-4 space-y-3">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sync Settings</div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Live Sync GitHub</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-between border-t border-gray-200 pt-4 mt-4">
                     <label class="text-sm font-bold text-gray-700">Show Daily Overview Banner</label>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -1411,6 +1431,17 @@ The word "Nua" means new and "Khai" means food.
             if(document.getElementById('toggle-panchang')) document.getElementById('toggle-panchang').checked = secs.panchang;
             if(document.getElementById('toggle-horoscope')) document.getElementById('toggle-horoscope').checked = secs.horoscope;
 
+            // Update Sync Toggles
+            const liveUrl = appState.config.liveUrl || "";
+            const isDocs = liveUrl.includes('docs.google.com') || (appState.config.syncDocsUrl && liveUrl === appState.config.syncDocsUrl);
+            const isGitHub = liveUrl.includes('github') || (appState.config.syncGitHubUrl && liveUrl === appState.config.syncGitHubUrl);
+
+            const docsToggle = document.getElementById('toggle-sync-docs');
+            const githubToggle = document.getElementById('toggle-sync-github');
+
+            if(docsToggle) docsToggle.checked = isDocs;
+            if(githubToggle) githubToggle.checked = isGitHub;
+
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
@@ -1432,6 +1463,52 @@ The word "Nua" means new and "Khai" means food.
                 stopBannerAutoPlay();
             }
             render();
+        }
+
+        function toggleLiveSyncDocs(checked) {
+            const toggleGitHub = document.getElementById('toggle-sync-github');
+            if (checked) {
+                if (toggleGitHub) toggleGitHub.checked = false;
+
+                if (appState.config.syncDocsUrl) {
+                    appState.config.liveUrl = appState.config.syncDocsUrl;
+                    saveConfigToStorage();
+                    fetchLiveDoc(appState.config.liveUrl);
+                } else {
+                    configureLiveSync(); // Will save to syncDocsUrl and liveUrl
+                }
+            } else {
+                // If turning off Docs, and it was the active one, clear liveUrl
+                const currentUrl = appState.config.liveUrl || "";
+                if (currentUrl === appState.config.syncDocsUrl || currentUrl.includes('docs.google.com')) {
+                    delete appState.config.liveUrl;
+                    saveConfigToStorage();
+                    showToast("Live Sync disabled.");
+                }
+            }
+        }
+
+        function toggleLiveSyncGitHub(checked) {
+            const toggleDocs = document.getElementById('toggle-sync-docs');
+            if (checked) {
+                if (toggleDocs) toggleDocs.checked = false;
+
+                if (appState.config.syncGitHubUrl) {
+                    appState.config.liveUrl = appState.config.syncGitHubUrl;
+                    saveConfigToStorage();
+                    fetchGitHubData(appState.config.liveUrl);
+                } else {
+                    configureGitHubSync(); // Will save to syncGitHubUrl and liveUrl
+                }
+            } else {
+                // If turning off GitHub, and it was the active one, clear liveUrl
+                const currentUrl = appState.config.liveUrl || "";
+                if (currentUrl === appState.config.syncGitHubUrl || currentUrl.includes('github')) {
+                    delete appState.config.liveUrl;
+                    saveConfigToStorage();
+                    showToast("Live Sync disabled.");
+                }
+            }
         }
 
         let tempImageState = { key: null, originalUrl: null, selectedType: 'logo', cropper: null };
@@ -1827,10 +1904,6 @@ The word "Nua" means new and "Khai" means food.
 
                 // GitHub Logic (Redirect to dedicated function if user pastes GitHub here)
                 if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                    // Forward to GitHub config flow with this URL pre-filled? 
-                    // No, let's just handle it gracefully or warn. 
-                    // But to keep it simple and backwards compatible, we can just process it.
-                    // However, user asked for dedicated workflow. Let's keep this for Google Docs primarily but allow fallback.
                     if (url.includes('github.com') && url.includes('/blob/')) {
                          url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
                     }
@@ -1842,6 +1915,10 @@ The word "Nua" means new and "Khai" means food.
 
                 // Save to App State (So it persists in Downloaded File)
                 appState.config.liveUrl = url;
+                if (!url.includes('github')) {
+                    appState.config.syncDocsUrl = url;
+                }
+
                 saveConfigToStorage();
                 
                 // Fetch immediately to test
@@ -1850,11 +1927,23 @@ The word "Nua" means new and "Khai" means food.
                 } else {
                     fetchLiveDoc(url);
                 }
+
+                // Update Settings UI if open
+                const docsToggle = document.getElementById('toggle-sync-docs');
+                const githubToggle = document.getElementById('toggle-sync-github');
+                if (docsToggle && !url.includes('github')) {
+                    docsToggle.checked = true;
+                    if(githubToggle) githubToggle.checked = false;
+                }
+
             } else if (url === "") {
                 // User cleared the input
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
                 showToast("Live Sync removed.");
+
+                const docsToggle = document.getElementById('toggle-sync-docs');
+                if (docsToggle) docsToggle.checked = false;
             }
         }
 
@@ -1873,15 +1962,28 @@ The word "Nua" means new and "Khai" means food.
                 
                 // Save to App State
                 appState.config.liveUrl = url;
+                appState.config.syncGitHubUrl = url;
+
                 saveConfigToStorage();
                 
                 // Trigger Fetch
                 fetchGitHubData(url);
                 
+                // Update Settings UI if open
+                const docsToggle = document.getElementById('toggle-sync-docs');
+                const githubToggle = document.getElementById('toggle-sync-github');
+                if (githubToggle) {
+                    githubToggle.checked = true;
+                    if(docsToggle) docsToggle.checked = false;
+                }
+
             } else if (url === "") {
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
                 showToast("GitHub Sync removed.");
+
+                const githubToggle = document.getElementById('toggle-sync-github');
+                if (githubToggle) githubToggle.checked = false;
             }
         }
 
