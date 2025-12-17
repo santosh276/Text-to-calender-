@@ -1944,6 +1944,12 @@ The word "Nua" means new and "Khai" means food.
 
                 const docsToggle = document.getElementById('toggle-sync-docs');
                 if (docsToggle) docsToggle.checked = false;
+            } else if (url === null) {
+                // User Cancelled: Revert Toggle if it was just clicked
+                // Re-check logic: If liveUrl is NOT docs, toggle should be off
+                const docsToggle = document.getElementById('toggle-sync-docs');
+                const isDocsActive = appState.config.liveUrl && !appState.config.liveUrl.includes('github');
+                if (docsToggle) docsToggle.checked = !!isDocsActive;
             }
         }
 
@@ -1984,6 +1990,11 @@ The word "Nua" means new and "Khai" means food.
 
                 const githubToggle = document.getElementById('toggle-sync-github');
                 if (githubToggle) githubToggle.checked = false;
+            } else if (url === null) {
+                // User Cancelled
+                const githubToggle = document.getElementById('toggle-sync-github');
+                const isGitHubActive = appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'));
+                if (githubToggle) githubToggle.checked = !!isGitHubActive;
             }
         }
 
