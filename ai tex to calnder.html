@@ -1981,41 +1981,64 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        // Shared Logic for updating app state from fetched text
-        function updateAppWithFetchedData(cleanText) {
-            // 1. Save to Local Storage (Auto-Save)
-            localStorage.setItem('panchang_autosave_text', cleanText);
-
-            // 2. Update the App Logic
-            const editor = document.getElementById('editor');
-            
-            if (editor) {
-                // SCENARIO A: We are in Editor Mode
-                if (editor.value !== cleanText) {
-                    editor.value = cleanText;
-                    parseInput(cleanText);
-                    render();
-                    showToast("Calendar updated from Cloud!");
-                }
-            } else {
-                // SCENARIO B: We are in Downloaded App Mode (No Editor)
-                parseInput(cleanText);
-                render();
-                // Optional: Update title if changed in config
-                if (appState.config && appState.config.title) {
-                     const titleEl = document.getElementById('app-title');
-                     if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
-                }
-                console.log("App updated seamlessly from background cloud fetch.");
+        function saveStateToCache() {
+            try {
+                // "Fastly Lord" approach: Cache the calculated state
+                localStorage.setItem('panchang_cached_state', JSON.stringify(appState));
+                console.log("State cached to localStorage (Fastly Lord).");
+            } catch (e) {
+                console.error("Failed to save state to cache (Quota?):", e);
             }
         }
 
-        function initAutoSync() {
-            // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
-            if (window.exportedData) {
-                appState = window.exportedData;
-                
-                // Hide Editor Panel
+        // Shared Logic for updating app state from fetched text
+        function updateAppWithFetchedData(cleanText) {
+            const currentText = localStorage.getItem('panchang_autosave_text');
+
+            // Phase 3: Smart Diffing
+            if (currentText === cleanText) {
+                console.log("Smart Sync: Data is identical. Skipping update.");
+                localStorage.setItem('panchang_last_sync_ts', Date.now());
+                return;
+            }
+
+            // Data Changed
+            localStorage.setItem('panchang_autosave_text', cleanText);
+            localStorage.setItem('panchang_last_sync_ts', Date.now());
+
+            const editor = document.getElementById('editor');
+            if (editor) {
+                 // SCENARIO A: Editor Mode
+                 if (editor.value !== cleanText) {
+                     editor.value = cleanText;
+                     parseInput(cleanText);
+                     render();
+                     saveStateToCache(); // Update JSON Cache
+                     showToast("Calendar Updated");
+                 }
+            } else {
+                 // SCENARIO B: App Mode
+                 parseInput(cleanText);
+                 render();
+                 saveStateToCache(); // Update JSON Cache
+                 showToast("Calendar Updated");
+
+                 // Update title if needed
+                 if (appState.config && appState.config.title) {
+                     const titleEl = document.getElementById('app-title');
+                     if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+                }
+            }
+        }
+
+        function initApp() {
+            // Environment Detection
+            const isAppMode = !!window.exportedData;
+            const editor = document.getElementById('editor');
+            const loader = document.getElementById('app-loader');
+
+            if (isAppMode) {
+                 // Hide Editor Panel
                 const editorPanel = document.getElementById('editor-panel');
                 if (editorPanel) editorPanel.style.display = 'none';
                 
@@ -2024,76 +2047,117 @@ The word "Nua" means new and "Khai" means food.
                     previewPanel.classList.remove('md:w-[65%]'); 
                     previewPanel.classList.add('w-full'); 
                 }
+            }
 
-                // 2. CHECK LOCAL STORAGE FIRST (Fast Load)
-                const cachedText = localStorage.getItem('panchang_autosave_text');
-                const loader = document.getElementById('app-loader');
-
-                if (cachedText) {
-                    console.log("Restoring from Local Storage...");
-                    parseInput(cachedText); // This populates appState.monthsData, etc.
+            // Phase 1: Instant Load (JSON Cache)
+            let loadedFromCache = false;
+            try {
+                const cachedState = localStorage.getItem('panchang_cached_state');
+                if (cachedState) {
+                    const parsedState = JSON.parse(cachedState);
+                    appState = parsedState;
+                    console.log("Instant Load: Restored from JSON Cache (Fastly Lord)");
                     render();
+                    loadedFromCache = true;
                     
-                    // Remove Loader immediately
                     if (loader) {
-                        loader.style.opacity = '0';
-                        setTimeout(() => loader.remove(), 500);
-                    }
-                    
-                    // Background Sync (Update if changed)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("Background syncing...");
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
-                    }
-                } 
-                else {
-                    // 3. NO LOCAL DATA -> FETCH FROM CLOUD (First Run)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("No local data. Fetching from Cloud...");
-                        const url = appState.config.liveUrl;
-                        const fetchPromise = (url.includes('github.com') || url.includes('raw.githubusercontent.com')) ? fetchGitHubData(url) : fetchLiveDoc(url);
-                        
-                        fetchPromise.then(() => {
-                            // Remove Loader AFTER fetch
-                            if (loader) {
-                                loader.style.opacity = '0';
-                                setTimeout(() => loader.remove(), 500);
-                            }
-                        });
-                    } else {
-                        // No Data, No URL -> Just Remove Loader (Empty App)
-                        if (loader) loader.remove();
-                        render();
+                         loader.style.opacity = '0';
+                         setTimeout(() => loader.remove(), 300);
                     }
                 }
-            } 
-            else {
-                // EDITOR MODE (Normal)
-                if (editor) {
-                    editor.addEventListener('input', (e) => { parseInput(e.target.value); });
-                    // Initial parse
+            } catch (e) {
+                console.error("JSON Cache load failed:", e);
+            }
+
+            if (!loadedFromCache) {
+                // Fallback to Text Cache
+                const cachedText = localStorage.getItem('panchang_autosave_text');
+                if (cachedText) {
+                    console.log("Instant Load: Restored from Text Cache");
+                    if (editor) editor.value = cachedText;
+                    parseInput(cachedText);
+                    render();
+                    if (loader) {
+                         loader.style.opacity = '0';
+                         setTimeout(() => loader.remove(), 300);
+                    }
+                } else if (isAppMode) {
+                    // First run in App Mode (Skeleton only)
+                    if (window.exportedData && window.exportedData.config) {
+                        appState = window.exportedData;
+                    }
+                    render(); // Render skeleton
+                    // Keep loader to wait for fetch
+                } else if (editor) {
+                    // Editor Mode Default
                     parseInput(editor.value);
-                    
-                    // Check if we need to sync
-                    if (appState.config && appState.config.liveUrl) {
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
-                    }
                 }
+            }
+
+            // Setup Editor Listener (Always needed in Editor Mode)
+            if (editor) {
+                let debounceTimer;
+                editor.addEventListener('input', (e) => {
+                    const val = e.target.value;
+                    parseInput(val);
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        localStorage.setItem('panchang_autosave_text', val);
+                        saveStateToCache();
+                    }, 500);
+                });
+            }
+
+            // Phase 2: Background Validation (Smart Sync)
+
+            // 1. Get Live URL
+            const liveUrl = appState.config.liveUrl;
+            if (!liveUrl) {
+                if (loader) loader.remove();
+                return;
+            }
+
+            // 2. Check Timer
+            const lastSync = parseInt(localStorage.getItem('panchang_last_sync_ts') || '0');
+            const now = Date.now();
+            const syncIntervalHours = appState.config.syncInterval || 24;
+            const syncIntervalMs = syncIntervalHours * 60 * 60 * 1000;
+
+            const isTimerExpired = (now - lastSync) > syncIntervalMs;
+
+            // 3. Logic
+            // If in Editor Mode, we usually want fresh data if available, BUT we also have local edits.
+            // The prompt says: "Editor Mode: Always force the background fetch to run immediately (ignoring the timer) so I can verify edits."
+            // However, this might overwrite local edits if not handled carefully.
+            // updateAppWithFetchedData handles diffing. If fetched text is different from current autosave, it updates.
+            // If I just typed something, autosave is updated. If fetched text is OLDER/DIFFERENT, it might overwrite?
+            // "If Data Changed... Update...".
+            // If I am editing, I am the source of truth?
+            // "Environment Logic... Editor Mode: Always force the background fetch... so I can verify edits."
+            // This implies the user edits via GitHub/Docs and wants to see changes here.
+
+            if (editor || isTimerExpired) {
+                console.log("Background Sync: Starting...");
+
+                // Fetch
+                const fetchPromise = (liveUrl.includes('github.com') || liveUrl.includes('raw.githubusercontent.com'))
+                                    ? fetchGitHubData(liveUrl)
+                                    : fetchLiveDoc(liveUrl);
+
+                if (isAppMode && loader) {
+                     fetchPromise.finally(() => {
+                         loader.style.opacity = '0';
+                         setTimeout(() => loader.remove(), 500);
+                     });
+                }
+            } else {
+                console.log(`Background Sync: Skipped (Timer valid for ${((lastSync + syncIntervalMs - now)/3600000).toFixed(1)}h)`);
+                if (loader) loader.remove();
             }
         }
         
         // Start Up
-        initAutoSync();
+        initApp();
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
