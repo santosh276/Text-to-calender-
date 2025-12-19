@@ -1415,6 +1415,16 @@ The word "Nua" means new and "Khai" means food.
             return { tithi: tithiName, paksha: pakshaName, index: safeIndex };
         }
 
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         function toNativeNum(num, langCode) {
             if (langCode === 'en' || !langData[langCode]) return num;
             return num.toString().split('').map(d => langData[langCode].nums[parseInt(d)]).join('');
@@ -2635,7 +2645,7 @@ The word "Nua" means new and "Khai" means food.
                 slide.innerHTML = `
                     <img src="${banner.url}" class="w-full h-full object-cover">
                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 md:p-6 text-white pt-10">
-                        <div class="font-bold text-lg md:text-2xl drop-shadow-sm">${banner.caption}</div>
+                        <div class="font-bold text-lg md:text-2xl drop-shadow-sm">${escapeHtml(banner.caption)}</div>
                         <div class="text-xs md:text-sm opacity-90 font-semibold uppercase tracking-wide bg-black/30 inline-block px-2 py-0.5 rounded mt-1 backdrop-blur-sm border border-white/20">${months[data.month]} ${banner.date}</div>
                     </div>
                 `;
@@ -3021,17 +3031,17 @@ The word "Nua" means new and "Khai" means food.
                 if (lowerKey === 'sunrise') {
                     const pill = document.createElement('div');
                     pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
+                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${escapeHtml(value)}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else if (lowerKey === 'sunset') {
                     const pill = document.createElement('div');
                     pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
+                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${escapeHtml(value)}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else {
                     const li = document.createElement('div');
                     li.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${key}:</span> <span class="text-gray-800 font-medium text-right">${value}</span>`;
+                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${escapeHtml(key)}:</span> <span class="text-gray-800 font-medium text-right">${escapeHtml(value)}</span>`;
                     list.appendChild(li);
                 }
             }
@@ -3069,7 +3079,7 @@ The word "Nua" means new and "Khai" means food.
                 let badgeColor = "bg-gray-500";
                 if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
                 const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
+                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${escapeHtml(ev.engName)}</div><div class="text-xs text-gray-500 font-oriya">${escapeHtml(ev.locName || '')}</div></div>`;
                 li.innerHTML = dateBadge + content;
                 list.appendChild(li);
             });
@@ -3145,13 +3155,13 @@ The word "Nua" means new and "Khai" means food.
                         html += '<ul class="list-disc pl-5 mb-2 text-gray-600">';
                         inList = true;
                     }
-                    html += `<li>${trimmed.substring(1).trim()}</li>`;
+                    html += `<li>${escapeHtml(trimmed.substring(1).trim())}</li>`;
                 } else {
                     if (inList) {
                         html += '</ul>';
                         inList = false;
                     }
-                    if (trimmed) html += `<p class="mb-2 last:mb-0">${trimmed}</p>`;
+                    if (trimmed) html += `<p class="mb-2 last:mb-0">${escapeHtml(trimmed)}</p>`;
                 }
             });
             
@@ -3175,7 +3185,7 @@ The word "Nua" means new and "Khai" means food.
                     let iconHtml = '<i class="fa-solid fa-scroll"></i>'; 
                     if (titleText.toLowerCase().includes('ritual')) iconHtml = '<i class="fa-solid fa-fire-burner"></i>';
                     if (titleText.toLowerCase().includes('significance')) iconHtml = '<i class="fa-solid fa-book-open-reader"></i>';
-                    h3.innerHTML = `${iconHtml} ${titleText}`;
+                    h3.innerHTML = `${iconHtml} ${escapeHtml(titleText)}`;
                     container.appendChild(h3);
                 } else if (line.startsWith('-')) {
                     let ul = container.lastElementChild;
@@ -3360,7 +3370,7 @@ The word "Nua" means new and "Khai" means food.
                 
                 if (detail.tags.length > 0) {
                     const tagText = detail.tags[0]; 
-                    tagPillContainer.innerHTML = `<span class="bg-[#F5E6CA] text-[#5D4037] text-[11px] font-bold px-3 py-1 rounded-full shadow-sm border border-white/20 mr-2">${tagText}</span>`;
+                    tagPillContainer.innerHTML = `<span class="bg-[#F5E6CA] text-[#5D4037] text-[11px] font-bold px-3 py-1 rounded-full shadow-sm border border-white/20 mr-2">${escapeHtml(tagText)}</span>`;
                 }
                 
                 // Add "Page X of Y" if multiple
@@ -3395,7 +3405,7 @@ The word "Nua" means new and "Khai" means food.
                     currentModalDayEvents.forEach(ev => {
                         const div = document.createElement('div');
                         div.className = "p-4 bg-gray-50 rounded-xl border border-gray-200 mb-3 shadow-sm";
-                        div.innerHTML = `<div class="font-bold text-gray-800 text-lg">${ev.engName}</div><div class="text-sm text-gray-500 font-oriya">${ev.locName || ''}</div>`;
+                        div.innerHTML = `<div class="font-bold text-gray-800 text-lg">${escapeHtml(ev.engName)}</div><div class="text-sm text-gray-500 font-oriya">${escapeHtml(ev.locName || '')}</div>`;
                         bodyContainer.appendChild(div);
                     });
                 } else {
@@ -3456,22 +3466,22 @@ The word "Nua" means new and "Khai" means food.
             const badgesContainer = document.getElementById('horo-badges');
             badgesContainer.innerHTML = '';
             if (details) {
-                if (details.element) badgesContainer.innerHTML += `<span class="horo-badge-gold px-3 py-1 text-xs"><i class="fa-solid fa-fire mr-1"></i> ${details.element}</span>`;
-                if (details.ruler) badgesContainer.innerHTML += `<span class="horo-badge-blue px-3 py-1 text-xs"><i class="fa-solid fa-crown mr-1"></i> ${details.ruler}</span>`;
+                if (details.element) badgesContainer.innerHTML += `<span class="horo-badge-gold px-3 py-1 text-xs"><i class="fa-solid fa-fire mr-1"></i> ${escapeHtml(details.element)}</span>`;
+                if (details.ruler) badgesContainer.innerHTML += `<span class="horo-badge-blue px-3 py-1 text-xs"><i class="fa-solid fa-crown mr-1"></i> ${escapeHtml(details.ruler)}</span>`;
                 document.getElementById('horo-date-range').innerText = details.dateRange || "";
                 
                 // Enhanced Lucky Section
                 const luckyNumEl = document.getElementById('horo-lucky-num');
-                luckyNumEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-solid fa-hashtag text-amber-300 text-sm mb-1 opacity-80"></i><span class="text-3xl">${details.lucky.number}</span></div>`;
+                luckyNumEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-solid fa-hashtag text-amber-300 text-sm mb-1 opacity-80"></i><span class="text-3xl">${escapeHtml(details.lucky.number)}</span></div>`;
                 
                 const colorEl = document.getElementById('horo-lucky-color');
                 const colorVal = details.lucky.color;
                 const colorMap = { 'red': 'text-red-600', 'green': 'text-green-600', 'blue': 'text-blue-600', 'yellow': 'text-yellow-500', 'orange': 'text-orange-600', 'purple': 'text-amber-500', 'pink': 'text-pink-600', 'white': 'text-gray-400', 'black': 'text-gray-900' };
                 const textColorClass = colorMap[colorVal.toLowerCase()] || "text-gray-800";
-                colorEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-solid fa-palette text-green-300 text-sm mb-1 opacity-80"></i><span class="text-xl ${textColorClass}">${colorVal}</span></div>`;
+                colorEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-solid fa-palette text-green-300 text-sm mb-1 opacity-80"></i><span class="text-xl ${textColorClass}">${escapeHtml(colorVal)}</span></div>`;
                 
                 const timeEl = document.getElementById('horo-lucky-time');
-                const timeVal = details.lucky.time.replace(' ', '<br>');
+                const timeVal = escapeHtml(details.lucky.time).replace(' ', '<br>');
                 timeEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-regular fa-clock text-blue-300 text-sm mb-1 opacity-80"></i><span class="text-lg leading-tight text-blue-600">${timeVal}</span></div>`;
 
                 const compatContainer = document.getElementById('horo-compatible');
@@ -3479,7 +3489,7 @@ The word "Nua" means new and "Khai" means food.
                 const bgColors = ["bg-pink-50 text-pink-700 border border-pink-100", "bg-indigo-50 text-indigo-700 border border-indigo-100", "bg-teal-50 text-teal-700 border border-teal-100", "bg-orange-50 text-orange-700 border border-orange-100"];
                 details.compatible.forEach((c, index) => {
                     const colorClass = bgColors[index % bgColors.length];
-                    compatContainer.innerHTML += `<span class="compat-pill ${colorClass} px-4 py-1.5 text-sm font-bold shadow-sm">${c}</span>`;
+                    compatContainer.innerHTML += `<span class="compat-pill ${colorClass} px-4 py-1.5 text-sm font-bold shadow-sm">${escapeHtml(c)}</span>`;
                 });
             } else {
                 document.getElementById('horo-date-range').innerText = "";
