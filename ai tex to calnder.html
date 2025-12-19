@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -681,6 +682,26 @@ The word "Nua" means new and "Khai" means food.
                         <label class="text-sm font-bold text-gray-700">Show Horoscope</label>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="toggle-horoscope" class="sr-only peer" checked onchange="toggleSection('horoscope', this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4 space-y-3">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sync Settings</div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Live Sync GitHub</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                         </label>
                     </div>
@@ -1411,6 +1432,17 @@ The word "Nua" means new and "Khai" means food.
             if(document.getElementById('toggle-panchang')) document.getElementById('toggle-panchang').checked = secs.panchang;
             if(document.getElementById('toggle-horoscope')) document.getElementById('toggle-horoscope').checked = secs.horoscope;
 
+            // Update Sync Toggles
+            const liveUrl = appState.config.liveUrl || "";
+            const isDocs = liveUrl.includes('docs.google.com') || (appState.config.syncDocsUrl && liveUrl === appState.config.syncDocsUrl);
+            const isGitHub = liveUrl.includes('github') || (appState.config.syncGitHubUrl && liveUrl === appState.config.syncGitHubUrl);
+            
+            const docsToggle = document.getElementById('toggle-sync-docs');
+            const githubToggle = document.getElementById('toggle-sync-github');
+            
+            if(docsToggle) docsToggle.checked = isDocs;
+            if(githubToggle) githubToggle.checked = isGitHub;
+
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
@@ -1432,6 +1464,52 @@ The word "Nua" means new and "Khai" means food.
                 stopBannerAutoPlay();
             }
             render();
+        }
+
+        function toggleLiveSyncDocs(checked) {
+            const toggleGitHub = document.getElementById('toggle-sync-github');
+            if (checked) {
+                if (toggleGitHub) toggleGitHub.checked = false;
+                
+                if (appState.config.syncDocsUrl) {
+                    appState.config.liveUrl = appState.config.syncDocsUrl;
+                    saveConfigToStorage();
+                    fetchLiveDoc(appState.config.liveUrl);
+                } else {
+                    configureLiveSync(); // Will save to syncDocsUrl and liveUrl
+                }
+            } else {
+                // If turning off Docs, and it was the active one, clear liveUrl
+                const currentUrl = appState.config.liveUrl || "";
+                if (currentUrl === appState.config.syncDocsUrl || currentUrl.includes('docs.google.com')) {
+                    delete appState.config.liveUrl;
+                    saveConfigToStorage();
+                    showToast("Live Sync disabled.");
+                }
+            }
+        }
+
+        function toggleLiveSyncGitHub(checked) {
+            const toggleDocs = document.getElementById('toggle-sync-docs');
+            if (checked) {
+                if (toggleDocs) toggleDocs.checked = false;
+                
+                if (appState.config.syncGitHubUrl) {
+                    appState.config.liveUrl = appState.config.syncGitHubUrl;
+                    saveConfigToStorage();
+                    fetchGitHubData(appState.config.liveUrl);
+                } else {
+                    configureGitHubSync(); // Will save to syncGitHubUrl and liveUrl
+                }
+            } else {
+                // If turning off GitHub, and it was the active one, clear liveUrl
+                const currentUrl = appState.config.liveUrl || "";
+                if (currentUrl === appState.config.syncGitHubUrl || currentUrl.includes('github')) {
+                    delete appState.config.liveUrl;
+                    saveConfigToStorage();
+                    showToast("Live Sync disabled.");
+                }
+            }
         }
 
         let tempImageState = { key: null, originalUrl: null, selectedType: 'logo', cropper: null };
@@ -1827,10 +1905,6 @@ The word "Nua" means new and "Khai" means food.
 
                 // GitHub Logic (Redirect to dedicated function if user pastes GitHub here)
                 if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                    // Forward to GitHub config flow with this URL pre-filled? 
-                    // No, let's just handle it gracefully or warn. 
-                    // But to keep it simple and backwards compatible, we can just process it.
-                    // However, user asked for dedicated workflow. Let's keep this for Google Docs primarily but allow fallback.
                     if (url.includes('github.com') && url.includes('/blob/')) {
                          url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
                     }
@@ -1842,6 +1916,10 @@ The word "Nua" means new and "Khai" means food.
 
                 // Save to App State (So it persists in Downloaded File)
                 appState.config.liveUrl = url;
+                if (!url.includes('github')) {
+                    appState.config.syncDocsUrl = url;
+                }
+                
                 saveConfigToStorage();
                 
                 // Fetch immediately to test
@@ -1850,11 +1928,29 @@ The word "Nua" means new and "Khai" means food.
                 } else {
                     fetchLiveDoc(url);
                 }
+                
+                // Update Settings UI if open
+                const docsToggle = document.getElementById('toggle-sync-docs');
+                const githubToggle = document.getElementById('toggle-sync-github');
+                if (docsToggle && !url.includes('github')) {
+                    docsToggle.checked = true;
+                    if(githubToggle) githubToggle.checked = false;
+                }
+
             } else if (url === "") {
                 // User cleared the input
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
                 showToast("Live Sync removed.");
+                
+                const docsToggle = document.getElementById('toggle-sync-docs');
+                if (docsToggle) docsToggle.checked = false;
+            } else if (url === null) {
+                // User Cancelled: Revert Toggle if it was just clicked
+                // Re-check logic: If liveUrl is NOT docs, toggle should be off
+                const docsToggle = document.getElementById('toggle-sync-docs');
+                const isDocsActive = appState.config.liveUrl && !appState.config.liveUrl.includes('github');
+                if (docsToggle) docsToggle.checked = !!isDocsActive;
             }
         }
 
@@ -1873,15 +1969,33 @@ The word "Nua" means new and "Khai" means food.
                 
                 // Save to App State
                 appState.config.liveUrl = url;
+                appState.config.syncGitHubUrl = url;
+                
                 saveConfigToStorage();
                 
                 // Trigger Fetch
                 fetchGitHubData(url);
                 
+                // Update Settings UI if open
+                const docsToggle = document.getElementById('toggle-sync-docs');
+                const githubToggle = document.getElementById('toggle-sync-github');
+                if (githubToggle) {
+                    githubToggle.checked = true;
+                    if(docsToggle) docsToggle.checked = false;
+                }
+                
             } else if (url === "") {
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
                 showToast("GitHub Sync removed.");
+                
+                const githubToggle = document.getElementById('toggle-sync-github');
+                if (githubToggle) githubToggle.checked = false;
+            } else if (url === null) {
+                // User Cancelled
+                const githubToggle = document.getElementById('toggle-sync-github');
+                const isGitHubActive = appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'));
+                if (githubToggle) githubToggle.checked = !!isGitHubActive;
             }
         }
 
@@ -1905,6 +2019,14 @@ The word "Nua" means new and "Khai" means food.
                 
                 // VALIDATION
                 if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
+
+                // Smart Diffing
+                const cachedString = localStorage.getItem('panchang_autosave_text');
+                if (cachedString && cleanText === cachedString) {
+                     console.log("Smart Diff: Data is identical. Skipping parse & render.");
+                     showToast("Sync: No changes found.");
+                     return; 
+                }
 
                 // Update & Save Logic (Shared)
                 updateAppWithFetchedData(cleanText);
@@ -1970,6 +2092,14 @@ The word "Nua" means new and "Khai" means food.
                 // VALIDATION
                 if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
 
+                // Smart Diffing
+                const cachedString = localStorage.getItem('panchang_autosave_text');
+                if (cachedString && cleanText === cachedString) {
+                     console.log("Smart Diff: Data is identical. Skipping parse & render.");
+                     showToast("Sync: No changes found.");
+                     return; 
+                }
+
                 // Update & Save
                 updateAppWithFetchedData(cleanText);
 
@@ -1986,31 +2116,85 @@ The word "Nua" means new and "Khai" means food.
             // 1. Save to Local Storage (Auto-Save)
             localStorage.setItem('panchang_autosave_text', cleanText);
 
-            // 2. Update the App Logic
-            const editor = document.getElementById('editor');
-            
-            if (editor) {
-                // SCENARIO A: We are in Editor Mode
-                if (editor.value !== cleanText) {
-                    editor.value = cleanText;
-                    parseInput(cleanText);
-                    render();
-                    showToast("Calendar updated from Cloud!");
+            // 2. Non-Blocking Render
+            requestAnimationFrame(() => {
+                const editor = document.getElementById('editor');
+                
+                if (editor) {
+                    if (editor.value !== cleanText) {
+                        editor.value = cleanText;
+                    }
                 }
-            } else {
-                // SCENARIO B: We are in Downloaded App Mode (No Editor)
+                
+                // Heavy lifting
                 parseInput(cleanText);
                 render();
+                
                 // Optional: Update title if changed in config
                 if (appState.config && appState.config.title) {
                      const titleEl = document.getElementById('app-title');
                      if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
                 }
-                console.log("App updated seamlessly from background cloud fetch.");
-            }
+                
+                if (editor) showToast("Calendar updated from Cloud!");
+                else console.log("App updated seamlessly from background cloud fetch.");
+            });
         }
 
         function initAutoSync() {
+            // STEP 2: Instant Initialization from Cache
+            if (loadStateFromCache()) {
+                console.log("Instant Initialization from Cache!");
+                
+                // Setup UI based on Mode
+                if (window.exportedData) {
+                    // App Mode
+                    const editorPanel = document.getElementById('editor-panel');
+                    if (editorPanel) editorPanel.style.display = 'none';
+                    
+                    const previewPanel = document.getElementById('preview-container');
+                    if (previewPanel) { 
+                        previewPanel.classList.remove('md:w-[65%]'); 
+                        previewPanel.classList.add('w-full'); 
+                    }
+                } else {
+                    // Editor Mode
+                    const editor = document.getElementById('editor');
+                    if (editor) {
+                        const savedText = localStorage.getItem('panchang_autosave_text');
+                        if (savedText) editor.value = savedText;
+                        
+                        let timeout;
+                        editor.addEventListener('input', (e) => { 
+                            const val = e.target.value;
+                            parseInput(val);
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
+                        });
+                    }
+                }
+                
+                // Immediate Render
+                setTimeout(() => {
+                    render();
+                    const loader = document.getElementById('app-loader');
+                    if (loader) loader.remove();
+                    
+                    // Background Sync
+                    if (appState.config && appState.config.liveUrl) {
+                        const url = appState.config.liveUrl;
+                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                            fetchGitHubData(url);
+                        } else {
+                            fetchLiveDoc(url);
+                        }
+                    }
+                }, 0);
+                
+                return;
+            }
+
+            // Fallback to Legacy Logic
             // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
             if (window.exportedData) {
                 appState = window.exportedData;
@@ -2075,7 +2259,14 @@ The word "Nua" means new and "Khai" means food.
             else {
                 // EDITOR MODE (Normal)
                 if (editor) {
-                    editor.addEventListener('input', (e) => { parseInput(e.target.value); });
+                    let timeout;
+                    editor.addEventListener('input', (e) => { 
+                        const val = e.target.value;
+                        parseInput(val);
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
+                    });
+
                     // Initial parse
                     parseInput(editor.value);
                     
@@ -2351,6 +2542,9 @@ The word "Nua" means new and "Khai" means food.
             if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
             if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
             if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
+            
+            // Step 1: Cache the state
+            saveStateToCache();
         }
 
         function dismissBanner(e) {
@@ -3302,6 +3496,31 @@ The word "Nua" means new and "Khai" means food.
             const modal = document.getElementById('horoscope-modal');
             modal.classList.add('modal-hidden');
             setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        function saveStateToCache() {
+            try {
+                const jsonString = JSON.stringify(appState);
+                localStorage.setItem('panchang_cached_state', jsonString);
+            } catch (e) {
+                console.error("Failed to cache state", e);
+            }
+        }
+
+        function loadStateFromCache() {
+            try {
+                const cached = localStorage.getItem('panchang_cached_state');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.monthsData) {
+                        appState = parsed;
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load state from cache", e);
+            }
+            return false;
         }
 
         function downloadCalendar() {
