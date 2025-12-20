@@ -338,6 +338,7 @@
                     <button onclick="downloadTxtFile()" class="header-btn flex-1"><i class="fa-solid fa-file-lines"></i> Download TXT</button>
                 </div>
                 <div class="flex gap-3">
+                    <button onclick="insertYearTemplate()" class="header-btn flex-1"><i class="fa-regular fa-calendar-plus"></i> Year Template</button>
                     <button onclick="openSettingsModal()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
                     <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
                 </div>
@@ -1772,6 +1773,33 @@ The word "Nua" means new and "Khai" means food.
             const modal = document.getElementById('link-modal');
             modal.classList.add('modal-hidden');
             setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function insertYearTemplate() {
+            const currentYear = new Date().getFullYear();
+            const yearInput = prompt("Enter Year for Template:", currentYear + 1);
+            if (!yearInput) return;
+
+            const year = parseInt(yearInput);
+            if (isNaN(year)) { alert("Invalid year"); return; }
+
+            const confirmReplace = confirm("Do you want to REPLACE the current content? Click Cancel to APPEND instead.");
+
+            let text = `::: config\n@ Title : Calendar ${year}\n:::\n\n`;
+            months.forEach(month => {
+                text += `::: calendar\n++ ${month} ${year} ++\n:::\n\n`;
+            });
+
+            const editor = document.getElementById('editor');
+            if (confirmReplace) {
+                editor.value = text;
+            } else {
+                editor.value += "\n\n" + text;
+            }
+
+            parseInput(editor.value);
+            render();
+            showToast(`Template for ${year} inserted!`);
         }
 
         function updateLinkType(type) {
