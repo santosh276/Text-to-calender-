@@ -3011,7 +3011,7 @@ The word "Nua" means new and "Khai" means food.
                 } else {
                     const li = document.createElement('div');
                     li.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${key}:</span> <span class="text-gray-800 font-medium text-right">${value}</span>`;
+                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${escapeHtml(key)}:</span> <span class="text-gray-800 font-medium text-right">${escapeHtml(value)}</span>`;
                     list.appendChild(li);
                 }
             }
@@ -3049,7 +3049,7 @@ The word "Nua" means new and "Khai" means food.
                 let badgeColor = "bg-gray-500";
                 if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
                 const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
+                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${escapeHtml(ev.engName)}</div><div class="text-xs text-gray-500 font-oriya">${escapeHtml(ev.locName || '')}</div></div>`;
                 li.innerHTML = dateBadge + content;
                 list.appendChild(li);
             });
@@ -3058,6 +3058,16 @@ The word "Nua" means new and "Khai" means food.
         function toggleFilter(symbol) {
             if (activeFilters.has(symbol)) activeFilters.delete(symbol); else activeFilters.add(symbol);
             render(); 
+        }
+
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return text;
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
         function renderHoroscope(data) {
@@ -3125,13 +3135,13 @@ The word "Nua" means new and "Khai" means food.
                         html += '<ul class="list-disc pl-5 mb-2 text-gray-600">';
                         inList = true;
                     }
-                    html += `<li>${trimmed.substring(1).trim()}</li>`;
+                    html += `<li>${escapeHtml(trimmed.substring(1).trim())}</li>`;
                 } else {
                     if (inList) {
                         html += '</ul>';
                         inList = false;
                     }
-                    if (trimmed) html += `<p class="mb-2 last:mb-0">${trimmed}</p>`;
+                    if (trimmed) html += `<p class="mb-2 last:mb-0">${escapeHtml(trimmed)}</p>`;
                 }
             });
             
@@ -3147,7 +3157,7 @@ The word "Nua" means new and "Khai" means food.
                     const alt = imgMatch[1];
                     const src = resolveImageUrls(imgMatch[2]);
                     const figure = document.createElement('figure');
-                    figure.innerHTML = `<img src="${src}" alt="${alt}"><figcaption>${alt}</figcaption>`;
+                    figure.innerHTML = `<img src="${src}" alt="${escapeHtml(alt)}"><figcaption>${escapeHtml(alt)}</figcaption>`;
                     container.appendChild(figure);
                 } else if (line.startsWith('#')) {
                     const titleText = line.replace('#', '').trim();
@@ -3155,7 +3165,7 @@ The word "Nua" means new and "Khai" means food.
                     let iconHtml = '<i class="fa-solid fa-scroll"></i>'; 
                     if (titleText.toLowerCase().includes('ritual')) iconHtml = '<i class="fa-solid fa-fire-burner"></i>';
                     if (titleText.toLowerCase().includes('significance')) iconHtml = '<i class="fa-solid fa-book-open-reader"></i>';
-                    h3.innerHTML = `${iconHtml} ${titleText}`;
+                    h3.innerHTML = `${iconHtml} ${escapeHtml(titleText)}`;
                     container.appendChild(h3);
                 } else if (line.startsWith('-')) {
                     let ul = container.lastElementChild;
