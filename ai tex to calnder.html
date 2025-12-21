@@ -2146,28 +2146,29 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function initApp() {
-            // 1. Initial Load (Instant)
-            let loaded = false;
+            // 1. Attempt Cache Load
+            let dataFound = false;
 
-            // Try JSON Cache first (Fastest)
+            // Try JSON Cache
             if (loadStateFromCache()) {
                 console.log("Loaded from JSON Cache");
-                loaded = true;
+                dataFound = true;
             }
-            // Fallback: Text Cache (Fast)
+            // Try Text Cache
             else {
                 const cachedText = localStorage.getItem('panchang_autosave_text');
                 if (cachedText) {
                     console.log("Loaded from Text Cache");
                     parseInput(cachedText); // This populates appState
-                    loaded = true;
+                    dataFound = true;
                 }
             }
 
             // Determine Mode & Setup UI
             const isEditor = !!document.getElementById('editor');
+
             if (window.exportedData && !isEditor) {
-                // App Mode logic (hide editor, full width preview)
+                // App Mode
                 const editorPanel = document.getElementById('editor-panel');
                 if (editorPanel) editorPanel.style.display = 'none';
                 const previewPanel = document.getElementById('preview-container');
@@ -2176,21 +2177,21 @@ The word "Nua" means new and "Khai" means food.
                     previewPanel.classList.add('w-full'); 
                 }
 
-                if (!loaded) {
+                if (!dataFound) {
                     appState = window.exportedData;
                 }
             } else if (isEditor) {
                 // Editor Mode
                 const editor = document.getElementById('editor');
-                if (loaded) {
+                if (dataFound) {
                     const cachedText = localStorage.getItem('panchang_autosave_text');
                     if (cachedText && editor.value !== cachedText) editor.value = cachedText;
                 } else {
-                    // Initial parse of default editor content
+                    // Initial parse
                     parseInput(editor.value);
                 }
 
-                // Setup Auto-Save Listener
+                // Auto-Save Listener
                 let timeout;
                 editor.addEventListener('input', (e) => {
                     const val = e.target.value;
@@ -2200,29 +2201,43 @@ The word "Nua" means new and "Khai" means food.
                 });
             }
 
-            // Render Initial View
+            // Render
             render();
 
-            // Remove Loader
             const loader = document.getElementById('app-loader');
-            if (loader) {
-                setTimeout(() => loader.remove(), 500);
-            }
 
-            // 2. Delayed Sync (Background)
-            setTimeout(() => {
-                if (appState.config && appState.config.liveUrl) {
-                    const url = appState.config.liveUrl;
-                    // Force update if in Editor Mode
-                    const shouldForce = isEditor;
+            // 2. Conditional Fetching Logic
+            if (appState.config && appState.config.liveUrl) {
+                const url = appState.config.liveUrl;
+                const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
+
+                if (dataFound) {
+                    // Scenario A: Data Found -> Wait 2s -> Sync (Respect Timer)
+                    if (loader) setTimeout(() => loader.remove(), 500);
+
+                    setTimeout(() => {
+                        const shouldForce = isEditor;
+                        if (isGitHub) fetchGitHubData(url, shouldForce);
+                        else fetchLiveDoc(url);
+                    }, 2000);
+                } else {
+                    // Scenario B: Cold Start -> Immediate Sync (Force)
+                    console.log("Cold Start: Fetching immediately...");
+                    const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url);
                     
-                    if (url.includes('github') || url.includes('raw.githubusercontent')) {
-                        fetchGitHubData(url, shouldForce);
+                    // Remove loader only after fetch finishes
+                    if (promise && typeof promise.then === 'function') {
+                        promise.finally(() => {
+                            if (loader) loader.remove();
+                        });
                     } else {
-                        fetchLiveDoc(url);
+                        if (loader) setTimeout(() => loader.remove(), 2000);
                     }
                 }
-            }, 2000);
+            } else {
+                // No Sync Configured
+                if (loader) setTimeout(() => loader.remove(), 500);
+            }
         }
         
         // Start Up
