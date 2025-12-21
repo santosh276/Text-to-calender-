@@ -2038,7 +2038,7 @@ The word "Nua" means new and "Khai" means food.
                 }
 
                 // Update & Save Logic (Shared)
-                updateAppWithFetchedData(cleanText);
+                await updateAppWithFetchedData(cleanText);
 
                 // Update Timestamp
                 localStorage.setItem('panchang_last_sync_ts', Date.now());
@@ -2052,12 +2052,17 @@ The word "Nua" means new and "Khai" means food.
         }
 
         // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
-        async function fetchLiveDoc(url) {
+        async function fetchLiveDoc(url, force = false) {
             if (!url) return;
             
             // Check if it's actually a GitHub URL that got routed here
             if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                return fetchGitHubData(url);
+                return fetchGitHubData(url, force);
+            }
+
+            // Auto-detect Editor Mode to enforce Force Update
+            if (document.getElementById('editor')) {
+                force = true;
             }
 
             // UI Feedback
@@ -2065,6 +2070,19 @@ The word "Nua" means new and "Khai" means food.
             const originalText = syncBtn ? syncBtn.innerHTML : '';
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
+            // TIMER LOGIC (Only if NOT forced)
+            if (!force) {
+                const lastSync = localStorage.getItem('panchang_last_sync_ts');
+                const interval = appState.config.syncInterval || (24 * 60 * 60 * 1000); // Default 24h
+                const now = Date.now();
+
+                if (lastSync && (now - parseInt(lastSync) < interval)) {
+                    console.log(`Sync Timer Valid (Docs). Elapsed: ${now - parseInt(lastSync)}ms < Interval: ${interval}ms`);
+                    if(syncBtn) syncBtn.innerHTML = originalText;
+                    return; // Stop.
+                }
+            }
+
             try {
                 // Add timestamp to bypass browser caching
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
@@ -2104,8 +2122,22 @@ The word "Nua" means new and "Khai" means food.
                 // VALIDATION
                 if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
 
+                // SMART DIFF (Only if NOT forced)
+                if (!force) {
+                    const cachedString = localStorage.getItem('panchang_autosave_text');
+                    if (cachedString && cleanText === cachedString) {
+                         console.log("Smart Diff (Docs): Data is identical. Update timestamp only.");
+                         localStorage.setItem('panchang_last_sync_ts', Date.now());
+                         if(syncBtn) showToast("Sync: No changes found.");
+                         return;
+                    }
+                }
+
                 // Update & Save
-                updateAppWithFetchedData(cleanText);
+                await updateAppWithFetchedData(cleanText);
+
+                // Update Timestamp
+                localStorage.setItem('panchang_last_sync_ts', Date.now());
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
@@ -2117,31 +2149,36 @@ The word "Nua" means new and "Khai" means food.
 
         // Shared Logic for updating app state from fetched text
         function updateAppWithFetchedData(cleanText) {
-            // 1. Save to Local Storage (Auto-Save)
-            localStorage.setItem('panchang_autosave_text', cleanText);
+            return new Promise((resolve) => {
+                // 1. Save to Local Storage (Auto-Save)
+                localStorage.setItem('panchang_autosave_text', cleanText);
 
-            // 2. Non-Blocking Render
-            requestAnimationFrame(() => {
-                const editor = document.getElementById('editor');
-                
-                if (editor) {
-                    if (editor.value !== cleanText) {
-                        editor.value = cleanText;
+                // 2. Non-Blocking Render
+                requestAnimationFrame(() => {
+                    const editor = document.getElementById('editor');
+
+                    if (editor) {
+                        if (editor.value !== cleanText) {
+                            editor.value = cleanText;
+                        }
                     }
-                }
-                
-                // Heavy lifting
-                parseInput(cleanText);
-                render();
-                
-                // Optional: Update title if changed in config
-                if (appState.config && appState.config.title) {
-                     const titleEl = document.getElementById('app-title');
-                     if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
-                }
-                
-                if (editor) showToast("Calendar updated from Cloud!");
-                else console.log("App updated seamlessly from background cloud fetch.");
+
+                    // Heavy lifting
+                    parseInput(cleanText);
+                    render();
+                    saveStateToCache(); // Update JSON Cache
+
+                    // Optional: Update title if changed in config
+                    if (appState.config && appState.config.title) {
+                         const titleEl = document.getElementById('app-title');
+                         if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+                    }
+
+                    if (editor) showToast("Calendar updated from Cloud!");
+                    else console.log("App updated seamlessly from background cloud fetch.");
+
+                    resolve();
+                });
             });
         }
 
@@ -2223,7 +2260,7 @@ The word "Nua" means new and "Khai" means food.
                 } else {
                     // Scenario B: Cold Start -> Immediate Sync (Force)
                     console.log("Cold Start: Fetching immediately...");
-                    const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url);
+                    const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url, true);
                     
                     // Remove loader only after fetch finishes
                     if (promise && typeof promise.then === 'function') {
