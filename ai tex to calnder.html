@@ -44,7 +44,17 @@
 
 .group:hover .group-hover\:text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12/var(--tw-text-opacity,1))}
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
-@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
+@media (min-width:768px){
+.md\:text-\[13px\]{font-size:13px}
+.md\:items-center{align-items:center}
+.md\:justify-end{justify-content:flex-end}
+.md\:w-auto{width:auto}
+.md\:mt-0{margin-top:0}
+.md\:w-14{width:3.5rem}
+.md\:h-14{height:3.5rem}
+}
+.custom-header-gradient { background: linear-gradient(90deg, #D32F2F 0%, #FFCDD2 100%); }
+</style>
 <style>
         .pointer-events-auto { pointer-events: auto !important; }
         /* Custom Scrollbar */
@@ -550,25 +560,37 @@ The word "Nua" means new and "Khai" means food.
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
-                    <div class="bg-white rounded-xl shadow-lg border-t-4 border-saffron p-4 md:p-6 relative z-10">
-                         <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
-                        <div class="flex items-center justify-between w-full gap-4">
-                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
-                            <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
-                                <h2 id="cal-month-year" class="text-2xl md:text-3xl font-bold text-deepred uppercase tracking-wider leading-none">JANUARY 2025</h2>
-                                <p id="cal-indian-month" class="text-lg font-bold text-red-800 bg-amber-400 px-4 py-1 rounded-lg mt-2 font-oriya leading-tight shadow-md border-2 border-amber-500 hidden"></p>
+                    <div class="custom-header-gradient rounded-2xl shadow-lg p-5 text-white mb-4 relative overflow-hidden z-10">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+                            <!-- Left Side: Icon + Text -->
+                            <div class="flex items-center gap-4">
+                                <!-- Icon -->
+                                <div class="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-sm">
+                                    <i class="fa-regular fa-calendar text-2xl text-yellow-400"></i>
+                                </div>
                                 
-                                <!-- MOVED: Go to Today Button (Centered Below Title) -->
-                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-xs font-bold hover:bg-orange-200 transition items-center gap-2 animate-pulse shadow-sm border border-orange-200 whitespace-nowrap">
-                                    <i class="fa-solid fa-crosshairs"></i> Go to Today
+                                <!-- Text -->
+                                <div class="flex flex-col">
+                                    <h2 id="cal-month-year" class="text-2xl md:text-3xl font-bold leading-none tracking-tight text-white drop-shadow-sm">JANUARY 2025</h2>
+                                    <p id="cal-indian-month" class="text-sm md:text-base font-medium opacity-90 mt-1 font-oriya leading-tight hidden text-white/90"></p>
+                                </div>
+                            </div>
+
+                            <!-- Right Side: Navigation -->
+                            <div class="flex items-center justify-between md:justify-end gap-3 mt-2 md:mt-0 w-full md:w-auto">
+                                <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition backdrop-blur-sm active:scale-95 text-white" title="Previous Month">
+                                    <i class="fa-solid fa-chevron-left text-sm"></i>
+                                </button>
+
+                                <button onclick="jumpToToday()" id="btn-today" class="hidden bg-orange-500 hover:bg-orange-600 text-black px-6 py-2 rounded-full text-sm font-bold shadow-md transition transform active:scale-95 items-center gap-2">
+                                    Today
+                                </button>
+
+                                <button onclick="changeMonth(1)" class="w-10 h-10 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition backdrop-blur-sm active:scale-95 text-white" title="Next Month">
+                                    <i class="fa-solid fa-chevron-right text-sm"></i>
                                 </button>
                             </div>
-                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
-                        </div>
-                        
-                        <!-- Decorative Icon (Absolute Positioning on Right) -->
-                        <div class="hidden md:block absolute right-6 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
-                            <i class="fa-solid fa-calendar-days text-4xl text-saffron"></i>
                         </div>
                     </div>
 
