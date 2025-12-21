@@ -1214,6 +1214,7 @@ The word "Nua" means new and "Khai" means food.
                 sections: { festivals: true, panchang: true, horoscope: true }
             }
         };
+        window.appState = appState;
         
         let bannerInterval;
         let bannerCurrentIndex = 0;
@@ -1988,9 +1989,24 @@ The word "Nua" means new and "Khai" means food.
         }
 
         // --- NEW: Fetch GitHub Data (Direct) ---
-        async function fetchGitHubData(url) {
+        async function fetchGitHubData(url, force = false) {
             if (!url) return;
             
+            const isEditorMode = document.getElementById('editor') !== null;
+            const now = Date.now();
+
+            // TIMER LOGIC (Only for App Mode & Non-Forced)
+            if (!isEditorMode && !force) {
+                const lastSync = parseInt(localStorage.getItem('panchang_last_sync_ts') || '0');
+                const interval = appState.config.syncInterval || (24 * 60 * 60 * 1000); // Default 24h
+
+                const elapsed = now - lastSync;
+                if (elapsed < interval) {
+                    console.log(`Sync: Skipping. Next sync in ${((interval - elapsed) / 60000).toFixed(1)} mins.`);
+                    return;
+                }
+            }
+
             // UI Feedback (Target specific button if possible, else fallback)
             const syncBtn = document.querySelector('button[onclick="configureGitHubSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
@@ -1998,7 +2014,7 @@ The word "Nua" means new and "Khai" means food.
             
             try {
                 // Add timestamp to bypass caching
-                const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+                const fetchUrl = url.includes('?') ? `${url}&t=${now}` : `${url}?t=${now}`;
                 
                 const response = await fetch(fetchUrl);
                 if (!response.ok) throw new Error(`GitHub Fetch Failed: ${response.status}`);
@@ -2008,15 +2024,21 @@ The word "Nua" means new and "Khai" means food.
                 // VALIDATION
                 if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
 
-                // Smart Diffing
-                const cachedString = localStorage.getItem('panchang_autosave_text');
-                if (cachedString && cleanText === cachedString) {
-                     console.log("Smart Diff: Data is identical. Skipping parse & render.");
-                     showToast("Sync: No changes found.");
-                     return; 
+                // SMART DIFF LOGIC
+                // In Editor Mode: DISABLE Smart Diff (Always update)
+                // In App Mode: ENABLE Smart Diff (Check equality)
+                if (!isEditorMode) {
+                    const cachedString = localStorage.getItem('panchang_autosave_text');
+                    if (cachedString && cleanText === cachedString) {
+                         console.log("Smart Diff: Data is identical. Updating timestamp only.");
+                         localStorage.setItem('panchang_last_sync_ts', now.toString());
+                         // showToast("Sync: No changes found.");
+                         return;
+                    }
                 }
 
                 // Update & Save Logic (Shared)
+                localStorage.setItem('panchang_last_sync_ts', now.toString());
                 updateAppWithFetchedData(cleanText);
 
             } catch (e) {
@@ -2122,122 +2144,19 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function initAutoSync() {
-            // STEP 2: Instant Initialization from Cache
-            if (loadStateFromCache()) {
-                console.log("Instant Initialization from Cache!");
-                
-                // Setup UI based on Mode
-                if (window.exportedData) {
-                    // App Mode
-                    const editorPanel = document.getElementById('editor-panel');
-                    if (editorPanel) editorPanel.style.display = 'none';
-                    
-                    const previewPanel = document.getElementById('preview-container');
-                    if (previewPanel) { 
-                        previewPanel.classList.remove('md:w-[65%]'); 
-                        previewPanel.classList.add('w-full'); 
-                    }
-                } else {
-                    // Editor Mode
-                    const editor = document.getElementById('editor');
-                    if (editor) {
-                        const savedText = localStorage.getItem('panchang_autosave_text');
-                        if (savedText) editor.value = savedText;
-                        
-                        let timeout;
-                        editor.addEventListener('input', (e) => { 
-                            const val = e.target.value;
-                            parseInput(val);
-                            clearTimeout(timeout);
-                            timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
-                        });
-                    }
-                }
-                
-                // Immediate Render
-                setTimeout(() => {
-                    render();
-                    const loader = document.getElementById('app-loader');
-                    if (loader) loader.remove();
-                    
-                    // Background Sync
-                    if (appState.config && appState.config.liveUrl) {
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
-                    }
-                }, 0);
-                
-                return;
-            }
+            const isAppMode = !!window.exportedData;
+            const editor = document.getElementById('editor');
 
-            // Fallback to Legacy Logic
-            // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
-            if (window.exportedData) {
-                appState = window.exportedData;
-                
-                // Hide Editor Panel
+            // 1. SETUP UI MODE
+            if (isAppMode) {
+                appState = window.exportedData; // Initialize with skeleton
+                window.appState = appState;
                 const editorPanel = document.getElementById('editor-panel');
                 if (editorPanel) editorPanel.style.display = 'none';
-                
                 const previewPanel = document.getElementById('preview-container');
-                if (previewPanel) { 
-                    previewPanel.classList.remove('md:w-[65%]'); 
-                    previewPanel.classList.add('w-full'); 
-                }
-
-                // 2. CHECK LOCAL STORAGE FIRST (Fast Load)
-                const cachedText = localStorage.getItem('panchang_autosave_text');
-                const loader = document.getElementById('app-loader');
-
-                if (cachedText) {
-                    console.log("Restoring from Local Storage...");
-                    parseInput(cachedText); // This populates appState.monthsData, etc.
-                    render();
-                    
-                    // Remove Loader immediately
-                    if (loader) {
-                        loader.style.opacity = '0';
-                        setTimeout(() => loader.remove(), 500);
-                    }
-                    
-                    // Background Sync (Update if changed)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("Background syncing...");
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
-                    }
-                } 
-                else {
-                    // 3. NO LOCAL DATA -> FETCH FROM CLOUD (First Run)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("No local data. Fetching from Cloud...");
-                        const url = appState.config.liveUrl;
-                        const fetchPromise = (url.includes('github.com') || url.includes('raw.githubusercontent.com')) ? fetchGitHubData(url) : fetchLiveDoc(url);
-                        
-                        fetchPromise.then(() => {
-                            // Remove Loader AFTER fetch
-                            if (loader) {
-                                loader.style.opacity = '0';
-                                setTimeout(() => loader.remove(), 500);
-                            }
-                        });
-                    } else {
-                        // No Data, No URL -> Just Remove Loader (Empty App)
-                        if (loader) loader.remove();
-                        render();
-                    }
-                }
-            } 
-            else {
-                // EDITOR MODE (Normal)
+                if (previewPanel) { previewPanel.classList.remove('md:w-[65%]'); previewPanel.classList.add('w-full'); }
+            } else {
+                // Editor Mode Setup
                 if (editor) {
                     let timeout;
                     editor.addEventListener('input', (e) => { 
@@ -2246,19 +2165,74 @@ The word "Nua" means new and "Khai" means food.
                         clearTimeout(timeout);
                         timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
                     });
+                }
+            }
 
-                    // Initial parse
-                    parseInput(editor.value);
-                    
-                    // Check if we need to sync
-                    if (appState.config && appState.config.liveUrl) {
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
+            // 2. DATA LOADING STRATEGY
+            let dataLoaded = false;
+
+            // A. Attempt JSON Cache (Fastest)
+            if (loadStateFromCache()) {
+                console.log("Init: Loaded from JSON Cache.");
+                dataLoaded = true;
+                render();
+            }
+            // B. Attempt Text Fallback (Auto-Save)
+            else {
+                const cachedText = localStorage.getItem('panchang_autosave_text');
+                if (cachedText) {
+                    console.log("Init: Loaded from Text Cache.");
+                    if(editor) editor.value = cachedText;
+                    parseInput(cachedText);
+                    render();
+                    dataLoaded = true;
+                }
+            }
+
+            // Remove Loader if data loaded
+            const loader = document.getElementById('app-loader');
+            if (dataLoaded && loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+            }
+
+            // 3. COLD START & SYNC CHECK
+            const liveUrl = appState.config.liveUrl;
+
+            if (liveUrl) {
+                const isGitHub = liveUrl.includes('github.com') || liveUrl.includes('raw.githubusercontent.com');
+
+                if (dataLoaded || !isAppMode) {
+                    // RETURNING USER: Wait 2s, then Background Check
+                    if (!isAppMode) {
+                         // Editor Mode: Instant Sync
+                         if (isGitHub) fetchGitHubData(liveUrl, true);
+                         else fetchLiveDoc(liveUrl);
+                    } else {
+                        console.log("Returning User: Scheduling background sync...");
+                        setTimeout(() => {
+                            if (isGitHub) fetchGitHubData(liveUrl, false);
+                            else fetchLiveDoc(liveUrl);
+                        }, 2000);
                     }
+                } else {
+                    // FIRST TIME USER (Cold Start, App Mode): Immediate Force Fetch
+                    console.log("First Time User: Immediate Sync...");
+                    if (isGitHub) {
+                        fetchGitHubData(liveUrl, true).then(() => {
+                            if(loader) loader.remove();
+                        });
+                    } else {
+                        fetchLiveDoc(liveUrl).then(() => {
+                            if(loader) loader.remove();
+                        });
+                    }
+                }
+            } else {
+                // No Live URL - Just remove loader if it's there
+                if (!dataLoaded && loader) loader.remove();
+                if (!dataLoaded && editor) {
+                     parseInput(editor.value);
                 }
             }
         }
@@ -2334,8 +2308,20 @@ The word "Nua" means new and "Khai" means food.
                 if (currentBlock === 'config') {
                     const titleMatch = line.match(/^@\s*Title\s*:\s*(.+)/i);
                     const logoMatch = line.match(/^@\s*Logo\s*:\s*!\[(.*?)\]\((.*?)\)/i);
+                    // New: Parse Sync Interval
+                    const syncIntervalMatch = line.match(/^@\s*Live Sync GitHub trigger in every\s*:\s*(\d+)\s*(minutes?|hours?|days?)/i);
+
                     if (titleMatch) tempConfig.title = titleMatch[1];
                     if (logoMatch) tempConfig.logoUrl = logoMatch[2];
+                    if (syncIntervalMatch) {
+                        const val = parseInt(syncIntervalMatch[1]);
+                        const unit = syncIntervalMatch[2].toLowerCase();
+                        let ms = 24 * 60 * 60 * 1000; // Default 24h
+                        if (unit.startsWith('minute')) ms = val * 60 * 1000;
+                        else if (unit.startsWith('hour')) ms = val * 60 * 60 * 1000;
+                        else if (unit.startsWith('day')) ms = val * 24 * 60 * 60 * 1000;
+                        tempConfig.syncInterval = ms;
+                    }
                 }
                 else if (currentBlock === 'calendar') {
                     const headerMatch = line.match(/\+\+\s+(\w+)\s+(\d{4})\s+\+\+/);
@@ -3494,6 +3480,7 @@ The word "Nua" means new and "Khai" means food.
                     const parsed = JSON.parse(cached);
                     if (parsed && parsed.monthsData) {
                         appState = parsed;
+                        window.appState = appState;
                         return true;
                     }
                 }
