@@ -10,7 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -303,6 +304,381 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* --- RETRO THEME STYLES (Scoped to #retro-calendar-view) --- */
+        #retro-calendar-view {
+            --paper-base: #f3eacb;
+            --paper-dark: #e6d5a7;
+            --ink-primary: #3b2f2f; /* Deep Sepia */
+            --ink-secondary: #5d4037;
+            --ink-red: #8a3324; /* Burnt Red for holidays */
+            --ink-green: #3d5a3d; /* Muted Forest Green */
+            --gold-accent: #b8860b;
+
+            /* Shadows for Depth */
+            --shadow-deep: 4px 4px 8px rgba(46, 30, 20, 0.3), -1px -1px 2px rgba(255, 255, 255, 0.3);
+            --shadow-pressed: inset 2px 2px 5px rgba(46, 30, 20, 0.2), inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+            --border-ink: 1px solid rgba(59, 47, 47, 0.6);
+
+            background-color: #2c241b; /* Dark wooden desk background */
+            font-family: 'IM Fell English', serif;
+            display: flex;
+            justify-content: center;
+            /* min-height: 100vh; -- Removed to fit container */
+            height: 100%;
+            overflow-y: auto;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233e2f26' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+            padding: 20px;
+        }
+
+        #retro-calendar-view * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- Texture Generation (SVG Filter Class) --- */
+        #retro-calendar-view .paper-texture {
+            position: relative;
+            background-color: var(--paper-base);
+            /* Vignette effect */
+            background-image: radial-gradient(circle at center, transparent 40%, rgba(139, 69, 19, 0.15) 100%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 1px #dcc28e inset;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        #retro-calendar-view .paper-texture::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.4;
+            /* SVG Noise generated via Data URI for self-containment */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            mix-blend-mode: multiply;
+        }
+
+        /* --- Main Layout --- */
+        #retro-calendar-view .calendar-container {
+            width: 100%;
+            max-width: 600px; /* Increased slightly */
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            position: relative;
+            margin: 0 auto;
+        }
+
+        /* --- Typography --- */
+        #retro-calendar-view h1, #retro-calendar-view h2, #retro-calendar-view h3 {
+            margin: 0;
+            font-weight: normal;
+            color: var(--ink-primary);
+            /* Ink bleed effect */
+            text-shadow: 0.5px 0.5px 0px rgba(59, 47, 47, 0.2);
+        }
+
+        #retro-calendar-view .odia-font {
+            font-family: 'Noto Sans Oriya', sans-serif;
+        }
+
+        /* --- Header Section --- */
+        #retro-calendar-view .header {
+            text-align: center;
+            border-bottom: 2px double var(--ink-primary);
+            padding-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #retro-calendar-view .header-ornament {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.8rem;
+            color: var(--ink-primary);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+
+        #retro-calendar-view .odia-title {
+            font-size: 1.4rem;
+            color: var(--ink-secondary);
+            font-weight: 700;
+        }
+
+        /* --- Controls (Month Nav) --- */
+        #retro-calendar-view .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            z-index: 1;
+        }
+
+        #retro-calendar-view .nav-btn {
+            background: none;
+            border: 2px solid var(--ink-secondary);
+            color: var(--ink-secondary);
+            font-family: 'IM Fell English', serif;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 50% 10% 50% 10%; /* Leaf/Organic shape */
+            transition: all 0.2s ease;
+            box-shadow: 2px 2px 0 rgba(93, 64, 55, 0.2);
+            user-select: none;
+            width: auto; height: auto; /* Override tailwind */
+        }
+
+        #retro-calendar-view .nav-btn:hover {
+            transform: translateY(-1px);
+            background-color: rgba(93, 64, 55, 0.05);
+            color: var(--ink-primary);
+        }
+
+        #retro-calendar-view .nav-btn:active {
+            transform: translateY(1px);
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        #retro-calendar-view .current-month {
+            text-align: center;
+        }
+
+        #retro-calendar-view .month-en {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+            display: block;
+        }
+
+        #retro-calendar-view .month-odia {
+            font-size: 1.1rem;
+            color: var(--ink-green);
+        }
+
+        /* --- Grid --- */
+        #retro-calendar-view .grid-wrapper {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.2); /* Slight lightening */
+            box-shadow: var(--shadow-pressed);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        #retro-calendar-view .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        /* Weekdays */
+        #retro-calendar-view .weekday {
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 5px 0;
+            color: var(--ink-secondary);
+            border-bottom: 1px dashed var(--ink-secondary);
+            margin-bottom: 5px;
+        }
+
+        #retro-calendar-view .weekday.sunday {
+            color: var(--ink-red);
+            font-weight: bold;
+        }
+
+        #retro-calendar-view .day-name-en { display: block; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
+        #retro-calendar-view .day-name-od { display: block; font-size: 0.75rem; opacity: 0.8; }
+
+        /* Dates */
+        #retro-calendar-view .date-cell {
+            min-height: 60px;
+            position: relative;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            border-radius: 3px;
+        }
+
+        #retro-calendar-view .date-cell:hover {
+            background-color: rgba(62, 39, 35, 0.05);
+            border: 1px solid rgba(62, 39, 35, 0.2);
+        }
+
+        #retro-calendar-view .date-cell:active {
+            box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);
+            transform: scale(0.98);
+        }
+
+        #retro-calendar-view .date-cell.pressed-anim {
+            animation: ink-press 0.2s ease-out;
+        }
+
+        #retro-calendar-view .num-en {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--ink-primary);
+            line-height: 1;
+        }
+
+        #retro-calendar-view .num-od {
+            font-size: 0.9rem;
+            color: var(--ink-secondary);
+            margin-top: 2px;
+            opacity: 0.8;
+        }
+
+        /* State: Sunday */
+        #retro-calendar-view .date-cell.is-sunday .num-en,
+        #retro-calendar-view .date-cell.is-sunday .num-od {
+            color: var(--ink-red);
+        }
+
+        /* State: Today */
+        #retro-calendar-view .date-cell.is-today {
+            /* Stamp effect */
+            border: 2px solid var(--ink-primary);
+            border-radius: 50% 40% 60% 30% / 40% 50% 60% 50%; /* Imperfect circle */
+            background-color: rgba(184, 134, 11, 0.1);
+        }
+
+        #retro-calendar-view .date-cell.empty {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        /* Markers (Moon phases) */
+        #retro-calendar-view .marker {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: 0 0 1px rgba(0,0,0,0.3);
+        }
+
+        #retro-calendar-view .marker.purnima { background-color: #ffd700; border: 1px solid #b8860b; }
+        #retro-calendar-view .marker.amavasya { background-color: #222; border: 1px solid #000; }
+        #retro-calendar-view .marker.sankranti {
+            width: 0; height: 0; background: none; box-shadow: none;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 7px solid var(--ink-green);
+        }
+
+        /* --- Footer Sections (Scrolls) --- */
+        #retro-calendar-view .info-sections {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            z-index: 1;
+        }
+
+        @media (min-width: 500px) {
+            #retro-calendar-view .info-sections { grid-template-columns: 1fr 1fr; }
+            #retro-calendar-view .section-full { grid-column: span 2; }
+        }
+
+        #retro-calendar-view .scroll-box {
+            border: 3px double var(--ink-secondary);
+            padding: 15px;
+            position: relative;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Decorative Corners for Scroll Box */
+        #retro-calendar-view .scroll-box::after {
+            content: "✦";
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            color: var(--ink-secondary);
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        #retro-calendar-view .section-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1rem;
+            color: var(--ink-red);
+            border-bottom: 1px solid var(--ink-secondary);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #retro-calendar-view .section-title svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--ink-secondary);
+        }
+
+        #retro-calendar-view .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--ink-primary);
+        }
+
+        #retro-calendar-view .info-list li {
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted rgba(93, 64, 55, 0.3);
+            padding-bottom: 2px;
+            align-items: center;
+        }
+
+        #retro-calendar-view .info-list li span:last-child {
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        /* Location Seal */
+        #retro-calendar-view .location-stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            border: 2px solid var(--ink-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: var(--ink-green);
+            text-transform: uppercase;
+            transform: rotate(-15deg);
+            opacity: 0.7;
+            text-align: center;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 0;
+            background: rgba(61, 90, 61, 0.05);
+        }
+
+        /* Pressed Effect Animation */
+        @keyframes ink-press {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -464,11 +840,11 @@ Horoscope body text here.
 
             <textarea id="editor" class="flex-grow w-full h-full bg-gray-900 text-gray-100 p-4 font-mono text-sm resize-none focus:outline-none leading-relaxed z-0" spellcheck="false">
 ::: config
-@ Title : Odia Panchang 2025
+@ Title : Vintage Odia Panchang 2026
 :::
 
 ::: calendar
-++ January 2025 ++
+++ January 2026 ++
 01 * New Year's Day [ନୂତନ ବର୍ଷ]
 14 ! Makar Sankranti [ମକର ସଂକ୍ରାନ୍ତି]
 26 * Republic Day [ଗଣତନ୍ତ୍ର ଦିବସ]
@@ -505,7 +881,7 @@ Financial matters improve today. Stay patient with loved ones and focus on long-
 -----------------------------------
 
 ::: calendar
-++ November 2025 ++
+++ November 2026 ++
 02 > Daily Meeting [ଦୈନିକ ବୈଠକ]
 20 ^ Special Community Setup
 21 ! Nuakhai [ନୂଆଖାଇ]
@@ -2476,324 +2852,127 @@ The word "Nua" means new and "Khai" means food.
             const currentData = appState.monthsData[appState.activeMonthIndex];
             if (!currentData) return;
 
-            if (appState.config.title) document.getElementById('app-title').innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+            // Ensure Retro Container Exists
+            const previewContainer = document.getElementById('preview-container');
+            if (!document.getElementById('retro-calendar-view')) {
+                previewContainer.innerHTML = `
+<div id="retro-calendar-view">
+    <div class="paper-texture calendar-container">
+        <!-- Location Stamp -->
+        <div class="location-stamp"><div style="transform: translateY(-2px); line-height: 1.2;" id="retro-location"></div></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-ornament" id="retro-header-title"></div>
+            <div class="odia-title odia-font" id="retro-header-odia"></div>
+        </header>
+
+        <!-- Navigation -->
+        <div class="controls">
+            <button class="nav-btn" onclick="changeMonth(-1)" title="Previous Month">←</button>
+            <div class="current-month">
+                <span class="month-en" id="retro-month-en"></span>
+                <span class="month-odia odia-font" id="retro-month-odia"></span>
+            </div>
+            <button class="nav-btn" onclick="changeMonth(1)" title="Next Month">→ </button>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid-wrapper">
+             <div class="calendar-grid header-row" id="retro-grid-header" style="margin-bottom: 5px;"></div>
+             <div class="calendar-grid" id="retro-calendar-days"></div>
+        </div>
+
+        <!-- Details Sections -->
+        <div class="info-sections">
+            <div class="scroll-box" id="retro-festivals-box">
+                <div class="section-title">
+                    <span>Festivals</span>
+                    <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z"/></svg>
+                </div>
+                <ul class="info-list odia-font" id="retro-festival-list"></ul>
+            </div>
+
+            <div class="scroll-box" id="retro-panchang-box">
+                <div class="section-title">
+                    <span>Panchang</span>
+                    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <ul class="info-list odia-font" id="retro-panchang-list"></ul>
+            </div>
             
-            const logoContainer = document.getElementById('logo-container');
-            if (appState.config.logoUrl) {
-                const src = resolveImageUrls(appState.config.logoUrl);
-                logoContainer.innerHTML = `<img id="app-logo-img" src="${src}" alt="Logo">`;
-            } else {
-                logoContainer.innerHTML = `<i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i>`;
+            <div class="scroll-box section-full" id="retro-horoscope-box">
+                <div class="section-title">
+                    <span>Horoscope</span>
+                    <svg viewBox="0 0 24 24"><path d="M12 0L2 10l10 14 10-14z"/></svg>
+                </div>
+                <div id="retro-horoscope-grid" class="grid grid-cols-3 gap-2 mt-2"></div>
+            </div>
+        </div>
+    </div>
+</div>`;
             }
 
-            document.getElementById('cal-month-year').innerText = `${months[currentData.month]} ${currentData.year}`;
-            
-            const indianMonthEl = document.getElementById('cal-indian-month');
             const currentLang = appState.config.language || 'en';
-            const currentLangData = langData[currentLang];
-            
-            if (currentLangData && currentLangData.indianMonths) {
-                indianMonthEl.classList.remove('hidden');
-                indianMonthEl.innerText = currentLangData.indianMonths[currentData.month];
-            } else {
-                indianMonthEl.classList.add('hidden');
-            }
-            
-            const btnToday = document.getElementById('btn-today');
-            if (appState.todayIndex !== -1 && appState.activeMonthIndex !== appState.todayIndex) {
-                btnToday.classList.remove('hidden'); btnToday.classList.add('flex');
-            } else {
-                btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
-            }
 
-            renderCalendarGrid(currentData);
-            renderPanchang(currentData);
-            renderFestivals(currentData);
-            renderHoroscope(currentData);
-            renderMonthBanner(currentData);
+            // Update Header
+            const title = (appState.config.title || "Panchang").toUpperCase();
+            document.getElementById('retro-header-title').innerText = title.includes(currentData.year.toString()) ? title : title + " " + currentData.year;
+            
+            // Force Odia subtitle for vintage theme authenticity
+            document.getElementById('retro-header-odia').innerText = "ଓଡ଼ିଆ ପଞ୍ଜିକା " + toNativeNum(currentData.year, 'or');
+            
+            // Location
+            const locName = appState.config.location ? (appState.config.location.name || "Location") : "Location";
+            const locEl = document.getElementById('retro-location');
+            locEl.innerHTML = locName.split(',')[0] + '<br>' + (locName.split(',')[1] || '');
 
-            // --- NEW LOGIC: Hide/Show Sections based on Config ---
+            // Month
+            document.getElementById('retro-month-en').innerText = `${months[currentData.month].toUpperCase()} ${currentData.year}`;
+            // Force Odia month name for vintage theme authenticity
+            const indianMonths = langData['or']?.indianMonths || langData.en.indianMonths;
+            document.getElementById('retro-month-odia').innerText = indianMonths[currentData.month];
+
+            renderRetroGrid(currentData);
+            renderRetroFestivals(currentData);
+            renderRetroPanchang(currentData);
+            renderRetroHoroscope(currentData);
+            
+            // Toggle Sections
             const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
-            
-            const secFest = document.getElementById('sec-festivals');
-            const secPan = document.getElementById('sec-panchang');
-            const secHoro = document.getElementById('sec-horoscope');
+            const festBox = document.getElementById('retro-festivals-box');
+            const panBox = document.getElementById('retro-panchang-box');
+            const horoBox = document.getElementById('retro-horoscope-box');
 
-            if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
-            if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
-            if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
-            
-            // Step 1: Cache the state
+            if(festBox) festBox.style.display = secs.festivals ? 'block' : 'none';
+            if(panBox) panBox.style.display = secs.panchang ? 'block' : 'none';
+            if(horoBox) horoBox.style.display = secs.horoscope ? 'block' : 'none';
+
             saveStateToCache();
         }
 
-        function dismissBanner(e) {
-            if (e) e.stopPropagation();
-            isBannerDismissed = true;
-            stopBannerAutoPlay();
-            const container = document.getElementById('month-banner-container');
-            if (container) container.classList.add('hidden');
-        }
+        // Stub for compatibility if anything calls it
+        function renderMonthBanner(data) {}
+        function dismissBanner(e) {}
 
-        function renderMonthBanner(data) {
-            const container = document.getElementById('month-banner-container');
-            
-            if (isBannerDismissed) {
-                if (container) container.classList.add('hidden');
-                return;
-            }
-
-            const slidesContainer = document.getElementById('banner-slides');
-            const dotsContainer = document.getElementById('banner-dots');
-            
-            // Collect banners for the current month
-            const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
-            const banners = [];
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateKey = `${data.year}-${data.month}-${d}`;
-                const details = appState.details[dateKey]; // Array
-                
-                if (details && Array.isArray(details)) {
-                     details.forEach(detail => {
-                         if (detail.bannerUrl) {
-                             // Find event name if possible for caption
-                             const dayEvents = data.events.filter(e => e.date === d);
-                             let caption = '';
-                             if (dayEvents.length > 0) {
-                                 caption = dayEvents[0].engName;
-                             }
-                             
-                             banners.push({
-                                 url: resolveImageUrls(detail.bannerUrl),
-                                 date: d,
-                                 caption: caption
-                             });
-                         }
-                     });
-                } else if (details && details.bannerUrl) {
-                    // Fallback for old object structure if applicable
-                     const dayEvents = data.events.filter(e => e.date === d);
-                     let caption = '';
-                     if (dayEvents.length > 0) caption = dayEvents[0].engName;
-                     banners.push({ url: resolveImageUrls(details.bannerUrl), date: d, caption: caption });
-                }
-            }
-
-            // Optimization: If banners list is same, don't rebuild DOM
-            const newHash = JSON.stringify(banners);
-            if (newHash === currentBannerDataHash) {
-                if (banners.length === 0) {
-                     container.classList.add('hidden');
-                } else {
-                     container.classList.remove('hidden');
-                }
-                return;
-            }
-            currentBannerDataHash = newHash;
-
-            // Clear previous
-            slidesContainer.innerHTML = '';
-            dotsContainer.innerHTML = '';
-            clearInterval(bannerInterval);
-            bannerCurrentIndex = 0;
-
-            if (banners.length === 0) {
-                container.classList.add('hidden');
-                return;
-            }
-
-            container.classList.remove('hidden');
-            slidesContainer.style.transform = `translateX(0)`;
-
-            // Render slides
-            banners.forEach((banner, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'w-full flex-shrink-0 h-full relative cursor-pointer';
-                slide.onclick = () => openDayModal(banner.date, data); // Click banner to open day
-                
-                slide.innerHTML = `
-                    <img src="${banner.url}" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 md:p-6 text-white pt-10">
-                        <div class="font-bold text-lg md:text-2xl drop-shadow-sm">${banner.caption}</div>
-                        <div class="text-xs md:text-sm opacity-90 font-semibold uppercase tracking-wide bg-black/30 inline-block px-2 py-0.5 rounded mt-1 backdrop-blur-sm border border-white/20">${months[data.month]} ${banner.date}</div>
-                    </div>
-                `;
-                slidesContainer.appendChild(slide);
-
-                // Dot
-                const dot = document.createElement('button');
-                dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/80'}`;
-                dot.onclick = (e) => { e.stopPropagation(); goToBannerSlide(index, banners.length); };
-                dotsContainer.appendChild(dot);
-            });
-
-            // Initialize Swipe & Auto-play
-            startBannerAutoPlay(banners.length);
-            
-            // Swipe support (Touch)
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            container.ontouchstart = (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-                stopBannerAutoPlay();
-            };
-            
-            container.ontouchend = (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleBannerSwipe(banners.length, touchStartX, touchEndX);
-                startBannerAutoPlay(banners.length);
-            };
-
-            // Arrow Listeners
-            const prevBtn = document.getElementById('banner-prev');
-            const nextBtn = document.getElementById('banner-next');
-            
-            // Cloning to remove old event listeners if any (though we rebuild the DOM logic, buttons are static)
-            // Actually buttons are static in HTML, so we should assign onclick carefully.
-            // Since this function runs often, we are reassigning onclick.
-            
-            prevBtn.onclick = (e) => {
-                e.stopPropagation();
-                stopBannerAutoPlay();
-                prevBannerSlide(banners.length);
-                startBannerAutoPlay(banners.length);
-            };
-            nextBtn.onclick = (e) => {
-                e.stopPropagation();
-                stopBannerAutoPlay();
-                nextBannerSlide(banners.length);
-                startBannerAutoPlay(banners.length);
-            };
-        }
-
-        function updateBannerSlidePosition() {
-            const slidesContainer = document.getElementById('banner-slides');
-            slidesContainer.style.transform = `translateX(-${bannerCurrentIndex * 100}%)`;
-            
-            // Update dots
-            const dots = document.getElementById('banner-dots').children;
-            Array.from(dots).forEach((dot, idx) => {
-                if (idx === bannerCurrentIndex) {
-                    dot.className = 'w-2 h-2 rounded-full bg-white w-6 transition-all duration-300';
-                } else {
-                    dot.className = 'w-2 h-2 rounded-full bg-white/50 transition-all duration-300 hover:bg-white/80';
-                }
-            });
-        }
-
-        function goToBannerSlide(index, total) {
-            bannerCurrentIndex = index;
-            updateBannerSlidePosition();
-            stopBannerAutoPlay();
-            startBannerAutoPlay(total);
-        }
-
-        function nextBannerSlide(total) {
-            bannerCurrentIndex = (bannerCurrentIndex + 1) % total;
-            updateBannerSlidePosition();
-        }
-
-        function prevBannerSlide(total) {
-            bannerCurrentIndex = (bannerCurrentIndex - 1 + total) % total;
-            updateBannerSlidePosition();
-        }
-
-        function startBannerAutoPlay(total) {
-            clearInterval(bannerInterval);
-            if(total > 1) {
-                bannerInterval = setInterval(() => {
-                    nextBannerSlide(total);
-                }, 4000);
-            }
-        }
-
-        function stopBannerAutoPlay() {
-            clearInterval(bannerInterval);
-        }
-
-        function handleBannerSwipe(total, startX, endX) {
-            if (endX < startX - 50) nextBannerSlide(total);
-            if (endX > startX + 50) prevBannerSlide(total);
-        }
-
-        function toggleSeasonDescription(btn, event) {
-            event.stopPropagation();
-            const card = btn.closest('.season-ui-card');
-            if (!card) return;
-            
-            const desc = card.querySelector('.season-desc-container');
-            const icon = btn.querySelector('.season-toggle-icon') || btn.querySelector('i');
-            
-            if (desc) {
-                desc.classList.toggle('hidden');
-                if (icon) {
-                    if (desc.classList.contains('hidden')) {
-                         icon.classList.remove('fa-chevron-up');
-                         icon.classList.add('fa-chevron-down');
-                    } else {
-                         icon.classList.remove('fa-chevron-down');
-                         icon.classList.add('fa-chevron-up');
-                    }
-                }
-            }
-        }
-
-        function renderCalendarGrid(data) {
-            const grid = document.getElementById('calendar-grid');
-            const headerRow = document.getElementById('grid-header');
+        function renderRetroGrid(data) {
+            const headerRow = document.getElementById('retro-grid-header');
+            const grid = document.getElementById('retro-calendar-days');
             const currentLang = appState.config.language || 'en';
             const localizedDays = langData[currentLang] ? langData[currentLang].days : langData.en.days;
-            const englishDays = langData.en.days; // English reference for dual mode
+            const englishDays = langData.en.days;
 
             headerRow.innerHTML = '';
-            
             localizedDays.forEach((day, index) => {
                 const isSunday = index === 0;
                 const div = document.createElement('div');
-                
-                // SMART FONT SIZING LOGIC - UPDATED
-                let textSizeClass = 'text-sm md:text-base'; // Default (English/Hindi)
-                
-                if (currentLang !== 'en' && currentLang !== 'hi') {
-                   // Regional languages (Odia, Bengali, Marathi, etc.)
-                   textSizeClass = 'text-[14px] md:text-base'; 
-                   
-                   // Specific Check for Wide Scripts (Malayalam, Kannada, Telugu)
-                   if (['ml', 'kn', 'te'].includes(currentLang)) {
-                       textSizeClass = 'text-[11px] md:text-sm leading-tight tracking-normal';
-                   }
-                   // Specific Check for Tamil
-                   else if (currentLang === 'ta') {
-                       textSizeClass = 'text-[9px] md:text-sm leading-tight tracking-normal';
-                   }
-                }
-                
-                // Added flex-col to stack items vertically
-                // ADDED: min-w-[3rem] md:min-w-[4rem] and py-3 for increased height/width
-                div.className = `w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 ${isSunday ? 'text-red-600' : 'text-gray-600'}`;
+                div.className = `weekday ${isSunday ? 'sunday' : ''}`;
                 
                 if (currentLang === 'en') {
-                     // English Mode: Just show the day name
-                     const span = document.createElement('span');
-                     span.className = textSizeClass;
-                     span.innerText = day;
-                     div.appendChild(span);
+                    div.innerHTML = `<span class="day-name-en">${day}</span>`;
                 } else {
-                     // Regional Mode: Show Regional + English
-                     // Top: Regional Name
-                     const regionalSpan = `<span class="${textSizeClass} leading-none mb-0.5">${day}</span>`;
-                     
-                     // Bottom: English Name (Smaller, Title Case)
-                     const engDay = englishDays[index];
-                     const titleCaseEng = engDay.charAt(0) + engDay.slice(1).toLowerCase();
-                     const englishSpan = `<span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">${titleCaseEng}</span>`;
-                     
-                     div.innerHTML = regionalSpan + englishSpan;
+                    div.innerHTML = `<span class="day-name-en">${englishDays[index].substring(0,3).toUpperCase()}</span><span class="day-name-od odia-font">${day}</span>`;
                 }
-                
-                div.title = day; 
                 headerRow.appendChild(div);
             });
 
@@ -2801,315 +2980,134 @@ The word "Nua" means new and "Khai" means food.
             const firstDay = new Date(data.year, data.month, 1).getDay();
             const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
             const today = new Date();
+
             for (let i = 0; i < firstDay; i++) {
                 const cell = document.createElement('div');
-                cell.className = 'h-16 md:h-32 bg-gray-50 rounded';
+                cell.className = 'date-cell empty';
                 grid.appendChild(cell);
             }
+
             for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${data.year}-${data.month}-${d}`;
                 const isSunday = new Date(data.year, data.month, d).getDay() === 0;
                 const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
-                const dateKey = `${data.year}-${data.month}-${d}`;
-                
-                const detailsList = appState.details[dateKey];
-                // Use first detail for grid preview
-                const detail = (detailsList && Array.isArray(detailsList) && detailsList.length > 0) ? detailsList[0] : (detailsList && !Array.isArray(detailsList) ? detailsList : null);
                 
                 const cell = document.createElement('div');
+                cell.className = `date-cell ${isSunday ? 'is-sunday' : ''} ${isToday ? 'is-today' : ''}`;
                 
-                // Determine Background Class (Mutually Exclusive)
-                let bgClass = 'bg-white';
-                if (isSunday) bgClass = 'bg-red-50';
+                cell.onclick = () => {
+                     // Visual Feedback
+                     document.querySelectorAll('.date-cell').forEach(c => c.style.backgroundColor = 'transparent');
+                     cell.style.backgroundColor = 'rgba(62, 39, 35, 0.1)';
+                     cell.classList.remove('pressed-anim');
+                     void cell.offsetWidth;
+                     cell.classList.add('pressed-anim');
+                     openDayModal(d, data);
+                };
 
-                // Determine primary event
-                const dayEvents = data.events.filter(e => e.date === d);
-                let primaryEvent = null;
-                if (dayEvents.length > 0) {
-                    if (dayEvents.some(e => e.symbol === '!')) primaryEvent = '!';
-                    else if (dayEvents.some(e => e.symbol === '^')) primaryEvent = '^';
-                    else if (dayEvents.some(e => e.symbol === '*')) primaryEvent = '*';
-                    else if (dayEvents.some(e => e.symbol === '>')) primaryEvent = '>';
-                }
+                const numEn = `<span class="num-en">${d}</span>`;
+                // Force Odia Numeral for secondary display
+                const numOd = `<span class="num-od odia-font">${toNativeNum(d, 'or')}</span>`;
+                cell.innerHTML = numEn + numOd;
 
-                if (primaryEvent && !isToday) {
-                    if (primaryEvent === '!') bgClass = 'bg-red-100';
-                    else if (primaryEvent === '^') bgClass = 'bg-green-100';
-                    else if (primaryEvent === '*') bgClass = 'bg-blue-100';
-                    else if (primaryEvent === '>') bgClass = 'bg-gray-100';
-                }
-
-                if (detail && detail.gridBgUrl) bgClass = 'bg-white'; // Reset if image exists
-
-                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative ${bgClass} hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
-                
-                if (detail && detail.gridBgUrl) {
-                    const bgUrl = resolveImageUrls(detail.gridBgUrl);
-                    cell.classList.add('has-bg-image');
-                    cell.innerHTML += `<div class="grid-cell-bg-wrapper"><img src="${bgUrl}" class="grid-cell-bg-img"><div class="grid-cell-overlay"></div></div>`;
-                }
-                cell.onclick = () => openDayModal(d, data);
-                // Note: bg-red-50 for Sunday is already handled in bgClass logic
-                if (isToday) cell.classList.add('today-glow', 'border-orange-400');
-
-                const contentWrapper = document.createElement('div');
-                contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full items-center justify-center';
-                
-                const dateNum = document.createElement('span');
-                dateNum.className = `text-lg md:text-2xl font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'}`;
-                if (isToday) dateNum.classList.add('text-deepred', 'underline');
-                dateNum.innerText = toNativeNum(d, currentLang);
-                contentWrapper.appendChild(dateNum);
-
-                // --- Tithi Icon Logic ---
+                // Markers (Moon)
                 const dateObj = new Date(data.year, data.month, d);
                 const tithiInfo = calculateTithi(dateObj);
-                
-                let iconHtml = '';
-                if (tithiInfo.index === 14) { // Purnima
-                    iconHtml = `<i class="fa-solid fa-circle text-amber-400 text-xs md:text-base absolute top-0 right-0 p-0.5 drop-shadow-md" title="Purnima"></i>`;
-                } else if (tithiInfo.index === 29) { // Amavasya
-                    iconHtml = `<i class="fa-solid fa-circle text-black text-xs md:text-base absolute top-0 right-0 p-0.5" title="Amavasya"></i>`;
-                } else if (tithiInfo.index === 10 || tithiInfo.index === 25) { // Ekadashi (Shukla=10, Krishna=25)
-                    iconHtml = `<i class="fa-solid fa-moon text-indigo-400 text-[10px] md:text-sm absolute top-0 right-0 p-0.5" title="Ekadashi"></i>`;
+                if (tithiInfo.index === 14) {
+                    cell.innerHTML += `<div class="marker purnima" title="Purnima"></div>`;
+                } else if (tithiInfo.index === 29) {
+                    cell.innerHTML += `<div class="marker amavasya" title="Amavasya"></div>`;
+                } else if (data.events.some(e => e.date === d && e.symbol === '!')) {
+                     // Festival Marker
+                     cell.innerHTML += `<div class="marker sankranti" title="Festival"></div>`;
                 }
                 
-                if (iconHtml) {
-                    const iconSpan = document.createElement('span');
-                    iconSpan.innerHTML = iconHtml;
-                    contentWrapper.appendChild(iconSpan);
-                }
-                // ------------------------
-
-                cell.appendChild(contentWrapper);
                 grid.appendChild(cell);
             }
         }
 
-        function renderPanchang(data) {
-            const pillsContainer = document.getElementById('panchang-pills');
-
-            const locContainer = document.getElementById('location-btn-container');
-            if (locContainer) {
-                if (appState.config.location) {
-                     const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
-                     locContainer.innerHTML = `<div class="text-center"><div class="text-xs text-green-600 font-bold mb-1"><i class="fa-solid fa-check-circle"></i> ${locName}</div><button id="btn-location" onclick="getUserLocation()" class="text-xs text-gray-500 hover:text-deepred underline">Update Location</button></div>`;
-                } else {
-                     locContainer.innerHTML = `<button id="btn-location" onclick="getUserLocation()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 px-4 rounded-full shadow-sm border border-gray-300 transition flex items-center gap-2"><i class="fa-solid fa-location-crosshairs text-red-500"></i> Use My Location</button>`;
-                }
-            }
-
-            const list = document.getElementById('panchang-list');
-            pillsContainer.innerHTML = '';
+        function renderRetroFestivals(data) {
+            const list = document.getElementById('retro-festival-list');
             list.innerHTML = '';
             
-            // 1. Display Season (Ritu)
-            const seasonIndex = getSeasonIndex(data.month);
-            const currentLang = appState.config.language || 'en';
-            const langObj = langData[currentLang] || langData['en'];
-            const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
-            const rawSeasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex]) 
-                               ? appState.customSeasonDescriptions[seasonIndex] 
-                               : (langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "");
-            const seasonDescHtml = formatSeasonDescription(rawSeasonDesc);
+            // Filter important events
+            const events = data.events.filter(e => ['!', '^', '*'].includes(e.symbol)).sort((a, b) => a.date - b.date);
             
-            if (seasonName) {
-                const config = seasonUIConfig[seasonIndex] || seasonUIConfig[0];
-                const cardDiv = document.createElement('div');
-                
-                // Using new UI Classes
-                cardDiv.className = "season-ui-card group"; 
-                cardDiv.id = "seasonCard";
-                cardDiv.onclick = cycleSeasonCard;
-                cardDiv.dataset.index = seasonIndex;
-                
-                cardDiv.innerHTML = `
-                    <div class="season-ui-icon-container" id="seasonIcon" style="transform: scale(1) rotate(0deg); opacity: 1;">
-                        ${config.icon}
-                    </div>
-                    <div class="season-ui-content w-full">
-                        <div class="flex justify-between items-start w-full">
-                            <div class="flex flex-col">
-                                <span class="season-ui-label">Season</span>
-                                <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
-                            </div>
-                            <button onclick="toggleSeasonDescription(this, event)" class="md:hidden text-gray-400 hover:text-gray-600 p-2 -mr-2 -mt-2 transition-transform active:scale-95 focus:outline-none">
-                                <i class="fa-solid fa-chevron-down text-sm season-toggle-icon"></i>
-                            </button>
-                        </div>
-                        <div class="season-desc-container mt-3 text-[11px] md:text-xs text-gray-600 leading-relaxed hidden md:block w-full border-t md:border-t-0 border-gray-100 pt-2 md:pt-1 font-sans">
-                            ${seasonDescHtml}
-                        </div>
-                    </div>
-                `;
-                list.appendChild(cardDiv);
+            if (events.length === 0) {
+                list.innerHTML = '<li style="justify-content: center; font-style: italic; opacity: 0.6;">No major festivals</li>';
+                return;
             }
 
-            // 2. Calculated Tithi (for the month view)
-            const today = new Date();
-            let targetDate;
-            if (data.month === today.getMonth() && data.year === today.getFullYear()) {
-                targetDate = today;
-            } else {
-                targetDate = new Date(data.year, data.month, 1);
-            }
-            const tithiInfo = calculateTithi(targetDate);
-            
-            const tithiDiv = document.createElement('div');
-            tithiDiv.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-            tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
-            list.appendChild(tithiDiv);
-
-            if (Object.keys(data.panchang).length === 0) { 
-                // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>'; 
-            }
-            
-            const iconMap = { 'tithi': 'fa-moon', 'nakshatra': 'fa-star', 'yoga': 'fa-bahai', 'karana': 'fa-hourglass-half', 'sunrise': 'fa-sun', 'sunset': 'fa-cloud-sun', 'month': 'fa-calendar' };
-            
-            // Calculate Sunrise/Sunset if location exists
-            let calculatedPanchang = { ...data.panchang };
-            
-            if (appState.config.location && SunCalc) {
-                // Use today's date or 1st of month for the display
-                const today = new Date();
-                let calcDate;
-                if (data.month === today.getMonth() && data.year === today.getFullYear()) {
-                    calcDate = today;
-                } else {
-                    calcDate = new Date(data.year, data.month, 1);
-                }
-                
-                const times = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
-                if (times.sunrise && times.sunset) {
-                    const fmt = (d) => {
-                        let h = d.getHours();
-                        let m = d.getMinutes();
-                        const ampm = h >= 12 ? 'PM' : 'AM';
-                        h = h % 12;
-                        h = h ? h : 12; 
-                        m = m < 10 ? '0'+m : m;
-                        return `${h}:${m} ${ampm}`;
-                    };
-                    calculatedPanchang['Sunrise'] = fmt(times.sunrise) + " (GPS)";
-                    calculatedPanchang['Sunset'] = fmt(times.sunset) + " (GPS)";
-                }
-            }
-            
-            for (const [key, value] of Object.entries(calculatedPanchang)) {
-
-                const lowerKey = key.toLowerCase();
-                let iconClass = iconMap[lowerKey] || 'fa-circle-info';
-                if (lowerKey === 'sunrise') {
-                    const pill = document.createElement('div');
-                    pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
-                    pillsContainer.appendChild(pill);
-                } else if (lowerKey === 'sunset') {
-                    const pill = document.createElement('div');
-                    pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
-                    pillsContainer.appendChild(pill);
-                } else {
-                    const li = document.createElement('div');
-                    li.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${key}:</span> <span class="text-gray-800 font-medium text-right">${value}</span>`;
-                    list.appendChild(li);
-                }
-            }
-        }
-
-        function renderFestivals(data) {
-            const filterContainer = document.getElementById('festival-filters');
-            filterContainer.innerHTML = '';
-            const currentLang = appState.config.language || 'en';
-            const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
-            const filters = [ { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' } ];
-            filters.forEach(f => {
-                const isActive = activeFilters.has(f.id);
-                const btn = document.createElement('button');
-                let baseClass = `filter-btn px-3 md:px-4 py-1 md:py-1.5 rounded-full border flex items-center gap-1.5 md:gap-2 text-xs md:text-sm font-bold font-oriya whitespace-nowrap transition-all duration-200 `;
-                if (f.color === 'red') { baseClass += isActive ? 'bg-red-50 border-red-400 text-red-700 shadow-sm ring-1 ring-red-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-red-50 hover:border-red-300 hover:text-red-400 hover:grayscale-0 hover:opacity-100'; } 
-                else if (f.color === 'green') { baseClass += isActive ? 'bg-green-50 border-green-400 text-green-700 shadow-sm ring-1 ring-green-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-green-50 hover:border-green-300 hover:text-green-400 hover:grayscale-0 hover:opacity-100'; } 
-                else if (f.color === 'blue') { baseClass += isActive ? 'bg-blue-50 border-blue-400 text-blue-700 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 hover:grayscale-0 hover:opacity-100'; }
-                btn.className = baseClass;
-                btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
-                btn.onclick = () => toggleFilter(f.id);
-                filterContainer.appendChild(btn);
-            });
-            const list = document.getElementById('festival-list');
-            list.innerHTML = '';
-            
-            list.className = "space-y-2 text-sm"; 
-            
-            const filteredEvents = data.events.filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*') && activeFilters.has(e.symbol)).sort((a, b) => a.date - b.date);
-            if (filteredEvents.length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-center py-4">No events found.</li>'; return; }
-            filteredEvents.forEach(ev => {
+            events.forEach(ev => {
                 const li = document.createElement('li');
-                li.className = "flex gap-2 items-start p-1 rounded hover:bg-gray-50 transition cursor-pointer";
+                // Use locName if available, else engName
+                const name = ev.locName || ev.engName;
+                li.innerHTML = `<span>${name}</span> <span>${ev.date}</span>`;
                 li.onclick = () => openDayModal(ev.date, data);
-                let badgeColor = "bg-gray-500";
-                if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
-                const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
-                li.innerHTML = dateBadge + content;
+                li.style.cursor = 'pointer';
                 list.appendChild(li);
             });
         }
 
-        function toggleFilter(symbol) {
-            if (activeFilters.has(symbol)) activeFilters.delete(symbol); else activeFilters.add(symbol);
-            render(); 
+        function renderRetroPanchang(data) {
+            const list = document.getElementById('retro-panchang-list');
+            list.innerHTML = '';
+            
+            // Tithi Today
+            const today = new Date();
+            let targetDate = (data.month === today.getMonth() && data.year === today.getFullYear()) ? today : new Date(data.year, data.month, 1);
+            const tithiInfo = calculateTithi(targetDate);
+            
+            list.innerHTML += `<li><span>Tithi (${targetDate.getDate()})</span> <span>${tithiInfo.tithi}</span></li>`;
+            list.innerHTML += `<li><span>Paksha</span> <span>${tithiInfo.paksha}</span></li>`;
+
+            // Season
+            const seasonIndex = getSeasonIndex(data.month);
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+            const seasonName = langObj.indianSeasons[seasonIndex].split('(')[0].trim();
+            list.innerHTML += `<li><span>Season</span> <span>${seasonName}</span></li>`;
+
+            // Manual Panchang Data
+             for (const [key, value] of Object.entries(data.panchang)) {
+                  list.innerHTML += `<li><span>${key}</span> <span>${value}</span></li>`;
+             }
+
+             // Sunrise/Sunset (Calculated)
+             if (appState.config.location && SunCalc) {
+                const times = SunCalc.getTimes(targetDate, appState.config.location.lat, appState.config.location.lng);
+                if (times.sunrise) {
+                     const fmt = (d) => { let h = d.getHours() % 12 || 12; let m = d.getMinutes().toString().padStart(2,'0'); return `${h}:${m} ${d.getHours()>=12?'PM':'AM'}`; };
+                     list.innerHTML += `<li><span>Sunrise</span> <span>${fmt(times.sunrise)}</span></li>`;
+                     list.innerHTML += `<li><span>Sunset</span> <span>${fmt(times.sunset)}</span></li>`;
+                }
+             }
         }
 
-        function renderHoroscope(data) {
-            const grid = document.getElementById('horoscope-grid');
+        function renderRetroHoroscope(data) {
+            const grid = document.getElementById('retro-horoscope-grid');
             grid.innerHTML = '';
-            // Update grid to 3 columns for circle layout (3D Circle Style)
-            grid.className = "grid grid-cols-3 gap-y-6 gap-x-2 p-1";
-            
-            const currentLang = appState.config.language || 'en';
-            const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
-            
+
             const signKeys = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 
-            signKeys.forEach(signKey => {
-                // Find prediction text if available in data.horoscope
-                const predictionItem = data.horoscope.find(h => h.sign.toLowerCase() === signKey);
-                const predictionText = predictionItem ? predictionItem.text : "No specific prediction available for today.";
-
-                const btn = document.createElement('button');
-                let iconHtml = '';
+            signKeys.forEach(sign => {
+                const prediction = data.horoscope.find(h => h.sign.toLowerCase() === sign);
+                const text = prediction ? prediction.text : "Forecast unavailable.";
                 
-                // Check for custom icon
-                const details = appState.horoscopeDetails[signKey];
-                if (details && details.icon) {
-                    const iconUrl = resolveImageUrls(details.icon);
-                    // Image fits inside the circle
-                    iconHtml = `<img src="${iconUrl}" class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-300">`;
-                } else {
-                    let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
-                    // Colored icons to look better in white circle
-                    // Using purple-600 to match theme
-                    iconHtml = `<i class="${iconClass} text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i>`;
-                }
-
-                const localizedName = localizedHoroscopes[signKey] || signKey.charAt(0).toUpperCase() + signKey.slice(1);
+                const btn = document.createElement('div');
+                btn.className = "flex flex-col items-center p-1 cursor-pointer hover:opacity-75 transition";
                 
-                // 3D Circle Style Layout
-                // Button container
-                btn.className = "flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200";
+                const iconClass = zodiacIcons[sign];
+                btn.innerHTML = `<i class="${iconClass} text-xl" style="color: var(--ink-secondary);"></i><span style="font-size: 0.6rem; text-transform: uppercase; margin-top: 2px; color: var(--ink-primary);">${sign.substring(0,3)}</span>`;
+                btn.onclick = () => openHoroscopeModal(sign, text);
                 
-                // Circle Wrapper with Shadow (3D effect)
-                const circleClass = "w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5";
-                
-                const innerContent = `<div class="${circleClass}">${iconHtml}</div>`;
-                const labelHtml = `<span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">${localizedName}</span>`;
-                
-                btn.innerHTML = innerContent + labelHtml;
-                
-                const displaySign = signKey.charAt(0).toUpperCase() + signKey.slice(1);
-                btn.onclick = () => openHoroscopeModal(displaySign, predictionText);
                 grid.appendChild(btn);
             });
+        }
+
+        function toggleFilter(symbol) {
+             if (activeFilters.has(symbol)) activeFilters.delete(symbol); else activeFilters.add(symbol);
+             render();
         }
 
         function formatSeasonDescription(desc) {
