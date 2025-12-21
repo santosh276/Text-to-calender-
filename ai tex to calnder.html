@@ -307,6 +307,19 @@
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
 
+    <!-- APP LOADER -->
+    <div id="app-loader" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#fdfbf7] transition-opacity duration-500">
+        <div id="loader-content" class="flex flex-col items-center">
+            <div class="relative w-24 h-24 mb-6">
+                <div class="absolute inset-0 border-4 border-orange-200 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-orange-500 rounded-full border-t-transparent" style="animation: spin 1s linear infinite;"></div>
+                <i class="fa-solid fa-om absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl text-orange-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 animate-pulse">Loading...</h2>
+            <p class="text-gray-500 mt-2 text-sm">Initializing application</p>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="bg-deepred text-white px-4 py-3 shadow-lg flex flex-wrap justify-between items-center z-20 shrink-0 gap-3 relative z-50">
         <div class="flex items-center gap-3">
@@ -1997,7 +2010,7 @@ The word "Nua" means new and "Khai" means food.
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
             try {
-                // Add timestamp to bypass caching
+                // STRICT DIRECT FETCH (NO PROXY for GitHub)
                 const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
                 
                 const response = await fetch(fetchUrl);
@@ -2022,6 +2035,7 @@ The word "Nua" means new and "Khai" means food.
             } catch (e) {
                 console.error("GitHub Sync Error:", e);
                 showToast("GitHub Sync Error: " + e.message);
+                throw e; // Propagate error for Init Retry Logic
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
@@ -2042,7 +2056,7 @@ The word "Nua" means new and "Khai" means food.
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
             try {
-                // Add timestamp to bypass browser caching
+                // STRICT PROXY USAGE (Google Docs needs Proxy)
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
                 
                 const response = await fetch(proxyUrl);
@@ -2086,6 +2100,7 @@ The word "Nua" means new and "Khai" means food.
             } catch (e) {
                 console.error("Live Sync Error:", e);
                 showToast("Sync Error: " + e.message);
+                throw e; // Propagate error for Init Retry Logic
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
@@ -2121,24 +2136,51 @@ The word "Nua" means new and "Khai" means food.
             });
         }
 
-        function initAutoSync() {
-            // STEP 2: Instant Initialization from Cache
+        async function initApp() {
+            const loader = document.getElementById('app-loader');
+
+            // Helper: Determine Fetch Method based on URL (Strict Logic)
+            const performSync = async (url) => {
+                 if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                     await fetchGitHubData(url); // Direct
+                 } else {
+                     await fetchLiveDoc(url); // Proxy
+                 }
+            };
+
+            // Helper: Display Retry UI inside Loader
+            const showRetryUI = () => {
+                if (!loader) return;
+                const content = document.getElementById('loader-content');
+                if (content) {
+                    content.innerHTML = `
+                        <div class="flex flex-col items-center text-center p-6">
+                            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                                <i class="fa-solid fa-wifi text-3xl text-red-500"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800 mb-2">Connection Failed</h2>
+                            <p class="text-gray-500 mb-6 max-w-xs">Could not load calendar data. Please check your internet and try again.</p>
+                            <button onclick="location.reload()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-bold shadow-lg transition transform active:scale-95 flex items-center gap-2">
+                                <i class="fa-solid fa-rotate-right"></i> Retry
+                            </button>
+                        </div>`;
+                }
+                loader.classList.remove('opacity-0'); // Ensure visible
+            };
+
+            // STEP 1: Check Cache (Fastest)
             if (loadStateFromCache()) {
-                console.log("Instant Initialization from Cache!");
+                console.log("Warm Start: Loaded from Cache");
                 
-                // Setup UI based on Mode
+                // Handle UI Modes
                 if (window.exportedData) {
-                    // App Mode
+                    // App Mode UI
                     const editorPanel = document.getElementById('editor-panel');
                     if (editorPanel) editorPanel.style.display = 'none';
-                    
                     const previewPanel = document.getElementById('preview-container');
-                    if (previewPanel) { 
-                        previewPanel.classList.remove('md:w-[65%]'); 
-                        previewPanel.classList.add('w-full'); 
-                    }
+                    if (previewPanel) { previewPanel.classList.remove('md:w-[65%]'); previewPanel.classList.add('w-full'); }
                 } else {
-                    // Editor Mode
+                    // Editor Mode UI: Sync Editor content with Cache if needed
                     const editor = document.getElementById('editor');
                     if (editor) {
                         const savedText = localStorage.getItem('panchang_autosave_text');
@@ -2154,90 +2196,63 @@ The word "Nua" means new and "Khai" means food.
                     }
                 }
                 
-                // Immediate Render
-                setTimeout(() => {
-                    render();
-                    const loader = document.getElementById('app-loader');
-                    if (loader) loader.remove();
-                    
-                    // Background Sync
-                    if (appState.config && appState.config.liveUrl) {
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
-                    }
-                }, 0);
+                render();
+                if(loader) loader.remove();
                 
+                // Background Sync
+                if (appState.config && appState.config.liveUrl) {
+                    performSync(appState.config.liveUrl).catch(e => console.log("Background sync failed (silent)", e));
+                }
                 return;
             }
 
-            // Fallback to Legacy Logic
-            // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
-            if (window.exportedData) {
+            // STEP 2: Cold Start Logic
+
+            // Check Mode
+            const isAppMode = !!window.exportedData;
+
+            if (isAppMode) {
                 appState = window.exportedData;
                 
-                // Hide Editor Panel
+                // Adjust UI for App Mode
                 const editorPanel = document.getElementById('editor-panel');
                 if (editorPanel) editorPanel.style.display = 'none';
-                
                 const previewPanel = document.getElementById('preview-container');
-                if (previewPanel) { 
-                    previewPanel.classList.remove('md:w-[65%]'); 
-                    previewPanel.classList.add('w-full'); 
-                }
+                if (previewPanel) { previewPanel.classList.remove('md:w-[65%]'); previewPanel.classList.add('w-full'); }
 
-                // 2. CHECK LOCAL STORAGE FIRST (Fast Load)
+                // Try Local Storage First
                 const cachedText = localStorage.getItem('panchang_autosave_text');
-                const loader = document.getElementById('app-loader');
-
                 if (cachedText) {
-                    console.log("Restoring from Local Storage...");
-                    parseInput(cachedText); // This populates appState.monthsData, etc.
-                    render();
-                    
-                    // Remove Loader immediately
-                    if (loader) {
-                        loader.style.opacity = '0';
-                        setTimeout(() => loader.remove(), 500);
-                    }
-                    
-                    // Background Sync (Update if changed)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("Background syncing...");
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
-                    }
-                } 
-                else {
-                    // 3. NO LOCAL DATA -> FETCH FROM CLOUD (First Run)
-                    if (appState.config && appState.config.liveUrl) {
-                        console.log("No local data. Fetching from Cloud...");
-                        const url = appState.config.liveUrl;
-                        const fetchPromise = (url.includes('github.com') || url.includes('raw.githubusercontent.com')) ? fetchGitHubData(url) : fetchLiveDoc(url);
-                        
-                        fetchPromise.then(() => {
-                            // Remove Loader AFTER fetch
-                            if (loader) {
-                                loader.style.opacity = '0';
-                                setTimeout(() => loader.remove(), 500);
-                            }
-                        });
-                    } else {
-                        // No Data, No URL -> Just Remove Loader (Empty App)
-                        if (loader) loader.remove();
-                        render();
-                    }
+                     console.log("Cold Start: Loaded from LocalStorage");
+                     parseInput(cachedText);
+                     render();
+                     if(loader) loader.remove();
+
+                     // Background Sync
+                     if (appState.config && appState.config.liveUrl) {
+                         performSync(appState.config.liveUrl).catch(e => console.log("Background sync failed", e));
+                     }
+                } else {
+                     // NO LOCAL DATA -> CRITICAL FETCH
+                     if (appState.config && appState.config.liveUrl) {
+                         console.log("No local data. Fetching from Cloud...");
+                         try {
+                             await performSync(appState.config.liveUrl);
+                             if(loader) loader.remove();
+                         } catch (e) {
+                             console.error("Initial Sync Failed", e);
+                             // DO NOT REMOVE LOADER. SHOW RETRY UI.
+                             showRetryUI();
+                         }
+                     } else {
+                         // Empty App (No URL configured)
+                         if(loader) loader.remove();
+                         render();
+                     }
                 }
-            } 
-            else {
-                // EDITOR MODE (Normal)
+            } else {
+                // EDITOR MODE
+                const editor = document.getElementById('editor');
                 if (editor) {
                     let timeout;
                     editor.addEventListener('input', (e) => { 
@@ -2247,25 +2262,25 @@ The word "Nua" means new and "Khai" means food.
                         timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
                     });
 
-                    // Initial parse
                     parseInput(editor.value);
                     
-                    // Check if we need to sync
+                    // Initial Sync in Editor
                     if (appState.config && appState.config.liveUrl) {
-                        const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
-                        } else {
-                            fetchLiveDoc(url);
-                        }
+                         try {
+                             await performSync(appState.config.liveUrl);
+                             if(loader) loader.remove();
+                         } catch (e) {
+                             console.error("Editor Initial Sync Failed", e);
+                             // Show Retry UI even in Editor Mode as per user request
+                             showRetryUI();
+                         }
+                    } else {
+                        if(loader) loader.remove();
                     }
                 }
             }
         }
         
-        // Start Up
-        initAutoSync();
-
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -3630,6 +3645,9 @@ The word "Nua" means new and "Khai" means food.
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
+
+        // Start Up
+        initApp();
     </script>
 </body>
     </html>
