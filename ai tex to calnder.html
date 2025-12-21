@@ -309,10 +309,10 @@
         :root {
             --paper-base: #f3eacb;
             --paper-dark: #e6d5a7;
-            --ink-primary: #3b2f2f; /* Deep Sepia */
-            --ink-secondary: #5d4037;
-            --ink-red: #8a3324; /* Burnt Red */
-            --ink-green: #3d5a3d; /* Muted Forest Green */
+            --ink-primary: #1a120b; /* Much Darker Sepia/Black for Contrast */
+            --ink-secondary: #4e342e; /* Darker Brown */
+            --ink-red: #b91c1c; /* Deeper, more vibrant Red */
+            --ink-green: #1b5e20; /* Darker Forest Green */
             --gold-accent: #b8860b;
 
             --shadow-deep: 4px 4px 8px rgba(46, 30, 20, 0.3), -1px -1px 2px rgba(255, 255, 255, 0.3);
@@ -488,8 +488,8 @@
             margin: 0;
             font-weight: normal;
             color: var(--ink-primary);
-            /* Ink bleed effect */
-            text-shadow: 0.5px 0.5px 0px rgba(59, 47, 47, 0.2);
+            /* Subtler ink bleed effect to avoid blur */
+            text-shadow: 0.25px 0.25px 0px rgba(59, 47, 47, 0.15);
         }
 
         #retro-calendar-view .odia-font {
@@ -530,24 +530,26 @@
         }
 
         #retro-calendar-view .nav-btn {
-            background: none;
+            background: rgba(255,255,255,0.1);
             border: 2px solid var(--ink-secondary);
-            color: var(--ink-secondary);
+            color: var(--ink-primary);
             font-family: 'IM Fell English', serif;
-            font-size: 1.2rem;
+            font-size: 1.4rem; /* Larger touch target */
+            font-weight: bold;
             cursor: pointer;
-            padding: 5px 15px;
-            border-radius: 50% 10% 50% 10%; /* Leaf/Organic shape */
-            transition: all 0.2s ease;
-            box-shadow: 2px 2px 0 rgba(93, 64, 55, 0.2);
+            padding: 8px 18px;
+            border-radius: 50% 20% 50% 20%; /* Organic shape */
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 3px 3px 0 rgba(78, 52, 46, 0.2);
             user-select: none;
             width: auto; height: auto; /* Override tailwind */
         }
 
         #retro-calendar-view .nav-btn:hover {
-            transform: translateY(-1px);
-            background-color: rgba(93, 64, 55, 0.05);
-            color: var(--ink-primary);
+            transform: translateY(-2px);
+            background-color: rgba(93, 64, 55, 0.1);
+            color: var(--ink-red);
+            box-shadow: 4px 4px 0 rgba(78, 52, 46, 0.3);
         }
 
         #retro-calendar-view .nav-btn:active {
@@ -561,54 +563,59 @@
 
         #retro-calendar-view .month-en {
             font-family: 'Cinzel Decorative', cursive;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--ink-primary);
             display: block;
+            line-height: 1.1;
         }
 
         #retro-calendar-view .month-odia {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
             color: var(--ink-green);
+            margin-top: 4px;
         }
 
         /* --- Grid --- */
         #retro-calendar-view .grid-wrapper {
             position: relative;
             z-index: 1;
-            background: rgba(255, 255, 255, 0.2); /* Slight lightening */
+            background: rgba(255, 255, 255, 0.3); /* Higher contrast backing */
             box-shadow: var(--shadow-pressed);
-            padding: 10px;
-            border-radius: 4px;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(78, 52, 46, 0.1);
         }
 
         #retro-calendar-view .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
+            gap: 6px;
         }
 
         /* Weekdays */
         #retro-calendar-view .weekday {
             text-align: center;
-            font-size: 0.8rem;
-            padding: 5px 0;
-            color: var(--ink-secondary);
-            border-bottom: 1px dashed var(--ink-secondary);
-            margin-bottom: 5px;
+            font-size: 0.9rem;
+            padding: 8px 0;
+            color: var(--ink-primary);
+            font-weight: bold;
+            border-bottom: 2px dashed var(--ink-secondary);
+            margin-bottom: 8px;
         }
 
         #retro-calendar-view .weekday.sunday {
             color: var(--ink-red);
-            font-weight: bold;
+            border-bottom-color: var(--ink-red);
         }
 
-        #retro-calendar-view .day-name-en { display: block; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
-        #retro-calendar-view .day-name-od { display: block; font-size: 0.75rem; opacity: 0.8; }
+        #retro-calendar-view .day-name-en { display: block; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
+        #retro-calendar-view .day-name-od { display: block; font-size: 0.85rem; opacity: 0.9; margin-top: 2px;}
 
         /* Dates */
         #retro-calendar-view .date-cell {
-            min-height: 60px;
+            min-height: 70px;
             position: relative;
             background: transparent;
             border: 1px solid transparent;
@@ -617,18 +624,21 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s ease;
-            border-radius: 3px;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-radius: 6px;
         }
 
         #retro-calendar-view .date-cell:hover {
-            background-color: rgba(62, 39, 35, 0.05);
-            border: 1px solid rgba(62, 39, 35, 0.2);
+            background-color: rgba(78, 52, 46, 0.08);
+            border: 1px solid rgba(78, 52, 46, 0.3);
+            transform: scale(1.05);
+            z-index: 5;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         #retro-calendar-view .date-cell:active {
-            box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);
-            transform: scale(0.98);
+            box-shadow: inset 1px 1px 4px rgba(0,0,0,0.15);
+            transform: scale(0.95);
         }
 
         #retro-calendar-view .date-cell.pressed-anim {
@@ -636,17 +646,20 @@
         }
 
         #retro-calendar-view .num-en {
-            font-size: 1.3rem;
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 900;
             color: var(--ink-primary);
             line-height: 1;
+            /* Subtle text shadow for sharpness */
+            text-shadow: 0.5px 0.5px 0 rgba(255,255,255,0.5);
         }
 
         #retro-calendar-view .num-od {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--ink-secondary);
+            font-weight: 600;
             margin-top: 2px;
-            opacity: 0.8;
+            opacity: 1; /* Increased from 0.8 */
         }
 
         /* State: Sunday */
@@ -657,10 +670,11 @@
 
         /* State: Today */
         #retro-calendar-view .date-cell.is-today {
-            /* Stamp effect */
+            /* Hand-drawn circle effect */
             border: 2px solid var(--ink-primary);
-            border-radius: 50% 40% 60% 30% / 40% 50% 60% 50%; /* Imperfect circle */
-            background-color: rgba(184, 134, 11, 0.1);
+            border-radius: 55% 45% 60% 40% / 45% 55% 40% 60%;
+            background-color: rgba(184, 134, 11, 0.25);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         #retro-calendar-view .date-cell.empty {
