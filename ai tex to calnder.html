@@ -1885,9 +1885,26 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        // --- RETRY UI LOGIC ---
+        function showRetryUI() {
+            const loader = document.getElementById('app-loader');
+            if (loader) {
+                loader.innerHTML = `
+                    <div class="flex flex-col items-center justify-center text-center p-6 bg-white rounded-xl shadow-2xl max-w-sm mx-4">
+                        <i class="fa-solid fa-wifi text-4xl text-gray-400 mb-4"></i>
+                        <h2 class="text-xl font-bold text-gray-700 mb-2">Connection Failed</h2>
+                        <p class="text-gray-500 mb-6 text-sm">Could not load calendar data. Please check your internet connection.</p>
+                        <button onclick="location.reload()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full shadow-md transition transform active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
         // --- NEW: Fetch GitHub Data (Direct) ---
         async function fetchGitHubData(url) {
-            if (!url) return;
+            if (!url) return false;
             
             // UI Feedback (Target specific button if possible, else fallback)
             const syncBtn = document.querySelector('button[onclick="configureGitHubSync()"]');
@@ -1895,7 +1912,7 @@ The word "Nua" means new and "Khai" means food.
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
             try {
-                // Add timestamp to bypass caching
+                // Add timestamp to bypass caching (Strictly Direct Fetch)
                 const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
                 
                 const response = await fetch(fetchUrl);
@@ -1908,20 +1925,22 @@ The word "Nua" means new and "Khai" means food.
 
                 // Update & Save Logic (Shared)
                 updateAppWithFetchedData(cleanText);
+                return true;
 
             } catch (e) {
                 console.error("GitHub Sync Error:", e);
                 showToast("GitHub Sync Error: " + e.message);
+                return false;
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
         }
 
-        // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
+        // 2. The Fetching Logic (Google Docs - Proxy)
         async function fetchLiveDoc(url) {
-            if (!url) return;
+            if (!url) return false;
             
-            // Check if it's actually a GitHub URL that got routed here
+            // STRICT SEPARATION: Redirect GitHub URLs to dedicated function
             if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
                 return fetchGitHubData(url);
             }
@@ -1972,10 +1991,12 @@ The word "Nua" means new and "Khai" means food.
 
                 // Update & Save
                 updateAppWithFetchedData(cleanText);
+                return true;
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
                 showToast("Sync Error: " + e.message);
+                return false;
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
@@ -2010,7 +2031,7 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        function initAutoSync() {
+        function initApp() {
             // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
             if (window.exportedData) {
                 appState = window.exportedData;
@@ -2044,6 +2065,7 @@ The word "Nua" means new and "Khai" means food.
                     if (appState.config && appState.config.liveUrl) {
                         console.log("Background syncing...");
                         const url = appState.config.liveUrl;
+                        // Strict Routing
                         if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
                             fetchGitHubData(url);
                         } else {
@@ -2056,17 +2078,27 @@ The word "Nua" means new and "Khai" means food.
                     if (appState.config && appState.config.liveUrl) {
                         console.log("No local data. Fetching from Cloud...");
                         const url = appState.config.liveUrl;
-                        const fetchPromise = (url.includes('github.com') || url.includes('raw.githubusercontent.com')) ? fetchGitHubData(url) : fetchLiveDoc(url);
                         
-                        fetchPromise.then(() => {
-                            // Remove Loader AFTER fetch
-                            if (loader) {
-                                loader.style.opacity = '0';
-                                setTimeout(() => loader.remove(), 500);
+                        // Strict Logic: Route based on URL type
+                        const isGitHub = (url.includes('github.com') || url.includes('raw.githubusercontent.com'));
+                        const fetchPromise = isGitHub ? fetchGitHubData(url) : fetchLiveDoc(url);
+
+                        fetchPromise.then((success) => {
+                            if (success) {
+                                // SUCCESS -> Remove Loader
+                                if (loader) {
+                                    loader.style.opacity = '0';
+                                    setTimeout(() => loader.remove(), 500);
+                                }
+                            } else {
+                                // FAILURE -> Show Retry UI (Don't remove loader)
+                                console.error("Initial Fetch Failed. Showing Retry UI.");
+                                showRetryUI();
                             }
                         });
                     } else {
                         // No Data, No URL -> Just Remove Loader (Empty App)
+                        // Or should we show a welcome screen? For now, blank app is standard behavior if no content provided.
                         if (loader) loader.remove();
                         render();
                     }
@@ -2082,6 +2114,7 @@ The word "Nua" means new and "Khai" means food.
                     // Check if we need to sync
                     if (appState.config && appState.config.liveUrl) {
                         const url = appState.config.liveUrl;
+                        // Strict Routing
                         if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
                             fetchGitHubData(url);
                         } else {
@@ -2093,7 +2126,7 @@ The word "Nua" means new and "Khai" means food.
         }
         
         // Start Up
-        initAutoSync();
+        initApp();
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
