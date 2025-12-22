@@ -1912,6 +1912,7 @@ The word "Nua" means new and "Khai" means food.
             } catch (e) {
                 console.error("GitHub Sync Error:", e);
                 showToast("GitHub Sync Error: " + e.message);
+                throw e; // Propagate error for Retry UI
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
@@ -1976,6 +1977,7 @@ The word "Nua" means new and "Khai" means food.
             } catch (e) {
                 console.error("Live Sync Error:", e);
                 showToast("Sync Error: " + e.message);
+                throw e; // Propagate error for Retry UI
             } finally {
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
@@ -2010,7 +2012,7 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        function initAutoSync() {
+        function initApp() {
             // 1. Check if we are in "Downloaded App Mode" (window.exportedData exists)
             if (window.exportedData) {
                 appState = window.exportedData;
@@ -2044,10 +2046,14 @@ The word "Nua" means new and "Khai" means food.
                     if (appState.config && appState.config.liveUrl) {
                         console.log("Background syncing...");
                         const url = appState.config.liveUrl;
+
+                        // Strict Fetch Logic
                         if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                            fetchGitHubData(url);
+                            // Direct Fetch for GitHub
+                            fetchGitHubData(url).catch(e => console.warn("Background Sync Failed:", e));
                         } else {
-                            fetchLiveDoc(url);
+                            // Proxy Fetch for Docs
+                            fetchLiveDoc(url).catch(e => console.warn("Background Sync Failed:", e));
                         }
                     }
                 } 
@@ -2056,15 +2062,41 @@ The word "Nua" means new and "Khai" means food.
                     if (appState.config && appState.config.liveUrl) {
                         console.log("No local data. Fetching from Cloud...");
                         const url = appState.config.liveUrl;
-                        const fetchPromise = (url.includes('github.com') || url.includes('raw.githubusercontent.com')) ? fetchGitHubData(url) : fetchLiveDoc(url);
                         
+                        // Determine Fetch Method
+                        let fetchPromise;
+                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                             fetchPromise = fetchGitHubData(url);
+                        } else {
+                             fetchPromise = fetchLiveDoc(url);
+                        }
+
+                        // Handle Success/Failure
                         fetchPromise.then(() => {
-                            // Remove Loader AFTER fetch
+                            // Success: Remove Loader
                             if (loader) {
                                 loader.style.opacity = '0';
                                 setTimeout(() => loader.remove(), 500);
                             }
+                        }).catch((e) => {
+                            // Failure: Show Retry UI
+                            console.error("Initial Fetch Failed:", e);
+                            if (loader) {
+                                loader.innerHTML = `
+                                    <div class="flex flex-col items-center justify-center text-center p-6">
+                                        <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4 text-red-500 text-3xl shadow-sm">
+                                            <i class="fa-solid fa-wifi"></i>
+                                        </div>
+                                        <h2 class="text-xl font-bold text-gray-800 mb-2">Connection Failed</h2>
+                                        <p class="text-gray-500 mb-6 max-w-xs text-sm">Could not load calendar data. Please check your internet connection.</p>
+                                        <button onclick="location.reload()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform active:scale-95 flex items-center gap-2">
+                                            <i class="fa-solid fa-rotate-right"></i> Retry
+                                        </button>
+                                    </div>
+                                `;
+                            }
                         });
+
                     } else {
                         // No Data, No URL -> Just Remove Loader (Empty App)
                         if (loader) loader.remove();
@@ -2093,7 +2125,7 @@ The word "Nua" means new and "Khai" means food.
         }
         
         // Start Up
-        initAutoSync();
+        initApp();
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
@@ -2127,7 +2159,7 @@ The word "Nua" means new and "Khai" means food.
             console.error("Failed to load config from localStorage", e);
         }
 
-        // Initialization logic moved to initAutoSync()
+        // Initialization logic moved to initApp()
 
         function parseInput(text) {
             const lines = text.split('\n');
