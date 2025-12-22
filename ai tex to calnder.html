@@ -1935,11 +1935,7 @@ The word "Nua" means new and "Khai" means food.
                 saveConfigToStorage();
                 
                 // Fetch immediately to test
-                if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                    fetchGitHubData(url);
-                } else {
-                    fetchLiveDoc(url);
-                }
+                syncFromUrl(url);
                 
                 // Update Settings UI if open
                 const docsToggle = document.getElementById('toggle-sync-docs');
@@ -1980,7 +1976,7 @@ The word "Nua" means new and "Khai" means food.
                 saveConfigToStorage();
                 
                 // Trigger Fetch
-                fetchGitHubData(url);
+                syncFromUrl(url);
                 
                 // Update Settings UI if open
                 const docsToggle = document.getElementById('toggle-sync-docs');
@@ -1998,6 +1994,15 @@ The word "Nua" means new and "Khai" means food.
                 const githubToggle = document.getElementById('toggle-sync-github');
                 if (githubToggle) githubToggle.checked = false;
             }
+        }
+
+        // --- ROUTER: Determine Sync Algorithm ---
+        async function syncFromUrl(url) {
+             if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                 await fetchGitHubData(url); // Direct Algorithm
+             } else {
+                 await fetchLiveDoc(url); // Proxy Algorithm
+             }
         }
 
         // --- NEW: Fetch GitHub Data (Direct) ---
@@ -2045,11 +2050,6 @@ The word "Nua" means new and "Khai" means food.
         async function fetchLiveDoc(url) {
             if (!url) return;
             
-            // Check if it's actually a GitHub URL that got routed here
-            if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                return fetchGitHubData(url);
-            }
-
             // UI Feedback
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
@@ -2139,15 +2139,6 @@ The word "Nua" means new and "Khai" means food.
         async function initApp() {
             const loader = document.getElementById('app-loader');
 
-            // Helper: Determine Fetch Method based on URL (Strict Logic)
-            const performSync = async (url) => {
-                 if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                     await fetchGitHubData(url); // Direct
-                 } else {
-                     await fetchLiveDoc(url); // Proxy
-                 }
-            };
-
             // Helper: Display Retry UI inside Loader
             const showRetryUI = () => {
                 if (!loader) return;
@@ -2201,7 +2192,7 @@ The word "Nua" means new and "Khai" means food.
                 
                 // Background Sync
                 if (appState.config && appState.config.liveUrl) {
-                    performSync(appState.config.liveUrl).catch(e => console.log("Background sync failed (silent)", e));
+                    syncFromUrl(appState.config.liveUrl).catch(e => console.log("Background sync failed (silent)", e));
                 }
                 return;
             }
@@ -2230,14 +2221,14 @@ The word "Nua" means new and "Khai" means food.
 
                      // Background Sync
                      if (appState.config && appState.config.liveUrl) {
-                         performSync(appState.config.liveUrl).catch(e => console.log("Background sync failed", e));
+                         syncFromUrl(appState.config.liveUrl).catch(e => console.log("Background sync failed", e));
                      }
                 } else {
                      // NO LOCAL DATA -> CRITICAL FETCH
                      if (appState.config && appState.config.liveUrl) {
                          console.log("No local data. Fetching from Cloud...");
                          try {
-                             await performSync(appState.config.liveUrl);
+                             await syncFromUrl(appState.config.liveUrl);
                              if(loader) loader.remove();
                          } catch (e) {
                              console.error("Initial Sync Failed", e);
@@ -2267,7 +2258,7 @@ The word "Nua" means new and "Khai" means food.
                     // Initial Sync in Editor
                     if (appState.config && appState.config.liveUrl) {
                          try {
-                             await performSync(appState.config.liveUrl);
+                             await syncFromUrl(appState.config.liveUrl);
                              if(loader) loader.remove();
                          } catch (e) {
                              console.error("Editor Initial Sync Failed", e);
