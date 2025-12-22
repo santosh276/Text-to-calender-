@@ -1817,6 +1817,11 @@ The word "Nua" means new and "Khai" means food.
 
         // --- LIVE GOOGLE DOC SYNC FEATURE ---
 
+        // Helper to detect GitHub URLs
+        function isGitHubUrl(url) {
+            return url.includes('github.com') || url.includes('raw.githubusercontent.com');
+        }
+
         // 1. Configure the Link (User clicks button)
         function configureLiveSync() {
             const currentUrl = appState.config.liveUrl || "";
@@ -1826,7 +1831,7 @@ The word "Nua" means new and "Khai" means food.
                 url = url.trim();
 
                 // GitHub Logic (Redirect to dedicated function if user pastes GitHub here)
-                if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                if (isGitHubUrl(url)) {
                     // Forward to GitHub config flow with this URL pre-filled? 
                     // No, let's just handle it gracefully or warn. 
                     // But to keep it simple and backwards compatible, we can just process it.
@@ -1844,8 +1849,8 @@ The word "Nua" means new and "Khai" means food.
                 appState.config.liveUrl = url;
                 saveConfigToStorage();
                 
-                // Fetch immediately to test
-                if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                // Fetch immediately to test - STRICT ROUTING
+                if (isGitHubUrl(url)) {
                     fetchGitHubData(url);
                 } else {
                     fetchLiveDoc(url);
@@ -1860,7 +1865,7 @@ The word "Nua" means new and "Khai" means food.
 
         // --- NEW: Configure GitHub Sync ---
         function configureGitHubSync() {
-            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'))) ? appState.config.liveUrl : "";
+            const currentUrl = (appState.config.liveUrl && isGitHubUrl(appState.config.liveUrl)) ? appState.config.liveUrl : "";
             let url = prompt("Paste your GitHub File Link (e.g., github.com/.../data.txt):", currentUrl);
             
             if (url) {
@@ -1921,10 +1926,8 @@ The word "Nua" means new and "Khai" means food.
         async function fetchLiveDoc(url) {
             if (!url) return;
             
-            // Check if it's actually a GitHub URL that got routed here
-            if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                return fetchGitHubData(url);
-            }
+            // STRICT SEPARATION: This function is ONLY for Proxy fetching (Google Docs)
+            // GitHub URLs should be routed to fetchGitHubData() by the caller.
 
             // UI Feedback
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
@@ -2044,7 +2047,7 @@ The word "Nua" means new and "Khai" means food.
                     if (appState.config && appState.config.liveUrl) {
                         console.log("Background syncing...");
                         const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                        if (isGitHubUrl(url)) {
                             fetchGitHubData(url);
                         } else {
                             fetchLiveDoc(url);
@@ -2056,7 +2059,7 @@ The word "Nua" means new and "Khai" means food.
                     if (appState.config && appState.config.liveUrl) {
                         console.log("No local data. Fetching from Cloud...");
                         const url = appState.config.liveUrl;
-                        const fetchPromise = (url.includes('github.com') || url.includes('raw.githubusercontent.com')) ? fetchGitHubData(url) : fetchLiveDoc(url);
+                        const fetchPromise = isGitHubUrl(url) ? fetchGitHubData(url) : fetchLiveDoc(url);
                         
                         fetchPromise.then(() => {
                             // Remove Loader AFTER fetch
@@ -2082,7 +2085,7 @@ The word "Nua" means new and "Khai" means food.
                     // Check if we need to sync
                     if (appState.config && appState.config.liveUrl) {
                         const url = appState.config.liveUrl;
-                        if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                        if (isGitHubUrl(url)) {
                             fetchGitHubData(url);
                         } else {
                             fetchLiveDoc(url);
