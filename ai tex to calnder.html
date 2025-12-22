@@ -1922,11 +1922,6 @@ The word "Nua" means new and "Khai" means food.
         async function fetchLiveDoc(url) {
             if (!url) return;
             
-            // Check if it's actually a GitHub URL that got routed here
-            if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                return fetchGitHubData(url);
-            }
-
             // UI Feedback
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
