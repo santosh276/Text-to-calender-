@@ -1,13 +1,15 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odia Panchang 2025</title>
+    <title>TXT to Auto Calendar - Odia/Indian Theme</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Noto+Sans+Oriya:wght@400;700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&amp;family=Open+Sans:wght@700&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -303,32 +305,248 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
     </style>
 </head>
-<body class="flex flex-col min-h-screen overflow-y-auto bg-[#fdfbf7]"><script>window.exportedData = {"activeMonthIndex":0,"monthsData":[],"todayIndex":-1,"details":{},"horoscopeDetails":{},"customSeasonDescriptions":{},"images":{},"config":{"title":"Odia Panchang 2025","logoUrl":null,"language":"or","location":null,"sections":{"festivals":true,"panchang":true,"horoscope":true},"liveUrl":"https://santosh276.github.io/panchang-data/calendar_data.txt","syncDocsUrl":"https://docs.google.com/document/d/e/2PACX-1vQDexcd-amo5HoDI3CmBpRfwmmuYgrruS6WGG1cTxK3vJ4sdcYdebFAz4SKGG4H6dkSWSm5eBwHlXcH/pub","syncGitHubUrl":"https://santosh276.github.io/panchang-data/calendar_data.txt"}};</script><div id="app-loader" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#fdfbf7] transition-opacity duration-500">
-                <div class="relative w-24 h-24 mb-6">
-                    <div class="absolute inset-0 border-4 border-orange-200 rounded-full"></div>
-                    <div class="absolute inset-0 border-4 border-orange-500 rounded-full border-t-transparent" style="animation: spin 1s linear infinite;"></div>
-                    <i class="fa-solid fa-om absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl text-orange-600"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800 animate-pulse">Loading Calendar...</h2>
-                <p class="text-gray-500 mt-2 text-sm">Fetching latest data from cloud</p>
-            </div>
+<body class="h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
     <nav class="bg-deepred text-white px-4 py-3 shadow-lg flex flex-wrap justify-between items-center z-20 shrink-0 gap-3 relative z-50">
         <div class="flex items-center gap-3">
             <div id="logo-container"><i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i></div>
-            <h1 class="font-bold text-xl tracking-wide" id="app-title">Odia Panchang 2025 <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span></h1>
+            <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span></h1>
         </div>
     </nav>
 
     <!-- Main Content Area -->
-    <div class="flex flex-col md:flex-row flex-1">
+    <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
         
         <!-- LEFT PANEL: Editor -->
-        
+        <div id="editor-panel" class="w-full md:w-[35%] h-[62%] md:h-full bg-gray-900 text-gray-100 flex flex-col border-b-4 md:border-b-0 md:border-r-4 border-saffron z-10 transition-all duration-300 relative overflow-hidden">
+            
+            <!-- Editor Header -->
+            <div class="bg-black border-b border-gray-800 p-4 shrink-0 flex flex-col gap-3 z-50 relative shadow-lg">
+                <div class="flex gap-3">
+                    <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
+                    <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
+                    <button onclick="configureLiveSync()" class="header-btn flex-1 bg-green-700 text-green-100 border-green-600 hover:bg-green-600"><i class="fa-solid fa-file-word"></i> Live Sync Docs</button>
+                    <button onclick="configureGitHubSync()" class="header-btn flex-1 bg-black text-white border-gray-800 hover:bg-gray-900 hover:border-gray-700"><i class="fa-brands fa-github"></i> Live Sync GitHub</button>
+                    <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
+                    <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                    <button onclick="openLinkModal()" class="header-btn flex-1"><i class="fa-solid fa-link"></i> Insert Link</button>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="downloadCalendar()" class="header-btn flex-1"><i class="fa-solid fa-download"></i> Download HTML</button>
+                    <button onclick="downloadTxtFile()" class="header-btn flex-1"><i class="fa-solid fa-file-lines"></i> Download TXT</button>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="openSettingsModal()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
+                    <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
+                </div>
+                <div class="flex items-center gap-3 mt-1">
+                    <span class="text-sm font-bold text-gray-500 uppercase tracking-wider">VIEW:</span>
+                    <div class="relative flex-grow">
+                        <select id="view-toggle" class="w-full appearance-none bg-gray-800 border border-gray-700 text-gray-300 py-2 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:border-gray-500 text-sm font-semibold shadow-sm">
+                            <option>Show Both Languages</option>
+                            <option>English Only</option>
+                            <option>Odia Only</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400"><i class="fa-solid fa-chevron-down text-xs"></i></div>
+                    </div>
+                </div>
+                <div class="mt-2 border-t border-gray-800 pt-3">
+                    <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
+                        <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i> Formatting Guide</span>
+                        <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhanced Syntax Guide -->
+            <div id="syntax-guide" class="text-gray-100 relative z-40">
+                <div class="p-6 pb-12 text-sm">
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-gear"></i> 1. App Configuration</div>
+                        <div class="code-block">
+::: config
+@ Title : <span class="hl-string">My Calendar 2025</span>
+@ Logo : <span class="hl-string">![Logo](URL_or_Use_Upload_Btn)</span>
+@ Live Sync GitHub trigger in every : <span class="hl-string">24 hours</span>
+:::
+                        </div>
+                        <p class="code-annotation">Sets the main title of your app and the top-left logo. Sync interval supports minutes, hours, or days.</p>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-regular fa-calendar"></i> 2. Calendar Grid Events</div>
+                        <div class="code-block">
+::: calendar
+<span class="hl-keyword">++ January 2025 ++</span>
+01 <span class="hl-tag">*</span> New Year's Day [ନୂତନ ବର୍ଷ]
+14 <span class="hl-tag">!</span> Makar Sankranti
+23 <span class="hl-tag">!</span> Saraswati Puja / Netaji Jayanti [ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ]
+26 <span class="hl-tag">^</span> Republic Day
+05 <span class="hl-tag">></span> Office Meeting
+:::
+                        </div>
+                        <div class="mt-2 text-xs space-y-1 text-gray-400">
+                            <p><span class="font-mono text-white bg-gray-700 px-1 rounded">++ Month Year ++</span> : Starts a new month.</p>
+                            <p><span class="font-mono text-white bg-red-600 px-1.5 rounded">!</span> : Festival (Red)</p>
+                            <p><span class="font-mono text-white bg-blue-600 px-1.5 rounded">*</span> : Holiday (Blue)</p>
+                            <p><span class="font-mono text-white bg-green-600 px-1.5 rounded">^</span> : Auspicious (Green)</p>
+                            <p><span class="font-mono text-white bg-gray-600 px-1.5 rounded">></span> : Generic Event (Gray)</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 3. Detailed Day View</div>
+                        <div class="code-block">
+::: details
+<span class="hl-keyword">>> 14-01-2025</span>
+<span class="hl-tag">![Banner](https://image.url)</span>
+<span class="hl-tag">@ Tag : Festival</span>
+
+Makar Sankranti is a major harvest festival.
+
+<span class="hl-keyword"># Rituals</span>
+- Holy dip in river
+- Flying kites
+:::
+                        </div>
+                        <p class="code-annotation">Use <span class="font-mono bg-gray-800 px-1">>> DD-MM-YYYY</span> to target a date.</p>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 4. Monthly Panchang</div>
+                        <div class="code-block">
+::: panchang
+@ Tithi : <span class="hl-string">Shukla Paksha</span>
+@ Nakshatra : <span class="hl-string">Rohini</span>
+@ Yoga : <span class="hl-string">Indra</span>
+@ Karana : <span class="hl-string">Bava</span>
+@ Sunrise : <span class="hl-string">06:20 AM</span>
+:::
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 6. Custom Season Descriptions</div>
+                        <div class="code-block">
+::: seasons
+@ Spring : <span class="hl-string">Nature blooms, flowers everywhere.</span>
+@ Summer : <span class="hl-string">It's getting hot in here.</span>
+:::
+                        </div>
+                        <p class="code-annotation">Customize descriptions for Vasant (Spring), Grishma (Summer), Varsha (Monsoon), Sharad (Autumn), Hemant (Pre-Winter), Shishir (Winter).</p>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-star"></i> 5. Horoscope (Short & Detail)</div>
+                        <div class="code-block">
+<span class="hl-comment"># Short (Sidebar)</span>
+::: horoscope
+~ Aries : <span class="hl-string">Good day for work.</span>
+:::
+
+<span class="hl-comment"># Detail (Popup)</span>
+::: horoscope_details
+<span class="hl-keyword">>> Taurus</span>
+@ Element : <span class="hl-string">Earth</span>
+@ Ruler : <span class="hl-string">Venus</span>
+@ DateRange : <span class="hl-string">Apr 20 - May 20</span>
+@ Lucky Number : <span class="hl-string">6</span>
+@ Lucky Color : <span class="hl-string">Green</span>
+@ Compatible : <span class="hl-string">Virgo, Capricorn</span>
+
+Horoscope body text here.
+:::
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <textarea id="editor" class="flex-grow w-full h-full bg-gray-900 text-gray-100 p-4 font-mono text-sm resize-none focus:outline-none leading-relaxed z-0" spellcheck="false">
+::: config
+@ Title : Odia Panchang 2025
+:::
+
+::: calendar
+++ January 2025 ++
+01 * New Year's Day [ନୂତନ ବର୍ଷ]
+14 ! Makar Sankranti [ମକର ସଂକ୍ରାନ୍ତି]
+26 * Republic Day [ଗଣତନ୍ତ୍ର ଦିବସ]
+:::
+
+::: horoscope_details
+>> Taurus
+@ Element : Earth Sign
+@ Ruler : Venus
+@ DateRange : Apr 20 - May 20
+@ Lucky Number : 6
+@ Lucky Color : Yellow
+@ Lucky Time : 2:00 PM
+@ Compatible : Virgo, Capricorn, Cancer
+
+Financial matters improve today. Stay patient with loved ones and focus on long-term investments.
+:::
+
+::: panchang
+@ Tithi : Shukla Paksha
+@ Nakshatra : Rohini
+3 Yoga: Indral
+@ Karana : Bava
+@ Sunrise : 06:20 AM
+@ Sunset : 05:30 PM
+@ Month : Pausha / Magha
+:::
+
+::: horoscope
+~ Aries : New beginnings are favored.
+~ Taurus : Financial stability looks good.
+:::
+
+-----------------------------------
+
+::: calendar
+++ November 2025 ++
+02 > Daily Meeting [ଦୈନିକ ବୈଠକ]
+20 ^ Special Community Setup
+21 ! Nuakhai [ନୂଆଖାଇ]
+25 * Office Closed
+:::
+
+::: details
+>> 21-11-2025
+@ Tag : Major Agricultural Festival
+
+Nuakhai is the most important social festival of Western Odisha and Sambalpur region.
+
+# Significance
+The word "Nua" means new and "Khai" means food.
+
+# Rituals
+- People offer new rice to the presiding deity
+- Family members gather for a feast
+- Traditional songs and dances are performed
+:::
+
+::: panchang
+@ Tithi : Krishna Paksha
+@ Nakshatra : Uttara Phalguni
+@ Yoga : Brahma
+@ Karana : Kaulava
+@ Sunrise : 06:00 AM
+@ Sunset : 05:15 PM
+@ Month : Kartika / Margashirsha
+:::
+
+::: horoscope
+~ Aries : Good health today.
+~ Taurus : Focus on work.
+:::
+            </textarea>
+        </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full h-auto pb-4 p-2 md:p-8 relative z-0" style="overflow: visible;">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
             <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
@@ -338,8 +556,8 @@
                         <div class="flex items-center justify-between w-full gap-4">
                             <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
                             <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
-                                <h2 id="cal-month-year" class="text-2xl md:text-3xl font-bold text-deepred uppercase tracking-wider leading-none">December 2025</h2>
-                                <p id="cal-indian-month" class="text-lg font-bold text-red-800 bg-amber-400 px-4 py-1 rounded-lg mt-2 font-oriya leading-tight shadow-md border-2 border-amber-500">ମାର୍ଗଶୀର / ପୌଷ</p>
+                                <h2 id="cal-month-year" class="text-2xl md:text-3xl font-bold text-deepred uppercase tracking-wider leading-none">JANUARY 2025</h2>
+                                <p id="cal-indian-month" class="text-lg font-bold text-red-800 bg-amber-400 px-4 py-1 rounded-lg mt-2 font-oriya leading-tight shadow-md border-2 border-amber-500 hidden"></p>
                                 
                                 <!-- MOVED: Go to Today Button (Centered Below Title) -->
                                 <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-xs font-bold hover:bg-orange-200 transition items-center gap-2 animate-pulse shadow-sm border border-orange-200 whitespace-nowrap">
@@ -372,61 +590,26 @@
                     </div>
 
                     <div class="bg-white rounded-xl shadow-lg p-2 md:p-3">
-                        <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 text-red-600" title="ରବି"><span class="text-[14px] md:text-base leading-none mb-0.5">ରବି</span><span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">Sun</span></div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 text-gray-600" title="ସୋମ"><span class="text-[14px] md:text-base leading-none mb-0.5">ସୋମ</span><span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">Mon</span></div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 text-gray-600" title="ମଙ୍ଗଳ"><span class="text-[14px] md:text-base leading-none mb-0.5">ମଙ୍ଗଳ</span><span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">Tue</span></div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 text-gray-600" title="ବୁଧ"><span class="text-[14px] md:text-base leading-none mb-0.5">ବୁଧ</span><span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">Wed</span></div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 text-gray-600" title="ଗୁରୁ"><span class="text-[14px] md:text-base leading-none mb-0.5">ଗୁରୁ</span><span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">Thu</span></div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 text-gray-600" title="ଶୁକ୍ର"><span class="text-[14px] md:text-base leading-none mb-0.5">ଶୁକ୍ର</span><span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">Fri</span></div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 text-gray-600" title="ଶନି"><span class="text-[14px] md:text-base leading-none mb-0.5">ଶନି</span><span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">Sat</span></div></div>
-                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"><div class="h-16 md:h-32 bg-gray-50 rounded"></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧</span><span><i class="fa-solid fa-moon text-indigo-400 text-[10px] md:text-sm absolute top-0 right-0 p-0.5" title="Ekadashi"></i></span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୨</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୩</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୪</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୫</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୬</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-red-50 hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-deepred">୭</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୮</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୯</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୦</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୧</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୨</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୩</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-red-50 hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-deepred">୧୪</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୫</span><span><i class="fa-solid fa-moon text-indigo-400 text-[10px] md:text-sm absolute top-0 right-0 p-0.5" title="Ekadashi"></i></span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୬</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୭</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୮</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୧୯</span><span><i class="fa-solid fa-circle text-black text-xs md:text-base absolute top-0 right-0 p-0.5" title="Amavasya"></i></span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୨୦</span><span><i class="fa-solid fa-circle text-black text-xs md:text-base absolute top-0 right-0 p-0.5" title="Amavasya"></i></span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-red-50 hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-deepred">୨୧</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୨୨</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer today-glow border-orange-400"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700 text-deepred underline">୨୩</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୨୪</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୨୫</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୨୬</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୨୭</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-red-50 hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-deepred">୨୮</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୨୯</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୩୦</span></div></div><div class="grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative bg-white hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer"><div class="cell-content-relative w-full flex flex-col h-full items-center justify-center"><span class="text-lg md:text-2xl font-bold leading-none text-gray-700">୩୧</span></div></div></div>
+                        <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
                     </div>
                 </div>
 
                 <!-- Sidebar Section -->
                 <div class="lg:w-1/4 space-y-6">
-                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300" style="display: block;">
+                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300">
                         <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
-                        <div id="festival-filters" class="flex gap-2 mb-4 overflow-x-auto pb-2"><button class="filter-btn px-3 md:px-4 py-1 md:py-1.5 rounded-full border flex items-center gap-1.5 md:gap-2 text-xs md:text-sm font-bold font-oriya whitespace-nowrap transition-all duration-200 bg-red-50 border-red-400 text-red-700 shadow-sm ring-1 ring-red-200"><i class="fa-solid fa-gopuram"></i> ପର୍ବପର୍ବାଣି</button><button class="filter-btn px-3 md:px-4 py-1 md:py-1.5 rounded-full border flex items-center gap-1.5 md:gap-2 text-xs md:text-sm font-bold font-oriya whitespace-nowrap transition-all duration-200 bg-green-50 border-green-400 text-green-700 shadow-sm ring-1 ring-green-200"><i class="fa-solid fa-om"></i> ଶୁଭ ଦିନ</button><button class="filter-btn px-3 md:px-4 py-1 md:py-1.5 rounded-full border flex items-center gap-1.5 md:gap-2 text-xs md:text-sm font-bold font-oriya whitespace-nowrap transition-all duration-200 bg-blue-50 border-blue-400 text-blue-700 shadow-sm ring-1 ring-blue-200"><i class="fa-solid fa-umbrella-beach"></i> ଛୁଟି ଦିନ</button></div>
-                        <ul id="festival-list" class="space-y-2 text-sm"><li class="text-gray-400 italic text-center py-4">No events found.</li></ul>
+                        <div id="festival-filters" class="flex gap-2 mb-4 overflow-x-auto pb-2"></div>
+                        <ul id="festival-list" class="space-y-2 text-sm"></ul>
                     </div>
-                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300" style="display: block;">
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i>Month's Panchang</h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
-                        <ul id="panchang-list" class="text-sm space-y-2"><div class="season-ui-card group" id="seasonCard" data-index="4">
-                    <div class="season-ui-icon-container" id="seasonIcon" style="transform: scale(1) rotate(0deg); opacity: 1;">
-                        
-                <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="sunGradH" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#FFD54F;stop-opacity:1"></stop>
-                            <stop offset="100%" style="stop-color:#FFB300;stop-opacity:1"></stop>
-                        </linearGradient>
-                    </defs>
-                    <!-- Sun (Spinning slowly) -->
-                    <g style="transform-origin: 32px 32px; animation: spin 12s linear infinite;">
-                        <circle cx="32" cy="32" r="14" fill="url(#sunGradH)"></circle>
-                        <path d="M32 6V10 M32 54V58 M58 32H54 M10 32H6 M53 11L50 14 M14 50L11 53 M53 53L50 50 M14 14L11 11" stroke="#FFB300" stroke-width="3" stroke-linecap="round"></path>
-                    </g>
-                    <!-- Cloud (Floating) -->
-                    <g style="animation: float 4s ease-in-out infinite;">
-                        <path transform="translate(-6, 6)" d="M44 44H20C15.58 44 12 40.42 12 36C12 31.58 15.58 28 20 28C20.6 28 21.18 28.08 21.74 28.22C22.82 24.32 26.4 21.5 30.6 21.5C35.75 21.5 40 25.4 40.5 30.3C44.92 30.3 48.5 33.88 48.5 38.3C48.5 41.5 46.5 44 44 44Z" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1.5"></path>
-                    </g>
-                </svg>
+                        <ul id="panchang-list" class="text-sm space-y-2"></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"></div>
                     </div>
-                    <div class="season-ui-content w-full">
-                        <div class="flex justify-between items-start w-full">
-                            <div class="flex flex-col">
-                                <span class="season-ui-label">Season</span>
-                                <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: #D60000;">ହେମନ୍ତ</span>
-                            </div>
-                            <button onclick="toggleSeasonDescription(this, event)" class="md:hidden text-gray-400 hover:text-gray-600 p-2 -mr-2 -mt-2 transition-transform active:scale-95 focus:outline-none">
-                                <i class="fa-solid fa-chevron-down text-sm season-toggle-icon"></i>
-                            </button>
-                        </div>
-                        <div class="season-desc-container mt-3 text-[11px] md:text-xs text-gray-600 leading-relaxed hidden md:block w-full border-t md:border-t-0 border-gray-100 pt-2 md:pt-1 font-sans">
-                            <p class="mb-2 last:mb-0">ହେମନ୍ତ ହେଉଛି ଶୀତ ପୂର୍ବର ସମୟ, ଯେଉଁଥିରେ ତାପମାତ୍ରା କମିଯାଏ ଏବଂ ଦିନ ଛୋଟ ହୁଏ । ଏହା ଶୀତ ପାଇଁ ପ୍ରସ୍ତୁତିର ସମୟ, ସକାଳ ଥଣ୍ଡା ଏବଂ ଅପରାହ୍ନ ଟିକେ ଗରମ ଥାଏ ।</p>
-                        </div>
-                    </div>
-                </div><div class="w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1"><span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (23th):</span> <span class="text-gray-800 font-medium text-right">ତୃତୀୟା, ଶୁକ୍ଳ ପକ୍ଷ</span></div></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"><button id="btn-location" onclick="getUserLocation()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 px-4 rounded-full shadow-sm border border-gray-300 transition flex items-center gap-2"><i class="fa-solid fa-location-crosshairs text-red-500"></i> Use My Location</button></div>
-                    </div>
-                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300" style="display: block;">
+                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300">
                         <h3 class="font-bold text-amber-800 mb-3 border-b pb-1"><i class="fa-solid fa-hand-sparkles text-amber-500 mr-2"></i>Horoscope</h3>
-                        <div id="horoscope-grid" class="grid grid-cols-3 gap-y-6 gap-x-2 p-1"><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-regular fa-star text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ମେଷ</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-bullseye text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ବୃଷ</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-user-group text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ମିଥୁନ</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-moon text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">କର୍କଟ</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-crown text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ସିଂହ</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-leaf text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">କନ୍ୟା</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-scale-balanced text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ତୁଳା</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-spider text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ବିଛା</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-arrow-up text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ଧନୁ</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-mountain text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ମକର</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-water text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">କୁମ୍ଭ</span></button><button class="flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200"><div class="w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5"><i class="fa-solid fa-fish text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i></div><span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">ମୀନ</span></button></div>
+                        <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
                     </div>
                 </div>
             </div>
@@ -482,7 +665,7 @@
                     <div class="flex items-center justify-between">
                         <label class="text-sm font-bold text-gray-700">Show Festivals</label>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked="" onchange="toggleSection('festivals', this.checked)">
+                            <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                         </label>
                     </div>
@@ -490,7 +673,7 @@
                     <div class="flex items-center justify-between">
                         <label class="text-sm font-bold text-gray-700">Show Panchang</label>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked="" onchange="toggleSection('panchang', this.checked)">
+                            <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                         </label>
                     </div>
@@ -498,7 +681,7 @@
                     <div class="flex items-center justify-between">
                         <label class="text-sm font-bold text-gray-700">Show Horoscope</label>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-horoscope" class="sr-only peer" checked="" onchange="toggleSection('horoscope', this.checked)">
+                            <input type="checkbox" id="toggle-horoscope" class="sr-only peer" checked onchange="toggleSection('horoscope', this.checked)">
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                         </label>
                     </div>
@@ -540,7 +723,7 @@
         <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCropModal()"></div>
         <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative z-10 overflow-hidden flex flex-col h-[90vh] md:h-[800px]">
             <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-gray-700"><i class="fa-solid fa-crop-simple mr-2 text-blue-500"></i>Crop &amp; Place Image</h3>
+                <h3 class="font-bold text-gray-700"><i class="fa-solid fa-crop-simple mr-2 text-blue-500"></i>Crop & Place Image</h3>
                 <button onclick="closeCropModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
@@ -580,7 +763,7 @@
                                     <span class="block font-bold text-gray-700 text-sm">Horoscope Icon</span>
                                     <span class="block text-xs text-gray-500">Square (1:1)</span>
                                     <select id="crop-horoscope-select" class="mt-2 w-full text-xs p-1.5 border rounded bg-white hidden" onclick="event.stopPropagation()">
-                                        <option value="" disabled="" selected="">Select Sign</option>
+                                        <option value="" disabled selected>Select Sign</option>
                                         <option value="Aries">Aries</option>
                                         <option value="Taurus">Taurus</option>
                                         <option value="Gemini">Gemini</option>
@@ -600,7 +783,7 @@
                     </div>
                     <div class="mt-auto pt-4">
                         <button onclick="performCropAndInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-check"></i> Crop &amp; Insert
+                            <i class="fa-solid fa-check"></i> Crop & Insert
                         </button>
                     </div>
                 </div>
@@ -1038,7 +1221,129 @@
         let currentBannerDataHash = "";
         let isBannerDismissed = false;
 
-        const langData = {"en":{"days":["SUN","MON","TUE","WED","THU","FRI","SAT"],"nums":["0","1","2","3","4","5","6","7","8","9"],"filters":["Festivals","Auspicious","Holidays"],"horoscopes":{"aries":"Aries","taurus":"Taurus","gemini":"Gemini","cancer":"Cancer","leo":"Leo","virgo":"Virgo","libra":"Libra","scorpio":"Scorpio","sagittarius":"Sagittarius","capricorn":"Capricorn","aquarius":"Aquarius","pisces":"Pisces"},"indianMonths":["Pausha / Magha","Magha / Phalguna","Phalguna / Chaitra","Chaitra / Vaishakha","Vaishakha / Jyeshtha","Jyeshtha / Ashadha","Ashadha / Shravana","Shravana / Bhadra","Bhadra / Ashvina","Ashvina / Kartika","Kartika / Margashirsha","Margashirsha / Pausha"],"indianSeasons":["Vasant (Spring)","Grishma (Summer)","Varsha (Monsoon)","Sharad (Autumn)","Hemant (Pre-Winter)","Shishir (Winter)"],"seasonDescriptions":["Spring is the season of new beginnings, characterized by blooming flowers and moderate temperatures. It marks the end of winter and the rejuvenation of nature.","Summer brings intense heat and longer days. The sun shines brightly, and water levels in rivers may drop. It is a time for indoor activities and staying hydrated.","Monsoon arrives with refreshing rains, bringing relief from the summer heat. The earth turns lush green, and it is a vital season for agriculture and water replenishment.","Autumn marks the transition from monsoon to winter. The sky clears, and the weather becomes pleasant. It is a season of festivals and harvest.","Pre-winter is the transitional period before winter, characterized by cooler temperatures and shorter days as fall ends. It is a time for preparing for the cold, where weather can be inconsistent, with mornings being chilly and afternoons warmer. In some regions, such as India, it is also referred to as \"late autumn\" or \"Hemant\" and occurs in November and December.","Winter is the coldest season, with chilly winds and shorter days. Nature appears dormant, and people seek warmth. It is a time for cozy gatherings and hot meals."],"paksha":["Shukla Paksha","Krishna Paksha"],"tithis":["Pratipada","Dwitiya","Tritiya","Chaturthi","Panchami","Shashthi","Saptami","Ashtami","Navami","Dashami","Ekadashi","Dwadashi","Trayodashi","Chaturdashi","Purnima","Pratipada","Dwitiya","Tritiya","Chaturthi","Panchami","Shashthi","Saptami","Ashtami","Navami","Dashami","Ekadashi","Dwadashi","Trayodashi","Chaturdashi","Amavasya"]},"or":{"days":["ରବି","ସୋମ","ମଙ୍ଗଳ","ବୁଧ","ଗୁରୁ","ଶୁକ୍ର","ଶନି"],"nums":["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"],"filters":["ପର୍ବପର୍ବାଣି","ଶୁଭ ଦିନ","ଛୁଟି ଦିନ"],"horoscopes":{"aries":"ମେଷ","taurus":"ବୃଷ","gemini":"ମିଥୁନ","cancer":"କର୍କଟ","leo":"ସିଂହ","virgo":"କନ୍ୟା","libra":"ତୁଳା","scorpio":"ବିଛା","sagittarius":"ଧନୁ","capricorn":"ମକର","aquarius":"କୁମ୍ଭ","pisces":"ମୀନ"},"indianMonths":["ପୌଷ / ମାଘ","ମାଘ / ଫାଲଗୁନ","ଫାଲଗୁନ / ଚୈତ୍ର","ଚୈତ୍ର / ବୈଶାଖ","ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ","ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼","ଆଷାଢ଼ / ଶ୍ରାବଣ","ଶ୍ରାବଣ / ଭାଦ୍ରବ","ଭାଦ୍ରବ / ଆଶ୍ୱିନ","ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ","କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର","ମାର୍ଗଶୀର / ପୌଷ"],"indianSeasons":["ବସନ୍ତ","ଗ୍ରୀଷ୍ମ","ବର୍ଷା","ଶରତ","ହେମନ୍ତ","ଶିଶିର"],"seasonDescriptions":["ବସନ୍ତ ହେଉଛି ନୂତନ ଆରମ୍ଭର ଋତୁ, ଯେଉଁଥିରେ ଫୁଲ ଫୁଟେ ଏବଂ ତାପମାତ୍ରା ମଧ୍ୟମ ରହେ । ଏହା ଶୀତର ସମାପ୍ତି ଏବଂ ପ୍ରକୃତିର ନବୀକରଣକୁ ସୂଚିତ କରେ ।","ଗ୍ରୀଷ୍ମ ପ୍ରଚଣ୍ଡ ଉତ୍ତାପ ଏବଂ ଲମ୍ବା ଦିନ ଆଣିଥାଏ । ସୂର୍ଯ୍ୟ ତେଜରେ କିରଣ ଦିଅନ୍ତି ଏବଂ ନଦୀର ଜଳସ୍ତର କମିଯାଏ । ଏହା ଘରେ ରହିବା ଏବଂ ପାଣି ପିଇବା ସମୟ ।","ବର୍ଷା ଋତୁ ଶାନ୍ତିଦାୟକ ବର୍ଷା ସହ ଆସେ, ଯାହା ଗ୍ରୀଷ୍ମ ତାପରୁ ମୁକ୍ତି ଦିଏ । ପୃଥିବୀ ସବୁଜ ହୋଇଯାଏ ଏବଂ ଏହା କୃଷି ପାଇଁ ଏକ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଋତୁ ।","ଶରତ ଋତୁ ବର୍ଷାରୁ ଶୀତକୁ ପରିବର୍ତ୍ତନର ସମୟ । ଆକାଶ ନିର୍ମଳ ହୁଏ ଏବଂ ପାଗ ମନୋରମ ହୋଇଯାଏ । ଏହା ପର୍ବପର୍ବାଣି ଏବଂ ଅମଳର ଋତୁ ।","ହେମନ୍ତ ହେଉଛି ଶୀତ ପୂର୍ବର ସମୟ, ଯେଉଁଥିରେ ତାପମାତ୍ରା କମିଯାଏ ଏବଂ ଦିନ ଛୋଟ ହୁଏ । ଏହା ଶୀତ ପାଇଁ ପ୍ରସ୍ତୁତିର ସମୟ, ସକାଳ ଥଣ୍ଡା ଏବଂ ଅପରାହ୍ନ ଟିକେ ଗରମ ଥାଏ ।","ଶିଶିର ହେଉଛି ସବୁଠାରୁ ଥଣ୍ଡା ଋତୁ, ଯେଉଁଥିରେ ଥଣ୍ଡା ପବନ ବହେ ଏବଂ ଦିନ ସବୁଠାରୁ ଛୋଟ ହୁଏ । ଲୋକମାନେ ଉଷୁମ ଖୋଜନ୍ତି ଏବଂ ଗରମ ଖାଦ୍ୟ ଖାଇବାକୁ ପସନ୍ଦ କରନ୍ତି ।"],"paksha":["ଶୁକ୍ଳ ପକ୍ଷ","କୃଷ୍ଣ ପକ୍ଷ"],"tithis":["ପ୍ରତିପଦା","ଦ୍ଵିତୀୟା","ତୃତୀୟା","ଚତୁର୍ଥୀ","ପଞ୍ଚମୀ","ଷଷ୍ଠୀ","ସପ୍ତମୀ","ଅଷ୍ଟମୀ","ନବମୀ","ଦଶମୀ","ଏକାଦଶୀ","ଦ୍ଵାଦଶୀ","ତ୍ରୟୋଦଶୀ","ଚତୁର୍ଦଶୀ","ପୂର୍ଣ୍ଣିମା","ପ୍ରତିପଦା","ଦ୍ଵିତୀୟା","ତୃତୀୟା","ଚତୁର୍ଥୀ","ପଞ୍ଚମୀ","ଷଷ୍ଠୀ","ସପ୍ତମୀ","ଅଷ୍ଟମୀ","ନବମୀ","ଦଶମୀ","ଏକାଦଶୀ","ଦ୍ଵାଦଶୀ","ତ୍ରୟୋଦଶୀ","ଚତୁର୍ଦଶୀ","ଅମାବାସ୍ୟା"]}};
+        const langData = {
+            en: { 
+                days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
+                nums: ["0","1","2","3","4","5","6","7","8","9"], 
+                filters: ["Festivals", "Auspicious", "Holidays"], 
+                horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
+                indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
+                indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
+                seasonDescriptions: ["Spring is the season of new beginnings, characterized by blooming flowers and moderate temperatures. It marks the end of winter and the rejuvenation of nature.", "Summer brings intense heat and longer days. The sun shines brightly, and water levels in rivers may drop. It is a time for indoor activities and staying hydrated.", "Monsoon arrives with refreshing rains, bringing relief from the summer heat. The earth turns lush green, and it is a vital season for agriculture and water replenishment.", "Autumn marks the transition from monsoon to winter. The sky clears, and the weather becomes pleasant. It is a season of festivals and harvest.", "Pre-winter is the transitional period before winter, characterized by cooler temperatures and shorter days as fall ends. It is a time for preparing for the cold, where weather can be inconsistent, with mornings being chilly and afternoons warmer. In some regions, such as India, it is also referred to as \"late autumn\" or \"Hemant\" and occurs in November and December.", "Winter is the coldest season, with chilly winds and shorter days. Nature appears dormant, and people seek warmth. It is a time for cozy gatherings and hot meals."],
+                paksha: ["Shukla Paksha", "Krishna Paksha"],
+                tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
+            },
+            hi: { 
+                days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], 
+                nums: ["०","१","२","३","४","५","६","७","८","९"], 
+                filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ"], 
+                horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
+                indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
+                indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
+                seasonDescriptions: ["वसंत नई शुरुआत का मौसम है, जिसमें फूल खिलते हैं और तापमान मध्यम रहता है। यह सर्दियों के अंत और प्रकृति के कायाकल्प का प्रतीक है।", "ग्रीष्म ऋतु तीव्र गर्मी और लंबे दिन लाती है। सूर्य चमकता है, और नदियों में जल स्तर गिर सकता है। यह घर के अंदर रहने और हाइड्रेटेड रहने का समय है।", "मानसून ताजी बारिश के साथ आता है, जो गर्मी से राहत दिलाता है। धरती हरी-भरी हो जाती है, और यह कृषि और जल पुनःपूर्ति के लिए एक महत्वपूर्ण मौसम है।", "शरद ऋतु मानसून से सर्दियों में संक्रमण का प्रतीक है। आकाश साफ हो जाता है, और मौसम सुहावना हो जाता है। यह त्योहारों और फसल का मौसम है।", "हेमंत ऋतु सर्दियों से पहले का संक्रमणकालीन समय है, जो ठंडक और छोटे दिनों की विशेषता है। यह ठंड की तैयारी का समय है, सुबह ठंडी और दोपहर गर्म होती है।", "शिशिर (सर्दी) सबसे ठंडा मौसम है, जिसमें ठंडी हवाएँ और छोटे दिन होते हैं। प्रकृति सुप्त दिखाई देती है, और लोग गर्मी की तलाश करते हैं। यह आरामदायक मुलाकातों और गर्म भोजन का समय है।"],
+                paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
+                tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
+            },
+            or: { 
+                days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], 
+                nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], 
+                filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ"], 
+                horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" },
+                indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ", "ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼", "ଆଷାଢ଼ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ରବ", "ଭାଦ୍ରବ / ଆଶ୍ୱିନ", "ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"],
+                indianSeasons: ["ବସନ୍ତ", "ଗ୍ରୀଷ୍ମ", "ବର୍ଷା", "ଶରତ", "ହେମନ୍ତ", "ଶିଶିର"],
+                seasonDescriptions: ["ବସନ୍ତ ହେଉଛି ନୂତନ ଆରମ୍ଭର ଋତୁ, ଯେଉଁଥିରେ ଫୁଲ ଫୁଟେ ଏବଂ ତାପମାତ୍ରା ମଧ୍ୟମ ରହେ । ଏହା ଶୀତର ସମାପ୍ତି ଏବଂ ପ୍ରକୃତିର ନବୀକରଣକୁ ସୂଚିତ କରେ ।", "ଗ୍ରୀଷ୍ମ ପ୍ରଚଣ୍ଡ ଉତ୍ତାପ ଏବଂ ଲମ୍ବା ଦିନ ଆଣିଥାଏ । ସୂର୍ଯ୍ୟ ତେଜରେ କିରଣ ଦିଅନ୍ତି ଏବଂ ନଦୀର ଜଳସ୍ତର କମିଯାଏ । ଏହା ଘରେ ରହିବା ଏବଂ ପାଣି ପିଇବା ସମୟ ।", "ବର୍ଷା ଋତୁ ଶାନ୍ତିଦାୟକ ବର୍ଷା ସହ ଆସେ, ଯାହା ଗ୍ରୀଷ୍ମ ତାପରୁ ମୁକ୍ତି ଦିଏ । ପୃଥିବୀ ସବୁଜ ହୋଇଯାଏ ଏବଂ ଏହା କୃଷି ପାଇଁ ଏକ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଋତୁ ।", "ଶରତ ଋତୁ ବର୍ଷାରୁ ଶୀତକୁ ପରିବର୍ତ୍ତନର ସମୟ । ଆକାଶ ନିର୍ମଳ ହୁଏ ଏବଂ ପାଗ ମନୋରମ ହୋଇଯାଏ । ଏହା ପର୍ବପର୍ବାଣି ଏବଂ ଅମଳର ଋତୁ ।", "ହେମନ୍ତ ହେଉଛି ଶୀତ ପୂର୍ବର ସମୟ, ଯେଉଁଥିରେ ତାପମାତ୍ରା କମିଯାଏ ଏବଂ ଦିନ ଛୋଟ ହୁଏ । ଏହା ଶୀତ ପାଇଁ ପ୍ରସ୍ତୁତିର ସମୟ, ସକାଳ ଥଣ୍ଡା ଏବଂ ଅପରାହ୍ନ ଟିକେ ଗରମ ଥାଏ ।", "ଶିଶିର ହେଉଛି ସବୁଠାରୁ ଥଣ୍ଡା ଋତୁ, ଯେଉଁଥିରେ ଥଣ୍ଡା ପବନ ବହେ ଏବଂ ଦିନ ସବୁଠାରୁ ଛୋଟ ହୁଏ । ଲୋକମାନେ ଉଷୁମ ଖୋଜନ୍ତି ଏବଂ ଗରମ ଖାଦ୍ୟ ଖାଇବାକୁ ପସନ୍ଦ କରନ୍ତି ।"],
+                paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
+                tithis: ["ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ଅମାବାସ୍ୟା"]
+            },
+            bn: { 
+                days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], 
+                nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
+                filters: ["উৎসব", "শুভ দিন", "ছুটি"], 
+                horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "সিংহ", virgo: "কন্যা", libra: "তুলা", scorpio: "বৃশ্চিক", sagittarius: "ধনু", capricorn: "মकर", aquarius: "কুম্ভ", pisces: "মীন" },
+                indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
+                indianSeasons: ["বসন্ত", "গ্রীষ্ম", "বর্ষা", "শরৎ", "হেমন্ত", "শিশির"],
+                seasonDescriptions: ["বসন্ত হলো নতুন শুরুর ঋতু, যা ফুল ফোটা এবং মাঝারি তাপমাত্রা দ্বারা চিহ্নিত। এটি শীতের শেষ এবং প্রকৃতির পুনরুজ্জীবনের প্রতীক।", "গ্রীষ্ম তীব্র তাপ এবং দীর্ঘ দিন নিয়ে আসে। সূর্য উজ্জ্বলভাবে কিরণ দেয় এবং নদীর জলস্তর কমে যেতে পারে। এটি ঘরের ভেতরে থাকা এবং হাইড্রেটেড থাকার সময়।", "বর্ষা সতেজ বৃষ্টি নিয়ে আসে, যা গ্রীষ্মের তাপ থেকে মুক্তি দেয়। পৃথিবী সজীব সবুজ হয়ে ওঠে এবং এটি কৃষি ও জল পুনর্ভরণের জন্য একটি গুরুত্বপূর্ণ ঋতু।", "শরৎ বর্ষা থেকে শীতে রূপান্তরের সময়। আকাশ পরিষ্কার হয়ে যায় এবং আবহাওয়া মনোরম হয়। এটি উৎসব এবং ফসলের ঋতু।", "হেমন্ত হলো শীতের আগের ক্রান্তিকাল, যা শীতল তাপমাত্রা এবং ছোট দিন দ্বারা চিহ্নিত। এটি শীতের প্রস্তুতির সময়, যেখানে সকাল ঠান্ডা এবং বিকেল উষ্ণ হতে পারে।", "শীত হলো সবচেয়ে ঠান্ডা ঋতু, যেখানে ঠান্ডা বাতাস এবং ছোট দিন থাকে। প্রকৃতি সুপ্ত মনে হয় এবং মানুষ উষ্ণতা খোঁজে। এটি আরামদায়ক সমাবেশ এবং গরম খাবারের সময়।"],
+                paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
+                tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
+            },
+            mr: { 
+                days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], 
+                nums: ["०","१","२","३","४","५","६","७","८","९"], 
+                filters: ["सण", "शुभ दिवस", "सुट्ट्या"], 
+                horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
+                indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
+                indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
+                seasonDescriptions: ["वसंत ऋतू नवीन सुरुवातीचा काळ आहे, जो फुललेली फुले आणि मध्यम तापमानाने ओळखला जातो. हा हिवाळ्याचा शेवट आणि निसर्गाच्या पुनरुज्जीवनाचा काळ आहे.", "ग्रीष्म ऋतू तीव्र उष्णता आणि मोठे दिवस आणतो. सूर्य प्रखर असतो आणि नद्यांमधील पाण्याची पातळी कमी होऊ शकते. हा घरात राहण्याचा आणि हायड्रेटेड राहण्याचा काळ आहे.", "वर्षा ऋतू रिमझिम पावसासह येतो, जो उन्हाळ्याच्या उष्णतेपासून दिलासा देतो. पृथ्वी हिरवीगार होते आणि शेती व पाण्याच्या पुनर्भरासाठी हा महत्त्वाचा ऋतू आहे.", "शरद ऋतू पावसाळ्याकडून हिवाळ्याकडे होणारा बदल दर्शवतो. आकाश निरभ्र होते आणि हवामान आल्हाददायक असते. हा सण आणि कापणीचा काळ आहे.", "हेमंत ऋतू हिवाळ्यापूर्वीचा संक्रमण काळ आहे, जो थंड तापमान आणि लहान दिवसांनी ओळखला जातो. हा थंडीची तयारी करण्याचा काळ आहे, जिथे सकाळ थंड आणि दुपार उबदार असते.", "शिशिर (हिवाळा) हा सर्वात थंड ऋतू आहे, ज्यामध्ये थंड वारे आणि लहान दिवस असतात. निसर्ग शांत दिसतो आणि लोक उबदारपणा शोधतात. हा उबदार भेटीगाठी आणि गरम जेवणाचा काळ आहे."],
+                paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
+                tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
+            },
+            gu: { 
+                days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], 
+                nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], 
+                filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ"], 
+                horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચિક", sagittarius: "ધનુ", capricorn: "મકર", aquarius: "કુંભ", pisces: "મીન" },
+                indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"],
+                indianSeasons: ["વસંત", "ગ્રીષ્મ", "વર્ષા", "શરદ", "હેમંત", "શિશિર"],
+                seasonDescriptions: ["વસંત નવી શરૂઆતની ઋતુ છે, જે ખીલેલા ફૂલો અને મધ્યમ તાપમાન દ્વારા વર્ગીકૃત થયેલ છે. તે શિયાળાનો અંત અને પ્રકૃતિના પુનર્જીવનનું પ્રતીક છે.", "ગ્રીષ્મ ઋતુ તીવ્ર ગરમી અને લાંબા દિવસો લાવે છે. સૂર્ય તેજસ્વી રીતે ચમકે છે, અને નદીઓમાં પાણીનું સ્તર ઘટી શકે છે. આ અંદર રહેવાનો અને હાઇડ્રેટેડ રહેવાનો સમય છે.", "વર્ષા ઋતુ તાજગીભર્યા વરસાદ સાથે આવે છે, જે ગરમીથી રાહત આપે છે. ધરતી લીલીછમ બની જાય છે, અને તે ખેતી અને પાણીના પુનઃભરણ માટે મહત્વપૂર્ણ ઋતુ છે.", "શરદ ઋતુ ચોમાસાથી શિયાળામાં સંક્રમણ સૂચવે છે. આકાશ સ્વચ્છ બને છે, અને હવામાન ખુશનુમા બને છે. તે તહેવારો અને લણણીની ઋતુ છે.", "હેમંત ઋતુ શિયાળા પહેલાનો સંક્રમણ સમય છે, જે ઠંડા તાપમાન અને ટૂંકા દિવસો દ્વારા વર્ગીકૃત થયેલ છે. આ ઠંડી માટે તૈયારી કરવાનો સમય છે.", "શિશિર (શિયાળો) સૌથી ઠંડી ઋતુ છે, જેમાં ઠંડા પવનો અને ટૂંકા દિવસો હોય છે. પ્રકૃતિ શાંત દેખાય છે, અને લોકો હૂંફ શોધે છે."],
+                paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
+                tithis: ["પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "પૂનમ", "પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "અમાસ"]
+            },
+            pa: { 
+                days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], 
+                nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], 
+                filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ"], 
+                horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" },
+                indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
+                indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"],
+                seasonDescriptions: ["ਬਸੰਤ ਨਵੀਂ ਸ਼ੁਰੂਆਤ ਦਾ ਮੌਸਮ ਹੈ, ਜੋ ਖਿੜੇ ਹੋਏ ਫੁੱਲਾਂ ਅਤੇ ਦਰਮਿਆਨੇ ਤਾਪਮਾਨ ਦੁਆਰਾ ਦਰਸਾਇਆ ਜਾਂਦਾ ਹੈ। ਇਹ ਸਰਦੀਆਂ ਦੇ ਅੰਤ ਅਤੇ ਕੁਦਰਤ ਦੇ ਪੁਨਰਜਨਮ ਦਾ ਪ੍ਰਤੀਕ ਹੈ।", "ਗਰਮੀ ਦਾ ਮੌਸਮ ਤੇਜ਼ ਗਰਮੀ ਅਤੇ ਲੰਬੇ ਦਿਨ ਲਿਆਉਂਦਾ ਹੈ। ਸੂਰਜ ਚਮਕਦਾ ਹੈ ਅਤੇ ਨਦੀਆਂ ਵਿੱਚ ਪਾਣੀ ਦਾ ਪੱਧਰ ਘੱਟ ਸਕਦਾ ਹੈ।", "ਬਰਸਾਤ ਦਾ ਮੌਸਮ ਤਾਜ਼ਗੀ ਭਰਪੂਰ ਮੀਂਹ ਨਾਲ ਆਉਂਦਾ ਹੈ, ਜੋ ਗਰਮੀ ਤੋਂ ਰਾਹਤ ਦਿੰਦਾ ਹੈ। ਧਰਤੀ ਹਰੀ-ਭਰੀ ਹੋ ਜਾਂਦੀ ਹੈ ਅਤੇ ਇਹ ਖੇਤੀਬਾੜੀ ਲਈ ਮਹੱਤਵਪੂਰਨ ਹੈ।", "ਪਤਝੜ (ਸ਼ਰਦ) ਬਰਸਾਤ ਤੋਂ ਸਰਦੀਆਂ ਵਿੱਚ ਤਬਦੀਲੀ ਦਾ ਪ੍ਰਤੀਕ ਹੈ। ਅਸਮਾਨ ਸਾਫ਼ ਹੋ ਜਾਂਦਾ ਹੈ ਅਤੇ ਮੌਸਮ ਸੁਹਾਵਣਾ ਹੋ ਜਾਂਦਾ ਹੈ।", "ਹੇਮੰਤ ਸਰਦੀਆਂ ਤੋਂ ਪਹਿਲਾਂ ਦਾ ਸਮਾਂ ਹੈ, ਜਿਸ ਵਿੱਚ ਠੰਡਾ ਤਾਪਮਾਨ ਅਤੇ ਛੋਟੇ ਦਿਨ ਹੁੰਦੇ ਹਨ। ਇਹ ਠੰਡ ਲਈ ਤਿਆਰੀ ਕਰਨ ਦਾ ਸਮਾਂ ਹੈ।", "ਸਰਦੀ (ਸ਼ਿਸ਼ਿਰ) ਸਭ ਤੋਂ ਠੰਡਾ ਮੌਸਮ ਹੈ, ਜਿਸ ਵਿੱਚ ਠੰਡੀਆਂ ਹਵਾਵਾਂ ਅਤੇ ਛੋਟੇ ਦਿਨ ਹੁੰਦੇ ਹਨ। ਕੁਦਰਤ ਸ਼ਾਂਤ ਦਿਖਾਈ ਦਿੰਦੀ ਹੈ ਅਤੇ ਲੋਕ ਨਿੱਘ ਭਾਲਦੇ ਹਨ।"],
+                paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
+                tithis: ["ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਮਾਸ਼ੀ", "ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਮੱਸਿਆ"]
+            },
+            ta: { 
+                days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], 
+                nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], 
+                filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை"], 
+                horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" },
+                indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"],
+                indianSeasons: ["இளவேனில்", "முதுவேனில்", "கார்", "குளிர்", "முன்பனி", "பின்பனி"],
+                seasonDescriptions: ["இளவேனில் (வசந்த காலம்) என்பது சித்திரை மற்றும் வைகாசி மாதங்களை உள்ளடக்கியது. இது மிதமான வெப்பம் மற்றும் மரங்கள் துளிர்க்கும் புதிய தொடக்கங்களின் காலம்.", "முதுவேனில் (கோடை காலம்) என்பது ஆனி மற்றும் ஆடி மாதங்களை உள்ளடக்கியது. இது கத்திரி வெயில் மற்றும் மிகுந்த வெப்பம் நிறைந்த காலம்.", "கார் காலம் (மழைக்காலம்) என்பது ஆவணி மற்றும் புரட்டாசி மாதங்களை உள்ளடக்கியது. இது கருமேகங்கள் சூழ்ந்து மழை பொழியும் பசுமையான காலம்.", "கூதிர் காலம் (குளிர் காற்று) என்பது ஐப்பசி மற்றும் கார்த்திகை மாதங்களை உள்ளடக்கியது. இது மழை குறைந்து குளிர்ந்த காற்று வீசும் காலம்.", "முன்பனிக்காலம் என்பது மார்கழி மற்றும் தை மாதங்களை உள்ளடக்கியது. இது அதிகாலை நேரங்களில் பனிப்பொழிவு அதிகமாக இருக்கும் காலம்.", "பின்பனிக்காலம் என்பது மாசி மற்றும் பங்குனி மாதங்களை உள்ளடக்கியது. இது பனி விலகி வெயில் மிதமாகத் தொடங்கும் காலம்."],
+                paksha: ["வளர்பிறை", "தேய்பிறை"],
+                tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "அமாவாசை"]
+            },
+            te: { 
+                days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], 
+                nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], 
+                filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు"], 
+                horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" },
+                indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"],
+                indianSeasons: ["వసంత", "గ్రీష్మ", "వర్ష", "శరత్", "హేమంత", "శిశిర"],
+                seasonDescriptions: ["వసంత ఋతువు (Spring) కొత్త ఆరంభాలకు చిహ్నం. చైత్రం మరియు వైశాఖ మాసాలలో చెట్లు చిగురించి, పూలు పూసి ప్రకృతి అందంగా మారుతుంది.", "గ్రీష్మ ఋతువు (Summer) తీవ్రమైన ఎండలను తెస్తుంది. జ్యేష్ఠం మరియు ఆషాఢ మాసాలలో పగటి సమయం ఎక్కువగా ఉండి, నదులు ఎండిపోవచ్చు.", "వర్ష ఋతువు (Monsoon) శ్రావణం మరియు భాద్రపద మాసాలలో వస్తుంది. వర్షాలతో నేల పచ్చగా మారుతుంది, ఇది వ్యవసాయానికి కీలకమైన సమయం.", "శరదృతువు (Autumn) ఆశ్వయుజం మరియు కార్తీక మాసాలలో వస్తుంది. ఆకాశం నిర్మలంగా ఉంటుంది, వెన్నెల కాస్తుంది, మరియు ఇది పండుగలకు ప్రసిద్ధి.", "హేమంత ఋతువు (Pre-Winter) మార్గశిరం మరియు పుష్య మాసాలలో వస్తుంది. చలి గాలులు మొదలై, ఉదయం పూట మంచు కురుస్తుంది.", "శిశిర ఋతువు (Winter) మాఘం మరియు ఫాల్గుణ మాసాలలో ఉంటుంది. ఇది అత్యంత చలిగా ఉండే కాలం, చెట్లు ఆకులు రాల్చే సమయం."],
+                paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
+                tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "అమావాస్య"]
+            },
+            kn: { 
+                days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], 
+                nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], 
+                filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು"], 
+                horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" },
+                indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"],
+                indianSeasons: ["ವಸಂತ", "ಗ್ರೀಷ್ಮ", "ವರ್ಷ", "ಶರತ್", "ಹೇಮಂತ", "ಶಿಶಿರ"],
+                seasonDescriptions: ["ವಸಂತ ಋತು (Spring) ಹೊಸ ಆರಂಭದ ಕಾಲ. ಚೈತ್ರ ಮತ್ತು ವೈಶಾಖ ಮಾಸಗಳಲ್ಲಿ ಗಿಡಮರಗಳು ಚಿಗುರಿ, ಹೂಗಳು ಅರಳಿ ಪ್ರಕೃತಿ ಸುಂದರವಾಗಿ ಕಾಣುತ್ತದೆ.", "ಗ್ರೀಷ್ಮ ಋತು (Summer) ಬಿಸಿಲಿನ ತಾಪವನ್ನು ತರುತ್ತದೆ. ಜ್ಯೇಷ್ಠ ಮತ್ತು ಆಷಾಢ ಮಾಸಗಳಲ್ಲಿ ಹಗಲು ದೀರ್ಘವಾಗಿರುತ್ತದೆ ಮತ್ತು ನೀರಿನ ಮಟ್ಟ ಕಡಿಮೆಯಾಗಬಹುದು.", "ವರ್ಷ ಋತು (Monsoon) ಶ್ರಾವಣ ಮತ್ತು ಭಾದ್ರಪದ ಮಾಸಗಳಲ್ಲಿ ಬರುತ್ತದೆ. ಮಳೆಯಿಂದ ಭೂಮಿ ಹಸಿರಾಗುತ್ತದೆ, ಇದು ಕೃಷಿಗೆ ಪ್ರಮುಖ ಕಾಲ.", "ಶರದೃತು (Autumn) ಆಶ್ವಯುಜ ಮತ್ತು ಕಾರ್ತಿಕ ಮಾಸಗಳಲ್ಲಿ ಬರುತ್ತದೆ. ಆಕಾಶ ಸ್ವಚ್ಛವಾಗಿರುತ್ತದೆ ಮತ್ತು ಹಬ್ಬಗಳಿಗೆ ಇದು ಸೂಕ್ತ ಸಮಯ.", "ಹೇಮಂತ ಋತು (Pre-Winter) ಮಾರ್ಗಶಿರ ಮತ್ತು ಪುಷ್ಯ ಮಾಸಗಳಲ್ಲಿ ಬರುತ್ತದೆ. ತಂಪು ಹವೆ ಮತ್ತು ಇಬ್ಬನಿ ಬೀಳುವ ಕಾಲವಿದು.", "ಶಿಶಿರ ಋತು (Winter) ಮಾಘ ಮತ್ತು ಫಾಲ್ಗುಣ ಮಾಸಗಳಲ್ಲಿ ಇರುತ್ತದೆ. ಇದು ಅತಿ ಹೆಚ್ಚು ಚಳಿ ಮತ್ತು ಎಲೆ ಉದುರುವ ಕಾಲ."],
+                paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
+                tithis: ["ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಅಮಾವಾಸ್ಯೆ"]
+            },
+            ml: { 
+                days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], 
+                nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], 
+                filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി"], 
+                horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" },
+                indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"],
+                indianSeasons: ["വസന്തം", "ഗ്രീഷ്മം", "വർഷം", "ശരത്", "ഹേമന്തം", "ശിശിരം"],
+                seasonDescriptions: ["വസന്തം (Spring) പുതിയ തുടക്കങ്ങളുടെ കാലമാണ്. പൂക്കൾ വിരിയുകയും പ്രകൃതി മനോഹരമാവുകയും ചെയ്യുന്ന ഈ കാലം ശൈത്യകാലത്തിന്റെ അവസാനത്തെ കുറിക്കുന്നു.", "ഗ്രീഷ്മം (Summer) കഠിനമായ ചൂടും നീണ്ട പകലുകളും കൊണ്ടുവരുന്നു. സൂര്യൻ പ്രകാശിക്കുന്നു, ജലനിരപ്പ് താഴാൻ സാധ്യതയുണ്ട്. വേനൽക്കാല വസ്ത്രങ്ങൾ ധരിക്കേണ്ട സമയമാണിത്.", "വർഷം (Monsoon) മഴക്കാലമാണ്. ഭൂമി പച്ചപ്പണിയുന്നു, കാർഷികാവശ്യങ്ങൾക്കും ജലസംഭരണത്തിനും ഇത് വളരെ പ്രധാനപ്പെട്ട സമയമാണ്.", "ശരത് (Autumn) മഴക്കാലത്തിൽ നിന്ന് ശൈത്യകാലത്തിലേക്കുള്ള മാറ്റമാണ്. ആകാശം തെളിയുകയും അന്തരീക്ഷം സുഖകരമാവുകയും ചെയ്യുന്നു. ഇത് ഉത്സവങ്ങളുടെ കാലമാണ്.", "ഹേമന്തം (Pre-Winter) ശൈത്യകാലത്തിന് മുൻപുള്ള സമയമാണ്. തണുത്ത കാലാവസ്ഥയും ചെറിയ പകലുകളും ഇതിന്റെ പ്രത്യേകതയാണ്. തണുപ്പിനെ നേരിടാൻ തയ്യാറെടുക്കേണ്ട സമയമാണിത്.", "ശിശിരം (Winter) ഏറ്റവും തണുപ്പുള്ള കാലമാണ്. തണുത്ത കാറ്റും ചെറിയ പകലുകളും ഉണ്ടാകും. പ്രകൃതി ശാന്തമാകുന്നു, ആളുകൾ ചൂട് തേടുന്നു."],
+                paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
+                tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "പൗർണ്ണമി", "പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "അമാവാസി"]
+            }
+        };
 
         function calculateTithi(dateObj) {
             // Use 06:00 AM Local Time for Tithi calculation to approximate Sunrise Tithi, or calculated Sunrise
@@ -3351,6 +3656,5 @@
             link.click();
         }
     </script>
-
-    
-</body></html>
+</body>
+    </html>
