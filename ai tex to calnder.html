@@ -690,7 +690,7 @@ The word "Nua" means new and "Khai" means food.
                 <div class="border-t border-gray-200 pt-4 space-y-3">
                     <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sync Settings</div>
                     
-                    <div class="flex items-center justify-between">
+                    <div id="container-sync-docs" class="flex items-center justify-between">
                         <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
@@ -1423,6 +1423,13 @@ The word "Nua" means new and "Khai" means food.
         function openSettingsModal() {
             document.getElementById('language-select').value = appState.config.language || 'en';
             
+            // Environment Check: Hide Docs Sync in App Mode
+            const isEditor = !!document.getElementById('editor');
+            const docsContainer = document.getElementById('container-sync-docs');
+            if (docsContainer) {
+                docsContainer.style.display = isEditor ? 'flex' : 'none';
+            }
+
             // Update toggle state
             const toggle = document.getElementById('banner-toggle');
             if(toggle) toggle.checked = !isBannerDismissed;
@@ -2055,6 +2062,13 @@ The word "Nua" means new and "Khai" means food.
         // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
         async function fetchLiveDoc(url, force = false) {
             if (!url) return;
+
+            // STRICT ENV CHECK: Proxy is ONLY allowed in Editor Mode
+            const isEditor = !!document.getElementById('editor');
+            if (!isEditor) {
+                console.warn("Security Restriction: Proxy fetch (Live Sync Docs) is disabled in Downloaded App Mode.");
+                return;
+            }
             
             // Check if it's actually a GitHub URL that got routed here
             if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
@@ -2062,7 +2076,7 @@ The word "Nua" means new and "Khai" means food.
             }
 
             // Auto-detect Editor Mode to enforce Force Update
-            if (document.getElementById('editor')) {
+            if (isEditor) {
                 force = true;
             }
 
@@ -2187,12 +2201,12 @@ The word "Nua" means new and "Khai" means food.
             // 1. Attempt Cache Load
             let dataFound = false;
             
-            // Try JSON Cache
+            // Priority 1: JSON Cache
             if (loadStateFromCache()) {
                 console.log("Loaded from JSON Cache");
                 dataFound = true;
             } 
-            // Try Text Cache
+            // Priority 2: Text Cache
             else {
                 const cachedText = localStorage.getItem('panchang_autosave_text');
                 if (cachedText) {
@@ -2202,9 +2216,10 @@ The word "Nua" means new and "Khai" means food.
                 }
             }
 
-            // Determine Mode & Setup UI
+            // Determine Environment
             const isEditor = !!document.getElementById('editor');
             
+            // Setup UI based on Environment
             if (window.exportedData && !isEditor) {
                 // App Mode
                 const editorPanel = document.getElementById('editor-panel');
@@ -2225,7 +2240,7 @@ The word "Nua" means new and "Khai" means food.
                     const cachedText = localStorage.getItem('panchang_autosave_text');
                     if (cachedText && editor.value !== cachedText) editor.value = cachedText;
                 } else {
-                    // Initial parse
+                    // Initial parse of default content
                     parseInput(editor.value);
                 }
                 
@@ -2239,7 +2254,7 @@ The word "Nua" means new and "Khai" means food.
                 });
             }
 
-            // Render
+            // Render whatever we have (Data or Skeleton)
             render();
             
             const loader = document.getElementById('app-loader');
@@ -2249,26 +2264,41 @@ The word "Nua" means new and "Khai" means food.
                 const url = appState.config.liveUrl;
                 const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
 
-                if (dataFound) {
-                    // Scenario A: Data Found -> Wait 2s -> Sync (Respect Timer)
+                // ENFORCE RESTRICTION: In App Mode, ONLY GitHub Direct Sync is allowed.
+                if (!isEditor && !isGitHub) {
+                    console.warn("App Mode Restriction: Live Sync Docs (Proxy) is disabled. Ignoring URL.");
                     if (loader) setTimeout(() => loader.remove(), 500);
+                    return;
+                }
+
+                if (dataFound) {
+                    // Scenario A: Data Found
+                    // Rendered immediately above.
+                    // Wait 2s then Sync (respecting timer)
+                    if (loader) setTimeout(() => loader.remove(), 500); // Remove loader quickly as we have data
                     
                     setTimeout(() => {
-                        const shouldForce = isEditor; 
+                        console.log("Scenario A: Background Sync...");
+                        const shouldForce = isEditor; // Editor forces, App respects timer
                         if (isGitHub) fetchGitHubData(url, shouldForce);
-                        else fetchLiveDoc(url);
+                        else fetchLiveDoc(url, shouldForce);
                     }, 2000);
                 } else {
-                    // Scenario B: Cold Start -> Immediate Sync (Force)
-                    console.log("Cold Start: Fetching immediately...");
-                    const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url, true);
+                    // Scenario B: No Data / First Run (Cold Start)
+                    console.log("Scenario B: Cold Start - Fetching immediately (Force)");
                     
-                    // Remove loader only after fetch finishes
+                    // Do not remove loader yet.
+                    // Immediately trigger fetch with forceInstant = true
+                    const forceInstant = true;
+                    const promise = isGitHub ? fetchGitHubData(url, forceInstant) : fetchLiveDoc(url, forceInstant);
+                    
+                    // Remove loader only after fetch finishes (Success or Fail)
                     if (promise && typeof promise.then === 'function') {
                         promise.finally(() => {
                             if (loader) loader.remove();
                         });
                     } else {
+                        // Fallback if no promise returned
                         if (loader) setTimeout(() => loader.remove(), 2000);
                     }
                 }
@@ -3503,9 +3533,13 @@ The word "Nua" means new and "Khai" means food.
             setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
 
+        const DATA_VERSION = 1;
+
         function saveStateToCache() {
             try {
-                const jsonString = JSON.stringify(appState);
+                // Include version in the saved state
+                const stateToSave = { ...appState, version: DATA_VERSION };
+                const jsonString = JSON.stringify(stateToSave);
                 localStorage.setItem('panchang_cached_state', jsonString);
             } catch (e) {
                 console.error("Failed to cache state", e);
@@ -3517,13 +3551,24 @@ The word "Nua" means new and "Khai" means food.
                 const cached = localStorage.getItem('panchang_cached_state');
                 if (cached) {
                     const parsed = JSON.parse(cached);
-                    if (parsed && parsed.monthsData) {
+                    
+                    // 1. Version Check
+                    if (parsed.version !== DATA_VERSION) {
+                        console.warn("⚠️ Cache Version Mismatch! Invalidating...");
+                        localStorage.removeItem('panchang_cached_state');
+                        return false;
+                    }
+
+                    // 2. Sanity Check
+                    if (parsed && parsed.monthsData && Array.isArray(parsed.monthsData)) {
                         appState = parsed;
                         return true;
                     }
                 }
             } catch (e) {
                 console.error("Failed to load state from cache", e);
+                // In case of parsing error, clear cache too
+                localStorage.removeItem('panchang_cached_state');
             }
             return false;
         }
