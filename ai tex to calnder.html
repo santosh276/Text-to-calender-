@@ -3533,9 +3533,13 @@ The word "Nua" means new and "Khai" means food.
             setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
 
+        const DATA_VERSION = 1;
+
         function saveStateToCache() {
             try {
-                const jsonString = JSON.stringify(appState);
+                // Include version in the saved state
+                const stateToSave = { ...appState, version: DATA_VERSION };
+                const jsonString = JSON.stringify(stateToSave);
                 localStorage.setItem('panchang_cached_state', jsonString);
             } catch (e) {
                 console.error("Failed to cache state", e);
@@ -3547,13 +3551,24 @@ The word "Nua" means new and "Khai" means food.
                 const cached = localStorage.getItem('panchang_cached_state');
                 if (cached) {
                     const parsed = JSON.parse(cached);
-                    if (parsed && parsed.monthsData) {
+
+                    // 1. Version Check
+                    if (parsed.version !== DATA_VERSION) {
+                        console.warn("⚠️ Cache Version Mismatch! Invalidating...");
+                        localStorage.removeItem('panchang_cached_state');
+                        return false;
+                    }
+
+                    // 2. Sanity Check
+                    if (parsed && parsed.monthsData && Array.isArray(parsed.monthsData)) {
                         appState = parsed;
                         return true;
                     }
                 }
             } catch (e) {
                 console.error("Failed to load state from cache", e);
+                // In case of parsing error, clear cache too
+                localStorage.removeItem('panchang_cached_state');
             }
             return false;
         }
