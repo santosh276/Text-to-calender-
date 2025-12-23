@@ -690,7 +690,7 @@ The word "Nua" means new and "Khai" means food.
                 <div class="border-t border-gray-200 pt-4 space-y-3">
                     <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sync Settings</div>
                     
-                    <div class="flex items-center justify-between">
+                    <div id="container-sync-docs" class="flex items-center justify-between">
                         <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
@@ -1423,6 +1423,13 @@ The word "Nua" means new and "Khai" means food.
         function openSettingsModal() {
             document.getElementById('language-select').value = appState.config.language || 'en';
             
+            // Environment Check: Hide Docs Sync in App Mode
+            const isEditor = !!document.getElementById('editor');
+            const docsContainer = document.getElementById('container-sync-docs');
+            if (docsContainer) {
+                docsContainer.style.display = isEditor ? 'flex' : 'none';
+            }
+
             // Update toggle state
             const toggle = document.getElementById('banner-toggle');
             if(toggle) toggle.checked = !isBannerDismissed;
@@ -2055,6 +2062,13 @@ The word "Nua" means new and "Khai" means food.
         // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
         async function fetchLiveDoc(url, force = false) {
             if (!url) return;
+
+            // STRICT ENV CHECK: Proxy is ONLY allowed in Editor Mode
+            const isEditor = !!document.getElementById('editor');
+            if (!isEditor) {
+                console.warn("Security Restriction: Proxy fetch (Live Sync Docs) is disabled in Downloaded App Mode.");
+                return;
+            }
             
             // Check if it's actually a GitHub URL that got routed here
             if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
@@ -2062,7 +2076,7 @@ The word "Nua" means new and "Khai" means food.
             }
 
             // Auto-detect Editor Mode to enforce Force Update
-            if (document.getElementById('editor')) {
+            if (isEditor) {
                 force = true;
             }
 
@@ -2248,6 +2262,14 @@ The word "Nua" means new and "Khai" means food.
             if (appState.config && appState.config.liveUrl) {
                 const url = appState.config.liveUrl;
                 const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
+
+                // ENFORCE RESTRICTION: In App Mode, ONLY GitHub Direct Sync is allowed.
+                // We reuse isEditor from the outer scope
+                if (!isEditor && !isGitHub) {
+                    console.warn("App Mode Restriction: Live Sync Docs (Proxy) is disabled. Ignoring URL.");
+                    if (loader) setTimeout(() => loader.remove(), 500);
+                    return;
+                }
 
                 if (dataFound) {
                     // Scenario A: Data Found -> Wait 2s -> Sync (Respect Timer)
