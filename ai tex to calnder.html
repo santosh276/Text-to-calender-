@@ -46,6 +46,12 @@
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
 @media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
 <style>
+        @media (min-width: 1440px) {
+            .app-container, .showcase-section, .intro-section, .faq-container {
+                max-width: 100% !important;
+            }
+        }
+
         .pointer-events-auto { pointer-events: auto !important; }
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
@@ -547,7 +553,7 @@ The word "Nua" means new and "Khai" means food.
 
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
-            <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+            <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
