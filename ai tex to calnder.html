@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -52,8 +53,65 @@
             }
         }
 
-        .header-gradient {
-            background: linear-gradient(135deg, #db2777 0%, #f59e0b 100%);
+        /* --- HEADER UI STYLES --- */
+        .animated-gradient {
+            background: linear-gradient(135deg, #D4143A 0%, #FF8C42 100%);
+            background-size: 200% 200%;
+            animation: gradientMove 6s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.15s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(5px); }
+        }
+
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .backdrop-blur-md {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .backdrop-blur-lg {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .mix-blend-overlay {
+            mix-blend-mode: overlay;
+        }
+
+        .shadow-glow-orange {
+            box-shadow: 0 20px 50px -12px rgba(249, 115, 22, 0.3);
+        }
+
+        .shadow-glow-orange:hover {
+            box-shadow: 0 25px 60px -12px rgba(249, 115, 22, 0.5);
+        }
+
+        .shadow-inner-white {
+            box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.1);
         }
 
         .pointer-events-auto { pointer-events: auto !important; }
@@ -620,42 +678,89 @@ The word "Nua" means new and "Khai" means food.
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
-                    <div class="header-gradient rounded-3xl shadow-xl p-4 md:p-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-4 overflow-hidden mb-6">
-                        <!-- Background Decor (Circles) -->
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-                        <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-xl -ml-10 -mb-10 pointer-events-none"></div>
+                    <div class="relative w-full mx-auto perspective-1000 mb-6 font-[Poppins]">
+                        <!-- Decorative Stacked Layers (Glassmorphism) -->
+                        <div class="absolute top-[-12px] left-4 right-4 h-24 bg-white/60 backdrop-blur-sm rounded-3xl transform scale-[0.92] shadow-sm z-0 transition-all duration-500"></div>
+                        <div class="absolute top-[-24px] left-8 right-8 h-24 bg-white/30 backdrop-blur-md rounded-3xl transform scale-[0.85] shadow-sm z-0 transition-all duration-500"></div>
 
-                        <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto z-20">
-                            <!-- Icon Circle -->
-                            <div class="w-14 h-14 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                                <i class="fa-solid fa-calendar-days text-2xl md:text-3xl text-orange-500"></i>
-                            </div>
+                        <!-- Main Card -->
+                        <div class="relative z-10 animated-gradient rounded-[2rem] shadow-glow-orange text-white overflow-hidden p-6 md:p-8 min-h-[300px] flex flex-col justify-between transition-all duration-300">
 
-                            <!-- Text Info -->
-                            <div class="flex flex-col text-left">
-                                <h2 id="cal-month-year" class="text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-none drop-shadow-sm">JANUARY 2025</h2>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <p id="cal-indian-month" class="text-sm md:text-base font-bold text-white/90 font-oriya hidden"></p>
+                            <!-- Header Controls -->
+                            <div class="flex justify-between items-start">
+                                <!-- Calendar Icon -->
+                                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl w-14 h-14 flex items-center justify-center shadow-inner-white cursor-pointer hover:bg-white/20 transition-all duration-300 group">
+                                    <i class="fa-solid fa-calendar-check text-white text-2xl drop-shadow-md group-hover:scale-110 transition-transform"></i>
+                                </div>
+
+                                <!-- Navigation -->
+                                <div class="flex flex-col items-end gap-3">
+                                    <button
+                                        onclick="jumpToToday()"
+                                        id="btn-today"
+                                        class="hidden bg-white text-orange-600 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg hover:bg-orange-50 hover:scale-105 active:scale-95 transition-all duration-200"
+                                        aria-label="Go to today"
+                                    >
+                                        Today
+                                    </button>
+
+                                    <div class="flex items-center gap-2 bg-black/10 backdrop-blur-lg rounded-full p-1 pl-3 pr-1 border border-white/10">
+                                        <span class="text-xs font-medium opacity-80 mr-2 uppercase tracking-wide">Navigate</span>
+                                        <button
+                                            onclick="changeMonth(-1)"
+                                            class="w-8 h-8 rounded-full bg-white text-orange-500 flex items-center justify-center shadow-md hover:scale-110 active:scale-90 transition-all"
+                                            aria-label="Previous Month"
+                                        >
+                                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                                        </button>
+                                        <button
+                                            onclick="changeMonth(1)"
+                                            class="w-8 h-8 rounded-full bg-white text-orange-500 flex items-center justify-center shadow-md hover:scale-110 active:scale-90 transition-all"
+                                            aria-label="Next Month"
+                                        >
+                                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Date Display -->
+                            <div id="header-date-display" class="mt-8 transition-opacity duration-300">
+
+                                <!-- Animated Key Effect -->
+                                <div class="fade-in">
+                                    <h1 id="cal-month-name" class="text-5xl md:text-6xl font-bold tracking-tighter drop-shadow-lg mb-2">
+                                        JANUARY
+                                    </h1>
+                                    <p id="cal-year-num" class="text-2xl font-light opacity-90 tracking-widest mb-6">
+                                        2025
+                                    </p>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="w-12 h-1 bg-white/40 rounded-full mb-6"></div>
+
+                                <!-- Odia/Lunar Date Section -->
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-2 text-lg font-medium text-white/90">
+                                        <i class="fa-regular fa-moon text-yellow-300"></i>
+                                        <span id="cal-indian-month-en">Pausha / Magha</span>
+                                    </div>
+                                    <div id="cal-indian-month-native-container" class="text-sm text-white/70 font-light tracking-wide hidden">
+                                        Regional • <span id="cal-indian-month-native" class="font-normal text-white font-oriya"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Background Decor -->
+                            <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-white blur-3xl opacity-10 rounded-full pointer-events-none mix-blend-overlay"></div>
                         </div>
 
-                        <!-- Right Controls -->
-                        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end z-20">
-                             <!-- Today Button (Visible if not today) -->
-                             <button onclick="jumpToToday()" id="btn-today" class="hidden bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full text-xs md:text-sm font-bold shadow-md border border-white/20 transition items-center gap-2">
-                                <i class="fa-solid fa-crosshairs"></i> <span class="hidden sm:inline">Today</span>
-                            </button>
-
-                            <!-- Nav Buttons -->
-                            <div class="flex gap-2">
-                                <button onclick="changeMonth(-1)" class="w-10 h-10 md:w-12 md:h-12 bg-white hover:bg-gray-50 text-orange-600 rounded-full flex items-center justify-center shadow-lg transition transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/50" title="Previous Month">
-                                    <i class="fa-solid fa-chevron-left text-lg"></i>
-                                </button>
-                                <button onclick="changeMonth(1)" class="w-10 h-10 md:w-12 md:h-12 bg-white hover:bg-gray-50 text-orange-600 rounded-full flex items-center justify-center shadow-lg transition transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/50" title="Next Month">
-                                    <i class="fa-solid fa-chevron-right text-lg"></i>
-                                </button>
-                            </div>
+                        <!-- User Hint -->
+                        <div class="text-center mt-6 text-gray-400 text-xs font-medium tracking-wide">
+                            <span class="bg-white px-2 py-1 rounded border border-gray-200 shadow-sm mx-1">←</span>
+                            <span class="bg-white px-2 py-1 rounded border border-gray-200 shadow-sm mx-1">→</span>
+                            Use arrow keys to navigate
                         </div>
                     </div>
 
@@ -2604,7 +2709,20 @@ The word "Nua" means new and "Khai" means food.
 
         function changeMonth(direction) {
             const newIndex = appState.activeMonthIndex + direction;
-            if (newIndex >= 0 && newIndex < appState.monthsData.length) { appState.activeMonthIndex = newIndex; render(); }
+            if (newIndex >= 0 && newIndex < appState.monthsData.length) {
+                const headerDisplay = document.getElementById('header-date-display');
+                if (headerDisplay) {
+                    headerDisplay.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => {
+                        appState.activeMonthIndex = newIndex;
+                        render();
+                        headerDisplay.classList.remove('opacity-0', 'translate-y-2');
+                    }, 150);
+                } else {
+                    appState.activeMonthIndex = newIndex;
+                    render();
+                }
+            }
         }
         function jumpToToday() {
             if (appState.todayIndex !== -1) { appState.activeMonthIndex = appState.todayIndex; render(); }
@@ -2627,17 +2745,38 @@ The word "Nua" means new and "Khai" means food.
                 logoContainer.innerHTML = `<i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i>`;
             }
 
-            document.getElementById('cal-month-year').innerText = `${months[currentData.month]} ${currentData.year}`;
+            // Update Header Elements
+            document.getElementById('cal-month-name').innerText = months[currentData.month];
+            document.getElementById('cal-year-num').innerText = currentData.year;
             
-            const indianMonthEl = document.getElementById('cal-indian-month');
+            // Animation reset for fade-in effect
+            const headerDisplay = document.getElementById('header-date-display');
+            if(headerDisplay) {
+                const inner = headerDisplay.querySelector('.fade-in');
+                if(inner) {
+                    inner.classList.remove('fade-in');
+                    void inner.offsetWidth; // trigger reflow
+                    inner.classList.add('fade-in');
+                }
+            }
+
             const currentLang = appState.config.language || 'en';
             const currentLangData = langData[currentLang];
-            
-            if (currentLangData && currentLangData.indianMonths) {
-                indianMonthEl.classList.remove('hidden');
-                indianMonthEl.innerText = currentLangData.indianMonths[currentData.month];
+            const englishData = langData['en'];
+
+            const indMonthEn = document.getElementById('cal-indian-month-en');
+            const indMonthNative = document.getElementById('cal-indian-month-native');
+            const indMonthNativeContainer = document.getElementById('cal-indian-month-native-container');
+
+            if (englishData && englishData.indianMonths) {
+                indMonthEn.innerText = englishData.indianMonths[currentData.month];
+            }
+
+            if (currentLang !== 'en' && currentLangData && currentLangData.indianMonths) {
+                indMonthNativeContainer.classList.remove('hidden');
+                indMonthNative.innerText = currentLangData.indianMonths[currentData.month];
             } else {
-                indianMonthEl.classList.add('hidden');
+                indMonthNativeContainer.classList.add('hidden');
             }
             
             const btnToday = document.getElementById('btn-today');
