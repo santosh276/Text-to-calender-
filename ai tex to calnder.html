@@ -309,6 +309,46 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* --- HIGH CONTRAST ACCESSIBILITY OVERRIDES --- */
+
+        /* 1. Darker Badge Backgrounds for White Text Legibility */
+        .bg-red-600 { background-color: rgb(185 28 28) !important; }   /* Red-700 */
+        .bg-green-600 { background-color: rgb(21 128 61) !important; } /* Green-700 */
+        .bg-blue-600 { background-color: rgb(29 78 216) !important; }  /* Blue-700 */
+
+        /* 2. Scoped Text Contrast Improvements for Light Mode Areas (Preview & Modals) */
+        /* Note: We scope this to avoid breaking the Dark Mode Editor where light text is needed */
+
+        #preview-container .text-gray-400, .modal-content .text-gray-400,
+        #preview-container .text-slate-400, .modal-content .text-slate-400 { color: #4b5563 !important; } /* mapped to gray-600 */
+
+        #preview-container .text-gray-500, .modal-content .text-gray-500,
+        #preview-container .text-slate-500, .modal-content .text-slate-500 { color: #374151 !important; } /* mapped to gray-700 */
+
+        #preview-container .text-gray-600, .modal-content .text-gray-600,
+        #preview-container .text-slate-600, .modal-content .text-slate-600 { color: #1f2937 !important; } /* mapped to gray-800 */
+
+        #preview-container .text-gray-700, .modal-content .text-gray-700,
+        #preview-container .text-slate-700, .modal-content .text-slate-700 { color: #111827 !important; } /* mapped to gray-900 */
+
+        #preview-container .text-gray-800, .modal-content .text-gray-800,
+        #preview-container .text-slate-800, .modal-content .text-slate-800 { color: #000000 !important; } /* mapped to black */
+
+        /* 3. Colored Text Legibility Boosts */
+        #preview-container .text-orange-400, .modal-content .text-orange-400 { color: #ea580c !important; } /* orange-600 */
+        #preview-container .text-indigo-400, .modal-content .text-indigo-400 { color: #4f46e5 !important; } /* indigo-600 */
+        #preview-container .text-amber-400, .modal-content .text-amber-400 { color: #d97706 !important; } /* amber-600 */
+        #preview-container .text-amber-500, .modal-content .text-amber-500 { color: #b45309 !important; } /* amber-700 */
+
+        /* Saffron text override for light backgrounds (keep themed but readable) */
+        #preview-container .text-saffron, .modal-content .text-saffron { color: #c2410c !important; } /* orange-700 */
+
+        /* 4. Specific Component Fixes */
+        .season-ui-label { opacity: 1 !important; color: #5D4037 !important; }
+        .rich-content ul { color: #1f2937 !important; }
+        .rich-content p { color: #111827 !important; }
+        .rich-content h3 { color: #451a03 !important; } /* Darker brown */
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
