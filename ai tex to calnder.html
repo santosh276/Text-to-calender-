@@ -335,14 +335,33 @@
         #preview-container .text-gray-800, .modal-content .text-gray-800,
         #preview-container .text-slate-800, .modal-content .text-slate-800 { color: #000000 !important; } /* mapped to black */
 
+        /* Placeholder Contrast in Light Mode */
+        #preview-container input::placeholder, .modal-content input::placeholder,
+        #preview-container textarea::placeholder, .modal-content textarea::placeholder {
+            color: #6b7280 !important; /* Gray-500 */
+            opacity: 1;
+        }
+
         /* 3. Colored Text Legibility Boosts */
         #preview-container .text-orange-400, .modal-content .text-orange-400 { color: #ea580c !important; } /* orange-600 */
         #preview-container .text-indigo-400, .modal-content .text-indigo-400 { color: #4f46e5 !important; } /* indigo-600 */
         #preview-container .text-amber-400, .modal-content .text-amber-400 { color: #d97706 !important; } /* amber-600 */
         #preview-container .text-amber-500, .modal-content .text-amber-500 { color: #b45309 !important; } /* amber-700 */
 
+        /* Darkening 600-level colors for better legibility on white */
+        #preview-container .text-red-600, .modal-content .text-red-600 { color: #b91c1c !important; } /* red-700 */
+        #preview-container .text-blue-600, .modal-content .text-blue-600 { color: #1d4ed8 !important; } /* blue-700 */
+        #preview-container .text-green-600, .modal-content .text-green-600 { color: #15803d !important; } /* green-700 */
+        #preview-container .text-orange-600, .modal-content .text-orange-600 { color: #c2410c !important; } /* orange-700 */
+
         /* Saffron text override for light backgrounds (keep themed but readable) */
         #preview-container .text-saffron, .modal-content .text-saffron { color: #c2410c !important; } /* orange-700 */
+
+        /* Navbar Gold Icon Fix (Better contrast on Deep Red) */
+        .text-gold { color: #fde047 !important; } /* yellow-300 */
+
+        /* Specific Fix for "Go to Today" button text (Orange on Orange) */
+        #btn-today.text-orange-600 { color: #9a3412 !important; } /* orange-800 */
 
         /* 4. Specific Component Fixes */
         .season-ui-label { opacity: 1 !important; color: #5D4037 !important; }
