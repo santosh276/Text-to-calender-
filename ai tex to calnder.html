@@ -1077,7 +1077,7 @@ The word "Nua" means new and "Khai" means food.
             { name: "Shishir (Winter)", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
         ];
 
-        
+        const DATA_VERSION = 1;
         
         function saveConfigToStorage() {
             try {
@@ -2204,6 +2204,7 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function initApp() {
+            window.appState = appState;
             // 1. Attempt Cache Load
             let dataFound = false;
             
@@ -2238,6 +2239,7 @@ The word "Nua" means new and "Khai" means food.
                 
                 if (!dataFound) {
                     appState = window.exportedData;
+                    window.appState = appState;
                 }
             } else if (isEditor) {
                 // Editor Mode
@@ -3539,8 +3541,6 @@ The word "Nua" means new and "Khai" means food.
             setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
 
-        const DATA_VERSION = 1;
-
         function saveStateToCache() {
             try {
                 // Include version in the saved state
@@ -3568,6 +3568,7 @@ The word "Nua" means new and "Khai" means food.
                     // 2. Sanity Check
                     if (parsed && parsed.monthsData && Array.isArray(parsed.monthsData)) {
                         appState = parsed;
+                        window.appState = appState;
                         return true;
                     }
                 }
