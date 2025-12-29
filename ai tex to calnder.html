@@ -46,6 +46,12 @@
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
 @media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
 <style>
+        @media (min-width: 1440px) {
+            .app-container, .showcase-section, .intro-section, .faq-container {
+                max-width: 100% !important;
+            }
+        }
+
         .pointer-events-auto { pointer-events: auto !important; }
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
@@ -547,7 +553,7 @@ The word "Nua" means new and "Khai" means food.
 
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
-            <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+            <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
@@ -599,7 +605,7 @@ The word "Nua" means new and "Khai" means food.
                 <div class="lg:w-1/4 space-y-6">
                     <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300">
                         <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
-                        <div id="festival-filters" class="flex gap-2 mb-4 overflow-x-auto pb-2"></div>
+                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
                         <ul id="festival-list" class="space-y-2 text-sm"></ul>
                     </div>
                     <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300">
@@ -3081,7 +3087,7 @@ The word "Nua" means new and "Khai" means food.
             filters.forEach(f => {
                 const isActive = activeFilters.has(f.id);
                 const btn = document.createElement('button');
-                let baseClass = `filter-btn px-3 md:px-4 py-1 md:py-1.5 rounded-full border flex items-center gap-1.5 md:gap-2 text-xs md:text-sm font-bold font-oriya whitespace-nowrap transition-all duration-200 `;
+                let baseClass = `filter-btn px-3 md:px-4 py-1 md:py-1.5 rounded-full border flex flex-1 justify-center items-center gap-1.5 md:gap-2 text-xs md:text-sm font-bold font-oriya whitespace-nowrap transition-all duration-200 `;
                 if (f.color === 'red') { baseClass += isActive ? 'bg-red-50 border-red-400 text-red-700 shadow-sm ring-1 ring-red-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-red-50 hover:border-red-300 hover:text-red-400 hover:grayscale-0 hover:opacity-100'; } 
                 else if (f.color === 'green') { baseClass += isActive ? 'bg-green-50 border-green-400 text-green-700 shadow-sm ring-1 ring-green-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-green-50 hover:border-green-300 hover:text-green-400 hover:grayscale-0 hover:opacity-100'; } 
                 else if (f.color === 'blue') { baseClass += isActive ? 'bg-blue-50 border-blue-400 text-blue-700 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 hover:grayscale-0 hover:opacity-100'; }
