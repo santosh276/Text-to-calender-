@@ -1205,6 +1205,8 @@ The word "Nua" means new and "Khai" means food.
         }
 
         const editor = document.getElementById('editor');
+        const DATA_VERSION = 1;
+
         let appState = {
             activeMonthIndex: 0,
             monthsData: [],
@@ -2315,7 +2317,7 @@ The word "Nua" means new and "Khai" means food.
         }
         
         // Start Up
-        initApp();
+        // initApp() call moved to end of script
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
@@ -3539,8 +3541,6 @@ The word "Nua" means new and "Khai" means food.
             setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
 
-        const DATA_VERSION = 1;
-
         function saveStateToCache() {
             try {
                 // Include version in the saved state
@@ -3706,6 +3706,8 @@ The word "Nua" means new and "Khai" means food.
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
+
+        initApp();
     </script>
 </body>
     </html>
