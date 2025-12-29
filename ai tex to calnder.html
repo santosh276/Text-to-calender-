@@ -108,14 +108,15 @@
             display: flex; align-items: center; gap: 0.5rem;
         }
         
-        .rich-content ul { list-style-type: none; padding-left: 0; margin-bottom: 1rem; color: #4b5563; }
+        .rich-content ul { list-style-type: none; padding-left: 0; margin-bottom: 1rem; color: #374151; }
         .rich-content li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
         .rich-content li::before {
             content: '\f058'; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            position: absolute; left: 0; color: #8D6E63; font-size: 0.9rem; top: 0.2rem;
+            position: absolute; left: 0; color: #5D4037; font-size: 0.9rem; top: 0.2rem;
         }
 
-        .rich-content p { margin-bottom: 0.75rem; color: #374151; line-height: 1.6; font-size: 1.05rem; }
+        /* Increased body text contrast: #374151 (gray-700) -> #111827 (gray-900) */
+        .rich-content p { margin-bottom: 0.75rem; color: #111827; line-height: 1.6; font-size: 1.05rem; }
         .rich-content img {
             max-width: 100%;
             border-radius: 12px;
@@ -200,11 +201,12 @@
         .lucky-card-yellow { background-color: #fffbeb; }
         .lucky-card-green { background-color: #f0fdf4; }
         .lucky-card-blue { background-color: #eff6ff; }
-        .lucky-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 6px; color: #4b5563; }
-        .lucky-value { font-size: 1.5rem; font-weight: 700; line-height: 1; }
-        .text-val-yellow { color: #d97706; }
-        .text-val-blue { color: #2563eb; }
-        .compat-pill { background-color: #f3f4f6; color: #374151; font-size: 0.8rem; font-weight: 500; padding: 6px 14px; border-radius: 9999px; display: inline-block; }
+        /* Increased lucky label contrast: #4b5563 (gray-600) -> #1f2937 (gray-800) */
+        .lucky-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 6px; color: #1f2937; }
+        .lucky-value { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+        .text-val-yellow { color: #b45309; } /* Darker yellow/amber */
+        .text-val-blue { color: #1d4ed8; } /* Darker blue */
+        .compat-pill { background-color: #f3f4f6; color: #111827; font-size: 0.8rem; font-weight: 600; padding: 6px 14px; border-radius: 9999px; display: inline-block; border: 1px solid #d1d5db; }
         .custom-modal-border { border-top: 8px solid #FF9933; border-bottom: 1px solid #fed7aa; border-left: 1px solid #fed7aa; border-right: 1px solid #fed7aa; border-radius: 24px; }
         .premium-header-bg { background: linear-gradient(135deg, #78350f 0%, #92400e 100%); position: relative; overflow: hidden; }
         .premium-header-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 30%); pointer-events: none; }
@@ -553,6 +555,15 @@ The word "Nua" means new and "Khai" means food.
 
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
+            <!-- Increased contrast for text outside containers -->
+            <style>
+                #preview-container { color: #111827; }
+                /* Scoped overrides to protect Dark Mode Editor */
+                #preview-container .text-gray-400, .modal-content .text-gray-400 { color: #6b7280 !important; }
+                #preview-container .text-gray-500, .modal-content .text-gray-500 { color: #374151 !important; }
+                #preview-container .text-gray-600, .modal-content .text-gray-600 { color: #1f2937 !important; }
+                #preview-container .border-gray-200, .modal-content .border-gray-200 { border-color: #d1d5db !important; }
+            </style>
             <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
@@ -906,8 +917,8 @@ The word "Nua" means new and "Khai" means food.
                 <p id="horo-date-range" class="text-sm font-medium text-slate-500 uppercase tracking-wide"></p>
             </div>
             <div class="px-6 py-2">
-                <h3 class="text-[13px] font-bold text-slate-800 uppercase mb-2 tracking-wide">Today's Prediction</h3>
-                <div id="horo-prediction" class="text-[15px] text-slate-600 leading-relaxed font-medium rich-content"></div>
+                <h3 class="text-[13px] font-bold text-slate-900 uppercase mb-2 tracking-wide">Today's Prediction</h3>
+                <div id="horo-prediction" class="text-[15px] text-slate-800 leading-relaxed font-semibold rich-content"></div>
             </div>
             <div class="px-6 py-6">
                 <div class="grid grid-cols-3 gap-3 h-28" id="horo-lucky-grid">
@@ -2849,7 +2860,7 @@ The word "Nua" means new and "Khai" means food.
                      // Bottom: English Name (Smaller, Title Case)
                      const engDay = englishDays[index];
                      const titleCaseEng = engDay.charAt(0) + engDay.slice(1).toLowerCase();
-                     const englishSpan = `<span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">${titleCaseEng}</span>`;
+                     const englishSpan = `<span class="text-[10px] md:text-[11px] font-sans opacity-90 leading-none tracking-normal text-gray-700 font-semibold">${titleCaseEng}</span>`;
                      
                      div.innerHTML = regionalSpan + englishSpan;
                 }
@@ -2901,6 +2912,7 @@ The word "Nua" means new and "Khai" means food.
 
                 if (detail && detail.gridBgUrl) bgClass = 'bg-white'; // Reset if image exists
 
+                // Increased border contrast: border-gray-200 -> border-gray-300
                 cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative ${bgClass} hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
                 
                 if (detail && detail.gridBgUrl) {
@@ -2916,6 +2928,7 @@ The word "Nua" means new and "Khai" means food.
                 contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full items-center justify-center';
                 
                 const dateNum = document.createElement('span');
+                // Increased text contrast: text-gray-700 -> text-gray-900
                 dateNum.className = `text-lg md:text-2xl font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'}`;
                 if (isToday) dateNum.classList.add('text-deepred', 'underline');
                 dateNum.innerText = toNativeNum(d, currentLang);
@@ -2997,7 +3010,7 @@ The word "Nua" means new and "Khai" means food.
                                 <i class="fa-solid fa-chevron-down text-sm season-toggle-icon"></i>
                             </button>
                         </div>
-                        <div class="season-desc-container mt-3 text-[11px] md:text-xs text-gray-600 leading-relaxed hidden md:block w-full border-t md:border-t-0 border-gray-100 pt-2 md:pt-1 font-sans">
+                        <div class="season-desc-container mt-3 text-[11px] md:text-xs text-gray-800 leading-relaxed hidden md:block w-full border-t md:border-t-0 border-gray-200 pt-2 md:pt-1 font-sans">
                             ${seasonDescHtml}
                         </div>
                     </div>
@@ -3016,8 +3029,10 @@ The word "Nua" means new and "Khai" means food.
             const tithiInfo = calculateTithi(targetDate);
             
             const tithiDiv = document.createElement('div');
-            tithiDiv.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-            tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
+            // Increased border contrast
+            tithiDiv.className = "w-full flex justify-between border-b border-gray-200 pb-1 mb-1 items-center px-1";
+            // Increased text contrast: text-gray-600 -> text-gray-800
+            tithiDiv.innerHTML = `<span class="font-semibold text-gray-800 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-900 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
             list.appendChild(tithiDiv);
 
             if (Object.keys(data.panchang).length === 0) { 
@@ -3061,18 +3076,20 @@ The word "Nua" means new and "Khai" means food.
                 let iconClass = iconMap[lowerKey] || 'fa-circle-info';
                 if (lowerKey === 'sunrise') {
                     const pill = document.createElement('div');
-                    pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
+                    pill.className = "bg-[#FFF6E8] border border-orange-200 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
+                    // Increased contrast: text-orange-400 -> text-orange-700
+                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-600"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-700 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else if (lowerKey === 'sunset') {
                     const pill = document.createElement('div');
-                    pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
+                    pill.className = "bg-[#EEF2FF] border border-indigo-200 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
+                    // Increased contrast: text-indigo-400 -> text-indigo-700, icon text-indigo-500 -> 600
+                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-600"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
                     pillsContainer.appendChild(pill);
                 } else {
                     const li = document.createElement('div');
-                    li.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${key}:</span> <span class="text-gray-800 font-medium text-right">${value}</span>`;
+                    li.className = "w-full flex justify-between border-b border-gray-200 pb-1 mb-1 items-center px-1";
+                    li.innerHTML = `<span class="font-semibold text-gray-800 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${key}:</span> <span class="text-gray-900 font-medium text-right">${value}</span>`;
                     list.appendChild(li);
                 }
             }
@@ -3087,10 +3104,11 @@ The word "Nua" means new and "Khai" means food.
             filters.forEach(f => {
                 const isActive = activeFilters.has(f.id);
                 const btn = document.createElement('button');
+                // Increased inactive contrast: text-gray-400 -> text-gray-600
                 let baseClass = `filter-btn px-3 md:px-4 py-1 md:py-1.5 rounded-full border flex flex-1 justify-center items-center gap-1.5 md:gap-2 text-xs md:text-sm font-bold font-oriya whitespace-nowrap transition-all duration-200 `;
-                if (f.color === 'red') { baseClass += isActive ? 'bg-red-50 border-red-400 text-red-700 shadow-sm ring-1 ring-red-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-red-50 hover:border-red-300 hover:text-red-400 hover:grayscale-0 hover:opacity-100'; } 
-                else if (f.color === 'green') { baseClass += isActive ? 'bg-green-50 border-green-400 text-green-700 shadow-sm ring-1 ring-green-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-green-50 hover:border-green-300 hover:text-green-400 hover:grayscale-0 hover:opacity-100'; } 
-                else if (f.color === 'blue') { baseClass += isActive ? 'bg-blue-50 border-blue-400 text-blue-700 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 hover:grayscale-0 hover:opacity-100'; }
+                if (f.color === 'red') { baseClass += isActive ? 'bg-red-50 border-red-400 text-red-700 shadow-sm ring-1 ring-red-200' : 'bg-white border-gray-400 text-gray-600 grayscale opacity-70 hover:bg-red-50 hover:border-red-300 hover:text-red-700 hover:grayscale-0 hover:opacity-100'; }
+                else if (f.color === 'green') { baseClass += isActive ? 'bg-green-50 border-green-400 text-green-700 shadow-sm ring-1 ring-green-200' : 'bg-white border-gray-400 text-gray-600 grayscale opacity-70 hover:bg-green-50 hover:border-green-300 hover:text-green-700 hover:grayscale-0 hover:opacity-100'; }
+                else if (f.color === 'blue') { baseClass += isActive ? 'bg-blue-50 border-blue-400 text-blue-700 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-400 text-gray-600 grayscale opacity-70 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 hover:grayscale-0 hover:opacity-100'; }
                 btn.className = baseClass;
                 btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
                 btn.onclick = () => toggleFilter(f.id);
@@ -3102,15 +3120,16 @@ The word "Nua" means new and "Khai" means food.
             list.className = "space-y-2 text-sm"; 
             
             const filteredEvents = data.events.filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*') && activeFilters.has(e.symbol)).sort((a, b) => a.date - b.date);
-            if (filteredEvents.length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-center py-4">No events found.</li>'; return; }
+            if (filteredEvents.length === 0) { list.innerHTML = '<li class="text-gray-500 italic text-center py-4">No events found.</li>'; return; }
             filteredEvents.forEach(ev => {
                 const li = document.createElement('li');
                 li.className = "flex gap-2 items-start p-1 rounded hover:bg-gray-50 transition cursor-pointer";
                 li.onclick = () => openDayModal(ev.date, data);
-                let badgeColor = "bg-gray-500";
-                if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
+                let badgeColor = "bg-gray-600";
+                if (ev.symbol === '!') badgeColor = "bg-red-700"; else if (ev.symbol === '^') badgeColor = "bg-green-700"; else if (ev.symbol === '*') badgeColor = "bg-blue-700";
                 const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
+                // Increased location text contrast: text-gray-500 -> text-gray-700
+                const content = `<div class="leading-tight"><div class="font-semibold text-gray-900 text-sm">${ev.engName}</div><div class="text-xs text-gray-700 font-oriya">${ev.locName || ''}</div></div>`;
                 li.innerHTML = dateBadge + content;
                 list.appendChild(li);
             });
