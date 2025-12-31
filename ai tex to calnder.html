@@ -309,6 +309,20 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        /* New UI Styles from React Snippet */
+        .app-gradient { background: linear-gradient(135deg, #D4143A 0%, #FF8C42 100%); }
+        .slide-enter { animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #FF8C42; border-radius: 4px; }
+        .perspective-1000 { perspective: 1000px; }
+        .rotate-12 { transform: rotate(12deg); }
+        .rounded-\[2rem\] { border-radius: 2rem; }
+        .rounded-\[2\.5rem\] { border-radius: 2.5rem; }
+        .rounded-t-\[2\.5rem\] { border-top-left-radius: 2.5rem; border-top-right-radius: 2.5rem; }
+        .rounded-l-\[2rem\] { border-top-left-radius: 2rem; border-bottom-left-radius: 2rem; }
+        .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -2533,59 +2547,218 @@ The word "Nua" means new and "Khai" means food.
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
+        function escapeHtml(text) {
+          if (!text) return text;
+          return text.replace(/&/g, "&amp;")
+                     .replace(/</g, "&lt;")
+                     .replace(/>/g, "&gt;")
+                     .replace(/"/g, "&quot;")
+                     .replace(/'/g, "&#039;");
+        }
+
         function render() {
             const currentData = appState.monthsData[appState.activeMonthIndex];
             if (!currentData) return;
 
-            if (appState.config.title) document.getElementById('app-title').innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
-            
-            const logoContainer = document.getElementById('logo-container');
-            if (appState.config.logoUrl) {
-                const src = resolveImageUrls(appState.config.logoUrl);
-                logoContainer.innerHTML = `<img id="app-logo-img" src="${src}" alt="Logo">`;
-            } else {
-                logoContainer.innerHTML = `<i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i>`;
+            // Update Window Title (Admin)
+            if (appState.config.title) {
+                const titleEl = document.getElementById('app-title');
+                if(titleEl) titleEl.innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
             }
-
-            document.getElementById('cal-month-year').innerText = `${months[currentData.month]} ${currentData.year}`;
             
-            const indianMonthEl = document.getElementById('cal-indian-month');
+             // Render the New UI into .app-container
+            const appContainer = document.querySelector('.app-container');
+            if (!appContainer) return;
+
+            const monthName = months[currentData.month];
+            const year = currentData.year;
             const currentLang = appState.config.language || 'en';
-            const currentLangData = langData[currentLang];
+            const currentLangData = langData[currentLang] || langData['en'];
+            const odiaMonth = currentLangData.indianMonths ? currentLangData.indianMonths[currentData.month] : "";
             
-            if (currentLangData && currentLangData.indianMonths) {
-                indianMonthEl.classList.remove('hidden');
-                indianMonthEl.innerText = currentLangData.indianMonths[currentData.month];
-            } else {
-                indianMonthEl.classList.add('hidden');
-            }
-            
-            const btnToday = document.getElementById('btn-today');
-            if (appState.todayIndex !== -1 && appState.activeMonthIndex !== appState.todayIndex) {
-                btnToday.classList.remove('hidden'); btnToday.classList.add('flex');
-            } else {
-                btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
-            }
+            const seasonIndex = getSeasonIndex(currentData.month);
+            const seasonName = currentLangData.indianSeasons ? currentLangData.indianSeasons[seasonIndex] : "";
 
-            renderCalendarGrid(currentData);
-            renderPanchang(currentData);
-            renderFestivals(currentData);
-            renderHoroscope(currentData);
-            renderMonthBanner(currentData);
+            appContainer.innerHTML = `
+                <div class="relative w-full perspective-1000 transition-all duration-500 mt-4 lg:mt-0">
 
-            // --- NEW LOGIC: Hide/Show Sections based on Config ---
-            const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
-            
-            const secFest = document.getElementById('sec-festivals');
-            const secPan = document.getElementById('sec-panchang');
-            const secHoro = document.getElementById('sec-horoscope');
+                    <!-- Stacked Layers (Mobile) -->
+                    <div class="lg:hidden absolute top-[-10px] left-6 right-6 h-32 bg-white/50 rounded-t-[2.5rem] transform scale-[0.92] z-0"></div>
+                    <div class="lg:hidden absolute top-[-20px] left-10 right-10 h-32 bg-white/30 rounded-t-[2.5rem] transform scale-[0.85] z-0"></div>
 
-            if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
-            if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
-            if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
+                    <!-- Main App Container -->
+                    <div class="relative z-10 bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-[600px] lg:min-h-[700px] lg:h-[80vh]">
+
+                        <!-- SIDEBAR / HEADER SECTION -->
+                        <div class="app-gradient text-white relative overflow-hidden p-8 lg:p-12 z-20 transition-all duration-500
+                                      lg:w-[35%] lg:flex lg:flex-col lg:justify-between lg:rounded-r-none rounded-b-[2.5rem] lg:rounded-l-[2rem]">
+
+                            <!-- Top Controls -->
+                            <div class="flex justify-between items-center mb-6 lg:mb-0">
+                                <div onclick="openSettingsModal()" class="bg-white/20 backdrop-blur-md p-2 rounded-xl cursor-pointer hover:bg-white/30 transition">
+                                    <i class="fa-solid fa-bars text-white text-lg px-2"></i>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="jumpToToday()" class="bg-white/20 backdrop-blur-md hover:bg-white text-white hover:text-orange-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide transition-all">
+                                        Today
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Month Display -->
+                            <div class="flex flex-col lg:gap-4 slide-enter">
+                                <div>
+                                    <h2 class="text-5xl lg:text-7xl font-bold tracking-tight leading-none">${monthName}</h2>
+                                    <p class="text-xl lg:text-3xl opacity-80 font-light mt-1">${year}</p>
+                                </div>
+
+                                <!-- Regional Subtext -->
+                                <div class="mt-4 lg:mt-8 pt-4 border-t border-white/20 flex flex-col gap-2">
+                                    <div class="flex items-center gap-2 text-sm lg:text-lg font-medium opacity-90">
+                                        <i class="fa-regular fa-moon text-yellow-300"></i>
+                                        ${odiaMonth}
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs lg:text-base opacity-70">
+                                        <i class="fa-solid fa-cloud-sun text-white"></i>
+                                        ${seasonName}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navigation Arrows -->
+                            <div class="flex gap-4 mt-6 lg:mt-0 justify-end lg:justify-start">
+                                <button onclick="changeMonth(-1)" class="w-12 h-12 rounded-full bg-white/20 hover:bg-white hover:text-orange-600 flex items-center justify-center transition-all backdrop-blur-sm text-lg">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <button onclick="changeMonth(1)" class="w-12 h-12 rounded-full bg-white/20 hover:bg-white hover:text-orange-600 flex items-center justify-center transition-all backdrop-blur-sm text-lg">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+                            </div>
+
+                            <!-- Background Texture -->
+                            <div class="absolute -right-6 -bottom-10 text-9xl lg:text-[15rem] opacity-10 rotate-12 pointer-events-none">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+                        </div>
+
+                        <!-- CALENDAR BODY & SCHEDULE -->
+                        <div class="flex-1 bg-white relative z-10 flex flex-col lg:flex-row overflow-hidden">
+
+                            <!-- Left Pane: Grid -->
+                            <div class="p-6 lg:p-10 lg:w-[60%] flex flex-col h-full overflow-y-auto custom-scroll">
+                                <!-- Weekday Labels -->
+                                <div class="grid grid-cols-7 mb-6">
+                                    ${getWeekdaysHtml(currentLang)}
+                                </div>
+
+                                <!-- Days Grid -->
+                                <div class="grid grid-cols-7 gap-y-4 gap-x-2 lg:gap-6 lg:gap-y-8 flex-1 content-start slide-enter">
+                                    ${getGridHtml(currentData)}
+                                </div>
+                            </div>
+
+                            <!-- Right Pane: Schedule -->
+                            <div class="p-6 lg:p-10 lg:w-[40%] bg-gray-50/50 lg:border-l border-gray-100 h-full overflow-y-auto custom-scroll">
+                                <div class="sticky top-0 bg-gray-50/95 backdrop-blur-sm pb-4 z-10 flex items-center justify-between">
+                                    <h3 class="text-gray-800 font-bold text-xl lg:text-2xl">Events</h3>
+                                    <span class="text-xs lg:text-sm text-gray-500 font-medium bg-white px-3 py-1 rounded-full border border-gray-200 shadow-sm">
+                                        ${months[currentData.month]}
+                                    </span>
+                                </div>
+
+                                <div class="space-y-4 lg:space-y-6 mt-2">
+                                    ${getEventsHtml(currentData)}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            `;
             
-            // Step 1: Cache the state
             saveStateToCache();
+        }
+
+        function getWeekdaysHtml(lang) {
+            const days = langData[lang] ? langData[lang].days : langData.en.days;
+            return days.map((day, index) =>
+                `<div class="text-center text-xs lg:text-sm font-semibold ${index===0?'text-red-400':'text-gray-400'} uppercase tracking-wide">${day}</div>`
+            ).join('');
+        }
+
+        function getGridHtml(data) {
+            const firstDay = new Date(data.year, data.month, 1).getDay();
+            const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
+            const today = new Date();
+            let html = '';
+
+            // Empty slots
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div></div>`;
+            }
+
+            // Days
+            for (let d = 1; d <= daysInMonth; d++) {
+                const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
+                const isSunday = new Date(data.year, data.month, d).getDay() === 0;
+
+                const dayEvents = data.events.filter(e => e.date === d);
+                const hasEvent = dayEvents.length > 0;
+
+                let cellClass = `w-10 h-10 lg:w-14 lg:h-14 flex items-center justify-center rounded-full text-sm lg:text-lg font-medium transition-all duration-200 cursor-pointer relative group `;
+
+                if (isToday) {
+                    cellClass += `bg-orange-100 text-orange-600 font-bold border border-orange-200 shadow-sm`;
+                } else if (isSunday) {
+                    cellClass += `text-red-500 hover:bg-red-50`;
+                } else {
+                    cellClass += `text-gray-700 hover:bg-gray-100`;
+                }
+
+                let dotHtml = '';
+                if (hasEvent) {
+                    dotHtml = `<div class="w-1 h-1 lg:w-1.5 lg:h-1.5 bg-orange-400 rounded-full mt-1 absolute -bottom-2"></div>`;
+                }
+
+                html += `
+                <div class="flex flex-col items-center justify-center relative" onclick="openDayModal(${d}, appState.monthsData[appState.activeMonthIndex])">
+                    <div class="${cellClass}">
+                        ${toNativeNum(d, appState.config.language)}
+                    </div>
+                    ${dotHtml}
+                </div>
+                `;
+            }
+            return html;
+        }
+
+        function getEventsHtml(data) {
+            const sortedEvents = [...data.events].sort((a,b) => a.date - b.date);
+            
+            if (sortedEvents.length === 0) {
+                return `
+                <div class="flex gap-4 items-center justify-center opacity-40 mt-10 flex-col">
+                    <i class="fa-regular fa-calendar-check text-4xl"></i>
+                    <p class="text-sm">No events this month</p>
+                </div>`;
+            }
+
+            return sortedEvents.map(ev => {
+                let borderClass = 'border-gray-300';
+                if (ev.symbol === '!') borderClass = 'border-red-500';
+                if (ev.symbol === '^') borderClass = 'border-green-500';
+                if (ev.symbol === '*') borderClass = 'border-blue-500';
+
+                return `
+                <div class="flex gap-4 items-start group cursor-pointer hover:bg-white p-2 rounded-xl transition-colors" onclick="openDayModal(${ev.date}, appState.monthsData[appState.activeMonthIndex])">
+                    <div class="text-xs lg:text-sm font-bold text-gray-400 mt-1 w-16 text-right">${months[data.month].substring(0,3)} ${ev.date}</div>
+                    <div class="bg-white p-4 rounded-xl flex-1 border-l-4 ${borderClass} shadow-sm group-hover:shadow-md transition-all">
+                        <h4 class="text-sm lg:text-base font-bold text-gray-800">${escapeHtml(ev.engName)}</h4>
+                        <p class="text-xs lg:text-sm text-gray-500 mt-1 font-oriya">${escapeHtml(ev.locName || '')}</p>
+                    </div>
+                </div>
+                `;
+            }).join('');
         }
 
         function dismissBanner(e) {
