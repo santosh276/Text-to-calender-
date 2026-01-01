@@ -250,6 +250,16 @@
         }
         .header-btn i { @apply text-base text-inherit; }
 
+        /* YEAR VIEW STYLES */
+        #year-view-container { animation: fade-in 0.2s ease-out; }
+        .mini-month-card { @apply bg-white rounded-xl p-3 shadow-sm border border-gray-100 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-orange-300 hover:-translate-y-1; }
+        .mini-cal-grid { @apply grid grid-cols-7 gap-1 text-center text-[10px]; }
+        .mini-cal-header { @apply grid grid-cols-7 text-center text-[10px] font-bold text-gray-400 mb-1; }
+        .mini-day { @apply aspect-square flex items-center justify-center rounded-full text-gray-700; }
+        .mini-day.has-event { @apply bg-orange-100 text-orange-700 font-bold; }
+        .mini-day.is-sunday { @apply text-red-500; }
+        .mini-day.is-today { @apply bg-deepred text-white font-bold; }
+
         /* SEASON UI COMPONENT STYLES */
         .season-ui-card {
             background-color: #FFFBF5;
@@ -571,30 +581,46 @@ The word "Nua" means new and "Khai" means food.
 
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
-            <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+            <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6 relative">
+
+                <!-- YEAR VIEW OVERLAY -->
+                <div id="year-view-container" class="absolute inset-0 bg-[#fdfbf7] z-[60] hidden flex flex-col p-2 md:p-6 overflow-y-auto rounded-3xl">
+                    <div class="flex justify-between items-center mb-6 shrink-0 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-0 z-10">
+                        <div class="flex items-center gap-3">
+                            <h2 id="year-view-title" class="text-2xl md:text-3xl font-bold text-gray-800">2025</h2>
+                            <span class="bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Year View</span>
+                        </div>
+                        <button onclick="toggleYearView()" class="bg-gray-100 hover:bg-orange-50 text-gray-700 hover:text-orange-600 border border-gray-200 hover:border-orange-200 px-4 py-2 rounded-lg font-bold shadow-sm transition transform active:scale-95 flex items-center gap-2 text-xs md:text-sm uppercase tracking-wide">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Month
+                        </button>
+                    </div>
+                    <div id="year-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-12"></div>
+                </div>
+
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
-                    <div class="bg-white rounded-3xl shadow-sm p-4 md:p-6 relative z-10">
+                    <div class="bg-white rounded-3xl shadow-sm p-4 md:p-6 relative z-10 border border-gray-100">
                          <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
-                        <div class="flex items-center justify-between w-full gap-4">
-                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month"><i class="fa-solid fa-arrow-left"></i></button>
+                        <div class="flex items-center justify-between w-full gap-3 md:gap-4">
+                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0 shadow-sm border-gray-200 hover:border-orange-300 hover:text-orange-600" title="Previous Month" aria-label="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
 
                             <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
                                 <!-- Adaptive Month/Year Container -->
-                                <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
-                                    <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight"></span>
-                                    <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
+                                <div class="flex flex-wrap justify-center items-baseline gap-x-2 md:gap-x-3 cursor-pointer group select-none" onclick="toggleYearView()" title="Open Year View">
+                                    <span id="cal-month" class="text-2xl md:text-3xl font-extrabold text-gray-900 uppercase tracking-tight group-hover:text-orange-600 transition-colors"></span>
+                                    <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-400 group-hover:text-orange-600 transition-colors"></span>
+                                    <i class="fa-solid fa-caret-down text-gray-300 text-sm md:text-lg group-hover:text-orange-400 transition-colors ml-1 mb-1"></i>
                                 </div>
 
-                                <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
+                                <p id="cal-indian-month" class="text-sm md:text-base text-orange-600 font-bold mt-0.5 font-oriya leading-tight hidden"></p>
                                 
-                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-50 text-orange-600 px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100">
+                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-2 bg-orange-50 text-orange-700 px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-200 shadow-sm uppercase tracking-wider">
                                     <i class="fa-solid fa-calendar-day"></i> Today
                                 </button>
                             </div>
 
-                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month" aria-label="Next Month"><i class="fa-solid fa-arrow-right"></i></button>
+                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0 shadow-sm border-gray-200 hover:border-orange-300 hover:text-orange-600" title="Next Month" aria-label="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
                         </div>
                     </div>
 
@@ -2550,6 +2576,101 @@ The word "Nua" means new and "Khai" means food.
         }
         function resolveImageUrls(text) {
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
+        }
+
+        function toggleYearView() {
+            const container = document.getElementById('year-view-container');
+            const isHidden = container.classList.contains('hidden');
+
+            if (isHidden) {
+                renderYearView();
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function renderYearView() {
+            const container = document.getElementById('year-grid');
+            container.innerHTML = '';
+
+            // Use current year from active month or default
+            let currentYear = new Date().getFullYear();
+            if (appState.monthsData && appState.monthsData[appState.activeMonthIndex]) {
+                currentYear = appState.monthsData[appState.activeMonthIndex].year;
+            }
+
+            document.getElementById('year-view-title').innerText = currentYear;
+
+            // Loop 12 Months
+            for(let m = 0; m < 12; m++) {
+                const card = document.createElement('div');
+                card.className = 'mini-month-card group';
+
+                // Check if this month exists in our data
+                const mDataIndex = appState.monthsData.findIndex(d => d.month === m && d.year === currentYear);
+                const mData = mDataIndex !== -1 ? appState.monthsData[mDataIndex] : null;
+
+                card.onclick = () => {
+                    // If data exists, jump to it. If not, maybe create it?
+                    // For now, if no data, we can't really jump efficiently without creating a month entry.
+                    // But we can set active index if it exists.
+                    if (mDataIndex !== -1) {
+                        appState.activeMonthIndex = mDataIndex;
+                        render();
+                        toggleYearView();
+                    } else {
+                        // Optional: Create new month logic here?
+                        // For now just alert or ignore
+                        showToast(`No data for ${months[m]} ${currentYear}`);
+                    }
+                };
+
+                const monthName = months[m];
+
+                // Mini Grid Generation
+                let gridHtml = '<div class="mini-cal-header">';
+                ['S','M','T','W','T','F','S'].forEach((d, i) => gridHtml += `<div class="${i===0?'text-red-500':''}">${d}</div>`);
+                gridHtml += '</div><div class="mini-cal-grid">';
+
+                const firstDay = new Date(currentYear, m, 1).getDay();
+                const daysInMonth = new Date(currentYear, m + 1, 0).getDate();
+                const today = new Date();
+
+                for(let i=0; i<firstDay; i++) gridHtml += '<div></div>';
+
+                for(let d=1; d<=daysInMonth; d++) {
+                    const isSunday = new Date(currentYear, m, d).getDay() === 0;
+                    const isToday = (d === today.getDate() && m === today.getMonth() && currentYear === today.getFullYear());
+
+                    let hasEvent = false;
+                    let hasHoliday = false;
+                    if (mData) {
+                        const evt = mData.events.find(e => e.date === d);
+                        if (evt) {
+                            if (evt.symbol === '!' || evt.symbol === '^') hasEvent = true;
+                            if (evt.symbol === '*') hasHoliday = true;
+                        }
+                    }
+
+                    let classes = `mini-day ${isSunday ? 'is-sunday' : ''} `;
+                    if (isToday) classes += 'is-today ';
+                    else if (hasEvent) classes += 'has-event ';
+                    else if (hasHoliday) classes += 'text-blue-600 font-bold ';
+
+                    gridHtml += `<div class="${classes}">${d}</div>`;
+                }
+                gridHtml += '</div>';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                         <div class="font-bold text-gray-800 group-hover:text-orange-600 transition text-sm uppercase tracking-wide">${monthName}</div>
+                         ${mData ? '<i class="fa-solid fa-check-circle text-green-500 text-[10px]"></i>' : ''}
+                    </div>
+                    ${gridHtml}
+                `;
+                container.appendChild(card);
+            }
         }
 
         function render() {
