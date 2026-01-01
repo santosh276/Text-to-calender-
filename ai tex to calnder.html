@@ -8,8 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -48,14 +47,20 @@
 <style>
         :root {
             --primary: #f97316; /* Orange 500 */
-            --primary-dark: #ea580c; /* Orange 600 */
+            --primary-dark: #c2410c; /* Orange 700 */
             --secondary: #dc2626; /* Red 600 */
-            --bg-color: #f9fafb; /* Gray 50 */
+            --bg-color: #f8fafc; /* Slate 50 */
             --surface: #ffffff;
-            --text-main: #1f2937; /* Gray 800 */
-            --text-muted: #6b7280; /* Gray 500 */
-            --border-color: #e5e7eb; /* Gray 200 */
+            --surface-hover: #f1f5f9; /* Slate 100 */
+            --text-main: #0f172a; /* Slate 900 */
+            --text-muted: #64748b; /* Slate 500 */
+            --border-color: #e2e8f0; /* Slate 200 */
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
         }
+
+        * { font-family: var(--font-body); }
+        h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); }
 
         @media (min-width: 1440px) {
             .app-container, .showcase-section, .intro-section, .faq-container {
@@ -65,57 +70,83 @@
 
         .pointer-events-auto { pointer-events: auto !important; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        /* Custom Scrollbar - Refined */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; transition: background 0.2s; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* Glassmorphism Utilities */
         .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px) saturate(180%);
-            -webkit-backdrop-filter: blur(12px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
         }
 
         .glass-dark {
-            background: rgba(17, 24, 39, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         body {
             background-color: var(--bg-color);
             background-image:
-                radial-gradient(at 0% 0%, rgba(255, 153, 51, 0.05) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(204, 0, 0, 0.05) 0px, transparent 50%);
+                radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.08) 0, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(220, 38, 38, 0.08) 0, transparent 40%);
             background-attachment: fixed;
             color: var(--text-main);
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Modern Card */
+        /* Modern Card - Refined */
         .card-modern {
             background: var(--surface);
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(229, 231, 235, 0.5);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 1.25rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        /* Pulsing Glow Effect */
-        @keyframes pulse-orange {
-            0%, 100% { box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3); border-color: var(--primary); }
-            50% { box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1); border-color: var(--primary-dark); }
+        .card-modern:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+            border-color: #cbd5e1;
         }
 
+        /* Grid Cell Styling */
+        .grid-cell {
+            background: #fff;
+            position: relative;
+            transition: all 0.2s ease-out;
+            border: 1px solid #f1f5f9;
+        }
+        .grid-cell:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            z-index: 5;
+            border-color: #e2e8f0;
+        }
+
+        /* Today Highlight - Refined */
         .today-glow {
-            animation: pulse-orange 2s infinite ease-in-out;
-            background-color: #fff7ed !important;
-            transform: scale(1.01);
+            position: relative;
             z-index: 10;
+        }
+        .today-glow::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 0.5rem;
+            border: 2px solid var(--primary);
+            pointer-events: none;
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(249, 115, 22, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
         }
 
         .filter-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -233,17 +264,22 @@
             justify-content: center;
             text-align: center;
             height: 100%;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
             background: #fff;
-            border: 1px solid #f3f4f6;
+            border: 1px solid #f1f5f9;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .lucky-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        
-        .lucky-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; color: #64748b; }
-        .lucky-value { font-size: 1.25rem; font-weight: 800; line-height: 1; color: #0f172a; }
+        .lucky-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border-color: #e2e8f0;
+        }
 
-        .compat-pill { background-color: #f8fafc; border: 1px solid #e2e8f0; color: #475569; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
+        .lucky-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 4px; color: #94a3b8; }
+        .lucky-value { font-size: 1.25rem; font-weight: 800; line-height: 1; color: #0f172a; font-family: var(--font-heading); }
+
+        .compat-pill { background-color: #f8fafc; border: 1px solid #e2e8f0; color: #475569; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 9999px; display: inline-block; transition: background 0.2s; }
+        .compat-pill:hover { background-color: #f1f5f9; }
 
         /* Custom Modal Header */
         .premium-header-bg {
@@ -278,30 +314,38 @@
 
         /* SEASON UI COMPONENT STYLES */
         .season-ui-card {
-            background-color: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 1rem;
-            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 1.25rem;
+            padding: 1.25rem;
             display: flex;
             align-items: center;
-            gap: 1.25rem;
+            gap: 1.5rem;
             width: 100%;
             cursor: pointer;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .season-ui-card:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+            background: #fff;
         }
 
-        .season-ui-card:active {
-            transform: scale(0.99);
+        .season-ui-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
+        .season-ui-card:hover::before { opacity: 1; }
 
         .season-ui-icon-container {
             width: 56px;
@@ -351,6 +395,22 @@
             opacity: 0;
             transform: translateY(-10px);
         }
+
+        /* List Entry Animations */
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        #festival-list li, #panchang-list > div {
+            animation: slideInRight 0.3s ease-out forwards;
+            opacity: 0;
+        }
+        #festival-list li:nth-child(1) { animation-delay: 0.05s; }
+        #festival-list li:nth-child(2) { animation-delay: 0.1s; }
+        #festival-list li:nth-child(3) { animation-delay: 0.15s; }
+        #festival-list li:nth-child(4) { animation-delay: 0.2s; }
+        #festival-list li:nth-child(5) { animation-delay: 0.25s; }
 
         /* --- SVG ANIMATIONS (Subtle & Clean) --- */
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -682,24 +742,33 @@ The word "Nua" means new and "Khai" means food.
 
                 <!-- Sidebar Section -->
                 <div class="lg:w-1/4 space-y-6">
-                    <div id="sec-festivals" class="card-modern p-5 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fa-solid fa-bell text-6xl text-red-500"></i></div>
-                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg"><span class="w-1 h-6 bg-red-500 rounded-full"></span> Festivals</h3>
-                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-5"></div>
+                    <div id="sec-festivals" class="card-modern p-6 relative overflow-hidden group bg-white">
+                        <div class="absolute -top-6 -right-6 w-24 h-24 bg-red-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
+                        <h3 class="font-bold text-gray-800 mb-5 flex items-center gap-3 text-lg font-heading relative z-10">
+                            <span class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center"><i class="fa-solid fa-bell text-sm"></i></span>
+                            Festivals
+                        </h3>
+                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-6 relative z-10"></div>
                         <ul id="festival-list" class="space-y-3 relative z-10"></ul>
                     </div>
 
-                    <div id="sec-panchang" class="card-modern p-5 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fa-solid fa-sun text-6xl text-orange-500"></i></div>
-                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg"><span class="w-1 h-6 bg-orange-500 rounded-full"></span> Panchang</h3>
-                        <div id="panchang-pills" class="flex flex-wrap gap-2 mb-4"></div>
-                        <ul id="panchang-list" class="text-sm space-y-3 relative z-10"></ul>
-                        <div id="location-btn-container" class="mt-4 pt-3 border-t border-gray-100 flex justify-center relative z-10"></div>
+                    <div id="sec-panchang" class="card-modern p-6 relative overflow-hidden group bg-white">
+                        <div class="absolute -top-6 -right-6 w-24 h-24 bg-orange-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
+                        <h3 class="font-bold text-gray-800 mb-5 flex items-center gap-3 text-lg font-heading relative z-10">
+                            <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center"><i class="fa-solid fa-sun text-sm"></i></span>
+                            Panchang
+                        </h3>
+                        <div id="panchang-pills" class="flex flex-wrap gap-2 mb-5 relative z-10"></div>
+                        <div id="panchang-list" class="text-sm space-y-2 relative z-10"></div>
+                        <div id="location-btn-container" class="mt-5 pt-4 border-t border-dashed border-gray-200 flex justify-center relative z-10"></div>
                     </div>
 
-                    <div id="sec-horoscope" class="card-modern p-5 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fa-solid fa-star text-6xl text-purple-500"></i></div>
-                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg"><span class="w-1 h-6 bg-purple-500 rounded-full"></span> Horoscope</h3>
+                    <div id="sec-horoscope" class="card-modern p-6 relative overflow-hidden group bg-white">
+                        <div class="absolute -top-6 -right-6 w-24 h-24 bg-purple-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
+                        <h3 class="font-bold text-gray-800 mb-5 flex items-center gap-3 text-lg font-heading relative z-10">
+                            <span class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center"><i class="fa-solid fa-star text-sm"></i></span>
+                            Horoscope
+                        </h3>
                         <div id="horoscope-grid" class="grid grid-cols-3 gap-3 relative z-10"></div>
                     </div>
                 </div>
@@ -2648,14 +2717,14 @@ The word "Nua" means new and "Khai" means food.
             const currentData = appState.monthsData[appState.activeMonthIndex];
             if (!currentData) return;
 
-            if (appState.config.title) document.getElementById('app-title').innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+            if (appState.config.title) document.getElementById('app-title').innerHTML = `${appState.config.title} <span class="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full ml-2 align-middle">2025</span>`;
             
             const logoContainer = document.getElementById('logo-container');
             if (appState.config.logoUrl) {
                 const src = resolveImageUrls(appState.config.logoUrl);
-                logoContainer.innerHTML = `<img id="app-logo-img" src="${src}" alt="Logo">`;
+                logoContainer.innerHTML = `<img id="app-logo-img" src="${src}" alt="Logo" class="w-full h-full object-cover">`;
             } else {
-                logoContainer.innerHTML = `<i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i>`;
+                logoContainer.innerHTML = `<i class="fa-solid fa-om text-2xl text-orange-500"></i>`;
             }
 
             document.getElementById('cal-month-year').innerText = `${months[currentData.month]} ${currentData.year}`;
@@ -2989,30 +3058,37 @@ The word "Nua" means new and "Khai" means food.
                 
                 const cell = document.createElement('div');
                 
-                // Determine Background Class (Mutually Exclusive)
+                // Determine Background & Border Class
                 let bgClass = 'bg-white';
-                if (isSunday) bgClass = 'bg-red-50';
+                let borderClass = 'border-l-4 border-transparent'; // Default transparent left border
+
+                if (isSunday) bgClass = 'bg-red-50/30'; // Very subtle red for Sunday
 
                 // Determine primary event
                 const dayEvents = data.events.filter(e => e.date === d);
                 let primaryEvent = null;
                 if (dayEvents.length > 0) {
+                    // Priority: ! > ^ > * > >
                     if (dayEvents.some(e => e.symbol === '!')) primaryEvent = '!';
                     else if (dayEvents.some(e => e.symbol === '^')) primaryEvent = '^';
                     else if (dayEvents.some(e => e.symbol === '*')) primaryEvent = '*';
                     else if (dayEvents.some(e => e.symbol === '>')) primaryEvent = '>';
                 }
 
-                if (primaryEvent && !isToday) {
-                    if (primaryEvent === '!') bgClass = 'bg-red-100';
-                    else if (primaryEvent === '^') bgClass = 'bg-green-100';
-                    else if (primaryEvent === '*') bgClass = 'bg-blue-100';
-                    else if (primaryEvent === '>') bgClass = 'bg-gray-100';
+                if (primaryEvent) {
+                    // Modern Approach: Colored Border + Subtle BG
+                    if (primaryEvent === '!') { borderClass = 'border-l-4 border-red-500'; bgClass = 'bg-red-50/50'; }
+                    else if (primaryEvent === '^') { borderClass = 'border-l-4 border-green-500'; bgClass = 'bg-green-50/50'; }
+                    else if (primaryEvent === '*') { borderClass = 'border-l-4 border-blue-500'; bgClass = 'bg-blue-50/50'; }
+                    else if (primaryEvent === '>') { borderClass = 'border-l-4 border-gray-400'; bgClass = 'bg-gray-50/50'; }
                 }
 
-                if (detail && detail.gridBgUrl) bgClass = 'bg-white'; // Reset if image exists
+                if (detail && detail.gridBgUrl) {
+                    bgClass = 'bg-white';
+                    borderClass = 'border-none'; // Remove border for full images
+                }
 
-                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative ${bgClass} hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
+                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto rounded-lg p-1 md:p-2 relative ${bgClass} ${borderClass} cursor-pointer flex flex-col overflow-hidden group`;
                 
                 if (detail && detail.gridBgUrl) {
                     const bgUrl = resolveImageUrls(detail.gridBgUrl);
@@ -3020,8 +3096,11 @@ The word "Nua" means new and "Khai" means food.
                     cell.innerHTML += `<div class="grid-cell-bg-wrapper"><img src="${bgUrl}" class="grid-cell-bg-img"><div class="grid-cell-overlay"></div></div>`;
                 }
                 cell.onclick = () => openDayModal(d, data);
-                // Note: bg-red-50 for Sunday is already handled in bgClass logic
-                if (isToday) cell.classList.add('today-glow', 'border-orange-400');
+
+                if (isToday) {
+                    cell.classList.add('today-glow');
+                    cell.classList.remove('border-transparent');
+                }
 
                 const contentWrapper = document.createElement('div');
                 contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full items-center justify-center';
@@ -3182,8 +3261,13 @@ The word "Nua" means new and "Khai" means food.
                     pillsContainer.appendChild(pill);
                 } else {
                     const li = document.createElement('div');
-                    li.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${key}:</span> <span class="text-gray-800 font-medium text-right">${value}</span>`;
+                    li.className = "w-full flex justify-between items-center p-2 rounded hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0";
+                    li.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-md bg-orange-50 text-orange-500 flex items-center justify-center text-xs"><i class="fa-solid ${iconClass}"></i></div>
+                            <span class="font-medium text-gray-600 text-xs uppercase tracking-wide">${key}</span>
+                        </div>
+                        <span class="text-gray-800 font-bold text-sm text-right">${value}</span>`;
                     list.appendChild(li);
                 }
             }
@@ -3216,13 +3300,34 @@ The word "Nua" means new and "Khai" means food.
             if (filteredEvents.length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-center py-4">No events found.</li>'; return; }
             filteredEvents.forEach(ev => {
                 const li = document.createElement('li');
-                li.className = "flex gap-2 items-start p-1 rounded hover:bg-gray-50 transition cursor-pointer";
+                // Card style for list items
+                li.className = "flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm hover:bg-gray-50 transition-all cursor-pointer group bg-white";
                 li.onclick = () => openDayModal(ev.date, data);
-                let badgeColor = "bg-gray-500";
-                if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
-                const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
-                li.innerHTML = dateBadge + content;
+
+                let accentColor = "bg-gray-500";
+                let icon = "fa-calendar-day";
+                if (ev.symbol === '!') { accentColor = "bg-red-500"; icon = "fa-gopuram"; }
+                else if (ev.symbol === '^') { accentColor = "bg-green-500"; icon = "fa-om"; }
+                else if (ev.symbol === '*') { accentColor = "bg-blue-500"; icon = "fa-umbrella-beach"; }
+
+                // Date Box
+                const dateBox = `
+                    <div class="flex flex-col items-center justify-center w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 group-hover:border-${ev.symbol === '!' ? 'red' : 'gray'}-200 transition-colors">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase leading-none">${shortMonths[data.month]}</span>
+                        <span class="text-lg font-bold text-gray-800 leading-none">${ev.date}</span>
+                    </div>
+                `;
+
+                const content = `
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-gray-800 text-sm truncate group-hover:text-primary transition-colors">${ev.engName}</div>
+                        <div class="text-xs text-gray-500 font-oriya truncate">${ev.locName || ''}</div>
+                    </div>
+                    <div class="w-6 h-6 rounded-full ${accentColor} bg-opacity-10 flex items-center justify-center text-${accentColor.replace('bg-', '')} text-xs">
+                        <i class="fa-solid ${icon}"></i>
+                    </div>
+                `;
+                li.innerHTML = dateBox + content;
                 list.appendChild(li);
             });
         }
