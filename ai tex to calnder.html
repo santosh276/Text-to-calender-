@@ -46,6 +46,17 @@
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
 @media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
 <style>
+        :root {
+            --primary: #f97316; /* Orange 500 */
+            --primary-dark: #ea580c; /* Orange 600 */
+            --secondary: #dc2626; /* Red 600 */
+            --bg-color: #f9fafb; /* Gray 50 */
+            --surface: #ffffff;
+            --text-main: #1f2937; /* Gray 800 */
+            --text-muted: #6b7280; /* Gray 500 */
+            --border-color: #e5e7eb; /* Gray 200 */
+        }
+
         @media (min-width: 1440px) {
             .app-container, .showcase-section, .intro-section, .faq-container {
                 max-width: 100% !important;
@@ -53,216 +64,254 @@
         }
 
         .pointer-events-auto { pointer-events: auto !important; }
+
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* Glassmorphism Utilities */
         .glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-dark {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         body {
-            background-color: #fdfbf7;
-            background-image: radial-gradient(#FF9933 0.5px, transparent 0.5px), radial-gradient(#FF9933 0.5px, #fdfbf7 0.5px);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(255, 153, 51, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(204, 0, 0, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Modern Card */
+        .card-modern {
+            background: var(--surface);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
         /* Pulsing Glow Effect */
         @keyframes pulse-orange {
-            0%, 100% { box-shadow: 0 0 15px rgba(255, 153, 51, 0.5); border-color: #FF9933; }
-            50% { box-shadow: 0 0 25px rgba(255, 153, 51, 0.8); border-color: #CC0000; }
+            0%, 100% { box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3); border-color: var(--primary); }
+            50% { box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1); border-color: var(--primary-dark); }
         }
 
         .today-glow {
             animation: pulse-orange 2s infinite ease-in-out;
             background-color: #fff7ed !important;
-            transform: scale(1.02);
+            transform: scale(1.01);
             z-index: 10;
-            border-width: 2px;
-            border-style: solid;
         }
 
-        .filter-btn { transition: all 0.2s ease; }
+        .filter-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .filter-btn:active { transform: scale(0.95); }
 
         /* Modal Animation */
-        .modal-backdrop { transition: opacity 0.3s ease-out; }
-        .modal-content { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out; }
+        .modal-backdrop { transition: opacity 0.2s ease-out; }
+        .modal-content { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease-out; }
         .modal-hidden .modal-backdrop { opacity: 0; pointer-events: none; }
         .modal-hidden .modal-content { opacity: 0; transform: scale(0.95) translateY(10px); pointer-events: none; }
 
         /* Rich Content Styling */
         .rich-content h3 {
-            font-weight: 800;
-            color: #5D4037;
-            margin-top: 1.25rem;
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
+            font-weight: 700;
+            color: #431407; /* Dark Brown/Red */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
             display: flex; align-items: center; gap: 0.5rem;
         }
         
-        .rich-content ul { list-style-type: none; padding-left: 0; margin-bottom: 1rem; color: #4b5563; }
+        .rich-content ul { list-style-type: none; padding-left: 0; margin-bottom: 1rem; color: var(--text-muted); }
         .rich-content li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
         .rich-content li::before {
-            content: '\f058'; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            position: absolute; left: 0; color: #8D6E63; font-size: 0.9rem; top: 0.2rem;
+            content: '•';
+            position: absolute; left: 0.5rem; color: var(--primary); font-weight: bold;
         }
 
-        .rich-content p { margin-bottom: 0.75rem; color: #374151; line-height: 1.6; font-size: 1.05rem; }
+        .rich-content p { margin-bottom: 1rem; color: var(--text-main); line-height: 1.7; font-size: 1rem; }
         .rich-content img {
             max-width: 100%;
-            border-radius: 12px;
+            border-radius: 0.75rem;
             margin: 1rem 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            border: 4px solid #fff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         .rich-content figcaption {
             font-size: 0.8rem;
             text-align: center;
-            color: #8D6E63;
-            font-style: italic;
-            margin-top: -0.5rem;
-            margin-bottom: 1rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        .nav-btn { @apply bg-gray-100 hover:bg-saffron hover:text-white text-gray-600 w-10 h-10 rounded-full flex items-center justify-center transition shadow-sm; }
+        .nav-btn {
+            @apply w-9 h-9 rounded-full flex items-center justify-center transition-all text-gray-500 hover:text-gray-900 hover:bg-gray-100;
+        }
 
-        /* STRICT CONTAINER MANAGEMENT: Formatting Guide */
+        /* Syntax Guide */
         #syntax-guide { 
             max-height: 0; 
             overflow: hidden;
             transition: max-height 0.3s ease-out, opacity 0.3s ease-out; 
             opacity: 0; 
-            background-color: #111827;
-            flex-shrink: 0; /* Prevent squashing */
+            background-color: #0f172a; /* Slate 900 */
+            flex-shrink: 0;
             position: relative;
-            z-index: 40; /* Layer below header (50) but above editor (10) */
-            border-bottom: 1px solid #374151;
+            z-index: 40;
+            border-bottom: 1px solid #1e293b;
         }
         #syntax-guide.open { 
-            max-height: 250px; /* Fixed height for mobile safety */
+            max-height: 300px;
             opacity: 1; 
-            overflow-y: auto; /* Scroll only when open */
+            overflow-y: auto;
         }
         
-        .guide-section { margin-bottom: 1.5rem; border-bottom: 1px solid #374151; padding-bottom: 1rem; }
+        .guide-section { margin-bottom: 1.5rem; border-bottom: 1px solid #1e293b; padding-bottom: 1rem; }
         .guide-section:last-child { border-bottom: none; }
         
         .guide-title { 
-            font-size: 0.85rem; 
+            font-size: 0.75rem;
             font-weight: 700; 
             color: #fbbf24;
             text-transform: uppercase; 
             letter-spacing: 0.05em; 
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
         
         .code-block {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #000;
-            border: 1px solid #374151;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            background-color: #020617;
+            border: 1px solid #1e293b;
             border-radius: 0.375rem;
             padding: 0.75rem;
             font-size: 0.75rem;
-            color: #e5e7eb;
+            color: #e2e8f0;
             white-space: pre-wrap;
             position: relative;
+            line-height: 1.4;
         }
         
         .code-annotation {
-            color: #9ca3af;
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-            font-style: italic;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
         }
 
-        /* Highlight classes for syntax guide */
         .hl-keyword { color: #f472b6; font-weight: bold; }
         .hl-string { color: #a78bfa; }
         .hl-tag { color: #34d399; }
         .hl-comment { color: #6b7280; }
 
-        /* Horoscope Styles */
-        .horo-badge-gold { background-color: #fffbeb; color: #b45309; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px; }
-        .horo-badge-blue { background-color: #dbeafe; color: #1e40af; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px; }
-        .lucky-card { border-radius: 12px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; transition: transform 0.2s ease; }
-        .lucky-card:hover { transform: translateY(-2px); }
-        .lucky-card-yellow { background-color: #fffbeb; }
-        .lucky-card-green { background-color: #f0fdf4; }
-        .lucky-card-blue { background-color: #eff6ff; }
-        .lucky-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 6px; color: #4b5563; }
-        .lucky-value { font-size: 1.5rem; font-weight: 700; line-height: 1; }
-        .text-val-yellow { color: #d97706; }
-        .text-val-blue { color: #2563eb; }
-        .compat-pill { background-color: #f3f4f6; color: #374151; font-size: 0.8rem; font-weight: 500; padding: 6px 14px; border-radius: 9999px; display: inline-block; }
-        .custom-modal-border { border-top: 8px solid #FF9933; border-bottom: 1px solid #fed7aa; border-left: 1px solid #fed7aa; border-right: 1px solid #fed7aa; border-radius: 24px; }
-        .premium-header-bg { background: linear-gradient(135deg, #78350f 0%, #92400e 100%); position: relative; overflow: hidden; }
-        .premium-header-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 30%); pointer-events: none; }
-        #app-logo-img { height: 40px; width: auto; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        /* Horoscope & Badges */
+        .horo-badge-gold { background-color: #fff7ed; color: #b45309; border: 1px solid #ffedd5; font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 9999px; }
+        .horo-badge-blue { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 9999px; }
+
+        .lucky-card {
+            border-radius: 1rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 100%;
+            transition: transform 0.2s ease;
+            background: #fff;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .lucky-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         
-        .grid-cell-bg-wrapper { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: 0.375rem; }
+        .lucky-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; color: #64748b; }
+        .lucky-value { font-size: 1.25rem; font-weight: 800; line-height: 1; color: #0f172a; }
+
+        .compat-pill { background-color: #f8fafc; border: 1px solid #e2e8f0; color: #475569; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 9999px; display: inline-block; }
+
+        /* Custom Modal Header */
+        .premium-header-bg {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            position: relative; overflow: hidden;
+        }
+        .premium-header-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15) 0%, transparent 20%); pointer-events: none; }
+
+        #app-logo-img { height: 32px; width: auto; border-radius: 6px; }
+
+        .grid-cell-bg-wrapper { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: 0.5rem; }
         .grid-cell-bg-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: transform 0.3s ease; }
-        .grid-cell:hover .grid-cell-bg-img { transform: scale(1.1); }
-        .grid-cell-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6)); z-index: 1; }
+        .grid-cell:hover .grid-cell-bg-img { transform: scale(1.05); }
+        .grid-cell-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%); z-index: 1; }
         .cell-content-relative { position: relative; z-index: 2; }
         .has-bg-image .text-gray-700 { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-        .has-bg-image .text-deepred { color: #ffcccc !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-        .has-bg-image .bg-gray-100 { background-color: rgba(255,255,255,0.85) !important; backdrop-filter: blur(2px); }
+        .has-bg-image .text-deepred { color: #fed7aa !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
-        .radio-option { @apply border border-gray-200 rounded-lg p-3 cursor-pointer flex items-center gap-3 hover:bg-orange-50 hover:border-orange-300 transition; }
-        .radio-option.selected { @apply bg-orange-50 border-orange-500 ring-1 ring-orange-500; }
+        .radio-option { @apply border border-gray-200 rounded-lg p-3 cursor-pointer flex items-center gap-3 hover:bg-gray-50 transition; }
+        .radio-option.selected { @apply bg-orange-50 border-orange-500 ring-1 ring-orange-200; }
         .radio-circle { @apply w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center; }
         .radio-option.selected .radio-circle { @apply border-orange-500; }
         .radio-dot { @apply w-2.5 h-2.5 rounded-full bg-orange-500 opacity-0 transform scale-0 transition-all; }
         .radio-option.selected .radio-dot { @apply opacity-100 scale-100; }
+
         .cropper-view-box, .cropper-face { border-radius: 0; }
 
         .header-btn {
-            @apply flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-gray-300 bg-gray-800 border border-gray-700 rounded-lg shadow-sm hover:bg-gray-700 hover:text-white transition-all duration-150 transform active:scale-95 whitespace-nowrap;
+            @apply flex items-center justify-center gap-2 px-3 py-1.5 text-xs font-semibold text-gray-300 bg-gray-800/50 border border-gray-700/50 rounded-lg hover:bg-gray-800 hover:text-white transition-all duration-150 active:scale-95 whitespace-nowrap;
         }
-        .header-btn i { @apply text-base text-inherit; }
+        .header-btn i { @apply text-xs text-inherit; }
 
         /* SEASON UI COMPONENT STYLES */
         .season-ui-card {
-            background-color: #FFFBF5;
-            border: 2px solid #FAE0C8;
-            border-radius: 16px;
-            padding: 16px 24px;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
             display: flex;
             align-items: center;
-            gap: 24px;
-            width: 100%; /* Fitted to container */
+            gap: 1.25rem;
+            width: 100%;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             margin-bottom: 1rem;
         }
 
+        .season-ui-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transform: translateY(-1px);
+        }
+
         .season-ui-card:active {
-            transform: scale(0.98);
+            transform: scale(0.99);
         }
 
         .season-ui-icon-container {
-            width: 64px;
-            height: 64px;
+            width: 56px;
+            height: 56px;
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: transparent; 
             flex-shrink: 0;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            filter: drop-shadow(0 4px 3px rgba(0,0,0,0.07));
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
@@ -271,24 +320,24 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
+            flex-grow: 1;
         }
 
         .season-ui-label {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #8B4513;
-            margin-bottom: 4px;
-            opacity: 0.8;
+            letter-spacing: 0.1em;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
         }
 
         .season-ui-title {
             font-family: 'Nunito', sans-serif;
-            font-size: 24px;
+            font-size: 1.25rem;
             font-weight: 800;
-            color: #D60000;
+            color: #334155;
             line-height: 1.1;
             transition: opacity 300ms, transform 300ms;
         }
@@ -314,10 +363,20 @@
 <body class="h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
-    <nav class="bg-deepred text-white px-4 py-3 shadow-lg flex flex-wrap justify-between items-center z-20 shrink-0 gap-3 relative z-50">
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-orange-100 px-6 py-3 flex justify-between items-center transition-all duration-300">
+        <div class="flex items-center gap-4">
+            <div id="logo-container" class="shadow-sm rounded-lg overflow-hidden">
+                <i class="fa-solid fa-om text-2xl text-orange-500 bg-orange-50 p-2 rounded-lg" id="default-logo-icon"></i>
+            </div>
+            <div>
+                <h1 class="font-black text-xl tracking-tight text-gray-800" id="app-title">
+                    Panchang App
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full ml-2 align-middle">Year View</span>
+                </h1>
+            </div>
+        </div>
         <div class="flex items-center gap-3">
-            <div id="logo-container"><i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i></div>
-            <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span></h1>
+             <!-- Right side actions can go here if needed later -->
         </div>
     </nav>
 
@@ -325,43 +384,60 @@
     <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
         
         <!-- LEFT PANEL: Editor -->
-        <div id="editor-panel" class="w-full md:w-[35%] h-[62%] md:h-full bg-gray-900 text-gray-100 flex flex-col border-b-4 md:border-b-0 md:border-r-4 border-saffron z-10 transition-all duration-300 relative overflow-hidden">
+        <div id="editor-panel" class="w-full md:w-[35%] h-[62%] md:h-full bg-[#0f172a] text-gray-100 flex flex-col border-b-4 md:border-b-0 md:border-r border-gray-800 z-10 transition-all duration-300 relative overflow-hidden">
             
             <!-- Editor Header -->
-            <div class="bg-black border-b border-gray-800 p-4 shrink-0 flex flex-col gap-3 z-50 relative shadow-lg">
-                <div class="flex gap-3">
-                    <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
-                    <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
-                    <button onclick="configureLiveSync()" class="header-btn flex-1 bg-green-700 text-green-100 border-green-600 hover:bg-green-600"><i class="fa-solid fa-file-word"></i> Live Sync Docs</button>
-                    <button onclick="configureGitHubSync()" class="header-btn flex-1 bg-black text-white border-gray-800 hover:bg-gray-900 hover:border-gray-700"><i class="fa-brands fa-github"></i> Live Sync GitHub</button>
+            <div class="bg-[#020617] border-b border-gray-800 p-4 shrink-0 flex flex-col gap-4 z-50 relative shadow-xl">
+
+                <!-- Section 1: File Operations -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    <button onclick="document.getElementById('fileInput').click()" class="header-btn" title="Open File"><i class="fa-solid fa-folder-open text-blue-400"></i> Open</button>
+                    <button onclick="fetchDriveData()" class="header-btn" title="Import from Drive"><i class="fa-brands fa-google-drive text-green-400"></i> Drive</button>
+                    <button onclick="document.getElementById('imageInput').click()" class="header-btn" title="Upload Image"><i class="fa-solid fa-image text-purple-400"></i> Upload</button>
+                    <button onclick="openLinkModal()" class="header-btn" title="Insert Link"><i class="fa-solid fa-link text-orange-400"></i> Link</button>
                     <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
-                    <button onclick="document.getElementById('imageInput').click()" class="header-btn flex-1"><i class="fa-solid fa-image"></i> Upload Image</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-                    <button onclick="openLinkModal()" class="header-btn flex-1"><i class="fa-solid fa-link"></i> Insert Link</button>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="downloadCalendar()" class="header-btn flex-1"><i class="fa-solid fa-download"></i> Download HTML</button>
-                    <button onclick="downloadTxtFile()" class="header-btn flex-1"><i class="fa-solid fa-file-lines"></i> Download TXT</button>
+
+                <!-- Section 2: Sync & Actions (Grid Layout) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Sync Group -->
+                    <div class="flex flex-col gap-2">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">Live Sync</span>
+                        <div class="flex gap-2">
+                            <button onclick="configureLiveSync()" class="header-btn flex-1 bg-blue-900/20 border-blue-900/50 text-blue-200 hover:bg-blue-900/40"><i class="fa-solid fa-file-word"></i> Docs</button>
+                            <button onclick="configureGitHubSync()" class="header-btn flex-1 bg-gray-800 border-gray-700 text-white hover:bg-gray-700"><i class="fa-brands fa-github"></i> Git</button>
+                        </div>
+                    </div>
+                    <!-- Export Group -->
+                    <div class="flex flex-col gap-2">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">Export</span>
+                        <div class="flex gap-2">
+                            <button onclick="downloadCalendar()" class="header-btn flex-1 bg-orange-600 border-orange-500 text-white hover:bg-orange-500 shadow-orange-900/20"><i class="fa-solid fa-download"></i> HTML</button>
+                            <button onclick="downloadTxtFile()" class="header-btn flex-1"><i class="fa-solid fa-file-lines"></i> TXT</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="openSettingsModal()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
-                    <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
-                </div>
-                <div class="flex items-center gap-3 mt-1">
-                    <span class="text-sm font-bold text-gray-500 uppercase tracking-wider">VIEW:</span>
+
+                <!-- Section 3: Settings & View -->
+                <div class="flex items-center gap-3 pt-2 border-t border-gray-800/50">
+                    <button onclick="openSettingsModal()" class="header-btn w-10 h-10 rounded-full p-0 flex items-center justify-center bg-transparent border-gray-700 hover:bg-gray-800" title="Settings"><i class="fa-solid fa-gear text-gray-400"></i></button>
+                    <button onclick="openClearModal()" class="header-btn w-10 h-10 rounded-full p-0 flex items-center justify-center bg-transparent border-gray-700 hover:bg-red-900/30 hover:border-red-800 hover:text-red-400" title="Clear All"><i class="fa-solid fa-trash"></i></button>
+
                     <div class="relative flex-grow">
-                        <select id="view-toggle" class="w-full appearance-none bg-gray-800 border border-gray-700 text-gray-300 py-2 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:border-gray-500 text-sm font-semibold shadow-sm">
+                        <select id="view-toggle" class="w-full appearance-none bg-gray-900 border border-gray-700 text-gray-300 py-2 pl-3 pr-8 rounded-lg text-xs font-semibold focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all hover:border-gray-600">
                             <option>Show Both Languages</option>
                             <option>English Only</option>
                             <option>Odia Only</option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400"><i class="fa-solid fa-chevron-down text-xs"></i></div>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"><i class="fa-solid fa-chevron-down text-[10px]"></i></div>
                     </div>
                 </div>
-                <div class="mt-2 border-t border-gray-800 pt-3">
-                    <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
-                        <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i> Formatting Guide</span>
-                        <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
+
+                <div class="mt-1">
+                    <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-3 py-2 bg-slate-800/50 text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition active:scale-[0.98] duration-150 border border-slate-700/50 group text-xs font-medium">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-book-open text-orange-400"></i> Formatting Guide</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] opacity-50 group-hover:opacity-100 transition-transform group-hover:rotate-180"></i>
                     </button>
                 </div>
             </div>
@@ -552,70 +628,79 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
-            <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-4 md:p-8 relative z-0 transition-all duration-300 pb-24">
+            <div class="app-container max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
                 <!-- Calendar Grid Section -->
-                <div class="flex-grow lg:w-3/4 space-y-2 w-full">
-                    <!-- Calendar Header -->
-                    <div class="bg-white rounded-xl shadow-lg border-t-4 border-saffron p-4 md:p-6 relative z-10">
-                         <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
-                        <div class="flex items-center justify-between w-full gap-4">
-                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
-                            <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
-                                <h2 id="cal-month-year" class="text-2xl md:text-3xl font-bold text-deepred uppercase tracking-wider leading-none">JANUARY 2025</h2>
-                                <p id="cal-indian-month" class="text-lg font-bold text-red-800 bg-amber-400 px-4 py-1 rounded-lg mt-2 font-oriya leading-tight shadow-md border-2 border-amber-500 hidden"></p>
-                                
-                                <!-- MOVED: Go to Today Button (Centered Below Title) -->
-                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-xs font-bold hover:bg-orange-200 transition items-center gap-2 animate-pulse shadow-sm border border-orange-200 whitespace-nowrap">
-                                    <i class="fa-solid fa-crosshairs"></i> Go to Today
-                                </button>
+                <div class="flex-grow lg:w-3/4 space-y-6 w-full">
+                    <!-- Modern Floating Calendar Header -->
+                    <div class="card-modern p-6 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+                        <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+                            <button onclick="changeMonth(-1)" class="nav-btn w-10 h-10 bg-gray-50 border border-gray-200 text-gray-600 hover:text-orange-600 hover:border-orange-200 hover:bg-orange-50" title="Previous Month">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                            <div class="text-center">
+                                <h2 id="cal-month-year" class="text-3xl font-black text-gray-800 uppercase tracking-tight leading-none">JANUARY 2025</h2>
+                                <p id="cal-indian-month" class="text-sm font-bold text-orange-600 mt-1 font-oriya hidden"></p>
                             </div>
-                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button onclick="changeMonth(1)" class="nav-btn w-10 h-10 bg-gray-50 border border-gray-200 text-gray-600 hover:text-orange-600 hover:border-orange-200 hover:bg-orange-50" title="Next Month">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
                         </div>
                         
-                        <!-- Decorative Icon (Absolute Positioning on Right) -->
-                        <div class="hidden md:block absolute right-6 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
-                            <i class="fa-solid fa-calendar-days text-4xl text-saffron"></i>
+                        <div class="flex items-center gap-3">
+                            <button onclick="jumpToToday()" id="btn-today" class="hidden px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-xs font-bold hover:bg-orange-200 transition items-center gap-2 shadow-sm border border-orange-200">
+                                <i class="fa-solid fa-calendar-day"></i> Today
+                            </button>
+                            <div class="hidden md:block w-px h-8 bg-gray-200 mx-2"></div>
+                            <div class="hidden md:flex items-center gap-2 text-gray-400">
+                                <i class="fa-regular fa-calendar text-xl"></i>
+                            </div>
                         </div>
                     </div>
 
                     <!-- MONTH BANNER CAROUSEL -->
-                    <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[3/1] md:aspect-[5/1] bg-gray-100 border-4 border-white">
+                    <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-2xl shadow-lg aspect-[3/1] md:aspect-[5/1] bg-gray-100 ring-1 ring-black/5">
                         <!-- Slides Wrapper -->
                         <div id="banner-slides" class="flex transition-transform duration-500 ease-out h-full"></div>
                         
                         <!-- Navigation Arrows -->
-                        <button id="banner-prev" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button id="banner-next" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button id="banner-prev" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-12 h-12 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-md border border-white/30"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button id="banner-next" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-12 h-12 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-md border border-white/30"><i class="fa-solid fa-arrow-right"></i></button>
                         
                         <!-- Close Button -->
-                        <button onclick="dismissBanner(event)" class="absolute right-2 top-2 bg-black/30 hover:bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center transition z-30 backdrop-blur-sm"><i class="fa-solid fa-times text-xs"></i></button>
+                        <button onclick="dismissBanner(event)" class="absolute right-3 top-3 bg-black/40 hover:bg-black/60 text-white w-7 h-7 rounded-full flex items-center justify-center transition z-30 backdrop-blur-md"><i class="fa-solid fa-times text-xs"></i></button>
 
                         <!-- Dots -->
-                        <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
+                        <div id="banner-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20 p-1.5 rounded-full bg-black/20 backdrop-blur-sm border border-white/10"></div>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-lg p-2 md:p-3">
-                        <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
-                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
+                    <div class="card-modern p-1 md:p-4 bg-white/50 backdrop-blur-sm">
+                        <div id="grid-header" class="grid grid-cols-7 mb-4 text-center pb-2 border-b border-gray-200/60"></div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-2 sm:gap-3 auto-rows-fr p-1"></div>
                     </div>
                 </div>
 
                 <!-- Sidebar Section -->
                 <div class="lg:w-1/4 space-y-6">
-                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300">
-                        <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
-                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
-                        <ul id="festival-list" class="space-y-2 text-sm"></ul>
+                    <div id="sec-festivals" class="card-modern p-5 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fa-solid fa-bell text-6xl text-red-500"></i></div>
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg"><span class="w-1 h-6 bg-red-500 rounded-full"></span> Festivals</h3>
+                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-5"></div>
+                        <ul id="festival-list" class="space-y-3 relative z-10"></ul>
                     </div>
-                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300">
-                        <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i>Month's Panchang</h3>
-                        <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
-                        <ul id="panchang-list" class="text-sm space-y-2"></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"></div>
+
+                    <div id="sec-panchang" class="card-modern p-5 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fa-solid fa-sun text-6xl text-orange-500"></i></div>
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg"><span class="w-1 h-6 bg-orange-500 rounded-full"></span> Panchang</h3>
+                        <div id="panchang-pills" class="flex flex-wrap gap-2 mb-4"></div>
+                        <ul id="panchang-list" class="text-sm space-y-3 relative z-10"></ul>
+                        <div id="location-btn-container" class="mt-4 pt-3 border-t border-gray-100 flex justify-center relative z-10"></div>
                     </div>
-                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300">
-                        <h3 class="font-bold text-amber-800 mb-3 border-b pb-1"><i class="fa-solid fa-hand-sparkles text-amber-500 mr-2"></i>Horoscope</h3>
-                        <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
+
+                    <div id="sec-horoscope" class="card-modern p-5 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fa-solid fa-star text-6xl text-purple-500"></i></div>
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg"><span class="w-1 h-6 bg-purple-500 rounded-full"></span> Horoscope</h3>
+                        <div id="horoscope-grid" class="grid grid-cols-3 gap-3 relative z-10"></div>
                     </div>
                 </div>
             </div>
@@ -624,100 +709,123 @@ The word "Nua" means new and "Khai" means food.
 
     <!-- CLEAR CONFIRMATION MODAL -->
     <div id="clear-confirmation-modal" class="fixed inset-0 z-[90] flex items-center justify-center p-4 modal-hidden" style="display: none;">
-        <div class="modal-backdrop absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeClearModal()"></div>
-        <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-sm relative z-10 overflow-hidden text-center p-6">
-            <div class="mb-4 text-red-100 bg-red-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto shadow-lg">
+        <div class="modal-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeClearModal()"></div>
+        <div class="modal-content card-modern p-8 max-w-sm w-full text-center relative z-10">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
             </div>
             <h3 class="font-bold text-gray-800 text-xl mb-2">Clear All Content?</h3>
-            <p class="text-gray-500 text-sm mb-6">This will permanently remove all text and calendar data. This action cannot be undone.</p>
+            <p class="text-gray-500 text-sm mb-6 leading-relaxed">This action will remove all calendar data and reset the editor. This cannot be undone.</p>
             <div class="flex gap-3 justify-center">
-                <button onclick="closeClearModal()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition active:scale-95 transform">Cancel</button>
-                <button onclick="performClear()" class="px-5 py-2.5 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 shadow-md transition transform active:scale-95">Yes, Clear It</button>
+                <button onclick="closeClearModal()" class="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition">Cancel</button>
+                <button onclick="performClear()" class="px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 shadow-md shadow-red-200 transition">Yes, Clear It</button>
             </div>
         </div>
     </div>
 
     <!-- SETTINGS MODAL -->
     <div id="settings-modal" class="fixed inset-0 z-[80] flex items-center justify-center p-4 modal-hidden" style="display: none;">
-        <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden">
-            <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="font-bold text-gray-700 flex items-center gap-2"><i class="fa-solid fa-gear text-gray-500"></i> Settings</h3>
-                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
+        <div class="modal-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gray-50/80 backdrop-blur p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-gray-700 flex items-center gap-2"><i class="fa-solid fa-sliders text-orange-500"></i> Preferences</h3>
+                <button onclick="closeSettingsModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 transition"><i class="fa-solid fa-times"></i></button>
             </div>
-            <div class="p-6 space-y-4">
+            <div class="p-6 space-y-6 overflow-y-auto">
+                <!-- Language Section -->
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Language</label>
-                    <select id="language-select" onchange="changeLanguage(this.value)" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition">
-                        <option value="en">English</option>
-                        <option value="hi">Hindi (हिन्दी)</option>
-                        <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                        <option value="bn">Bengali (বাংলা)</option>
-                        <option value="mr">Marathi (मराठी)</option>
-                        <option value="gu">Gujarati (ગુજરાતી)</option>
-                        <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                        <option value="ta">Tamil (தமிழ்)</option>
-                        <option value="te">Telugu (తెలుగు)</option>
-                        <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                        <option value="ml">Malayalam (മലയാളം)</option>
-                    </select>
-                    <p class="text-[10px] text-gray-400 mt-1 italic">Note: Downloaded app will only include the selected language.</p>
-                </div>
-
-                <div class="border-t border-gray-200 pt-4 space-y-3">
-                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Display Options</div>
-                    
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Show Festivals</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Show Panchang</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Show Horoscope</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-horoscope" class="sr-only peer" checked onchange="toggleSection('horoscope', this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Language & Region</label>
+                    <div class="relative">
+                        <select id="language-select" onchange="changeLanguage(this.value)" class="w-full p-3 pl-10 border border-gray-200 rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition appearance-none font-medium text-gray-700">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="mr">Marathi (मराठी)</option>
+                            <option value="gu">Gujarati (ગુજરાતી)</option>
+                            <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                            <option value="ta">Tamil (தமிழ்)</option>
+                            <option value="te">Telugu (తెలుగు)</option>
+                            <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                            <option value="ml">Malayalam (മലയാളം)</option>
+                        </select>
+                        <i class="fa-solid fa-language absolute left-3.5 top-3.5 text-gray-400 text-lg"></i>
+                        <i class="fa-solid fa-chevron-down absolute right-3.5 top-4 text-gray-400 text-xs"></i>
                     </div>
                 </div>
 
-                <div class="border-t border-gray-200 pt-4 space-y-3">
-                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sync Settings</div>
-                    
-                    <div id="container-sync-docs" class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Live Sync GitHub</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
+                <!-- Display Toggles -->
+                <div>
+                    <div class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Widget Visibility</div>
+                    <div class="space-y-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center"><i class="fa-solid fa-bell text-xs"></i></div>
+                                <span class="font-medium text-gray-700">Festivals</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500 transition-colors"></div>
+                            </label>
+                        </div>
+                        <div class="w-full h-px bg-gray-200"></div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center"><i class="fa-solid fa-sun text-xs"></i></div>
+                                <span class="font-medium text-gray-700">Panchang</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500 transition-colors"></div>
+                            </label>
+                        </div>
+                        <div class="w-full h-px bg-gray-200"></div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-500 flex items-center justify-center"><i class="fa-solid fa-star text-xs"></i></div>
+                                <span class="font-medium text-gray-700">Horoscope</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-horoscope" class="sr-only peer" checked onchange="toggleSection('horoscope', this.checked)">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500 transition-colors"></div>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between border-t border-gray-200 pt-4 mt-4">
-                    <label class="text-sm font-bold text-gray-700">Show Daily Overview Banner</label>
+                <!-- Sync Settings -->
+                <div>
+                    <div class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Data Sync</div>
+                    <div class="space-y-3">
+                        <div id="container-sync-docs" class="flex items-center justify-between p-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-gray-700 text-sm">Google Docs</span>
+                                <span class="text-[10px] text-gray-400">Live update from published doc</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500 transition-colors"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-gray-700 text-sm">GitHub / Raw File</span>
+                                <span class="text-[10px] text-gray-400">Sync with raw text file</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-800 transition-colors"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <span class="font-bold text-gray-700 text-sm">Show Day Banner</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="banner-toggle" class="sr-only peer" onchange="toggleBannerVisibility(this)">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 transition-colors"></div>
                     </label>
                 </div>
             </div>
@@ -727,48 +835,48 @@ The word "Nua" means new and "Khai" means food.
     <!-- CROP & PLACE MODAL -->
     <div id="crop-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCropModal()"></div>
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative z-10 overflow-hidden flex flex-col h-[90vh] md:h-[800px]">
-            <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-gray-700"><i class="fa-solid fa-crop-simple mr-2 text-blue-500"></i>Crop & Place Image</h3>
-                <button onclick="closeCropModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-5xl relative z-10 overflow-hidden flex flex-col h-[85vh]">
+            <div class="bg-gray-50 p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-crop-simple text-blue-500"></i> Image Editor</h3>
+                <button onclick="closeCropModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 transition"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
-                <div class="w-full md:w-2/3 bg-black flex items-center justify-center relative">
+                <div class="w-full md:w-2/3 bg-black/90 flex items-center justify-center relative">
                     <img id="cropper-img" class="max-h-full max-w-full">
                 </div>
-                <div class="w-full md:w-1/3 p-6 bg-white flex flex-col gap-4 border-l border-gray-100 overflow-y-auto">
+                <div class="w-full md:w-1/3 p-6 bg-white flex flex-col gap-6 border-l border-gray-100 overflow-y-auto">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Placement</label>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Where to place this?</label>
                         <div class="space-y-3">
                             <div class="radio-option selected" onclick="updateCropRatio('logo')">
                                 <div class="radio-circle"><div class="radio-dot"></div></div>
                                 <div class="flex-1">
                                     <span class="block font-bold text-gray-700 text-sm">App Logo</span>
-                                    <span class="block text-xs text-gray-500">Square (1:1)</span>
+                                    <span class="block text-xs text-gray-400">Square (1:1)</span>
                                 </div>
                             </div>
                             <div class="radio-option" onclick="updateCropRatio('gridbg')">
                                 <div class="radio-circle"><div class="radio-dot"></div></div>
                                 <div class="flex-1">
                                     <span class="block font-bold text-gray-700 text-sm">Grid Background</span>
-                                    <span class="block text-xs text-gray-500">Square (1:1)</span>
-                                    <select id="gridbg-date-select" class="mt-2 w-full text-xs p-1.5 border rounded bg-white hidden" onclick="event.stopPropagation()"></select>
+                                    <span class="block text-xs text-gray-400">Square (1:1) - Adds background to a date cell</span>
+                                    <select id="gridbg-date-select" class="mt-2 w-full text-xs p-2 border border-gray-200 rounded-lg bg-gray-50 hidden focus:ring-2 focus:ring-blue-500/20 outline-none" onclick="event.stopPropagation()"></select>
                                 </div>
                             </div>
                             <div class="radio-option" onclick="updateCropRatio('banner')">
                                 <div class="radio-circle"><div class="radio-dot"></div></div>
                                 <div class="flex-1">
                                     <span class="block font-bold text-gray-700 text-sm">Day Banner</span>
-                                    <span class="block text-xs text-gray-500">Widescreen (16:9)</span>
-                                    <select id="banner-date-select" class="mt-2 w-full text-xs p-1.5 border rounded bg-white hidden" onclick="event.stopPropagation()"></select>
+                                    <span class="block text-xs text-gray-400">Widescreen (16:9) - Shows in list & modal</span>
+                                    <select id="banner-date-select" class="mt-2 w-full text-xs p-2 border border-gray-200 rounded-lg bg-gray-50 hidden focus:ring-2 focus:ring-blue-500/20 outline-none" onclick="event.stopPropagation()"></select>
                                 </div>
                             </div>
                             <div class="radio-option" onclick="updateCropRatio('horoscope')">
                                 <div class="radio-circle"><div class="radio-dot"></div></div>
                                 <div class="flex-1">
                                     <span class="block font-bold text-gray-700 text-sm">Horoscope Icon</span>
-                                    <span class="block text-xs text-gray-500">Square (1:1)</span>
-                                    <select id="crop-horoscope-select" class="mt-2 w-full text-xs p-1.5 border rounded bg-white hidden" onclick="event.stopPropagation()">
+                                    <span class="block text-xs text-gray-400">Square (1:1) - Replaces star icon</span>
+                                    <select id="crop-horoscope-select" class="mt-2 w-full text-xs p-2 border border-gray-200 rounded-lg bg-gray-50 hidden focus:ring-2 focus:ring-blue-500/20 outline-none" onclick="event.stopPropagation()">
                                         <option value="" disabled selected>Select Sign</option>
                                         <option value="Aries">Aries</option>
                                         <option value="Taurus">Taurus</option>
@@ -788,7 +896,7 @@ The word "Nua" means new and "Khai" means food.
                         </div>
                     </div>
                     <div class="mt-auto pt-4">
-                        <button onclick="performCropAndInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <button onclick="performCropAndInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 transition transform active:scale-[0.98] flex items-center justify-center gap-2">
                             <i class="fa-solid fa-check"></i> Crop & Insert
                         </button>
                     </div>
@@ -799,19 +907,22 @@ The word "Nua" means new and "Khai" means food.
 
     <!-- INSERT LINK MODAL -->
     <div id="link-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-hidden" style="display: none;">
-        <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeLinkModal()"></div>
+        <div class="modal-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeLinkModal()"></div>
         <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col">
-            <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-gray-700"><i class="fa-solid fa-link mr-2 text-blue-500"></i>Insert Image Link</h3>
-                <button onclick="closeLinkModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
+            <div class="bg-gray-50 p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-link text-blue-500"></i> Insert Image Link</h3>
+                <button onclick="closeLinkModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 transition"><i class="fa-solid fa-times"></i></button>
             </div>
-            <div class="p-6 flex flex-col gap-4 overflow-y-auto">
+            <div class="p-6 flex flex-col gap-5 overflow-y-auto">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Image URL</label>
-                    <input type="text" id="link-url-input" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="https://example.com/image.jpg">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Image URL</label>
+                    <div class="relative">
+                        <input type="text" id="link-url-input" class="w-full p-3 pl-10 border border-gray-200 rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition text-sm font-medium" placeholder="https://example.com/image.jpg">
+                        <i class="fa-solid fa-globe absolute left-3.5 top-3.5 text-gray-400"></i>
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Placement</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Placement</label>
                     <div class="space-y-3">
                         <div class="radio-option selected" onclick="updateLinkType('logo')">
                             <div class="radio-circle"><div class="radio-dot"></div></div>
@@ -840,12 +951,12 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
                 <div id="link-date-container" class="hidden">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
-                    <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Target Date</label>
+                    <select id="link-date-select" class="w-full p-3 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition text-sm"></select>
                 </div>
                 <div id="link-horoscope-container" class="hidden">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Sign</label>
-                    <select id="link-horoscope-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Target Sign</label>
+                    <select id="link-horoscope-select" class="w-full p-3 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition text-sm">
                         <option value="Aries">Aries</option>
                         <option value="Taurus">Taurus</option>
                         <option value="Gemini">Gemini</option>
@@ -860,8 +971,8 @@ The word "Nua" means new and "Khai" means food.
                         <option value="Pisces">Pisces</option>
                     </select>
                 </div>
-                <div class="mt-4">
-                    <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
+                <div class="mt-2">
+                    <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 transition transform active:scale-[0.98] flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus"></i> Insert Link
                     </button>
                 </div>
