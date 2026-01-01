@@ -559,21 +559,23 @@ The word "Nua" means new and "Khai" means food.
                     <!-- Calendar Header -->
                     <div class="bg-white rounded-3xl shadow-sm p-6 relative z-10">
                         <div class="flex items-center justify-between w-full">
-                            <button onclick="changeMonth(-1)" class="w-12 h-12 flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 rounded-lg transition shadow-sm" title="Previous Month">
+                            <button onclick="changeMonth(-1)" class="w-12 h-12 flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 rounded-sm transition shadow-sm" title="Previous Month">
                                 <i class="fa-solid fa-arrow-left"></i>
                             </button>
                             <div class="text-center flex flex-col items-center justify-center">
-                                <h2 id="cal-month" class="text-2xl md:text-3xl font-normal text-slate-800 uppercase tracking-wide mb-0">JANUARY</h2>
-                                <div id="cal-year" class="text-2xl md:text-3xl font-normal text-slate-800 tracking-wide leading-none mt-1">2025</div>
-
-                                <p id="cal-indian-month" class="text-base md:text-lg font-bold text-orange-600 mt-2 font-oriya hidden"></p>
-                                
-                                <button onclick="jumpToToday()" id="btn-today" class="mt-4 bg-orange-100/80 text-orange-700 px-6 py-2 rounded-full text-sm font-bold hover:bg-orange-200 transition flex items-center gap-2 shadow-sm border border-orange-200 hidden">
-                                    <i class="fa-solid fa-calendar-days"></i> Today
-                                </button>
+                                <div class="flex items-baseline gap-2">
+                                    <h2 id="cal-month" class="text-3xl md:text-4xl font-normal text-slate-800 uppercase tracking-wide">JANUARY</h2>
+                                    <div id="cal-year" class="text-3xl md:text-4xl font-normal text-slate-800 tracking-wide leading-none">2025</div>
+                                </div>
+                                <p id="cal-indian-month" class="text-lg font-bold text-orange-600 mt-1 font-oriya hidden"></p>
                             </div>
-                            <button onclick="changeMonth(1)" class="w-12 h-12 flex items-center justify-center border border-orange-100 bg-orange-50 hover:bg-orange-100 text-gray-700 rounded-lg transition shadow-sm" title="Next Month">
+                            <button onclick="changeMonth(1)" class="w-12 h-12 flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 rounded-sm transition shadow-sm" title="Next Month">
                                 <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="flex justify-center mt-2">
+                            <button onclick="jumpToToday()" id="btn-today" class="bg-orange-100/80 text-orange-700 px-6 py-2 rounded-full text-sm font-bold hover:bg-orange-200 transition flex items-center gap-2 shadow-sm border border-orange-200 hidden">
+                                <i class="fa-solid fa-calendar-days"></i> Today
                             </button>
                         </div>
                     </div>
