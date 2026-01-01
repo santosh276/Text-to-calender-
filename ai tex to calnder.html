@@ -558,18 +558,18 @@ The word "Nua" means new and "Khai" means food.
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
                     <div class="bg-white rounded-3xl shadow-sm p-6 relative z-10">
-                        <div class="flex items-center justify-between w-full">
-                            <button onclick="changeMonth(-1)" class="w-12 h-12 flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 rounded-sm transition shadow-sm" title="Previous Month">
+                        <div class="flex items-center justify-between w-full gap-2">
+                            <button onclick="changeMonth(-1)" class="w-12 h-12 shrink-0 flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 rounded-sm transition shadow-sm" title="Previous Month">
                                 <i class="fa-solid fa-arrow-left"></i>
                             </button>
-                            <div class="text-center flex flex-col items-center justify-center">
-                                <div class="flex items-baseline gap-2">
+                            <div class="text-center flex flex-col items-center justify-center overflow-hidden min-w-0">
+                                <div class="flex flex-wrap justify-center items-baseline gap-x-2">
                                     <h2 id="cal-month" class="text-3xl md:text-4xl font-normal text-slate-800 uppercase tracking-wide">JANUARY</h2>
                                     <div id="cal-year" class="text-3xl md:text-4xl font-normal text-slate-800 tracking-wide leading-none">2025</div>
                                 </div>
                                 <p id="cal-indian-month" class="text-lg font-bold text-orange-600 mt-1 font-oriya hidden"></p>
                             </div>
-                            <button onclick="changeMonth(1)" class="w-12 h-12 flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 rounded-sm transition shadow-sm" title="Next Month">
+                            <button onclick="changeMonth(1)" class="w-12 h-12 shrink-0 flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 rounded-sm transition shadow-sm" title="Next Month">
                                 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
