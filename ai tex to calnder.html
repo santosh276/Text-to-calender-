@@ -44,7 +44,16 @@
 
 .group:hover .group-hover\:text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12/var(--tw-text-opacity,1))}
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
-@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
+@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}
+.bg-gradient-to-b{background-image:linear-gradient(to bottom,var(--tw-gradient-stops))}
+.rounded-\[2rem\]{border-radius:2rem}
+.text-5xl{font-size:3rem;line-height:1}
+.text-6xl{font-size:3.75rem;line-height:1}
+.text-9xl{font-size:8rem;line-height:1}
+.backdrop-blur-md{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.from-\[\#D92D20\]{--tw-gradient-from:#D92D20;--tw-gradient-to:rgb(217 45 32/0);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
+.to-orange-500{--tw-gradient-to:#f97316}
+</style>
 <style>
         @media (min-width: 1440px) {
             .app-container, .showcase-section, .intro-section, .faq-container {
@@ -557,26 +566,58 @@ The word "Nua" means new and "Khai" means food.
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
-                    <div class="bg-white rounded-xl shadow-lg border-t-4 border-saffron p-4 md:p-6 relative z-10">
-                         <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
-                        <div class="flex items-center justify-between w-full gap-4">
-                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
-                            <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
-                                <h2 id="cal-month-year" class="text-2xl md:text-3xl font-bold text-deepred uppercase tracking-wider leading-none">JANUARY 2025</h2>
-                                <p id="cal-indian-month" class="text-lg font-bold text-red-800 bg-amber-400 px-4 py-1 rounded-lg mt-2 font-oriya leading-tight shadow-md border-2 border-amber-500 hidden"></p>
-                                
-                                <!-- MOVED: Go to Today Button (Centered Below Title) -->
-                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-xs font-bold hover:bg-orange-200 transition items-center gap-2 animate-pulse shadow-sm border border-orange-200 whitespace-nowrap">
-                                    <i class="fa-solid fa-crosshairs"></i> Go to Today
+                    <div class="relative w-full overflow-hidden rounded-[2rem] shadow-2xl bg-gradient-to-b from-[#D92D20] to-orange-500 text-white p-6 md:p-8 mb-6 z-10">
+                        <!-- Watermark Icon -->
+                        <div class="absolute -bottom-6 -right-6 text-white opacity-10 text-9xl pointer-events-none z-0">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+
+                        <!-- Top Row: Controls -->
+                        <div class="relative z-10 flex justify-between items-start mb-2">
+                            <!-- Menu Button -->
+                            <button onclick="openSettingsModal()" class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition shadow-sm border border-white/20" aria-label="Settings">
+                                <i class="fa-solid fa-bars text-xl"></i>
+                            </button>
+
+                            <!-- Today Button -->
+                            <button onclick="jumpToToday()" id="btn-today" class="hidden px-5 py-2 rounded-full bg-white/20 backdrop-blur-md text-white font-bold text-sm hover:bg-white/30 transition shadow-sm border border-white/20 items-center gap-2">
+                                <span>TODAY</span>
+                            </button>
+                        </div>
+
+                        <!-- Middle Row: Month/Year & Nav -->
+                        <div class="relative z-10 flex items-center justify-between mb-6">
+                            <div>
+                                <h1 id="cal-month" class="text-5xl md:text-6xl font-extrabold tracking-tight leading-none drop-shadow-sm">January</h1>
+                                <p id="cal-year" class="text-2xl md:text-3xl font-light opacity-90 mt-1">2026</p>
+                            </div>
+
+                            <div class="flex gap-3 mb-2">
+                                <button onclick="changeMonth(-1)" class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition shadow-sm border border-white/20" aria-label="Previous Month">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <button onclick="changeMonth(1)" class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition shadow-sm border border-white/20" aria-label="Next Month">
+                                    <i class="fa-solid fa-chevron-right"></i>
                                 </button>
                             </div>
-                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
                         </div>
-                        
-                        <!-- Decorative Icon (Absolute Positioning on Right) -->
-                        <div class="hidden md:block absolute right-6 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
-                            <i class="fa-solid fa-calendar-days text-4xl text-saffron"></i>
+
+                        <!-- Divider -->
+                        <div class="relative z-10 h-px bg-white/20 mb-4"></div>
+
+                        <!-- Bottom Row: Indian Month -->
+                        <div class="relative z-10">
+                            <div id="header-details" class="flex flex-col gap-1">
+                                <div class="flex items-center gap-2 text-lg font-medium">
+                                    <i class="fa-regular fa-moon"></i>
+                                    <span id="cal-indian-month">Pausha / Magha</span>
+                                </div>
+                                <div id="cal-indian-month-regional" class="text-sm opacity-80 font-oriya ml-6 hidden"></div>
+                            </div>
                         </div>
+
+                        <!-- Hidden legacy element just in case JS breaks if missing -->
+                        <h2 id="cal-month-year" class="hidden"></h2>
                     </div>
 
                     <!-- MONTH BANNER CAROUSEL -->
@@ -2547,17 +2588,39 @@ The word "Nua" means new and "Khai" means food.
                 logoContainer.innerHTML = `<i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i>`;
             }
 
-            document.getElementById('cal-month-year').innerText = `${months[currentData.month]} ${currentData.year}`;
+            // Update Month/Year split
+            const monthEl = document.getElementById('cal-month');
+            const yearEl = document.getElementById('cal-year');
+            if (monthEl) monthEl.innerText = months[currentData.month];
+            if (yearEl) yearEl.innerText = currentData.year;
             
+            // Legacy fallback (hidden element)
+            const legacyHeader = document.getElementById('cal-month-year');
+            if(legacyHeader) legacyHeader.innerText = `${months[currentData.month]} ${currentData.year}`;
+
+            // Indian Month Logic
             const indianMonthEl = document.getElementById('cal-indian-month');
+            const indianMonthRegEl = document.getElementById('cal-indian-month-regional');
+
             const currentLang = appState.config.language || 'en';
             const currentLangData = langData[currentLang];
-            
-            if (currentLangData && currentLangData.indianMonths) {
+            const enMonth = langData.en.indianMonths[currentData.month];
+
+            if (indianMonthEl) {
+                // Primary line: English Transliteration
+                indianMonthEl.innerText = enMonth;
                 indianMonthEl.classList.remove('hidden');
-                indianMonthEl.innerText = currentLangData.indianMonths[currentData.month];
-            } else {
-                indianMonthEl.classList.add('hidden');
+
+                // Secondary line: Regional Script (if different and available)
+                if (currentLang !== 'en' && currentLangData && currentLangData.indianMonths) {
+                    const regMonth = currentLangData.indianMonths[currentData.month];
+                     if (indianMonthRegEl) {
+                        indianMonthRegEl.classList.remove('hidden');
+                        indianMonthRegEl.innerText = `Regional: ${regMonth}`;
+                    }
+                } else {
+                    if (indianMonthRegEl) indianMonthRegEl.classList.add('hidden');
+                }
             }
             
             const btnToday = document.getElementById('btn-today');
