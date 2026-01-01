@@ -53,6 +53,7 @@
 .backdrop-blur-md{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .from-\[\#D92D20\]{--tw-gradient-from:#D92D20;--tw-gradient-to:rgb(217 45 32/0);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
 .to-orange-500{--tw-gradient-to:#f97316}
+.-right-4{right:-1rem}
 </style>
 <style>
         @media (min-width: 1440px) {
@@ -566,40 +567,40 @@ The word "Nua" means new and "Khai" means food.
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
-                    <div class="relative w-full overflow-hidden rounded-[2rem] shadow-2xl bg-gradient-to-b from-[#D92D20] to-orange-500 text-white p-6 md:p-8 mb-6 z-10">
+                    <div class="relative w-full overflow-hidden rounded-[2rem] shadow-2xl bg-gradient-to-b from-[#D92D20] to-orange-500 text-white p-4 md:p-6 mb-4 z-10">
                         <!-- Watermark Icon -->
-                        <div class="absolute -bottom-6 -right-6 text-white opacity-10 text-9xl pointer-events-none z-0">
+                        <div class="absolute top-1/2 -translate-y-1/2 -right-4 text-white opacity-10 text-9xl pointer-events-none z-0">
                             <i class="fa-solid fa-calendar-days"></i>
                         </div>
 
                         <!-- Top Row: Controls -->
-                        <div class="relative z-10 flex justify-end items-start mb-2">
+                        <div class="relative z-10 flex justify-end items-start mb-0">
 
                             <!-- Today Button -->
-                            <button onclick="jumpToToday()" id="btn-today" class="hidden px-5 py-2 rounded-full bg-white/20 backdrop-blur-md text-white font-bold text-sm hover:bg-white/30 transition shadow-sm border border-white/20 items-center gap-2">
+                            <button onclick="jumpToToday()" id="btn-today" class="hidden px-5 py-2 rounded-full bg-white/20 backdrop-blur-md text-white font-bold text-sm hover:bg-white/30 transition shadow-sm items-center gap-2">
                                 <span>TODAY</span>
                             </button>
                         </div>
 
                         <!-- Middle Row: Month/Year & Nav -->
-                        <div class="relative z-10 flex items-center justify-between mb-6">
+                        <div class="relative z-10 flex items-center justify-between mb-2">
                             <div>
-                                <h1 id="cal-month" class="text-5xl md:text-6xl font-extrabold tracking-tight leading-none drop-shadow-sm">January</h1>
-                                <p id="cal-year" class="text-2xl md:text-3xl font-light opacity-90 mt-1">2026</p>
+                                <h1 id="cal-month" class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none drop-shadow-sm">January</h1>
+                                <p id="cal-year" class="text-xl md:text-2xl font-light opacity-90 mt-1">2026</p>
                             </div>
 
-                            <div class="flex gap-3 mb-2">
-                                <button onclick="changeMonth(-1)" class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition shadow-sm border border-white/20" aria-label="Previous Month">
+                            <div class="flex gap-3">
+                                <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition shadow-sm" aria-label="Previous Month">
                                     <i class="fa-solid fa-chevron-left"></i>
                                 </button>
-                                <button onclick="changeMonth(1)" class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition shadow-sm border border-white/20" aria-label="Next Month">
+                                <button onclick="changeMonth(1)" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition shadow-sm" aria-label="Next Month">
                                     <i class="fa-solid fa-chevron-right"></i>
                                 </button>
                             </div>
                         </div>
 
                         <!-- Divider -->
-                        <div class="relative z-10 h-px bg-white/20 mb-4"></div>
+                        <div class="relative z-10 h-px bg-white/20 mb-3"></div>
 
                         <!-- Bottom Row: Indian Month -->
                         <div class="relative z-10">
