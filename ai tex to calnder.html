@@ -132,7 +132,25 @@
             margin-bottom: 1rem;
         }
 
-        .nav-btn { @apply bg-gray-100 hover:bg-saffron hover:text-white text-gray-600 w-10 h-10 rounded-full flex items-center justify-center transition shadow-sm; }
+        .nav-btn { 
+            width: 3rem; 
+            height: 3rem; 
+            border-radius: 0.75rem; 
+            background-color: #ffffff; 
+            border: 1px solid #e5e7eb; 
+            color: #4b5563; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.2s; 
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .nav-btn:hover {
+            background-color: #f9fafb;
+            color: #111827;
+            border-color: #d1d5db;
+        }
 
         /* STRICT CONTAINER MANAGEMENT: Formatting Guide */
         #syntax-guide { 
@@ -557,25 +575,26 @@ The word "Nua" means new and "Khai" means food.
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
-                    <div class="bg-white rounded-xl shadow-lg border-t-4 border-saffron p-4 md:p-6 relative z-10">
+                    <div class="bg-white rounded-3xl shadow-sm p-4 md:p-6 relative z-10">
                          <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
                         <div class="flex items-center justify-between w-full gap-4">
-                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month"><i class="fa-solid fa-arrow-left"></i></button>
+                            
                             <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
-                                <h2 id="cal-month-year" class="text-2xl md:text-3xl font-bold text-deepred uppercase tracking-wider leading-none">JANUARY 2025</h2>
-                                <p id="cal-indian-month" class="text-lg font-bold text-red-800 bg-amber-400 px-4 py-1 rounded-lg mt-2 font-oriya leading-tight shadow-md border-2 border-amber-500 hidden"></p>
+                                <!-- Adaptive Month/Year Container -->
+                                <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
+                                    <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight"></span>
+                                    <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
+                                </div>
+
+                                <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
                                 
-                                <!-- MOVED: Go to Today Button (Centered Below Title) -->
-                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-xs font-bold hover:bg-orange-200 transition items-center gap-2 animate-pulse shadow-sm border border-orange-200 whitespace-nowrap">
-                                    <i class="fa-solid fa-crosshairs"></i> Go to Today
+                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-50 text-orange-600 px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100">
+                                    <i class="fa-solid fa-calendar-day"></i> Today
                                 </button>
                             </div>
-                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
-                        </div>
-                        
-                        <!-- Decorative Icon (Absolute Positioning on Right) -->
-                        <div class="hidden md:block absolute right-6 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
-                            <i class="fa-solid fa-calendar-days text-4xl text-saffron"></i>
+                            
+                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month" aria-label="Next Month"><i class="fa-solid fa-arrow-right"></i></button>
                         </div>
                     </div>
 
@@ -2547,7 +2566,9 @@ The word "Nua" means new and "Khai" means food.
                 logoContainer.innerHTML = `<i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i>`;
             }
 
-            document.getElementById('cal-month-year').innerText = `${months[currentData.month]} ${currentData.year}`;
+            // Updated for new Header
+            document.getElementById('cal-month').innerText = months[currentData.month];
+            document.getElementById('cal-year').innerText = currentData.year;
             
             const indianMonthEl = document.getElementById('cal-indian-month');
             const currentLang = appState.config.language || 'en';
