@@ -44,7 +44,11 @@
 
 .group:hover .group-hover\:text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12/var(--tw-text-opacity,1))}
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
-@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
+@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}
+@media (min-width:768px){.md\:inline{display:inline}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
 <style>
         @media (min-width: 1440px) {
             .app-container, .showcase-section, .intro-section, .faq-container {
@@ -335,8 +339,11 @@
     <nav class="bg-deepred text-white px-4 py-3 shadow-lg flex flex-wrap justify-between items-center z-20 shrink-0 gap-3 relative z-50">
         <div class="flex items-center gap-3">
             <div id="logo-container"><i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i></div>
-            <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span></h1>
+            <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App</h1>
         </div>
+        <button onclick="toggleYearView()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition shadow-sm border border-white/10 active:scale-95 backdrop-blur-sm">
+            <i class="fa-regular fa-calendar-days text-lg"></i> <span class="hidden md:inline">Year View</span>
+        </button>
     </nav>
 
     <!-- Main Content Area -->
@@ -571,7 +578,19 @@ The word "Nua" means new and "Khai" means food.
 
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
-            <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+
+            <!-- YEAR VIEW CONTAINER -->
+            <div id="year-view-container" class="app-container max-w-6xl mx-auto hidden flex-col gap-6">
+                <div class="bg-white rounded-3xl shadow-sm p-4 md:p-6 relative z-10 flex items-center justify-between">
+                     <button onclick="toggleYearView()" class="nav-btn" aria-label="Back to Month View"><i class="fa-solid fa-arrow-left"></i></button>
+                     <h2 class="text-2xl md:text-3xl font-bold text-gray-900" id="year-view-title">Year View</h2>
+                     <div class="w-12"></div>
+                </div>
+                <div id="year-grid-12" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-10"></div>
+            </div>
+
+            <!-- MONTH VIEW CONTAINER -->
+            <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
@@ -2552,11 +2571,131 @@ The word "Nua" means new and "Khai" means food.
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
+        function toggleYearView() {
+            const monthView = document.getElementById('month-view-container');
+            const yearView = document.getElementById('year-view-container');
+
+            if (yearView.classList.contains('hidden')) {
+                monthView.classList.add('hidden');
+                yearView.classList.remove('hidden');
+                yearView.classList.add('flex');
+                monthView.classList.remove('flex');
+                renderYearView();
+            } else {
+                yearView.classList.add('hidden');
+                yearView.classList.remove('flex');
+                monthView.classList.remove('hidden');
+                monthView.classList.add('flex');
+            }
+        }
+
+        function renderYearView() {
+            const yearGrid = document.getElementById('year-grid-12');
+            yearGrid.innerHTML = '';
+
+            // Determine year based on current active month
+            let year = new Date().getFullYear();
+            if (appState.monthsData.length > 0 && appState.activeMonthIndex < appState.monthsData.length) {
+                year = appState.monthsData[appState.activeMonthIndex].year;
+            }
+
+            document.getElementById('year-view-title').innerText = `${year} Year View`;
+
+            for (let m = 0; m < 12; m++) {
+                const monthName = months[m];
+
+                // Find if we have data for this month
+                const mDataIndex = appState.monthsData.findIndex(d => d.month === m && d.year === year);
+                const mData = mDataIndex !== -1 ? appState.monthsData[mDataIndex] : null;
+
+                // Card
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-lg transition cursor-pointer hover:border-orange-300 group relative overflow-hidden";
+
+                // Click Handler
+                card.onclick = () => {
+                     if (mDataIndex !== -1) {
+                         appState.activeMonthIndex = mDataIndex;
+                         render();
+                         toggleYearView();
+                     } else {
+                         // Optional: Allow creating it? For now just toast
+                         showToast(`No data for ${monthName} ${year}`);
+                     }
+                };
+
+                // Styling for Active vs Inactive
+                if (mDataIndex === -1) {
+                    card.classList.add('opacity-60', 'grayscale-[0.5]');
+                } else {
+                     card.classList.add('ring-1', 'ring-orange-100');
+                }
+
+                let html = `<div class="text-center font-bold text-gray-800 mb-3 text-sm group-hover:text-orange-600 transition flex items-center justify-center gap-2">${monthName}`;
+
+                if (mDataIndex !== -1) {
+                     // Event count indicator
+                     const eventCount = mData.events.length;
+                     if(eventCount > 0) html += `<span class="bg-orange-100 text-orange-700 text-[9px] px-1.5 py-0.5 rounded-full">${eventCount}</span>`;
+                }
+
+                html += `</div>`;
+
+                // Mini Grid
+                html += `<div class="grid grid-cols-7 gap-0.5 text-[9px] text-center">`;
+
+                // Days Header
+                ["S", "M", "T", "W", "T", "F", "S"].forEach((d, i) => {
+                    html += `<div class="${i===0?'text-red-500':'text-gray-400'} font-bold mb-1">${d}</div>`;
+                });
+
+                const firstDay = new Date(year, m, 1).getDay();
+                const daysInMonth = new Date(year, m+1, 0).getDate();
+
+                // Empty slots
+                for(let i=0; i<firstDay; i++) { html += `<div></div>`; }
+
+                for(let d=1; d<=daysInMonth; d++) {
+                    let bgClass = "text-gray-600";
+                    let weight = "font-medium";
+                    const isSunday = new Date(year, m, d).getDay() === 0;
+
+                    if (mData) {
+                        const dayEvents = mData.events.filter(e => e.date === d);
+                        if (dayEvents.length > 0) {
+                             if (dayEvents.some(e => e.symbol === '!')) { bgClass = "bg-red-100 text-red-700 rounded-full font-bold"; }
+                             else if (dayEvents.some(e => e.symbol === '^')) { bgClass = "bg-green-100 text-green-700 rounded-full font-bold"; }
+                             else if (dayEvents.some(e => e.symbol === '*')) { bgClass = "bg-blue-100 text-blue-700 rounded-full font-bold"; }
+                             else { bgClass = "bg-gray-200 text-gray-700 rounded-full font-bold"; }
+                        }
+                    }
+
+                    if (isSunday && !bgClass.includes('bg-')) bgClass = "text-red-500";
+
+                    html += `<div class="${bgClass} ${weight} h-5 w-5 flex items-center justify-center mx-auto">${d}</div>`;
+                }
+
+                html += `</div>`;
+
+                // Overlay for "Add" if missing? No, keep it simple.
+
+                card.innerHTML = html;
+                yearGrid.appendChild(card);
+            }
+        }
+
         function render() {
+            // Check if Year View is active and update it
+            const yearView = document.getElementById('year-view-container');
+            if (yearView && !yearView.classList.contains('hidden')) {
+                renderYearView();
+                // We don't return here because we might want to update Month View in background too
+            }
+
             const currentData = appState.monthsData[appState.activeMonthIndex];
             if (!currentData) return;
 
-            if (appState.config.title) document.getElementById('app-title').innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+            if (appState.config.title) document.getElementById('app-title').innerText = appState.config.title;
             
             const logoContainer = document.getElementById('logo-container');
             if (appState.config.logoUrl) {
