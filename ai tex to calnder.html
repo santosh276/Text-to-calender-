@@ -3100,40 +3100,129 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function renderFestivals(data) {
-            const filterContainer = document.getElementById('festival-filters');
-            filterContainer.innerHTML = '';
-            const currentLang = appState.config.language || 'en';
-            const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
-            const filters = [ { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' } ];
-            filters.forEach(f => {
-                const isActive = activeFilters.has(f.id);
-                const btn = document.createElement('button');
-                let baseClass = `filter-btn px-3 md:px-4 py-1 md:py-1.5 rounded-full border flex flex-1 justify-center items-center gap-1.5 md:gap-2 text-xs md:text-sm font-bold font-oriya whitespace-nowrap transition-all duration-200 `;
-                if (f.color === 'red') { baseClass += isActive ? 'bg-red-50 border-red-400 text-red-700 shadow-sm ring-1 ring-red-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-red-50 hover:border-red-300 hover:text-red-400 hover:grayscale-0 hover:opacity-100'; } 
-                else if (f.color === 'green') { baseClass += isActive ? 'bg-green-50 border-green-400 text-green-700 shadow-sm ring-1 ring-green-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-green-50 hover:border-green-300 hover:text-green-400 hover:grayscale-0 hover:opacity-100'; } 
-                else if (f.color === 'blue') { baseClass += isActive ? 'bg-blue-50 border-blue-400 text-blue-700 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-300 text-gray-400 grayscale opacity-70 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 hover:grayscale-0 hover:opacity-100'; }
-                btn.className = baseClass;
-                btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
-                btn.onclick = () => toggleFilter(f.id);
-                filterContainer.appendChild(btn);
+            const section = document.getElementById('sec-festivals');
+            section.innerHTML = '';
+
+            // 1. Header
+            const header = document.createElement('h3');
+            header.className = "font-bold text-gray-900 mb-4 text-base flex items-center gap-2";
+            header.innerHTML = `<i class="fa-solid fa-bell text-red-600 text-lg"></i> Festivals`;
+            section.appendChild(header);
+
+            // 2. Up Next Card logic
+            const sortedEvents = data.events
+                .filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*'))
+                .sort((a, b) => a.date - b.date);
+
+            let upNextEvent = null;
+            const realToday = new Date();
+            const isCurrentMonth = (data.month === realToday.getMonth() && data.year === realToday.getFullYear());
+            
+            if (isCurrentMonth) {
+                upNextEvent = sortedEvents.find(e => e.date >= realToday.getDate());
+            } else if (new Date(data.year, data.month, 1) > realToday) {
+                upNextEvent = sortedEvents[0];
+            }
+            
+            if (upNextEvent) {
+                const eventDate = new Date(data.year, data.month, upNextEvent.date);
+
+                // Diff days
+                const t1 = new Date(realToday.getFullYear(), realToday.getMonth(), realToday.getDate());
+                const t2 = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+                const diffTime = t2 - t1;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                let badgeText = "";
+                if (diffDays === 0) badgeText = "Today";
+                else if (diffDays === 1) badgeText = "Tomorrow";
+                else if (diffDays < 7) badgeText = `In ${diffDays} days`;
+                else badgeText = `${upNextEvent.date} ${shortMonths[data.month]}`;
+
+                const card = document.createElement('div');
+                card.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
+                card.onclick = () => openDayModal(upNextEvent.date, data);
+                card.style.background = "linear-gradient(135deg, #f97316 0%, #dc2626 100%)";
+
+                card.innerHTML = `
+                    <div class="p-4 relative z-10 text-white">
+                        <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase mb-1">UP NEXT</div>
+                        <div class="flex justify-between items-end gap-2">
+                    <div class="font-bold text-lg leading-tight truncate flex-1 min-w-0 pr-2">
+                                ${upNextEvent.engName}
+                            </div>
+                            <div class="shrink-0 bg-white/20 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-semibold border border-white/10 shadow-sm">
+                                ${badgeText}
+                            </div>
+                        </div>
+                        <div class="text-xs font-medium opacity-80 mt-1 truncate font-oriya">${upNextEvent.locName || ''}</div>
+                    </div>
+                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
+                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-16 h-16 rounded-full bg-black/5 blur-md"></div>
+                `;
+                section.appendChild(card);
+            }
+
+            // 3. Search Bar
+            const searchWrapper = document.createElement('div');
+            searchWrapper.className = "relative mb-4 group";
+            searchWrapper.innerHTML = `
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                </div>
+                <input type="text" id="festival-search"
+                    class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-500 transition-all duration-200 text-sm shadow-sm font-medium"
+                    placeholder="Search festivals..."
+                    autocomplete="off" style="padding-left: 2.5rem;">
+            `;
+            section.appendChild(searchWrapper);
+
+            // 4. Festival List Container
+            const list = document.createElement('ul');
+            list.id = 'festival-list';
+            list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll";
+            section.appendChild(list);
+
+            const input = searchWrapper.querySelector('input');
+            input.oninput = (e) => {
+                const query = e.target.value.toLowerCase();
+                renderFestivalListItems(list, sortedEvents, data, query);
+            };
+
+            renderFestivalListItems(list, sortedEvents, data, "");
+        }
+
+        function renderFestivalListItems(container, events, monthData, query) {
+            container.innerHTML = '';
+            const filtered = events.filter(e => {
+                return (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
             });
-            const list = document.getElementById('festival-list');
-            list.innerHTML = '';
-            
-            list.className = "space-y-2 text-sm"; 
-            
-            const filteredEvents = data.events.filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*') && activeFilters.has(e.symbol)).sort((a, b) => a.date - b.date);
-            if (filteredEvents.length === 0) { list.innerHTML = '<li class="text-gray-400 italic text-center py-4">No events found.</li>'; return; }
-            filteredEvents.forEach(ev => {
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<li class="text-center text-gray-400 text-xs py-4 italic">No festivals found</li>`;
+                return;
+            }
+
+            filtered.forEach(ev => {
                 const li = document.createElement('li');
-                li.className = "flex gap-2 items-start p-1 rounded hover:bg-gray-50 transition cursor-pointer";
-                li.onclick = () => openDayModal(ev.date, data);
-                let badgeColor = "bg-gray-500";
-                if (ev.symbol === '!') badgeColor = "bg-red-600"; else if (ev.symbol === '^') badgeColor = "bg-green-600"; else if (ev.symbol === '*') badgeColor = "bg-blue-600";
-                const dateBadge = `<span class="${badgeColor} text-white text-xs font-bold px-1.5 py-0.5 rounded min-w-[24px] text-center mt-0.5">${ev.date}</span>`;
-                const content = `<div class="leading-tight"><div class="font-semibold text-gray-800 text-sm">${ev.engName}</div><div class="text-xs text-gray-500 font-oriya">${ev.locName || ''}</div></div>`;
+                li.className = "flex gap-3 items-center p-2 rounded-lg hover:bg-orange-50 hover:border-orange-100 border border-transparent transition-all cursor-pointer group";
+                li.onclick = () => openDayModal(ev.date, monthData);
+
+                let badgeColor = "bg-gray-100 text-gray-600";
+                if (ev.symbol === '!') badgeColor = "bg-red-100 text-red-700";
+                else if (ev.symbol === '^') badgeColor = "bg-green-100 text-green-700";
+                else if (ev.symbol === '*') badgeColor = "bg-blue-100 text-blue-700";
+
+                const dateBadge = `<div class="${badgeColor} text-xs font-bold w-8 h-8 flex items-center justify-center rounded-lg shadow-sm shrink-0">${ev.date}</div>`;
+                const content = `
+                    <div class="flex-grow min-w-0">
+                        <div class="font-semibold text-gray-800 text-sm truncate group-hover:text-orange-800 transition-colors">${ev.engName}</div>
+                        <div class="text-xs text-gray-500 font-oriya truncate">${ev.locName || ''}</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-gray-300 group-hover:text-orange-400 transition-colors"></i>
+                `;
                 li.innerHTML = dateBadge + content;
-                list.appendChild(li);
+                container.appendChild(li);
             });
         }
 
