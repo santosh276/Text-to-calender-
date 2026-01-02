@@ -327,6 +327,9 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -337,6 +340,9 @@
             <div id="logo-container"><i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i></div>
             <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span></h1>
         </div>
+        <button onclick="toggleViewMode()" id="view-mode-btn" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 border border-white/10">
+            <i class="fa-solid fa-calendar-days"></i> Year View
+        </button>
     </nav>
 
     <!-- Main Content Area -->
@@ -572,71 +578,77 @@ The word "Nua" means new and "Khai" means food.
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
             <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
-                <!-- Calendar Grid Section -->
-                <div class="flex-grow lg:w-3/4 space-y-2 w-full">
-                    <!-- Calendar Header -->
-                    <div class="bg-white rounded-3xl shadow-sm p-4 md:p-6 relative z-10">
-                         <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
-                        <div class="flex items-center justify-between w-full gap-4">
-                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month"><i class="fa-solid fa-arrow-left"></i></button>
-                            
-                            <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
-                                <!-- Adaptive Month/Year Container -->
-                                <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
-                                    <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight"></span>
-                                    <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
-                                </div>
+                <!-- Month View Wrapper -->
+                <div id="month-view-container" class="contents">
+                    <!-- Calendar Grid Section -->
+                    <div class="flex-grow lg:w-3/4 space-y-2 w-full">
+                        <!-- Calendar Header -->
+                        <div class="bg-white rounded-3xl shadow-sm p-4 md:p-6 relative z-10">
+                             <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
+                            <div class="flex items-center justify-between w-full gap-4">
+                                <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month"><i class="fa-solid fa-arrow-left"></i></button>
 
-                                <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
+                                <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
+                                    <!-- Adaptive Month/Year Container -->
+                                    <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
+                                        <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight"></span>
+                                        <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
+                                    </div>
+
+                                    <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
+
+                                    <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-50 text-orange-600 px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100">
+                                        <i class="fa-solid fa-calendar-day"></i> Today
+                                    </button>
+                                </div>
                                 
-                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-50 text-orange-600 px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100">
-                                    <i class="fa-solid fa-calendar-day"></i> Today
-                                </button>
+                                <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month" aria-label="Next Month"><i class="fa-solid fa-arrow-right"></i></button>
                             </div>
-                            
-                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month" aria-label="Next Month"><i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+
+                        <!-- MONTH BANNER CAROUSEL -->
+                        <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[3/1] md:aspect-[5/1] bg-gray-100 border-4 border-white">
+                            <!-- Slides Wrapper -->
+                            <div id="banner-slides" class="flex transition-transform duration-500 ease-out h-full"></div>
+
+                            <!-- Navigation Arrows -->
+                            <button id="banner-prev" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button id="banner-next" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-right"></i></button>
+
+                            <!-- Close Button -->
+                            <button onclick="dismissBanner(event)" class="absolute right-2 top-2 bg-black/30 hover:bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center transition z-30 backdrop-blur-sm"><i class="fa-solid fa-times text-xs"></i></button>
+
+                            <!-- Dots -->
+                            <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-2 md:p-3">
+                            <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
+                            <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
                         </div>
                     </div>
 
-                    <!-- MONTH BANNER CAROUSEL -->
-                    <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[3/1] md:aspect-[5/1] bg-gray-100 border-4 border-white">
-                        <!-- Slides Wrapper -->
-                        <div id="banner-slides" class="flex transition-transform duration-500 ease-out h-full"></div>
-                        
-                        <!-- Navigation Arrows -->
-                        <button id="banner-prev" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button id="banner-next" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm"><i class="fa-solid fa-chevron-right"></i></button>
-                        
-                        <!-- Close Button -->
-                        <button onclick="dismissBanner(event)" class="absolute right-2 top-2 bg-black/30 hover:bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center transition z-30 backdrop-blur-sm"><i class="fa-solid fa-times text-xs"></i></button>
-
-                        <!-- Dots -->
-                        <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
-                    </div>
-
-                    <div class="bg-white rounded-xl shadow-lg p-2 md:p-3">
-                        <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
-                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
+                    <!-- Sidebar Section -->
+                    <div class="lg:w-1/4 space-y-6">
+                        <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300">
+                            <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
+                            <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
+                            <ul id="festival-list" class="space-y-2 text-sm"></ul>
+                        </div>
+                        <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300">
+                            <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i>Month's Panchang</h3>
+                            <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
+                            <ul id="panchang-list" class="text-sm space-y-2"></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"></div>
+                        </div>
+                        <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300">
+                            <h3 class="font-bold text-amber-800 mb-3 border-b pb-1"><i class="fa-solid fa-hand-sparkles text-amber-500 mr-2"></i>Horoscope</h3>
+                            <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Sidebar Section -->
-                <div class="lg:w-1/4 space-y-6">
-                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300">
-                        <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
-                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
-                        <ul id="festival-list" class="space-y-2 text-sm"></ul>
-                    </div>
-                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300">
-                        <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i>Month's Panchang</h3>
-                        <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
-                        <ul id="panchang-list" class="text-sm space-y-2"></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"></div>
-                    </div>
-                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300">
-                        <h3 class="font-bold text-amber-800 mb-3 border-b pb-1"><i class="fa-solid fa-hand-sparkles text-amber-500 mr-2"></i>Horoscope</h3>
-                        <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
-                    </div>
-                </div>
+                <!-- Year View Wrapper -->
+                <div id="year-view-container" class="hidden w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 animate-fade-in"></div>
             </div>
         </div>
     </div>
@@ -1220,6 +1232,96 @@ The word "Nua" means new and "Khai" means food.
                     iconEl.style.transform = "scale(1) rotate(0deg)";
                     iconEl.style.opacity = "1";
                 }, 50);
+            }
+        }
+
+        let isYearView = false;
+
+        function toggleViewMode() {
+            isYearView = !isYearView;
+            const monthView = document.getElementById('month-view-container');
+            const yearView = document.getElementById('year-view-container');
+            const btn = document.getElementById('view-mode-btn');
+
+            if (isYearView) {
+                monthView.classList.add('hidden');
+                monthView.classList.remove('contents');
+                yearView.classList.remove('hidden');
+                renderYearDashboard();
+                if(btn) btn.innerHTML = '<i class="fa-solid fa-calendar-day"></i> Month View';
+            } else {
+                monthView.classList.remove('hidden');
+                monthView.classList.add('contents');
+                yearView.classList.add('hidden');
+                if(btn) btn.innerHTML = '<i class="fa-solid fa-calendar-days"></i> Year View';
+            }
+        }
+
+        function renderYearDashboard() {
+            const container = document.getElementById('year-view-container');
+            container.innerHTML = '';
+
+            let year = new Date().getFullYear();
+            if (appState.monthsData && appState.monthsData.length > 0) {
+                year = appState.monthsData[appState.activeMonthIndex].year;
+            }
+
+            for (let m = 0; m < 12; m++) {
+                const monthData = appState.monthsData.find(d => d.month === m && d.year === year);
+                const hasEvents = monthData && monthData.events.length > 0;
+
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative hover:shadow-md transition cursor-pointer flex flex-col h-64 ${hasEvents ? 'hover:border-orange-300' : 'opacity-70 grayscale'}`;
+                card.onclick = () => {
+                     if (monthData) {
+                         appState.activeMonthIndex = appState.monthsData.indexOf(monthData);
+                         toggleViewMode();
+                         render();
+                     } else {
+                         showToast("No data for this month.");
+                     }
+                };
+
+                const monthName = months[m];
+                card.innerHTML = `<h3 class="font-bold text-gray-800 text-lg mb-2 flex justify-between items-center">
+                    ${monthName}
+                    ${hasEvents ? '<i class="fa-solid fa-check-circle text-green-500 text-sm"></i>' : ''}
+                </h3>`;
+
+                const grid = document.createElement('div');
+                grid.className = "grid grid-cols-7 gap-1 text-center text-[8px] flex-grow content-start";
+
+                ['S','M','T','W','T','F','S'].forEach((d, i) => {
+                     grid.innerHTML += `<div class="font-bold ${i===0?'text-red-500':'text-gray-400'}">${d}</div>`;
+                });
+
+                const firstDay = new Date(year, m, 1).getDay();
+                const daysInMonth = new Date(year, m+1, 0).getDate();
+
+                for(let i=0; i<firstDay; i++) {
+                     grid.innerHTML += `<div></div>`;
+                }
+
+                for(let d=1; d<=daysInMonth; d++) {
+                    let bgClass = "bg-gray-50 text-gray-600";
+                    let isEvent = false;
+
+                    if (monthData) {
+                        const ev = monthData.events.find(e => e.date === d);
+                        if (ev) {
+                            isEvent = true;
+                            if (ev.symbol === '!') bgClass = "bg-red-500 text-white";
+                            else if (ev.symbol === '^') bgClass = "bg-green-500 text-white";
+                            else if (ev.symbol === '*') bgClass = "bg-blue-500 text-white";
+                            else bgClass = "bg-gray-500 text-white";
+                        }
+                    }
+
+                    grid.innerHTML += `<div class="rounded-sm py-0.5 ${bgClass} ${isEvent ? 'font-bold' : ''}">${d}</div>`;
+                }
+
+                card.appendChild(grid);
+                container.appendChild(card);
             }
         }
 
