@@ -44,7 +44,8 @@
 
 .group:hover .group-hover\:text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12/var(--tw-text-opacity,1))}
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
-@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
+@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}@media (min-width:1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}</style>
+.translate-y-full{transform:translateY(100%) !important}
 <style>
         @media (min-width: 1440px) {
             .app-container, .showcase-section, .intro-section, .faq-container {
@@ -335,8 +336,11 @@
     <nav class="bg-deepred text-white px-4 py-3 shadow-lg flex flex-wrap justify-between items-center z-20 shrink-0 gap-3 relative z-50">
         <div class="flex items-center gap-3">
             <div id="logo-container"><i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i></div>
-            <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span></h1>
+            <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App</h1>
         </div>
+        <button onclick="toggleYearView()" class="w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center transition backdrop-blur-sm border border-white/10" aria-label="Year View" title="Year View Dashboard">
+            <i class="fa-solid fa-border-all text-lg"></i>
+        </button>
     </nav>
 
     <!-- Main Content Area -->
@@ -938,6 +942,32 @@ The word "Nua" means new and "Khai" means food.
             <div class="px-6 pb-8">
                 <h3 class="text-[13px] font-bold text-slate-800 uppercase mb-3 tracking-wide">Compatible Signs</h3>
                 <div id="horo-compatible" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- YEAR VIEW DASHBOARD -->
+    <div id="year-view-dashboard" class="fixed inset-0 bg-gray-900 text-gray-100 transform translate-y-full transition-transform duration-300 flex flex-col pointer-events-none" style="z-index: 200;">
+        <!-- Dashboard Header -->
+        <div class="p-4 md:p-6 flex justify-between items-center border-b border-gray-800 bg-gray-900/95 backdrop-blur shadow-md shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center text-white shadow-lg">
+                    <i class="fa-regular fa-calendar-check text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-white" id="year-view-year-display">2025</h2>
+                    <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">Year Overview</p>
+                </div>
+            </div>
+            <button onclick="toggleYearView()" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center transition border border-gray-700 shadow-sm">
+                <i class="fa-solid fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-[#0f172a] custom-scroll">
+            <div id="year-grid-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto pb-20">
+                <!-- Months injected here -->
             </div>
         </div>
     </div>
@@ -2556,7 +2586,7 @@ The word "Nua" means new and "Khai" means food.
             const currentData = appState.monthsData[appState.activeMonthIndex];
             if (!currentData) return;
 
-            if (appState.config.title) document.getElementById('app-title').innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+            if (appState.config.title) document.getElementById('app-title').innerText = appState.config.title;
             
             const logoContainer = document.getElementById('logo-container');
             if (appState.config.logoUrl) {
@@ -3726,6 +3756,121 @@ The word "Nua" means new and "Khai" means food.
             link.download = `${title}-Card.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
+        }
+
+        // --- YEAR VIEW LOGIC ---
+        function toggleYearView() {
+            const dashboard = document.getElementById('year-view-dashboard');
+            const isOpen = !dashboard.classList.contains('translate-y-full');
+            if (isOpen) {
+                dashboard.classList.add('translate-y-full');
+                dashboard.classList.add('pointer-events-none');
+            } else {
+                renderYearView();
+                dashboard.classList.remove('translate-y-full');
+                dashboard.classList.remove('pointer-events-none');
+            }
+        }
+
+        function renderYearView() {
+            const container = document.getElementById('year-grid-container');
+            container.innerHTML = '';
+
+            // Determine Year: Default to current year or active month year
+            let year = new Date().getFullYear();
+            if (appState.monthsData && appState.monthsData.length > 0) {
+                 const activeData = appState.monthsData[appState.activeMonthIndex];
+                 if (activeData) year = activeData.year;
+                 else year = appState.monthsData[0].year;
+            }
+
+            const titleEl = document.getElementById('year-view-year-display');
+            if(titleEl) titleEl.innerText = year;
+
+            // Generate 12 Cards (Jan-Dec)
+            for (let mIndex = 0; mIndex < 12; mIndex++) {
+                const monthName = months[mIndex];
+
+                // Find data
+                const foundIndex = appState.monthsData ? appState.monthsData.findIndex(d => d.month === mIndex && d.year === year) : -1;
+                const mData = foundIndex !== -1 ? appState.monthsData[foundIndex] : null;
+
+                const card = document.createElement('div');
+                let classes = "rounded-2xl border p-4 flex flex-col gap-3 relative overflow-hidden transition-all duration-200 group ";
+
+                if (mData) {
+                    classes += "bg-gray-800 border-gray-700 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/10 cursor-pointer";
+                    if (foundIndex === appState.activeMonthIndex) {
+                        classes += " ring-1 ring-orange-500 bg-gray-800";
+                    }
+                    card.onclick = () => selectMonthFromYearView(foundIndex);
+                } else {
+                    classes += "bg-gray-800/40 border-gray-800 opacity-60";
+                }
+                card.className = classes;
+
+                // Status Badge
+                let statusBadge = '';
+                if (mData) {
+                     if (foundIndex === appState.activeMonthIndex) {
+                        statusBadge = '<span class="bg-orange-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm">Active</span>';
+                     } else {
+                        statusBadge = '<span class="bg-gray-700 text-gray-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider group-hover:bg-gray-600 transition">View</span>';
+                     }
+                } else {
+                    statusBadge = '<span class="text-gray-600 text-[10px] uppercase font-bold tracking-wider">Empty</span>';
+                }
+
+                // Grid Content
+                let gridHtml = '';
+                if (mData) {
+                    const daysInMonth = new Date(year, mIndex + 1, 0).getDate();
+                    const firstDay = new Date(year, mIndex, 1).getDay();
+
+                    gridHtml = '<div class="grid grid-cols-7 gap-y-1 gap-x-0.5 text-center text-[9px] text-gray-500 mb-2 border-b border-gray-700/50 pb-1">';
+                    ['S','M','T','W','T','F','S'].forEach((d, i) => gridHtml += `<div class="${i===0?'text-red-400 font-bold':''}">${d}</div>`);
+                    gridHtml += '</div><div class="grid grid-cols-7 gap-y-1 gap-x-0.5 text-center text-[10px] font-medium text-gray-300">';
+
+                    for(let i=0; i<firstDay; i++) gridHtml += '<div></div>';
+
+                    for(let d=1; d<=daysInMonth; d++) {
+                        const isSunday = new Date(year, mIndex, d).getDay() === 0;
+                        let dayClass = isSunday ? 'text-red-400' : '';
+
+                        const dayEvents = mData.events.filter(e => e.date === d);
+                        let bg = '';
+                        if (dayEvents.some(e => e.symbol === '!')) bg = 'bg-red-500/20 text-red-200 rounded-full font-bold';
+                        else if (dayEvents.some(e => e.symbol === '^')) bg = 'bg-green-500/20 text-green-200 rounded-full font-bold';
+                        else if (dayEvents.some(e => e.symbol === '*')) bg = 'bg-blue-500/20 text-blue-200 rounded-full font-bold';
+                        else if (dayEvents.some(e => e.symbol === '>')) bg = 'bg-gray-600/30 text-gray-300 rounded-full';
+
+                        gridHtml += `<div class="${dayClass} ${bg} w-5 h-5 flex items-center justify-center mx-auto">${d}</div>`;
+                    }
+                    gridHtml += '</div>';
+                } else {
+                    gridHtml = '<div class="flex items-center justify-center h-24 text-gray-700"><i class="fa-regular fa-calendar-xmark text-3xl"></i></div>';
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-700/50">
+                        <div class="flex flex-col leading-none">
+                            <span class="font-bold text-gray-100 text-base tracking-wide ${mData ? 'group-hover:text-orange-400 transition-colors' : 'text-gray-500'}">${monthName}</span>
+                            <span class="text-[10px] font-mono text-gray-500 mt-1">${year}</span>
+                        </div>
+                        ${statusBadge}
+                    </div>
+                    <div class="flex-1 mt-1 ${mData ? 'opacity-80 group-hover:opacity-100 transition-opacity' : ''}">${gridHtml}</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function selectMonthFromYearView(index) {
+            appState.activeMonthIndex = index;
+            render();
+            const preview = document.getElementById('preview-container');
+            if(preview) preview.scrollTop = 0;
+            toggleYearView();
         }
     </script>
 </body>
