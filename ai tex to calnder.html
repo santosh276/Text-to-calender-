@@ -335,7 +335,12 @@
     <nav class="bg-deepred text-white px-4 py-3 shadow-lg flex flex-wrap justify-between items-center z-20 shrink-0 gap-3 relative z-50">
         <div class="flex items-center gap-3">
             <div id="logo-container"><i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i></div>
-            <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span></h1>
+            <h1 class="font-bold text-xl tracking-wide" id="app-title">Panchang App</h1>
+        </div>
+        <div>
+            <button onclick="toggleViewMode()" id="year-view-btn" class="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded-lg text-sm font-semibold transition flex items-center gap-2 border border-white/10">
+                <i class="fa-solid fa-border-all"></i> Year View
+            </button>
         </div>
     </nav>
 
@@ -571,9 +576,15 @@ The word "Nua" means new and "Khai" means food.
 
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
-            <div class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
-                <!-- Calendar Grid Section -->
-                <div class="flex-grow lg:w-3/4 space-y-2 w-full">
+            <div class="app-container max-w-6xl mx-auto">
+
+                <!-- YEAR VIEW DASHBOARD -->
+                <div id="year-view-wrapper" class="hidden w-full transition-opacity duration-300"></div>
+
+                <!-- MONTH VIEW WRAPPER -->
+                <div id="month-view-wrapper" class="flex flex-col lg:flex-row gap-6 w-full transition-opacity duration-300">
+                    <!-- Calendar Grid Section -->
+                    <div class="flex-grow lg:w-3/4 space-y-2 w-full">
                     <!-- Calendar Header -->
                     <div class="bg-white rounded-3xl shadow-sm p-4 md:p-6 relative z-10">
                          <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
@@ -637,6 +648,7 @@ The word "Nua" means new and "Khai" means food.
                         <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
                     </div>
                 </div>
+                </div> <!-- End month-view-wrapper -->
             </div>
         </div>
     </div>
@@ -1225,6 +1237,7 @@ The word "Nua" means new and "Khai" means food.
 
         const editor = document.getElementById('editor');
         let appState = {
+            viewMode: 'month',
             activeMonthIndex: 0,
             monthsData: [],
             todayIndex: -1,
@@ -2546,17 +2559,30 @@ The word "Nua" means new and "Khai" means food.
             if (newIndex >= 0 && newIndex < appState.monthsData.length) { appState.activeMonthIndex = newIndex; render(); }
         }
         function jumpToToday() {
-            if (appState.todayIndex !== -1) { appState.activeMonthIndex = appState.todayIndex; render(); }
+            if (appState.todayIndex !== -1) {
+                appState.activeMonthIndex = appState.todayIndex;
+                if (appState.viewMode === 'year') toggleViewMode();
+                else render();
+            }
+        }
+
+        function toggleViewMode() {
+            appState.viewMode = appState.viewMode === 'month' ? 'year' : 'month';
+            render();
+        }
+
+        function jumpToMonth(index) {
+            appState.activeMonthIndex = index;
+            if (appState.viewMode === 'year') toggleViewMode();
+            else render();
         }
         function resolveImageUrls(text) {
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
         function render() {
-            const currentData = appState.monthsData[appState.activeMonthIndex];
-            if (!currentData) return;
-
-            if (appState.config.title) document.getElementById('app-title').innerHTML = `${appState.config.title} <span class="text-xs font-normal opacity-75 bg-black/20 px-2 py-0.5 rounded ml-2">Year View</span>`;
+            // Update Title & Logo (Common for both views)
+            if (appState.config.title) document.getElementById('app-title').innerHTML = `${appState.config.title}`;
             
             const logoContainer = document.getElementById('logo-container');
             if (appState.config.logoUrl) {
@@ -2566,47 +2592,170 @@ The word "Nua" means new and "Khai" means food.
                 logoContainer.innerHTML = `<i class="fa-solid fa-om text-2xl text-gold" id="default-logo-icon"></i>`;
             }
 
-            // Updated for new Header
-            document.getElementById('cal-month').innerText = months[currentData.month];
-            document.getElementById('cal-year').innerText = currentData.year;
-            
-            const indianMonthEl = document.getElementById('cal-indian-month');
-            const currentLang = appState.config.language || 'en';
-            const currentLangData = langData[currentLang];
-            
-            if (currentLangData && currentLangData.indianMonths) {
-                indianMonthEl.classList.remove('hidden');
-                indianMonthEl.innerText = currentLangData.indianMonths[currentData.month];
-            } else {
-                indianMonthEl.classList.add('hidden');
-            }
-            
-            const btnToday = document.getElementById('btn-today');
-            if (appState.todayIndex !== -1 && appState.activeMonthIndex !== appState.todayIndex) {
-                btnToday.classList.remove('hidden'); btnToday.classList.add('flex');
-            } else {
-                btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
+            // Update Header Button Text/Icon
+            const viewBtn = document.getElementById('year-view-btn');
+            if(viewBtn) {
+                if(appState.viewMode === 'year') {
+                    viewBtn.innerHTML = '<i class="fa-solid fa-calendar-days"></i> Back to Month';
+                    viewBtn.classList.replace('bg-white/10', 'bg-orange-500');
+                    viewBtn.classList.replace('text-white', 'text-white'); // keep text white
+                    viewBtn.classList.add('border-orange-600');
+                } else {
+                    viewBtn.innerHTML = '<i class="fa-solid fa-border-all"></i> Year View';
+                    viewBtn.classList.replace('bg-orange-500', 'bg-white/10');
+                    viewBtn.classList.remove('border-orange-600');
+                }
             }
 
-            renderCalendarGrid(currentData);
-            renderPanchang(currentData);
-            renderFestivals(currentData);
-            renderHoroscope(currentData);
-            renderMonthBanner(currentData);
-
-            // --- NEW LOGIC: Hide/Show Sections based on Config ---
-            const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
+            // Toggle Containers
+            const monthWrapper = document.getElementById('month-view-wrapper');
+            const yearWrapper = document.getElementById('year-view-wrapper');
             
-            const secFest = document.getElementById('sec-festivals');
-            const secPan = document.getElementById('sec-panchang');
-            const secHoro = document.getElementById('sec-horoscope');
+            if (appState.viewMode === 'year') {
+                if(monthWrapper) { monthWrapper.classList.add('hidden'); monthWrapper.classList.remove('flex'); }
+                if(yearWrapper) { yearWrapper.classList.remove('hidden'); yearWrapper.classList.add('block'); }
+                renderYearDashboard();
+            } else {
+                if(monthWrapper) { monthWrapper.classList.remove('hidden'); monthWrapper.classList.add('flex'); }
+                if(yearWrapper) { yearWrapper.classList.add('hidden'); yearWrapper.classList.remove('block'); }
 
-            if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
-            if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
-            if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
+                // Standard Month View Render Logic
+                const currentData = appState.monthsData[appState.activeMonthIndex];
+                if (!currentData) return;
+
+                // Header Dates
+                document.getElementById('cal-month').innerText = months[currentData.month];
+                document.getElementById('cal-year').innerText = currentData.year;
+
+                const indianMonthEl = document.getElementById('cal-indian-month');
+                const currentLang = appState.config.language || 'en';
+                const currentLangData = langData[currentLang];
+
+                if (currentLangData && currentLangData.indianMonths) {
+                    indianMonthEl.classList.remove('hidden');
+                    indianMonthEl.innerText = currentLangData.indianMonths[currentData.month];
+                } else {
+                    indianMonthEl.classList.add('hidden');
+                }
+
+                const btnToday = document.getElementById('btn-today');
+                if (appState.todayIndex !== -1 && appState.activeMonthIndex !== appState.todayIndex) {
+                    btnToday.classList.remove('hidden'); btnToday.classList.add('flex');
+                } else {
+                    btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
+                }
+
+                renderCalendarGrid(currentData);
+                renderPanchang(currentData);
+                renderFestivals(currentData);
+                renderHoroscope(currentData);
+                renderMonthBanner(currentData);
+
+                // Hide/Show Sections based on Config
+                const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
+
+                const secFest = document.getElementById('sec-festivals');
+                const secPan = document.getElementById('sec-panchang');
+                const secHoro = document.getElementById('sec-horoscope');
+
+                if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
+                if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
+                if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
+            }
             
             // Step 1: Cache the state
             saveStateToCache();
+        }
+
+        function renderYearDashboard() {
+            const container = document.getElementById('year-view-wrapper');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Main Grid Container
+            // 1 column on mobile, 2 on tablet, 3 on desktop
+            const gridDiv = document.createElement('div');
+            gridDiv.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 pb-20";
+
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+            const localizedDays = langObj.days.map(d => d.substring(0, 1)); // Single letter for mini view
+
+            if (appState.monthsData.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-10">No calendar data found.</div>';
+                return;
+            }
+
+            // Loop 0-11 (or however many months we have)
+            // Assuming standard 12 months for a year view, but we rely on monthsData
+            // If monthsData spans multiple years, this might get long.
+            // For now, iterate monthsData.
+
+            appState.monthsData.forEach((mData, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow cursor-pointer flex flex-col";
+                card.onclick = () => jumpToMonth(index);
+
+                // Card Header
+                const monthNameEng = months[mData.month];
+                const yearNum = mData.year;
+                const monthNameLoc = langObj.indianMonths ? langObj.indianMonths[mData.month].split('/')[0].trim() : monthNameEng;
+
+                const headerHtml = `
+                    <div class="flex justify-between items-center mb-3 border-b border-gray-100 pb-2">
+                        <div>
+                            <div class="text-lg font-bold text-gray-800 leading-none">${monthNameEng}</div>
+                            <div class="text-xs text-orange-600 font-bold font-oriya mt-0.5">${monthNameLoc} ${yearNum}</div>
+                        </div>
+                        ${index === appState.activeMonthIndex ? '<div class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-bold">Active</div>' : ''}
+                    </div>
+                `;
+
+                // Mini Grid Header (Days)
+                let daysHeaderHtml = '<div class="grid grid-cols-7 text-center mb-1">';
+                localizedDays.forEach((d, i) => {
+                    daysHeaderHtml += `<div class="text-[10px] font-bold ${i===0 ? 'text-red-500' : 'text-gray-400'}">${d}</div>`;
+                });
+                daysHeaderHtml += '</div>';
+
+                // Mini Grid Body
+                let daysBodyHtml = '<div class="grid grid-cols-7 text-center gap-y-1">';
+
+                const firstDay = new Date(mData.year, mData.month, 1).getDay();
+                const daysInMonth = new Date(mData.year, mData.month + 1, 0).getDate();
+
+                // Empty cells
+                for(let i=0; i<firstDay; i++) {
+                    daysBodyHtml += '<div></div>';
+                }
+
+                // Days
+                for(let d=1; d<=daysInMonth; d++) {
+                    const isSunday = new Date(mData.year, mData.month, d).getDay() === 0;
+                    const isToday = (appState.todayIndex === index && d === new Date().getDate());
+
+                    let cellClass = "text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full mx-auto ";
+                    if (isToday) {
+                        cellClass += "bg-deepred text-white shadow-sm";
+                    } else if (isSunday) {
+                        cellClass += "text-red-600 bg-red-50";
+                    } else {
+                        cellClass += "text-gray-700 hover:bg-gray-100";
+                    }
+
+                    // Check for events to show a tiny dot?
+                    const hasEvent = mData.events.some(e => e.date === d);
+                    const eventDot = hasEvent && !isToday ? `<div class="absolute bottom-0.5 w-1 h-1 rounded-full bg-orange-400"></div>` : '';
+
+                    daysBodyHtml += `<div class="relative h-7"><div class="${cellClass}">${toNativeNum(d, currentLang)}</div>${eventDot}</div>`;
+                }
+                daysBodyHtml += '</div>';
+
+                card.innerHTML = headerHtml + daysHeaderHtml + daysBodyHtml;
+                gridDiv.appendChild(card);
+            });
+
+            container.appendChild(gridDiv);
         }
 
         function dismissBanner(e) {
