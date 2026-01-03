@@ -3284,13 +3284,13 @@ The word "Nua" means new and "Khai" means food.
                 const dateBadge = `
                     <div class="${badgeClass} w-9 h-9 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
                         <span class="text-[8px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
-                        <span class="text-base font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
+                        <span class="text-sm font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
                     </div>`;
                 
                 const content = `
                     <div class="flex-grow min-w-0 flex flex-col justify-center">
-                        <div class="font-bold text-gray-900 text-sm truncate group-hover:text-orange-700 transition-colors">${ev.engName}</div>
-                        <div class="text-[11px] text-gray-500 font-oriya truncate">${ev.locName || ''}</div>
+                        <div class="font-bold text-gray-900 text-[13px] truncate group-hover:text-orange-700 transition-colors">${ev.engName}</div>
+                        <div class="text-[10px] text-gray-500 font-oriya truncate">${ev.locName || ''}</div>
                     </div>
                 `;
                 li.innerHTML = dateBadge + content;
