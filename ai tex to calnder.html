@@ -3117,13 +3117,13 @@ The word "Nua" means new and "Khai" means food.
             let upNextEvent = null;
             const realToday = new Date();
             const isCurrentMonth = (data.month === realToday.getMonth() && data.year === realToday.getFullYear());
-            
+
             if (isCurrentMonth) {
                 upNextEvent = sortedEvents.find(e => e.date >= realToday.getDate());
             } else if (new Date(data.year, data.month, 1) > realToday) {
                 upNextEvent = sortedEvents[0];
             }
-            
+
             if (upNextEvent) {
                 const eventDate = new Date(data.year, data.month, upNextEvent.date);
 
@@ -3146,7 +3146,7 @@ The word "Nua" means new and "Khai" means food.
 
                 card.innerHTML = `
                     <div class="p-4 relative z-10 text-white">
-                        <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase mb-1">UP NEXT</div>
+                        <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase mb-1 flex items-center gap-1"><i class="fa-solid fa-calendar-check"></i> UP NEXT</div>
                         <div class="flex justify-between items-end gap-2">
                     <div class="font-bold text-lg leading-tight truncate flex-1 min-w-0 pr-2">
                                 ${upNextEvent.engName}
@@ -3165,28 +3165,74 @@ The word "Nua" means new and "Khai" means food.
 
             // 3. Search Bar
             const searchWrapper = document.createElement('div');
-            searchWrapper.className = "relative mb-4 group";
+            searchWrapper.className = "relative mb-3 group";
             searchWrapper.innerHTML = `
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-orange-500 transition-colors"></i>
                 </div>
                 <input type="text" id="festival-search"
-                    class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-500 transition-all duration-200 text-sm shadow-sm font-medium"
+                    class="block w-full pl-10 pr-8 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-500 transition-all duration-200 text-sm shadow-sm font-medium"
                     placeholder="Search festivals..."
                     autocomplete="off" style="padding-left: 2.5rem;">
+                <button id="search-clear" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer hidden">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
             `;
             section.appendChild(searchWrapper);
 
-            // 4. Festival List Container
+            // 4. Filters
+            const filterContainer = document.createElement('div');
+            filterContainer.className = "flex flex-wrap gap-2 mb-4";
+
+            const currentLang = appState.config.language || 'en';
+            const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
+            const filters = [
+                { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' },
+                { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' },
+                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' }
+            ];
+
+            filters.forEach(f => {
+                const isActive = activeFilters.has(f.id);
+                const btn = document.createElement('button');
+                let baseClass = `filter-btn px-3 py-1.5 rounded-full border flex flex-1 justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-200 `;
+
+                if (f.color === 'red') {
+                    baseClass += isActive ? 'bg-red-50 border-red-400 text-red-700 shadow-sm ring-1 ring-red-200' : 'bg-white border-gray-200 text-gray-400 grayscale opacity-80 hover:bg-red-50 hover:border-red-300 hover:text-red-400 hover:grayscale-0 hover:opacity-100';
+                } else if (f.color === 'green') {
+                    baseClass += isActive ? 'bg-green-50 border-green-400 text-green-700 shadow-sm ring-1 ring-green-200' : 'bg-white border-gray-200 text-gray-400 grayscale opacity-80 hover:bg-green-50 hover:border-green-300 hover:text-green-400 hover:grayscale-0 hover:opacity-100';
+                } else if (f.color === 'blue') {
+                    baseClass += isActive ? 'bg-blue-50 border-blue-400 text-blue-700 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-200 text-gray-400 grayscale opacity-80 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-400 hover:grayscale-0 hover:opacity-100';
+                }
+
+                btn.className = baseClass;
+                btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
+                btn.onclick = () => toggleFilter(f.id);
+                filterContainer.appendChild(btn);
+            });
+            section.appendChild(filterContainer);
+
+            // 5. Festival List Container
             const list = document.createElement('ul');
             list.id = 'festival-list';
             list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll";
             section.appendChild(list);
 
             const input = searchWrapper.querySelector('input');
+            const clearBtn = searchWrapper.querySelector('#search-clear');
+
             input.oninput = (e) => {
                 const query = e.target.value.toLowerCase();
+                if (query.length > 0) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
                 renderFestivalListItems(list, sortedEvents, data, query);
+            };
+
+            clearBtn.onclick = () => {
+                input.value = '';
+                clearBtn.classList.add('hidden');
+                input.focus();
+                renderFestivalListItems(list, sortedEvents, data, "");
             };
 
             renderFestivalListItems(list, sortedEvents, data, "");
@@ -3195,11 +3241,14 @@ The word "Nua" means new and "Khai" means food.
         function renderFestivalListItems(container, events, monthData, query) {
             container.innerHTML = '';
             const filtered = events.filter(e => {
-                return (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
+                const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
+                const matchesFilter = activeFilters.has(e.symbol);
+                return matchesQuery && matchesFilter;
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = `<li class="text-center text-gray-400 text-xs py-4 italic">No festivals found</li>`;
+                const msg = query ? "No events found" : "No events selected";
+                container.innerHTML = `<li class="text-center text-gray-400 text-xs py-4 italic">${msg}</li>`;
                 return;
             }
 
