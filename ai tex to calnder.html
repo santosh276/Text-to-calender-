@@ -3207,20 +3207,20 @@ The word "Nua" means new and "Khai" means food.
             filters.forEach(f => {
                 const isActive = activeFilters.has(f.id);
                 const btn = document.createElement('button');
-                let baseClass = `filter-btn px-4 py-2.5 rounded-full border flex flex-1 justify-center items-center gap-2 text-sm font-bold whitespace-nowrap transition-all duration-300 backdrop-blur-sm shadow-sm `;
+                let baseClass = `filter-btn px-3 py-1.5 rounded-full border flex flex-1 justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 backdrop-blur-sm shadow-sm `;
                 
                 if (f.color === 'red') { 
                     baseClass += isActive 
                         ? 'bg-red-600 text-white border-red-500 shadow-red-200 shadow-md hover:bg-red-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-red-50 hover:text-red-600 hover:border-red-200'; 
+                        : 'bg-white text-gray-500 border-gray-200 shadow-red-100 hover:bg-red-50 hover:text-red-600 hover:border-red-200 hover:shadow-red-200';
                 } else if (f.color === 'green') { 
                     baseClass += isActive 
                         ? 'bg-green-600 text-white border-green-500 shadow-green-200 shadow-md hover:bg-green-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-green-50 hover:text-green-600 hover:border-green-200'; 
+                        : 'bg-white text-gray-500 border-gray-200 shadow-green-100 hover:bg-green-50 hover:text-green-600 hover:border-green-200 hover:shadow-green-200';
                 } else if (f.color === 'blue') { 
                     baseClass += isActive 
                         ? 'bg-blue-600 text-white border-blue-500 shadow-blue-200 shadow-md hover:bg-blue-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200'; 
+                        : 'bg-white text-gray-500 border-gray-200 shadow-blue-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 hover:shadow-blue-200';
                 }
                 
                 btn.className = baseClass;
@@ -3282,9 +3282,9 @@ The word "Nua" means new and "Khai" means food.
                 
                 const monthName = shortMonths[monthData.month];
                 const dateBadge = `
-                    <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
-                        <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
-                        <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
+                    <div class="${badgeClass} w-9 h-9 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
+                        <span class="text-[8px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
+                        <span class="text-base font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
                     </div>`;
                 
                 const content = `
