@@ -3269,16 +3269,16 @@ The word "Nua" means new and "Khai" means food.
                 li.className = "flex gap-3 items-center p-2 rounded-lg hover:bg-gray-50 border border-transparent transition-all cursor-pointer group";
                 li.onclick = () => openDayModal(ev.date, monthData);
 
-                let badgeClass = "bg-gray-500";
+                let badgeClass = "bg-gray-600";
                 if (ev.symbol === '!') badgeClass = "bg-red-600";
-                else if (ev.symbol === '^') badgeClass = "bg-green-500";
+                else if (ev.symbol === '^') badgeClass = "bg-green-600";
                 else if (ev.symbol === '*') badgeClass = "bg-blue-600";
 
                 const monthName = shortMonths[monthData.month];
                 const dateBadge = `
-                    <div class="${badgeClass} w-12 h-12 rounded-xl flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
-                        <span class="text-[10px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
-                        <span class="text-xl font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
+                    <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
+                        <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
+                        <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
                     </div>`;
 
                 const content = `
