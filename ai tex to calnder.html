@@ -622,7 +622,7 @@ The word "Nua" means new and "Khai" means food.
 
                 <!-- Sidebar Section -->
                 <div class="lg:w-1/4 space-y-6">
-                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300">
+                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden">
                         <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
                         <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
                         <ul id="festival-list" class="space-y-2 text-sm"></ul>
@@ -3102,6 +3102,18 @@ The word "Nua" means new and "Khai" means food.
         function renderFestivals(data) {
             const section = document.getElementById('sec-festivals');
             section.innerHTML = '';
+
+            // 0. Decoration (Quarter-Circle)
+            const deco = document.createElement('div');
+            deco.className = "absolute top-0 right-0 -mr-4 -mt-4 pointer-events-none";
+            // Inline styles to match requested Tailwind classes (rounded-bl-full, from-red-500/10, etc.)
+            Object.assign(deco.style, {
+                width: '6rem', // w-24
+                height: '6rem', // h-24
+                background: 'linear-gradient(to bottom right, rgba(239, 68, 68, 0.1), transparent)', // bg-gradient-to-br from-red-500/10
+                borderBottomLeftRadius: '100%' // rounded-bl-full
+            });
+            section.appendChild(deco);
 
             // 1. Header
             const header = document.createElement('h3');
