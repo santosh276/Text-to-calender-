@@ -311,6 +311,14 @@
             transition: opacity 300ms, transform 300ms;
         }
 
+        /* Colored Shadow Utilities */
+        .shadow-red-100 { --tw-shadow-color: rgb(254 226 226); --tw-shadow: var(--tw-shadow-colored); }
+        .shadow-red-200 { --tw-shadow-color: rgb(254 202 202); --tw-shadow: var(--tw-shadow-colored); }
+        .shadow-green-100 { --tw-shadow-color: rgb(220 252 231); --tw-shadow: var(--tw-shadow-colored); }
+        .shadow-green-200 { --tw-shadow-color: rgb(187 247 208); --tw-shadow: var(--tw-shadow-colored); }
+        .shadow-blue-100 { --tw-shadow-color: rgb(219 234 254); --tw-shadow: var(--tw-shadow-colored); }
+        .shadow-blue-200 { --tw-shadow-color: rgb(191 219 254); --tw-shadow: var(--tw-shadow-colored); }
+
         /* ANIMATION UTILITIES */
         .fade-enter-active {
             opacity: 1;
@@ -943,6 +951,8 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <script>
+        const DATA_VERSION = 1;
+
         // Season UI Component Data
         
         // Minimal SunCalc Implementation
@@ -3207,20 +3217,20 @@ The word "Nua" means new and "Khai" means food.
             filters.forEach(f => {
                 const isActive = activeFilters.has(f.id);
                 const btn = document.createElement('button');
-                let baseClass = `filter-btn px-4 py-2.5 rounded-full border flex flex-1 justify-center items-center gap-2 text-sm font-bold whitespace-nowrap transition-all duration-300 backdrop-blur-sm shadow-sm `;
+                let baseClass = `filter-btn px-4 py-2 rounded-full border flex flex-1 justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 backdrop-blur-sm `;
                 
                 if (f.color === 'red') { 
                     baseClass += isActive 
                         ? 'bg-red-600 text-white border-red-500 shadow-red-200 shadow-md hover:bg-red-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-red-50 hover:text-red-600 hover:border-red-200'; 
+                        : 'bg-white/50 text-gray-500 border-white/60 shadow-red-100 shadow-sm hover:bg-red-50 hover:text-red-600 hover:border-red-200';
                 } else if (f.color === 'green') { 
                     baseClass += isActive 
                         ? 'bg-green-600 text-white border-green-500 shadow-green-200 shadow-md hover:bg-green-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-green-50 hover:text-green-600 hover:border-green-200'; 
+                        : 'bg-white/50 text-gray-500 border-white/60 shadow-green-100 shadow-sm hover:bg-green-50 hover:text-green-600 hover:border-green-200';
                 } else if (f.color === 'blue') { 
                     baseClass += isActive 
                         ? 'bg-blue-600 text-white border-blue-500 shadow-blue-200 shadow-md hover:bg-blue-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200'; 
+                        : 'bg-white/50 text-gray-500 border-white/60 shadow-blue-100 shadow-sm hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200';
                 }
                 
                 btn.className = baseClass;
@@ -3720,8 +3730,6 @@ The word "Nua" means new and "Khai" means food.
             modal.classList.add('modal-hidden');
             setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
-
-        const DATA_VERSION = 1;
 
         function saveStateToCache() {
             try {
