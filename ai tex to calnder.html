@@ -2949,7 +2949,7 @@ The word "Nua" means new and "Khai" means food.
                     if (primaryEvent === '!') bgClass = 'bg-red-100';
                     else if (primaryEvent === '^') bgClass = 'bg-green-100';
                     else if (primaryEvent === '*') bgClass = 'bg-blue-100';
-                    else if (primaryEvent === '>') bgClass = 'bg-amber-100';
+                    else if (primaryEvent === '>') bgClass = 'bg-gray-100';
                 }
 
                 if (detail && detail.gridBgUrl) bgClass = 'bg-white'; // Reset if image exists
@@ -3161,7 +3161,7 @@ The word "Nua" means new and "Khai" means food.
             section.appendChild(header);
 
             // Up Next Logic
-            const sortedEvents = mergedEvents.filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*' || e.symbol === '>')).sort((a, b) => a.date - b.date);
+            const sortedEvents = mergedEvents.filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*')).sort((a, b) => a.date - b.date);
             const realToday = new Date();
             let upNextEvent = null;
             if (data.month === realToday.getMonth() && data.year === realToday.getFullYear()) {
@@ -3206,8 +3206,7 @@ The word "Nua" means new and "Khai" means food.
             const filters = [ 
                 { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, 
                 { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, 
-                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' },
-                { id: '>', label: "Others", icon: 'fa-layer-group', color: 'amber' }
+                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' }
             ];
 
             filters.forEach(f => {
@@ -3234,9 +3233,6 @@ The word "Nua" means new and "Khai" means food.
                 } else if (f.color === 'blue') {
                     colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 ring-blue-600";
-                } else if (f.color === 'amber') {
-                    colorClass = "bg-amber-500 text-white shadow-lg shadow-amber-200 hover:bg-amber-600";
-                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-amber-500";
                 }
                 
                 btn.className = `${className} ${colorClass}`;
@@ -3295,7 +3291,6 @@ The word "Nua" means new and "Khai" means food.
                 if (ev.symbol === '!') badgeClass = "bg-red-600"; 
                 else if (ev.symbol === '^') badgeClass = "bg-green-600"; 
                 else if (ev.symbol === '*') badgeClass = "bg-blue-600";
-                else if (ev.symbol === '>') badgeClass = "bg-amber-500";
                 
                 const monthName = shortMonths[monthData.month];
                 li.innerHTML = `
