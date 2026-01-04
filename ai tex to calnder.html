@@ -1277,7 +1277,7 @@ The word "Nua" means new and "Khai" means food.
             en: { 
                 days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
                 nums: ["0","1","2","3","4","5","6","7","8","9"], 
-                filters: ["Festivals", "Auspicious", "Holidays", "Events"],
+                filters: ["Festivals", "Auspicious", "Holidays", "Other Events"],
                 horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
                 indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
                 indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
@@ -3223,6 +3223,7 @@ The word "Nua" means new and "Khai" means food.
 
             // --- SMART-LINE FILTER BUTTONS ---
             const filterContainer = document.createElement('div');
+            filterContainer.id = "festival-filters";
             filterContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
             
             const currentLang = appState.config.language || 'en';
@@ -3232,7 +3233,7 @@ The word "Nua" means new and "Khai" means food.
                 { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, 
                 { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, 
                 { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' },
-                { id: '>', label: localizedFilters[3] || "Events", icon: 'fa-calendar-days', color: 'gray' }
+                { id: '>', label: localizedFilters[3] || "Other Events", icon: 'fa-calendar-days', color: 'gray' }
             ];
 
             filters.forEach(f => {
