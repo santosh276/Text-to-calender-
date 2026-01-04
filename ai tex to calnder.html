@@ -3214,23 +3214,25 @@ The word "Nua" means new and "Khai" means food.
                 { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' } 
             ];
 
+            // Determine UI "Selected" state: Active only if it's the exclusive filter
+            const isSingleFilterMode = activeFilters.size === 1;
+
             filters.forEach(f => {
-                const isActive = activeFilters.has(f.id);
+                const isSelected = isSingleFilterMode && activeFilters.has(f.id);
                 const btn = document.createElement('button');
-                let baseClass = `filter-btn px-4 py-2 rounded-full border flex flex-1 justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 backdrop-blur-sm `;
+
+                // Base: Solid Color, No Border, White Text
+                let baseClass = `filter-btn px-4 py-2 rounded-full flex flex-1 justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 backdrop-blur-sm text-white shadow-md `;
                 
                 if (f.color === 'red') { 
-                    baseClass += isActive 
-                        ? 'bg-red-600 text-white border-red-600 shadow-red-200 shadow-md hover:bg-red-700'
-                        : 'bg-white text-red-600 border-red-200 shadow-red-100 shadow-sm hover:bg-red-50 hover:border-red-300';
+                    baseClass += `bg-red-600 shadow-red-200 hover:bg-red-700 `;
+                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-red-600 `;
                 } else if (f.color === 'green') { 
-                    baseClass += isActive 
-                        ? 'bg-green-600 text-white border-green-600 shadow-green-200 shadow-md hover:bg-green-700'
-                        : 'bg-white text-green-600 border-green-200 shadow-green-100 shadow-sm hover:bg-green-50 hover:border-green-300';
+                    baseClass += `bg-green-600 shadow-green-200 hover:bg-green-700 `;
+                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-green-600 `;
                 } else if (f.color === 'blue') { 
-                    baseClass += isActive 
-                        ? 'bg-blue-600 text-white border-blue-600 shadow-blue-200 shadow-md hover:bg-blue-700'
-                        : 'bg-white text-blue-600 border-blue-200 shadow-blue-100 shadow-sm hover:bg-blue-50 hover:border-blue-300';
+                    baseClass += `bg-blue-600 shadow-blue-200 hover:bg-blue-700 `;
+                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-blue-600 `;
                 }
                 
                 btn.className = baseClass;
@@ -3309,7 +3311,14 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function toggleFilter(symbol) {
-            if (activeFilters.has(symbol)) activeFilters.delete(symbol); else activeFilters.add(symbol);
+            // Show Only Toggle Logic
+            if (activeFilters.size === 1 && activeFilters.has(symbol)) {
+                // If currently showing ONLY this, reset to ALL
+                activeFilters = new Set(['!', '^', '*']);
+            } else {
+                // Else switch to ONLY this
+                activeFilters = new Set([symbol]);
+            }
             render(); 
         }
 
