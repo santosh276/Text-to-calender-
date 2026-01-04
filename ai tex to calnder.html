@@ -3149,18 +3149,20 @@ The word "Nua" means new and "Khai" means food.
             section.appendChild(header);
 
             // 2. Up Next Card logic
-            const sortedEvents = data.events
-                .filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*')) 
+            const listEvents = data.events
+                .filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*' || e.symbol === '>'))
                 .sort((a, b) => a.date - b.date);
+
+            const upNextEvents = listEvents.filter(e => e.symbol !== '>');
             
             let upNextEvent = null;
             const realToday = new Date();
             const isCurrentMonth = (data.month === realToday.getMonth() && data.year === realToday.getFullYear());
             
             if (isCurrentMonth) {
-                upNextEvent = sortedEvents.find(e => e.date >= realToday.getDate());
+                upNextEvent = upNextEvents.find(e => e.date >= realToday.getDate());
             } else if (new Date(data.year, data.month, 1) > realToday) {
-                upNextEvent = sortedEvents[0];
+                upNextEvent = upNextEvents[0];
             }
             
             if (upNextEvent) {
@@ -3283,17 +3285,17 @@ The word "Nua" means new and "Khai" means food.
                 const query = e.target.value.toLowerCase();
                 if (query.length > 0) clearBtn.classList.remove('hidden');
                 else clearBtn.classList.add('hidden');
-                renderFestivalListItems(list, sortedEvents, data, query);
+                renderFestivalListItems(list, listEvents, data, query);
             };
             
             clearBtn.onclick = () => {
                 input.value = '';
                 clearBtn.classList.add('hidden');
                 input.focus();
-                renderFestivalListItems(list, sortedEvents, data, "");
+                renderFestivalListItems(list, listEvents, data, "");
             };
 
-            renderFestivalListItems(list, sortedEvents, data, "");
+            renderFestivalListItems(list, listEvents, data, "");
         }
 
         function renderFestivalListItems(container, events, monthData, query) {
