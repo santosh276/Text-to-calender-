@@ -1223,6 +1223,7 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        const DATA_VERSION = 1; // Moved to top to avoid TDZ
         const editor = document.getElementById('editor');
         let appState = {
             activeMonthIndex: 0,
@@ -3194,37 +3195,31 @@ The word "Nua" means new and "Khai" means food.
 
             // 4. Filters
             const filterContainer = document.createElement('div');
-            filterContainer.className = "flex flex-wrap gap-2 mb-4";
+            filterContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
             
             const currentLang = appState.config.language || 'en';
             const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
             const filters = [ 
-                { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, 
-                { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, 
-                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' } 
+                { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', colorClass: 'bg-red-500', shadowClass: 'shadow-red-500/30', ringClass: 'ring-red-500' },
+                { id: '^', label: localizedFilters[1], icon: 'fa-om', colorClass: 'bg-green-600', shadowClass: 'shadow-green-600/30', ringClass: 'ring-green-600' },
+                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', colorClass: 'bg-blue-500', shadowClass: 'shadow-blue-500/30', ringClass: 'ring-blue-500' }
             ];
 
+            const isIsolationMode = activeFilters.size === 1;
+
             filters.forEach(f => {
-                const isActive = activeFilters.has(f.id);
+                const isSelected = isIsolationMode && activeFilters.has(f.id);
                 const btn = document.createElement('button');
-                let baseClass = `filter-btn px-4 py-2.5 rounded-full border flex flex-1 justify-center items-center gap-2 text-sm font-bold whitespace-nowrap transition-all duration-300 backdrop-blur-sm shadow-sm `;
                 
-                if (f.color === 'red') { 
-                    baseClass += isActive 
-                        ? 'bg-red-600 text-white border-red-500 shadow-red-200 shadow-md hover:bg-red-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-red-50 hover:text-red-600 hover:border-red-200'; 
-                } else if (f.color === 'green') { 
-                    baseClass += isActive 
-                        ? 'bg-green-600 text-white border-green-500 shadow-green-200 shadow-md hover:bg-green-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-green-50 hover:text-green-600 hover:border-green-200'; 
-                } else if (f.color === 'blue') { 
-                    baseClass += isActive 
-                        ? 'bg-blue-600 text-white border-blue-500 shadow-blue-200 shadow-md hover:bg-blue-700' 
-                        : 'bg-white/50 text-gray-500 border-white/60 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200'; 
+                let className = `filter-btn px-5 py-2 rounded-full flex-1 sm:flex-none min-w-[fit-content] flex items-center justify-center gap-2 text-xs font-bold text-white transition-all duration-200 ease-out active:scale-95 shadow-lg ${f.colorClass} ${f.shadowClass}`;
+
+                if (isSelected) {
+                    className += ` ring-2 ring-offset-2 ${f.ringClass}`;
                 }
                 
-                btn.className = baseClass;
-                btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
+                btn.className = className;
+                const iconClass = isSelected ? 'fa-check' : f.icon;
+                btn.innerHTML = `<i class="fa-solid ${iconClass}"></i> ${f.label}`;
                 btn.onclick = () => toggleFilter(f.id);
                 filterContainer.appendChild(btn);
             });
@@ -3299,7 +3294,11 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function toggleFilter(symbol) {
-            if (activeFilters.has(symbol)) activeFilters.delete(symbol); else activeFilters.add(symbol);
+            if (activeFilters.size === 1 && activeFilters.has(symbol)) {
+                activeFilters = new Set(['!', '^', '*']);
+            } else {
+                activeFilters = new Set([symbol]);
+            }
             render(); 
         }
 
@@ -3720,8 +3719,6 @@ The word "Nua" means new and "Khai" means food.
             modal.classList.add('modal-hidden');
             setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
-
-        const DATA_VERSION = 1;
 
         function saveStateToCache() {
             try {
