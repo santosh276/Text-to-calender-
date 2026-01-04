@@ -324,6 +324,7 @@
         .shadow-green-200 { --tw-shadow-color: rgb(187 247 208); --tw-shadow: var(--tw-shadow-colored); }
         .shadow-blue-100 { --tw-shadow-color: rgb(219 234 254); --tw-shadow: var(--tw-shadow-colored); }
         .shadow-blue-200 { --tw-shadow-color: rgb(191 219 254); --tw-shadow: var(--tw-shadow-colored); }
+        .shadow-gray-200 { --tw-shadow-color: rgb(229 231 235); --tw-shadow: var(--tw-shadow-colored); }
 
         /* Custom Glow Shadows (opacity 30%) */
         .shadow-glow-red { box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4); }
@@ -1276,7 +1277,7 @@ The word "Nua" means new and "Khai" means food.
             en: { 
                 days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
                 nums: ["0","1","2","3","4","5","6","7","8","9"], 
-                filters: ["Festivals", "Auspicious", "Holidays"], 
+                filters: ["Festivals", "Auspicious", "Holidays", "Events"],
                 horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
                 indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
                 indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
@@ -3228,7 +3229,8 @@ The word "Nua" means new and "Khai" means food.
             const filters = [ 
                 { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, 
                 { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, 
-                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' } 
+                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' },
+                { id: '>', label: localizedFilters[3] || "Events", icon: 'fa-calendar-days', color: 'gray' }
             ];
 
             filters.forEach(f => {
@@ -3255,6 +3257,9 @@ The word "Nua" means new and "Khai" means food.
                 } else if (f.color === 'blue') {
                     colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 ring-blue-600";
+                } else if (f.color === 'gray') {
+                    colorClass = "bg-gray-600 text-white shadow-lg shadow-gray-200 hover:bg-gray-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-gray-600";
                 }
                 
                 btn.className = `${className} ${colorClass}`;
