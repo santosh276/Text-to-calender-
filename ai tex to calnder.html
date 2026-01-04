@@ -319,6 +319,16 @@
         .shadow-blue-100 { --tw-shadow-color: rgb(219 234 254); --tw-shadow: var(--tw-shadow-colored); }
         .shadow-blue-200 { --tw-shadow-color: rgb(191 219 254); --tw-shadow: var(--tw-shadow-colored); }
 
+        /* Custom Glow Shadows (opacity 30%) */
+        .shadow-glow-red { box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4); }
+        .shadow-glow-green { box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4); }
+        .shadow-glow-blue { box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); }
+
+        /* Utility for Tablet Flex behavior if missing */
+        @media (min-width: 640px) {
+            .sm\:flex-none { flex: none; }
+        }
+
         /* ANIMATION UTILITIES */
         .fade-enter-active {
             opacity: 1;
@@ -1556,7 +1566,7 @@ The word "Nua" means new and "Khai" means food.
 
         let tempImageState = { key: null, originalUrl: null, selectedType: 'logo', cropper: null };
         let tempLinkState = { selectedType: 'logo' };
-        let activeFilters = new Set(['!', '^', '*']); 
+        let currentIsolationFilter = null; // null = Show All
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -3214,27 +3224,25 @@ The word "Nua" means new and "Khai" means food.
                 { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' } 
             ];
 
-            // Determine UI "Selected" state: Active only if it's the exclusive filter
-            const isSingleFilterMode = activeFilters.size === 1;
-
             filters.forEach(f => {
-                const isSelected = isSingleFilterMode && activeFilters.has(f.id);
+                const isSelected = (currentIsolationFilter === f.id);
                 const btn = document.createElement('button');
 
-                // Base: Solid Color, No Border, White Text
-                let baseClass = `filter-btn px-4 py-2 rounded-full flex flex-1 justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 backdrop-blur-sm text-white shadow-md `;
+                // Responsive: flex-1 (Mobile Stretch), sm:flex-none (Desktop Natural)
+                let baseClass = `filter-btn px-4 py-2 rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 text-white shadow-md `;
                 
                 if (f.color === 'red') { 
-                    baseClass += `bg-red-600 shadow-red-200 hover:bg-red-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-red-600 `;
+                    baseClass += `bg-red-600 shadow-glow-red hover:bg-red-700 `;
+                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-red-600 `;
                 } else if (f.color === 'green') { 
-                    baseClass += `bg-green-600 shadow-green-200 hover:bg-green-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-green-600 `;
+                    baseClass += `bg-green-600 shadow-glow-green hover:bg-green-700 `;
+                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-green-600 `;
                 } else if (f.color === 'blue') { 
-                    baseClass += `bg-blue-600 shadow-blue-200 hover:bg-blue-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-blue-600 `;
+                    baseClass += `bg-blue-600 shadow-glow-blue hover:bg-blue-700 `;
+                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-blue-600 `;
                 }
                 
+                // Ensure Title Case (Label comes from Data which is usually proper case)
                 btn.className = baseClass;
                 btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
                 btn.onclick = () => toggleFilter(f.id);
@@ -3272,7 +3280,8 @@ The word "Nua" means new and "Khai" means food.
             container.innerHTML = '';
             const filtered = events.filter(e => {
                 const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
-                const matchesFilter = activeFilters.has(e.symbol);
+                // Filter Logic: If Isolation Filter is set, match exact; else allow all in the list (!, ^, *)
+                const matchesFilter = currentIsolationFilter ? (e.symbol === currentIsolationFilter) : true;
                 return matchesQuery && matchesFilter;
             });
 
@@ -3311,13 +3320,11 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function toggleFilter(symbol) {
-            // Show Only Toggle Logic
-            if (activeFilters.size === 1 && activeFilters.has(symbol)) {
-                // If currently showing ONLY this, reset to ALL
-                activeFilters = new Set(['!', '^', '*']);
+            // Isolation Logic: Toggle between specific filter and 'Show All'
+            if (currentIsolationFilter === symbol) {
+                currentIsolationFilter = null; // Reset to All
             } else {
-                // Else switch to ONLY this
-                activeFilters = new Set([symbol]);
+                currentIsolationFilter = symbol; // Isolate
             }
             render(); 
         }
