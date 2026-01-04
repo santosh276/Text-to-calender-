@@ -51,6 +51,11 @@
 .ring-green-600{--tw-ring-opacity:1;--tw-ring-color:rgb(22 163 74/var(--tw-ring-opacity,1))}
 .ring-blue-600{--tw-ring-opacity:1;--tw-ring-color:rgb(37 99 235/var(--tw-ring-opacity,1))}
 .ring-gray-600{--tw-ring-opacity:1;--tw-ring-color:rgb(75 85 99/var(--tw-ring-opacity,1))}
+/* New Utility Classes for Search Input */
+.pr-10 { padding-right: 2.5rem; }
+.focus\:bg-white:focus { background-color: #ffffff; }
+.focus\:ring-orange-200:focus { --tw-ring-opacity: 1; --tw-ring-color: rgb(254 215 170 / var(--tw-ring-opacity, 1)); }
+.focus\:border-orange-400:focus { --tw-border-opacity: 1; border-color: rgb(251 146 60 / var(--tw-border-opacity, 1)); }
 </style>
 <style>
         @media (min-width: 1440px) {
@@ -3210,12 +3215,12 @@ The word "Nua" means new and "Khai" means food.
             searchWrapper.className = "relative mb-3 group";
             searchWrapper.innerHTML = `
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-orange-500 transition-colors"></i>
+                    <i class="fa-solid fa-search text-gray-400 group-focus-within:text-orange-500 transition-colors"></i>
                 </div>
                 <input type="text" id="festival-search" 
-                    class="block w-full pl-10 pr-8 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-500 transition-all duration-200 text-sm shadow-sm font-medium" 
+                    class="block w-full pl-10 pr-10 py-2.5 text-sm text-gray-700 bg-white/50 backdrop-blur-sm border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-200 focus:border-orange-400 placeholder-gray-400 outline-none transition-all duration-300 shadow-sm hover:shadow-md"
                     placeholder="Search..." 
-                    autocomplete="off" style="padding-left: 2.5rem;">
+                    autocomplete="off">
                 <button id="search-clear" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer hidden">
                     <i class="fa-solid fa-circle-xmark"></i>
                 </button>
