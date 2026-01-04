@@ -53,6 +53,13 @@
 .ring-gray-600{--tw-ring-opacity:1;--tw-ring-color:rgb(75 85 99/var(--tw-ring-opacity,1))}
 </style>
 <style>
+        .search-highlight {
+            background-color: #ffedd5;
+            color: #c2410c;
+            font-weight: 800;
+            border-radius: 2px;
+            padding: 0 1px;
+        }
         @media (min-width: 1440px) {
             .app-container, .showcase-section, .intro-section, .faq-container {
                 max-width: 100% !important;
@@ -3205,18 +3212,18 @@ The word "Nua" means new and "Khai" means food.
                 section.appendChild(card);
             }
 
-            // 3. Search Bar
+            // 3. Search Bar (Glassmorphism Capsule)
             const searchWrapper = document.createElement('div');
-            searchWrapper.className = "relative mb-3 group";
+            searchWrapper.className = "relative mb-4 group z-20";
             searchWrapper.innerHTML = `
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-orange-500 transition-colors"></i>
                 </div>
                 <input type="text" id="festival-search" 
-                    class="block w-full pl-10 pr-8 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-500 transition-all duration-200 text-sm shadow-sm font-medium" 
+                    class="block w-full pl-10 pr-10 py-2.5 text-sm text-gray-700 bg-white/50 backdrop-blur-sm border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-200 focus:border-orange-400 placeholder-gray-400 outline-none transition-all duration-300 shadow-sm hover:shadow-md"
                     placeholder="Search..." 
-                    autocomplete="off" style="padding-left: 2.5rem;">
-                <button id="search-clear" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer hidden">
+                    autocomplete="off">
+                <button id="search-clear" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer opacity-0 pointer-events-none transition-opacity duration-300">
                     <i class="fa-solid fa-circle-xmark"></i>
                 </button>
             `;
@@ -3283,25 +3290,44 @@ The word "Nua" means new and "Khai" means food.
             const input = searchWrapper.querySelector('input');
             const clearBtn = searchWrapper.querySelector('#search-clear');
 
-            input.oninput = (e) => {
-                const query = e.target.value.toLowerCase();
-                if (query.length > 0) clearBtn.classList.remove('hidden');
-                else clearBtn.classList.add('hidden');
+            // Handle Search Input
+            const handleSearch = (query) => {
+                query = query.toLowerCase().trim();
+
+                // Toggle Clear Button Visibility
+                if (query.length > 0) {
+                    clearBtn.classList.remove('opacity-0', 'pointer-events-none');
+                } else {
+                    clearBtn.classList.add('opacity-0', 'pointer-events-none');
+                }
+
                 renderFestivalListItems(list, listEvents, data, query);
             };
-            
-            clearBtn.onclick = () => {
+
+            const clearSearch = () => {
                 input.value = '';
-                clearBtn.classList.add('hidden');
                 input.focus();
-                renderFestivalListItems(list, listEvents, data, "");
+                handleSearch('');
             };
+
+            input.oninput = (e) => handleSearch(e.target.value);
+            clearBtn.onclick = clearSearch;
 
             renderFestivalListItems(list, listEvents, data, "");
         }
 
         function renderFestivalListItems(container, events, monthData, query) {
             container.innerHTML = '';
+
+            // Helper to highlight text
+            const highlightText = (text, q) => {
+                if (!q) return text;
+                // Escape regex special characters to prevent crashes
+                const escapedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(${escapedQ})`, 'gi');
+                return text.replace(regex, '<span class="search-highlight">$1</span>');
+            };
+
             const filtered = events.filter(e => {
                 const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
                 // ISOLATION LOGIC: Show if filter is null OR matches specific symbol
@@ -3309,9 +3335,26 @@ The word "Nua" means new and "Khai" means food.
                 return matchesQuery && matchesFilter;
             });
 
+            // Empty State
             if (filtered.length === 0) {
-                const msg = query ? "No events found" : "No events selected";
-                container.innerHTML = `<li class="text-center text-gray-400 text-xs py-4 italic">${msg}</li>`;
+                if (query) {
+                    // Search Empty State
+                    container.innerHTML = `
+                        <li class="flex flex-col items-center justify-center py-8 text-center animate-fade-in">
+                            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-gray-400">
+                                <i class="fa-regular fa-calendar-xmark text-2xl"></i>
+                            </div>
+                            <p class="text-gray-500 font-bold text-sm mb-1">No matches found</p>
+                            <p class="text-gray-400 text-xs mb-3">Try checking your spelling or use a different keyword.</p>
+                            <button onclick="document.getElementById('festival-search').value = ''; document.getElementById('festival-search').dispatchEvent(new Event('input')); document.getElementById('festival-search').focus();"
+                                class="text-xs font-bold text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-lg transition-colors">
+                                Clear Search
+                            </button>
+                        </li>`;
+                } else {
+                    // Filter Empty State
+                    container.innerHTML = `<li class="text-center text-gray-400 text-xs py-4 italic">No events selected for this filter.</li>`;
+                }
                 return;
             }
 
@@ -3326,14 +3369,19 @@ The word "Nua" means new and "Khai" means food.
                 else if (ev.symbol === '*') badgeClass = "bg-blue-600";
                 
                 const monthName = shortMonths[monthData.month];
+
+                // Apply Highlight
+                const hlEngName = highlightText(ev.engName, query);
+                const hlLocName = ev.locName ? highlightText(ev.locName, query) : '';
+
                 li.innerHTML = `
                     <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
                         <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
                         <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
                     </div>
                     <div class="flex-grow min-w-0 flex flex-col justify-center">
-                        <div class="font-bold text-gray-900 text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
-                        <div class="text-[11px] text-gray-500 font-oriya truncate">${ev.locName || ''}</div>
+                        <div class="font-bold text-gray-900 text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${hlEngName}</div>
+                        <div class="text-[11px] text-gray-500 font-oriya truncate">${hlLocName}</div>
                     </div>
                 `;
                 container.appendChild(li);
