@@ -44,7 +44,13 @@
 
 .group:hover .group-hover\:text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12/var(--tw-text-opacity,1))}
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
-@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}</style>
+@media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}
+.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.ring-offset-2{--tw-ring-offset-width:2px}
+.ring-red-600{--tw-ring-opacity:1;--tw-ring-color:rgb(220 38 38/var(--tw-ring-opacity,1))}
+.ring-green-600{--tw-ring-opacity:1;--tw-ring-color:rgb(22 163 74/var(--tw-ring-opacity,1))}
+.ring-blue-600{--tw-ring-opacity:1;--tw-ring-color:rgb(37 99 235/var(--tw-ring-opacity,1))}
+</style>
 <style>
         @media (min-width: 1440px) {
             .app-container, .showcase-section, .intro-section, .faq-container {
@@ -89,7 +95,7 @@
             border-style: solid;
         }
 
-        .filter-btn { transition: all 0.2s ease; }
+        .filter-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .filter-btn:active { transform: scale(0.95); }
 
         /* Modal Animation */
@@ -3212,12 +3218,13 @@ The word "Nua" means new and "Khai" means food.
             `;
             section.appendChild(searchWrapper);
 
-            // 4. Filters
+            // --- SMART-LINE FILTER BUTTONS ---
             const filterContainer = document.createElement('div');
-            filterContainer.className = "flex flex-wrap gap-2 mb-4";
+            filterContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
             
             const currentLang = appState.config.language || 'en';
             const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
+            
             const filters = [ 
                 { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, 
                 { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, 
@@ -3228,23 +3235,31 @@ The word "Nua" means new and "Khai" means food.
                 const isSelected = (currentIsolationFilter === f.id);
                 const btn = document.createElement('button');
                 
-                // Responsive: flex-1 (Mobile Stretch), sm:flex-none (Desktop Natural)
-                let baseClass = `filter-btn px-4 py-2 rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 text-white shadow-md `;
-                
-                if (f.color === 'red') { 
-                    baseClass += `bg-red-600 shadow-glow-red hover:bg-red-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-red-600 `;
-                } else if (f.color === 'green') { 
-                    baseClass += `bg-green-600 shadow-glow-green hover:bg-green-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-green-600 `;
-                } else if (f.color === 'blue') { 
-                    baseClass += `bg-blue-600 shadow-glow-blue hover:bg-blue-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-blue-600 `;
+                // RESPONSIVE LOGIC: flex-1 on mobile, sm:flex-none on desktop
+                let className = `
+                    filter-btn relative px-4 py-2 rounded-full 
+                    text-xs font-bold whitespace-nowrap outline-none
+                    flex items-center justify-center gap-2
+                    flex-1 sm:flex-none min-w-[fit-content]
+                    transition-all duration-200
+                `;
+
+                let colorClass = "";
+                // SOLID GLOW LOGIC (Both Active & Inactive are solid)
+                if (f.color === 'red') {
+                    colorClass = "bg-red-600 text-white shadow-lg shadow-red-200 hover:bg-red-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-red-600";
+                } else if (f.color === 'green') {
+                    colorClass = "bg-green-600 text-white shadow-lg shadow-green-200 hover:bg-green-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-green-600";
+                } else if (f.color === 'blue') {
+                    colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-blue-600";
                 }
                 
-                // Ensure Title Case (Label comes from Data which is usually proper case)
-                btn.className = baseClass;
-                btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
+                btn.className = `${className} ${colorClass}`;
+                const checkIcon = isSelected ? '<i class="fa-solid fa-check text-[10px]"></i>' : '';
+                btn.innerHTML = `${checkIcon} <i class="fa-solid ${f.icon}"></i> <span>${f.label}</span>`;
                 btn.onclick = () => toggleFilter(f.id);
                 filterContainer.appendChild(btn);
             });
@@ -3280,8 +3295,8 @@ The word "Nua" means new and "Khai" means food.
             container.innerHTML = '';
             const filtered = events.filter(e => {
                 const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
-                // Filter Logic: If Isolation Filter is set, match exact; else allow all in the list (!, ^, *)
-                const matchesFilter = currentIsolationFilter ? (e.symbol === currentIsolationFilter) : true;
+                // ISOLATION LOGIC: Show if filter is null OR matches specific symbol
+                const matchesFilter = (currentIsolationFilter === null) || (e.symbol === currentIsolationFilter);
                 return matchesQuery && matchesFilter;
             });
 
@@ -3302,29 +3317,25 @@ The word "Nua" means new and "Khai" means food.
                 else if (ev.symbol === '*') badgeClass = "bg-blue-600";
                 
                 const monthName = shortMonths[monthData.month];
-                const dateBadge = `
+                li.innerHTML = `
                     <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
                         <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
                         <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
-                    </div>`;
-                
-                const content = `
+                    </div>
                     <div class="flex-grow min-w-0 flex flex-col justify-center">
                         <div class="font-bold text-gray-900 text-sm truncate group-hover:text-orange-700 transition-colors">${ev.engName}</div>
                         <div class="text-[11px] text-gray-500 font-oriya truncate">${ev.locName || ''}</div>
                     </div>
                 `;
-                li.innerHTML = dateBadge + content;
                 container.appendChild(li);
             });
         }
 
         function toggleFilter(symbol) {
-            // Isolation Logic: Toggle between specific filter and 'Show All'
             if (currentIsolationFilter === symbol) {
-                currentIsolationFilter = null; // Reset to All
+                currentIsolationFilter = null; 
             } else {
-                currentIsolationFilter = symbol; // Isolate
+                currentIsolationFilter = symbol; 
             }
             render(); 
         }
