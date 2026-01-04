@@ -50,6 +50,7 @@
 .ring-red-600{--tw-ring-opacity:1;--tw-ring-color:rgb(220 38 38/var(--tw-ring-opacity,1))}
 .ring-green-600{--tw-ring-opacity:1;--tw-ring-color:rgb(22 163 74/var(--tw-ring-opacity,1))}
 .ring-blue-600{--tw-ring-opacity:1;--tw-ring-color:rgb(37 99 235/var(--tw-ring-opacity,1))}
+.ring-amber-500{--tw-ring-opacity:1;--tw-ring-color:rgb(245 158 11/var(--tw-ring-opacity,1))}
 </style>
 <style>
         @media (min-width: 1440px) {
@@ -324,11 +325,13 @@
         .shadow-green-200 { --tw-shadow-color: rgb(187 247 208); --tw-shadow: var(--tw-shadow-colored); }
         .shadow-blue-100 { --tw-shadow-color: rgb(219 234 254); --tw-shadow: var(--tw-shadow-colored); }
         .shadow-blue-200 { --tw-shadow-color: rgb(191 219 254); --tw-shadow: var(--tw-shadow-colored); }
+        .shadow-amber-200 { --tw-shadow-color: rgb(253 230 138); --tw-shadow: var(--tw-shadow-colored); }
 
         /* Custom Glow Shadows (opacity 30%) */
         .shadow-glow-red { box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4); }
         .shadow-glow-green { box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4); }
         .shadow-glow-blue { box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); }
+        .shadow-glow-amber { box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4); }
         
         /* Utility for Tablet Flex behavior if missing */
         @media (min-width: 640px) {
@@ -1463,7 +1466,7 @@ The word "Nua" means new and "Khai" means food.
             // 0-14 is Shukla (Waxing), 15-29 is Krishna (Waning)
             const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
             
-            return { tithi: tithiName, paksha: pakshaName, index: safeIndex };
+            return { tithi: tithiName, paksha: pakshaName, index: safeIndex, sunLong: lambda_sun };
         }
 
         function toNativeNum(num, langCode) {
@@ -3125,9 +3128,110 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        // --- NEW: Auto-Calculate Panchang Events (Purnima, Amavasya, Sankranti) ---
+        function generateAutoPanchangEvents(data) {
+            const events = [];
+            const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+
+            // We need previous day's sun longitude for Sankranti check
+            let prevSunLong = -1;
+            // Get last day of prev month for initial prevSunLong
+            const lastDayPrevMonth = new Date(data.year, data.month, 0);
+            const prevTithiInfo = calculateTithi(lastDayPrevMonth);
+            prevSunLong = prevTithiInfo.sunLong;
+
+            const signs = [
+                'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+                'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
+            ];
+            // Map signs to localized horoscope names if available
+            const localizedSignNames = signs.map(s => {
+                const key = s.toLowerCase();
+                return (langObj.horoscopes && langObj.horoscopes[key]) ? langObj.horoscopes[key] : s;
+            });
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(data.year, data.month, d);
+                const tithiInfo = calculateTithi(dateObj);
+
+                // 1. Purnima (Index 14)
+                if (tithiInfo.index === 14) {
+                    const name = langObj.tithis ? langObj.tithis[14] : "Purnima";
+                    events.push({
+                        date: d,
+                        symbol: 'P',
+                        engName: "Purnima",
+                        locName: name,
+                        isAuto: true
+                    });
+                }
+                // 2. Amavasya (Index 29)
+                else if (tithiInfo.index === 29) {
+                    const name = langObj.tithis ? langObj.tithis[29] : "Amavasya";
+                    events.push({
+                        date: d,
+                        symbol: 'P',
+                        engName: "Amavasya",
+                        locName: name,
+                        isAuto: true
+                    });
+                }
+
+                // 3. Sankranti (Sun enters new sign)
+                // Check if sign index changed
+                const currentSunLong = tithiInfo.sunLong;
+                const prevSignIndex = Math.floor(prevSunLong / 30);
+                const currentSignIndex = Math.floor(currentSunLong / 30);
+
+                if (currentSignIndex !== prevSignIndex) {
+                    // Sankranti happened today
+                    // The sign entered is currentSignIndex % 12
+                    const enteredSignIdx = currentSignIndex % 12;
+                    const signName = signs[enteredSignIdx];
+                    const locSignName = localizedSignNames[enteredSignIdx];
+
+                    const eventName = `${signName} Sankranti`;
+                    const locEventName = `${locSignName} Sankranti`; // Or localize "Sankranti" if needed
+
+                    events.push({
+                        date: d,
+                        symbol: 'P',
+                        engName: eventName,
+                        locName: locEventName,
+                        isAuto: true
+                    });
+                }
+
+                prevSunLong = currentSunLong;
+            }
+            return events;
+        }
+
         function renderFestivals(data) {
             const section = document.getElementById('sec-festivals');
             section.innerHTML = '';
+
+            // Generate and Merge Auto Events
+            const autoEvents = generateAutoPanchangEvents(data);
+            // Deduplicate: Don't add if user already has an event on that date with similar name
+            // Simple fuzzy check
+            const mergedEvents = [...data.events];
+
+            autoEvents.forEach(autoEv => {
+                const exists = data.events.some(ev =>
+                    ev.date === autoEv.date &&
+                    (ev.engName.toLowerCase().includes(autoEv.engName.toLowerCase()) ||
+                     ev.engName.toLowerCase().includes("sankranti") && autoEv.engName.includes("Sankranti") ||
+                     ev.engName.toLowerCase().includes("purnima") && autoEv.engName.includes("Purnima") ||
+                     ev.engName.toLowerCase().includes("amavasya") && autoEv.engName.includes("Amavasya"))
+                );
+
+                if (!exists) {
+                    mergedEvents.push(autoEv);
+                }
+            });
 
             // 0. Decoration (Quarter-Circle)
             const deco = document.createElement('div');
@@ -3148,8 +3252,8 @@ The word "Nua" means new and "Khai" means food.
             section.appendChild(header);
 
             // 2. Up Next Card logic
-            const sortedEvents = data.events
-                .filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*')) 
+            const sortedEvents = mergedEvents
+                .filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*' || e.symbol === 'P'))
                 .sort((a, b) => a.date - b.date);
             
             let upNextEvent = null;
@@ -3228,7 +3332,8 @@ The word "Nua" means new and "Khai" means food.
             const filters = [ 
                 { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, 
                 { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, 
-                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' } 
+                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' },
+                { id: 'P', label: "Panchang", icon: 'fa-sun', color: 'amber' }
             ];
 
             filters.forEach(f => {
@@ -3255,6 +3360,9 @@ The word "Nua" means new and "Khai" means food.
                 } else if (f.color === 'blue') {
                     colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 ring-blue-600";
+                } else if (f.color === 'amber') {
+                    colorClass = "bg-amber-500 text-white shadow-lg shadow-amber-200 hover:bg-amber-600";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-amber-500";
                 }
                 
                 btn.className = `${className} ${colorClass}`;
@@ -3315,6 +3423,7 @@ The word "Nua" means new and "Khai" means food.
                 if (ev.symbol === '!') badgeClass = "bg-red-600"; 
                 else if (ev.symbol === '^') badgeClass = "bg-green-600"; 
                 else if (ev.symbol === '*') badgeClass = "bg-blue-600";
+                else if (ev.symbol === 'P') badgeClass = "bg-amber-500";
                 
                 const monthName = shortMonths[monthData.month];
                 li.innerHTML = `
