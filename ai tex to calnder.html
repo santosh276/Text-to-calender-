@@ -3130,93 +3130,6 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        // --- NEW: Auto-Calculate Panchang Events (Purnima, Amavasya, Sankranti) ---
-        function generateAutoPanchangEvents(data) {
-            const events = [];
-            const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
-            const currentLang = appState.config.language || 'en';
-            const langObj = langData[currentLang] || langData['en'];
-
-            // We need previous day's sun longitude for Sankranti check
-            let prevSunLong = -1;
-            // Get last day of prev month for initial prevSunLong
-            const lastDayPrevMonth = new Date(data.year, data.month, 0);
-            const prevTithiInfo = calculateTithi(lastDayPrevMonth);
-
-            // Apply Ayanamsha Correction (approx 24 degrees) for Sidereal Zodiac
-            const AYANAMSHA = 24.0;
-            prevSunLong = prevTithiInfo.sunLong - AYANAMSHA;
-            if (prevSunLong < 0) prevSunLong += 360;
-
-            const signs = [
-                'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-                'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
-            ];
-            // Map signs to localized horoscope names if available
-            const localizedSignNames = signs.map(s => {
-                const key = s.toLowerCase();
-                return (langObj.horoscopes && langObj.horoscopes[key]) ? langObj.horoscopes[key] : s;
-            });
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateObj = new Date(data.year, data.month, d);
-                const tithiInfo = calculateTithi(dateObj);
-
-                // 1. Purnima (Index 14)
-                if (tithiInfo.index === 14) {
-                    const name = langObj.tithis ? langObj.tithis[14] : "Purnima";
-                    events.push({
-                        date: d,
-                        symbol: '>',
-                        engName: "Purnima",
-                        locName: name,
-                        isAuto: true
-                    });
-                }
-                // 2. Amavasya (Index 29)
-                else if (tithiInfo.index === 29) {
-                    const name = langObj.tithis ? langObj.tithis[29] : "Amavasya";
-                    events.push({
-                        date: d,
-                        symbol: '>',
-                        engName: "Amavasya",
-                        locName: name,
-                        isAuto: true
-                    });
-                }
-
-                // 3. Sankranti (Sun enters new sign)
-                // Check if sign index changed
-                const currentSunLong = tithiInfo.sunLong - AYANAMSHA;
-                const adjustedSunLong = currentSunLong < 0 ? currentSunLong + 360 : currentSunLong;
-
-                const prevSignIndex = Math.floor(prevSunLong / 30);
-                const currentSignIndex = Math.floor(adjustedSunLong / 30);
-
-                if (currentSignIndex !== prevSignIndex) {
-                    // Sankranti happened today
-                    // The sign entered is currentSignIndex % 12
-                    const enteredSignIdx = currentSignIndex % 12;
-                    const signName = signs[enteredSignIdx];
-                    const locSignName = localizedSignNames[enteredSignIdx];
-
-                    const eventName = `${signName} Sankranti`;
-                    const locEventName = `${locSignName} Sankranti`; // Or localize "Sankranti" if needed
-
-                    events.push({
-                        date: d,
-                        symbol: '>',
-                        engName: eventName,
-                        locName: locEventName,
-                        isAuto: true
-                    });
-                }
-
-                prevSunLong = adjustedSunLong;
-            }
-            return events;
-        }
-
         // --- 1. TOGGLE LOGIC (Isolation Mode) ---
         function toggleFilter(symbol) {
             if (currentIsolationFilter === symbol) {
@@ -3232,23 +3145,8 @@ The word "Nua" means new and "Khai" means food.
             const section = document.getElementById('sec-festivals');
             section.innerHTML = '';
 
-            // Generate and Merge Auto Events
-            const autoEvents = generateAutoPanchangEvents(data);
+            // Use only manual events
             const mergedEvents = [...data.events];
-
-            autoEvents.forEach(autoEv => {
-                const exists = data.events.some(ev =>
-                    ev.date === autoEv.date &&
-                    (ev.engName.toLowerCase().includes(autoEv.engName.toLowerCase()) ||
-                     ev.engName.toLowerCase().includes("sankranti") && autoEv.engName.includes("Sankranti") ||
-                     ev.engName.toLowerCase().includes("purnima") && autoEv.engName.includes("Purnima") ||
-                     ev.engName.toLowerCase().includes("amavasya") && autoEv.engName.includes("Amavasya"))
-                );
-
-                if (!exists) {
-                    mergedEvents.push(autoEv);
-                }
-            });
 
             // Decoration
             const deco = document.createElement('div');
