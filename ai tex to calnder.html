@@ -32,6 +32,12 @@
 @media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:1024px){.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+.min-w-\[fit-content\]{min-width:fit-content}
+.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68/var(--tw-bg-opacity,1))}
+.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246/var(--tw-bg-opacity,1))}
+.ring-red-500{--tw-ring-opacity:1;--tw-ring-color:rgb(239 68 68/var(--tw-ring-opacity,1))}
+.ring-blue-500{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246/var(--tw-ring-opacity,1))}
+.ring-green-600{--tw-ring-opacity:1;--tw-ring-color:rgb(22 163 74/var(--tw-ring-opacity,1))}
 .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
 
 .text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11/var(--tw-text-opacity,1))}
@@ -3228,23 +3234,26 @@ The word "Nua" means new and "Khai" means food.
                 const isSelected = (currentIsolationFilter === f.id);
                 const btn = document.createElement('button');
                 
-                // Responsive: flex-1 (Mobile Stretch), sm:flex-none (Desktop Natural)
-                let baseClass = `filter-btn px-4 py-2 rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 text-white shadow-md `;
+                // Responsive: flex-1 (Mobile Stretch), min-w-[fit-content] (Desktop Natural)
+                let baseClass = `filter-btn px-4 py-2 rounded-full flex flex-1 min-w-[fit-content] justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 text-white shadow-md `;
                 
                 if (f.color === 'red') { 
-                    baseClass += `bg-red-600 shadow-glow-red hover:bg-red-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-red-600 `;
+                    baseClass += `bg-red-500 shadow-glow-red hover:bg-red-600 `;
+                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-red-500 `;
                 } else if (f.color === 'green') { 
                     baseClass += `bg-green-600 shadow-glow-green hover:bg-green-700 `;
                     if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-green-600 `;
                 } else if (f.color === 'blue') { 
-                    baseClass += `bg-blue-600 shadow-glow-blue hover:bg-blue-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-blue-600 `;
+                    baseClass += `bg-blue-500 shadow-glow-blue hover:bg-blue-600 `;
+                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-blue-500 `;
                 }
                 
+                // Icon Logic: Swap to Checkmark if selected
+                const iconClass = isSelected ? 'fa-check' : f.icon;
+
                 // Ensure Title Case (Label comes from Data which is usually proper case)
                 btn.className = baseClass;
-                btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
+                btn.innerHTML = `<i class="fa-solid ${iconClass}"></i> ${f.label}`;
                 btn.onclick = () => toggleFilter(f.id);
                 filterContainer.appendChild(btn);
             });
