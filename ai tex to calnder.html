@@ -3123,101 +3123,31 @@ The word "Nua" means new and "Khai" means food.
             const section = document.getElementById('sec-festivals');
             section.innerHTML = '';
 
-            // 0. Decoration (Quarter-Circle)
-            const deco = document.createElement('div');
-            deco.className = "absolute top-0 right-0 -mr-4 -mt-4 pointer-events-none";
-            // Inline styles to match requested Tailwind classes (rounded-bl-full, from-red-500/10, etc.)
-            Object.assign(deco.style, {
-                width: '6rem', // w-24
-                height: '6rem', // h-24
-                background: 'linear-gradient(to bottom right, rgba(239, 68, 68, 0.1), transparent)', // bg-gradient-to-br from-red-500/10
-                borderBottomLeftRadius: '100%' // rounded-bl-full
-            });
-            section.appendChild(deco);
-
-            // 1. Header
+            // --- Header ---
             const header = document.createElement('h3');
             header.className = "font-bold text-gray-900 mb-4 text-base flex items-center gap-2";
             header.innerHTML = `<i class="fa-solid fa-bell text-red-600 text-lg"></i> Festivals`;
             section.appendChild(header);
 
-            // 2. Up Next Card logic
-            const sortedEvents = data.events
-                .filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*')) 
-                .sort((a, b) => a.date - b.date);
-            
-            let upNextEvent = null;
-            const realToday = new Date();
-            const isCurrentMonth = (data.month === realToday.getMonth() && data.year === realToday.getFullYear());
-            
-            if (isCurrentMonth) {
-                upNextEvent = sortedEvents.find(e => e.date >= realToday.getDate());
-            } else if (new Date(data.year, data.month, 1) > realToday) {
-                upNextEvent = sortedEvents[0];
-            }
-            
-            if (upNextEvent) {
-                const eventDate = new Date(data.year, data.month, upNextEvent.date);
-                
-                // Diff days
-                const t1 = new Date(realToday.getFullYear(), realToday.getMonth(), realToday.getDate());
-                const t2 = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
-                const diffTime = t2 - t1;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                
-                let badgeText = "";
-                if (diffDays === 0) badgeText = "Today";
-                else if (diffDays === 1) badgeText = "Tomorrow";
-                else if (diffDays < 7) badgeText = `In ${diffDays} days`;
-                else badgeText = `${upNextEvent.date} ${shortMonths[data.month]}`;
-
-                const card = document.createElement('div');
-                card.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
-                card.onclick = () => openDayModal(upNextEvent.date, data);
-                card.style.background = "linear-gradient(135deg, #f97316 0%, #dc2626 100%)";
-                
-                card.innerHTML = `
-                    <div class="p-4 relative z-10 text-white">
-                        <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase mb-1 flex items-center gap-1"><i class="fa-solid fa-calendar-check"></i> UP NEXT</div>
-                        <div class="flex justify-between items-end gap-2">
-                    <div class="font-bold text-lg leading-tight truncate flex-1 min-w-0 pr-2">
-                                ${upNextEvent.engName}
-                            </div>
-                            <div class="shrink-0 bg-white/20 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-semibold border border-white/10 shadow-sm">
-                                ${badgeText}
-                            </div>
-                        </div>
-                        <div class="text-xs font-medium opacity-80 mt-1 truncate font-oriya">${upNextEvent.locName || ''}</div>
-                    </div>
-                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
-                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-16 h-16 rounded-full bg-black/5 blur-md"></div>
-                `;
-                section.appendChild(card);
-            }
-
-            // 3. Search Bar
+            // --- Search Bar (Preserved) ---
             const searchWrapper = document.createElement('div');
             searchWrapper.className = "relative mb-3 group";
             searchWrapper.innerHTML = `
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-orange-500 transition-colors"></i>
-                </div>
-                <input type="text" id="festival-search" 
-                    class="block w-full pl-10 pr-8 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-500 transition-all duration-200 text-sm shadow-sm font-medium" 
-                    placeholder="Search..." 
-                    autocomplete="off" style="padding-left: 2.5rem;">
-                <button id="search-clear" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer hidden">
-                    <i class="fa-solid fa-circle-xmark"></i>
-                </button>
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-gray-400"></i></div>
+                <input type="text" id="festival-search" class="block w-full pl-10 pr-8 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all" placeholder="Search..." autocomplete="off">
+                <button id="search-clear" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hidden"><i class="fa-solid fa-circle-xmark"></i></button>
             `;
             section.appendChild(searchWrapper);
 
-            // 4. Filters
+            // --- FILTER BUTTONS (SMART-LINE LAYOUT) ---
             const filterContainer = document.createElement('div');
-            filterContainer.className = "flex flex-wrap gap-2 mb-4";
+            // 'flex-wrap' allows wrapping on tiny screens
+            // 'gap-2' gives space
+            filterContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
             
             const currentLang = appState.config.language || 'en';
             const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
+
             const filters = [ 
                 { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, 
                 { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, 
@@ -3227,71 +3157,94 @@ The word "Nua" means new and "Khai" means food.
             filters.forEach(f => {
                 const isSelected = (currentIsolationFilter === f.id);
                 const btn = document.createElement('button');
-
-                // Responsive: flex-1 (Mobile Stretch), sm:flex-none (Desktop Natural)
-                let baseClass = `filter-btn px-4 py-2 rounded-full flex flex-1 sm:flex-none justify-center items-center gap-2 text-xs font-bold whitespace-nowrap transition-all duration-300 text-white shadow-md `;
                 
+                // SMART-LINE CLASSES:
+                // flex-1        -> On Mobile: Grow to fill width evenly (balanced buttons)
+                // sm:flex-none  -> On Tablet+: Stop growing, sit side-by-side (one line)
+                // min-w-fit     -> Never squash the text
+                let className = `
+                    relative px-4 py-2 rounded-full
+                    text-xs font-bold whitespace-nowrap
+                    flex items-center justify-center gap-2
+                    transition-all duration-200 ease-out outline-none active:scale-95
+                    flex-1 sm:flex-none min-w-[fit-content]
+                `;
+
+                // SOLID GLOW COLORS:
+                let colorClass = "";
                 if (f.color === 'red') { 
-                    baseClass += `bg-red-600 shadow-glow-red hover:bg-red-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-red-600 `;
+                    colorClass = "bg-red-600 text-white shadow-lg shadow-red-500/30 hover:bg-red-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-red-600";
                 } else if (f.color === 'green') { 
-                    baseClass += `bg-green-600 shadow-glow-green hover:bg-green-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-green-600 `;
+                    colorClass = "bg-green-600 text-white shadow-lg shadow-green-600/30 hover:bg-green-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-green-600";
                 } else if (f.color === 'blue') { 
-                    baseClass += `bg-blue-600 shadow-glow-blue hover:bg-blue-700 `;
-                    if (isSelected) baseClass += `ring-2 ring-offset-2 ring-offset-white ring-blue-600 `;
+                    colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-blue-600";
                 }
                 
-                // Ensure Title Case (Label comes from Data which is usually proper case)
-                btn.className = baseClass;
-                btn.innerHTML = `<i class="fa-solid ${f.icon}"></i> ${f.label}`;
+                btn.className = `${className} ${colorClass}`;
+
+                // Add Checkmark icon if selected
+                const checkIcon = isSelected ? '<i class="fa-solid fa-check"></i>' : '';
+
+                btn.innerHTML = `${checkIcon} <i class="fa-solid ${f.icon}"></i> <span>${f.label}</span>`;
                 btn.onclick = () => toggleFilter(f.id);
                 filterContainer.appendChild(btn);
             });
             section.appendChild(filterContainer);
 
-            // 5. Festival List Container
+            // --- LIST RENDERING ---
             const list = document.createElement('ul');
             list.id = 'festival-list';
             list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll"; 
             section.appendChild(list);
 
+            // Re-attach Search Logic
             const input = searchWrapper.querySelector('input');
             const clearBtn = searchWrapper.querySelector('#search-clear');
 
+            // Helper to filter events based on current isolation mode
+            const getFilteredEvents = (query) => {
+                return data.events.filter(e => {
+                    // 1. Search Query Check
+                    const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
+
+                    // 2. Isolation Logic Check
+                    // If currentIsolationFilter is null, show everything. Else, match the symbol.
+                    const matchesFilter = (currentIsolationFilter === null) || (e.symbol === currentIsolationFilter);
+
+                    return matchesQuery && matchesFilter;
+                });
+            };
+
             input.oninput = (e) => {
                 const query = e.target.value.toLowerCase();
-                if (query.length > 0) clearBtn.classList.remove('hidden');
-                else clearBtn.classList.add('hidden');
-                renderFestivalListItems(list, sortedEvents, data, query);
+                if (query.length > 0) clearBtn.classList.remove('hidden'); else clearBtn.classList.add('hidden');
+                renderFestivalListItems(list, getFilteredEvents(query), data, query);
             };
             
             clearBtn.onclick = () => {
-                input.value = '';
-                clearBtn.classList.add('hidden');
-                input.focus();
-                renderFestivalListItems(list, sortedEvents, data, "");
+                input.value = ''; clearBtn.classList.add('hidden'); input.focus();
+                renderFestivalListItems(list, getFilteredEvents(""), data, "");
             };
 
-            renderFestivalListItems(list, sortedEvents, data, "");
+            // Initial Render
+            renderFestivalListItems(list, getFilteredEvents(""), data, "");
         }
 
         function renderFestivalListItems(container, events, monthData, query) {
             container.innerHTML = '';
-            const filtered = events.filter(e => {
-                const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
-                // Filter Logic: If Isolation Filter is set, match exact; else allow all in the list (!, ^, *)
-                const matchesFilter = currentIsolationFilter ? (e.symbol === currentIsolationFilter) : true;
-                return matchesQuery && matchesFilter;
-            });
 
-            if (filtered.length === 0) {
+            // Note: 'events' here is already filtered by getFilteredEvents in renderFestivals
+
+            if (events.length === 0) {
                 const msg = query ? "No events found" : "No events selected";
                 container.innerHTML = `<li class="text-center text-gray-400 text-xs py-4 italic">${msg}</li>`;
                 return;
             }
 
-            filtered.forEach(ev => {
+            events.forEach(ev => {
                 const li = document.createElement('li');
                 li.className = "flex gap-3 items-center p-2 rounded-lg hover:bg-gray-50 border border-transparent transition-all cursor-pointer group";
                 li.onclick = () => openDayModal(ev.date, monthData);
