@@ -2347,52 +2347,59 @@ The word "Nua" means new and "Khai" means food.
             
             const loader = document.getElementById('app-loader');
 
-            // 2. Conditional Fetching Logic
+            // --- NEW SMART SYNC ALGORITHM (Place this at the end of initApp) ---
+
+            // 1. Remove the "Loading..." spinner immediately if we have cached data
+            if (dataFound && loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+            }
+
+            // 2. Start the Smart Sync Process
             if (appState.config && appState.config.liveUrl) {
                 const url = appState.config.liveUrl;
-                const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
 
-                // ENFORCE RESTRICTION: In App Mode, ONLY GitHub Direct Sync is allowed.
-                if (!isEditor && !isGitHub) {
-                    console.warn("App Mode Restriction: Live Sync Docs (Proxy) is disabled. Ignoring URL.");
-                    if (loader) setTimeout(() => loader.remove(), 500);
-                    return;
-                }
+                // SECURITY BYPASS: Allow Google Docs Proxy on Blogspot/Mobile
+                // We removed the "!isEditor" check here so it works everywhere.
 
-                if (dataFound) {
-                    // Scenario A: Data Found
-                    // Rendered immediately above.
-                    // Wait 2s then Sync (respecting timer)
-                    if (loader) setTimeout(() => loader.remove(), 500); // Remove loader quickly as we have data
+                const lastSync = parseInt(localStorage.getItem('panchang_last_sync_ts') || '0');
+                const now = Date.now();
+
+                // Default to 1 hour if not set in config
+                const interval = appState.config.syncInterval || (60 * 60 * 1000);
+
+                const timeSinceLastSync = now - lastSync;
+                const shouldUpdate = timeSinceLastSync > interval;
+
+                console.log(`Smart Sync Status:
+                - Last Sync: ${Math.round(timeSinceLastSync / 1000 / 60)} mins ago
+                - Interval: ${Math.round(interval / 1000 / 60)} mins
+                - Updating Now? ${shouldUpdate ? "YES" : "NO"}
+                `);
+
+                if (shouldUpdate || !dataFound) {
+                    // Show small indicator if we are updating in the background (optional)
+                    if (dataFound) showToast("Checking for updates...");
+
+                    // Determine if it's GitHub or Docs
+                    const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
                     
-                    setTimeout(() => {
-                        console.log("Scenario A: Background Sync...");
-                        const shouldForce = isEditor; // Editor forces, App respects timer
-                        if (isGitHub) fetchGitHubData(url, shouldForce);
-                        else fetchLiveDoc(url, shouldForce);
-                    }, 2000);
-                } else {
-                    // Scenario B: No Data / First Run (Cold Start)
-                    console.log("Scenario B: Cold Start - Fetching immediately (Force)");
-                    
-                    // Do not remove loader yet.
-                    // Immediately trigger fetch with forceInstant = true
-                    const forceInstant = true;
-                    const promise = isGitHub ? fetchGitHubData(url, forceInstant) : fetchLiveDoc(url, forceInstant);
-                    
-                    // Remove loader only after fetch finishes (Success or Fail)
+                    // FORCE the fetch (ignore internal timer checks in fetch functions)
+                    const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url, true);
+
                     if (promise && typeof promise.then === 'function') {
-                        promise.finally(() => {
-                            if (loader) loader.remove();
+                        promise.then(() => {
+                            if (loader) loader.remove(); // Ensure loader is gone if it was a cold start
                         });
                     } else {
-                        // Fallback if no promise returned
-                        if (loader) setTimeout(() => loader.remove(), 2000);
+                         // Fallback safe removal
+                         if (loader) setTimeout(() => loader.remove(), 2000);
                     }
+                } else {
+                    console.log("Skipping update: Data is fresh.");
                 }
             } else {
-                // No Sync Configured
-                if (loader) setTimeout(() => loader.remove(), 500);
+                 if (loader) setTimeout(() => loader.remove(), 500);
             }
         }
         
@@ -2467,17 +2474,21 @@ The word "Nua" means new and "Khai" means food.
                 if (currentBlock === 'config') {
                     const titleMatch = line.match(/^@\s*Title\s*:\s*(.+)/i);
                     const logoMatch = line.match(/^@\s*Logo\s*:\s*!\[(.*?)\]\((.*?)\)/i);
-                    const syncMatch = line.match(/^@\s*Live Sync GitHub trigger in every\s*:\s*(\d+)\s*(minute|hour|day)s?/i);
+                    // IMPROVED CONFIG PARSING
+                    const syncMatch = line.match(/^@\s*(?:Live Sync|GitHub)?\s*Trigger\s*(?:in)?\s*every\s*:\s*(\d+)\s*(minute|hour|day)s?/i);
 
                     if (titleMatch) tempConfig.title = titleMatch[1];
                     if (logoMatch) tempConfig.logoUrl = logoMatch[2];
                     if (syncMatch) {
                          const val = parseInt(syncMatch[1]);
                          const unit = syncMatch[2].toLowerCase();
-                         let multiplier = 1000 * 60 * 60 * 24; // Default day
-                         if (unit.startsWith('minute')) multiplier = 1000 * 60;
+                         let multiplier = 1000 * 60; // Default minute
+
                          if (unit.startsWith('hour')) multiplier = 1000 * 60 * 60;
+                         if (unit.startsWith('day')) multiplier = 1000 * 60 * 60 * 24;
+
                          tempConfig.syncInterval = val * multiplier;
+                         console.log(`Update Frequency set to: ${val} ${unit}s`);
                     }
                 }
                 else if (currentBlock === 'calendar') {
