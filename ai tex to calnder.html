@@ -2286,30 +2286,32 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function initApp() {
-            // 1. Attempt Cache Load
+            // 1. Load Data (Cache First Strategy)
             let dataFound = false;
             
-            // Priority 1: JSON Cache
+            // Check JSON Cache (Version controlled)
             if (loadStateFromCache()) {
-                console.log("Loaded from JSON Cache");
+                console.log("Loaded from JSON Cache (Version " + DATA_VERSION + ")");
                 dataFound = true;
             } 
-            // Priority 2: Text Cache
+            // Check Text Cache as fallback
             else {
                 const cachedText = localStorage.getItem('panchang_autosave_text');
                 if (cachedText) {
                     console.log("Loaded from Text Cache");
-                    parseInput(cachedText); // This populates appState
+                    parseInput(cachedText);
                     dataFound = true;
                 }
             }
 
-            // Determine Environment
-            const isEditor = !!document.getElementById('editor');
+            // 2. Initial Render
+            render();
             
-            // Setup UI based on Environment
+            const loader = document.getElementById('app-loader');
+            const isEditor = !!document.getElementById('editor');
+
+            // 3. Setup Environment for App Mode (Blogspot/Download)
             if (window.exportedData && !isEditor) {
-                // App Mode
                 const editorPanel = document.getElementById('editor-panel');
                 if (editorPanel) editorPanel.style.display = 'none';
                 const previewPanel = document.getElementById('preview-container');
@@ -2317,22 +2319,22 @@ The word "Nua" means new and "Khai" means food.
                     previewPanel.classList.remove('md:w-[65%]'); 
                     previewPanel.classList.add('w-full'); 
                 }
-                
+                // If cache was empty, load the exported/default data
                 if (!dataFound) {
                     appState = window.exportedData;
+                    render();
                 }
             } else if (isEditor) {
-                // Editor Mode
+                // Editor Mode Setup
                 const editor = document.getElementById('editor');
                 if (dataFound) {
                     const cachedText = localStorage.getItem('panchang_autosave_text');
                     if (cachedText && editor.value !== cachedText) editor.value = cachedText;
                 } else {
-                    // Initial parse of default content
                     parseInput(editor.value);
+                    render();
                 }
-                
-                // Auto-Save Listener
+                // Auto-Save Logic
                 let timeout;
                 editor.addEventListener('input', (e) => { 
                     const val = e.target.value;
@@ -2342,64 +2344,57 @@ The word "Nua" means new and "Khai" means food.
                 });
             }
 
-            // Render whatever we have (Data or Skeleton)
-            render();
-            
-            const loader = document.getElementById('app-loader');
-
-            // --- NEW SMART SYNC ALGORITHM (Place this at the end of initApp) ---
-
-            // 1. Remove the "Loading..." spinner immediately if we have cached data
-            if (dataFound && loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => loader.remove(), 500);
-            }
-
-            // 2. Start the Smart Sync Process
+            // 4. SMART SYNC ALGORITHM (The Fix)
             if (appState.config && appState.config.liveUrl) {
                 const url = appState.config.liveUrl;
+                const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
 
-                // SECURITY BYPASS: Allow Google Docs Proxy on Blogspot/Mobile
-                // We removed the "!isEditor" check here so it works everywhere.
+                // [SECURITY] BLOCK Google Docs on Blogspot/App Mode
+                if (!isEditor && !isGitHub) {
+                    console.warn("Security: Live Sync (Docs) is disabled in App Mode.");
+                    if (loader) setTimeout(() => loader.remove(), 500);
+                    return;
+                }
 
+                // [TIMING] Check if update is needed
                 const lastSync = parseInt(localStorage.getItem('panchang_last_sync_ts') || '0');
                 const now = Date.now();
+                const interval = appState.config.syncInterval || (24 * 60 * 60 * 1000);
+                const timeSince = now - lastSync;
+                const shouldUpdate = timeSince > interval;
 
-                // Default to 1 hour if not set in config
-                const interval = appState.config.syncInterval || (60 * 60 * 1000);
+                console.log(`Sync Check: Last=${Math.round(timeSince/60000)}m ago. Interval=${Math.round(interval/60000)}m.`);
 
-                const timeSinceLastSync = now - lastSync;
-                const shouldUpdate = timeSinceLastSync > interval;
-
-                console.log(`Smart Sync Status:
-                - Last Sync: ${Math.round(timeSinceLastSync / 1000 / 60)} mins ago
-                - Interval: ${Math.round(interval / 1000 / 60)} mins
-                - Updating Now? ${shouldUpdate ? "YES" : "NO"}
-                `);
-
+                // --- CRITICAL "NO BLANK SCREEN" LOGIC ---
                 if (shouldUpdate || !dataFound) {
-                    // Show small indicator if we are updating in the background (optional)
-                    if (dataFound) showToast("Checking for updates...");
-
-                    // Determine if it's GitHub or Docs
-                    const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
                     
-                    // FORCE the fetch (ignore internal timer checks in fetch functions)
+                    // State A: We have old data -> Show it, but toast that we are updating
+                    if (dataFound) {
+                        if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 500); }
+                        showToast("Refreshing calendar...");
+                    }
+                    // State B: NO DATA (Blank Screen Risk) -> KEEP LOADER ACTIVE
+                    else {
+                        console.log("⚠️ Cache Empty! Forcing Sync & Holding Loader...");
+                        if (loader) loader.style.opacity = '1'; // Ensure loader is visible
+                    }
+
+                    // Force Fetch (pass 'true' to bypass internal timers)
                     const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url, true);
 
                     if (promise && typeof promise.then === 'function') {
-                        promise.then(() => {
-                            if (loader) loader.remove(); // Ensure loader is gone if it was a cold start
+                        promise.finally(() => {
+                            // Only remove loader AFTER data arrives or fails
+                            if (loader) loader.remove();
                         });
-                    } else {
-                         // Fallback safe removal
-                         if (loader) setTimeout(() => loader.remove(), 2000);
                     }
                 } else {
-                    console.log("Skipping update: Data is fresh.");
+                    console.log("Data is fresh. Skipping network call.");
+                    if (loader) setTimeout(() => loader.remove(), 500);
                 }
             } else {
-                 if (loader) setTimeout(() => loader.remove(), 500);
+                // No Sync Configured - Just remove loader
+                if (loader) setTimeout(() => loader.remove(), 500);
             }
         }
         
