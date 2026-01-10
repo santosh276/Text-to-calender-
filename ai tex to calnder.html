@@ -2331,16 +2331,6 @@ The word "Nua" means new and "Khai" means food.
 
         function showRetryUI(loader) {
             if (!loader) return;
-            const currentUrl = (appState.config && appState.config.liveUrl) ? appState.config.liveUrl : "";
-            const isEditor = !!document.getElementById('editor');
-
-            const urlInputHtml = isEditor ? `
-                <div class="mb-5 text-left bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Data Source URL</label>
-                    <input type="text" id="retry-url-input"
-                        class="w-full p-2 text-sm border border-gray-300 rounded bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition"
-                        value="${currentUrl}" placeholder="Enter Data URL...">
-                </div>` : '';
 
             loader.innerHTML = `
                 <div class="text-center p-6 max-w-md mx-auto bg-white/90 rounded-2xl shadow-xl backdrop-blur-sm border border-gray-100">
@@ -2348,17 +2338,11 @@ The word "Nua" means new and "Khai" means food.
                         <i class="fa-solid fa-wifi text-2xl text-gray-400"></i>
                     </div>
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Connection Failed</h2>
-                    <p class="text-gray-500 mb-6 text-sm">Unable to fetch calendar data. Please check your internet${isEditor ? ' or the URL' : ''}.</p>
-
-                    ${urlInputHtml}
+                    <p class="text-gray-500 mb-6 text-sm">Unable to fetch calendar data. Please check your internet connection.</p>
 
                     <div class="flex flex-col gap-3">
-                        <button onclick="retryWithUrl()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition transform active:scale-95 w-full flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-rotate-right"></i> Retry Connection
-                        </button>
-
-                        <button onclick="resetAppConfig()" class="text-xs text-gray-400 hover:text-red-500 font-semibold transition py-2">
-                            <i class="fa-solid fa-trash-can mr-1"></i> Reset Settings & Reload
+                        <button onclick="retryAppInitialization()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition transform active:scale-95 w-full flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> Retry
                         </button>
                     </div>
                 </div>
