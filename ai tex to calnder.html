@@ -2299,13 +2299,29 @@ The word "Nua" means new and "Khai" means food.
             `;
         }
 
+        // New Helper: Verify if Data is actually meaningful (Not just skeleton)
+        function hasValidData(state) {
+            if (!state || !state.monthsData || state.monthsData.length === 0) return false;
+            // If more than 1 month, it is likely valid data
+            if (state.monthsData.length > 1) return true;
+
+            // If single month (could be default), check for content
+            const m = state.monthsData[0];
+            const hasEvents = m.events && m.events.length > 0;
+            const hasPanchang = m.panchang && Object.keys(m.panchang).length > 0;
+            const hasHoroscope = m.horoscope && m.horoscope.length > 0;
+
+            return hasEvents || hasPanchang || hasHoroscope;
+        }
+
         function initApp() {
             // 1. Attempt Cache Load
             let dataFound = false;
             
             // Priority 1: JSON Cache
-            if (loadStateFromCache()) {
-                console.log("Loaded from JSON Cache");
+            // Updated Check: Must have VALID data, not just skeleton
+            if (loadStateFromCache() && hasValidData(appState)) {
+                console.log("Loaded valid data from JSON Cache");
                 dataFound = true;
             } 
             // Priority 2: Text Cache
@@ -2314,7 +2330,13 @@ The word "Nua" means new and "Khai" means food.
                 if (cachedText) {
                     console.log("Loaded from Text Cache");
                     parseInput(cachedText); // This populates appState
-                    dataFound = true;
+
+                    // Double check if the parsed text actually produced valid data
+                    if (hasValidData(appState)) {
+                        dataFound = true;
+                    } else {
+                        console.log("Text Cache present but data deemed invalid/empty.");
+                    }
                 }
             }
 
@@ -2396,7 +2418,7 @@ The word "Nua" means new and "Khai" means food.
                     if (promise && typeof promise.then === 'function') {
                         promise.then(() => {
                             // Check if we actually got data (monthsData should not be empty)
-                            if (appState.monthsData && appState.monthsData.length > 0) {
+                            if (hasValidData(appState)) {
                                 if (loader) loader.remove();
                             } else {
                                 // Still no data? Show Retry
