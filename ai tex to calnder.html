@@ -2313,6 +2313,11 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function retryAppInitialization() {
+            // Reset Cache to force fresh sync
+            localStorage.removeItem('panchang_cached_state');
+            localStorage.removeItem('panchang_autosave_text');
+            localStorage.removeItem('panchang_last_sync_ts');
+
             const loader = document.getElementById('app-loader');
             if (loader) {
                 // Restore Spinner UI
