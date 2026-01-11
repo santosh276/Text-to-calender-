@@ -92,6 +92,9 @@
         }
 
         .pointer-events-auto { pointer-events: auto !important; }
+        .z-\[200\] { z-index: 200; }
+        .z-\[300\] { z-index: 300; }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
@@ -3995,7 +3998,7 @@ The word "Nua" means new and "Khai" means food.
 
         function showToast(message) {
             const toast = document.createElement('div');
-            toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-[100] text-sm font-medium animate-bounce transition-opacity duration-300';
+            toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-[300] text-sm font-medium animate-bounce transition-opacity duration-300';
             toast.innerText = message;
             document.body.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
