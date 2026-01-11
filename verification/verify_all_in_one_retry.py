@@ -23,18 +23,18 @@ def verify_all_in_one_retry():
         else:
             print("FAILURE: 'Retry Now' button text NOT found.")
 
-        if "Reset Settings" in content:
-            print("FAILURE: 'Reset Settings' button still found.")
+        # Verify styling classes for Black Button
+        if "bg-black" in content:
+            print("SUCCESS: bg-black found.")
         else:
-            print("SUCCESS: 'Reset Settings' button removed.")
+            print("FAILURE: bg-black missing.")
 
-        # Verify styling classes (approximate check)
         if "bg-gradient-to-r" in content:
-            print("SUCCESS: Gradient styling found.")
+            print("FAILURE: Gradient styling still present.")
         else:
-            print("FAILURE: Gradient styling missing.")
+            print("SUCCESS: Gradient styling removed.")
 
-        page.screenshot(path="verification/unified_retry_ui.png")
+        page.screenshot(path="verification/unified_retry_ui_black.png")
         browser.close()
 
 if __name__ == "__main__":

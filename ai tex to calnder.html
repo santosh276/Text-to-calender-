@@ -2084,7 +2084,7 @@ The word "Nua" means new and "Khai" means food.
         }
 
         // --- NEW: Fetch GitHub Data (Direct) ---
-        async function fetchGitHubData(url, force = false) {
+        async function fetchGitHubData(url, force = false, quiet = false) {
             if (!url) return;
 
             // Auto-detect Editor Mode to enforce Force Update
@@ -2095,7 +2095,7 @@ The word "Nua" means new and "Khai" means food.
             // UI Feedback (Target specific button if possible, else fallback)
             const syncBtn = document.querySelector('button[onclick="configureGitHubSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
-            if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
+            if(syncBtn && !quiet) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
             // TIMER LOGIC (Only if NOT forced)
             if (!force) {
@@ -2105,7 +2105,7 @@ The word "Nua" means new and "Khai" means food.
                 
                 if (lastSync && (now - parseInt(lastSync) < interval)) {
                     console.log(`Sync Timer Valid. Elapsed: ${now - parseInt(lastSync)}ms < Interval: ${interval}ms`);
-                    if(syncBtn) syncBtn.innerHTML = originalText;
+                    if(syncBtn && !quiet) syncBtn.innerHTML = originalText;
                     return; // Stop.
                 }
             }
@@ -2128,7 +2128,7 @@ The word "Nua" means new and "Khai" means food.
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff: Data is identical. Update timestamp only.");
                          localStorage.setItem('panchang_last_sync_ts', Date.now());
-                         if(syncBtn) showToast("Sync: No changes found.");
+                         if(syncBtn && !quiet) showToast("Sync: No changes found.");
                          return; 
                     }
                 }
@@ -2141,14 +2141,14 @@ The word "Nua" means new and "Khai" means food.
 
             } catch (e) {
                 console.error("GitHub Sync Error:", e);
-                showToast("GitHub Sync Error: " + e.message);
+                if (!quiet) showToast("GitHub Sync Error: " + e.message);
             } finally {
-                if(syncBtn) syncBtn.innerHTML = originalText;
+                if(syncBtn && !quiet) syncBtn.innerHTML = originalText;
             }
         }
 
         // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
-        async function fetchLiveDoc(url, force = false) {
+        async function fetchLiveDoc(url, force = false, quiet = false) {
             if (!url) return;
 
             // STRICT ENV CHECK: Proxy is ONLY allowed in Editor Mode
@@ -2160,7 +2160,7 @@ The word "Nua" means new and "Khai" means food.
             
             // Check if it's actually a GitHub URL that got routed here
             if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
-                return fetchGitHubData(url, force);
+                return fetchGitHubData(url, force, quiet);
             }
 
             // Auto-detect Editor Mode to enforce Force Update
@@ -2171,7 +2171,7 @@ The word "Nua" means new and "Khai" means food.
             // UI Feedback
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
-            if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
+            if(syncBtn && !quiet) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
             
             // TIMER LOGIC (Only if NOT forced)
             if (!force) {
@@ -2181,7 +2181,7 @@ The word "Nua" means new and "Khai" means food.
                 
                 if (lastSync && (now - parseInt(lastSync) < interval)) {
                     console.log(`Sync Timer Valid (Docs). Elapsed: ${now - parseInt(lastSync)}ms < Interval: ${interval}ms`);
-                    if(syncBtn) syncBtn.innerHTML = originalText;
+                    if(syncBtn && !quiet) syncBtn.innerHTML = originalText;
                     return; // Stop.
                 }
             }
@@ -2231,7 +2231,7 @@ The word "Nua" means new and "Khai" means food.
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff (Docs): Data is identical. Update timestamp only.");
                          localStorage.setItem('panchang_last_sync_ts', Date.now());
-                         if(syncBtn) showToast("Sync: No changes found.");
+                         if(syncBtn && !quiet) showToast("Sync: No changes found.");
                          return; 
                     }
                 }
@@ -2244,9 +2244,9 @@ The word "Nua" means new and "Khai" means food.
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
-                showToast("Sync Error: " + e.message);
+                if (!quiet) showToast("Sync Error: " + e.message);
             } finally {
-                if(syncBtn) syncBtn.innerHTML = originalText;
+                if(syncBtn && !quiet) syncBtn.innerHTML = originalText;
             }
         }
 
@@ -2442,8 +2442,8 @@ The word "Nua" means new and "Khai" means food.
                     // Scenario B: No Data (Blank) -> FORCE Sync Immediately & Keep Loader
                     console.log("Scenario B: Cold Start - Force Syncing...");
                     
-                    // Force Sync (ignore timer)
-                    const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url, true);
+                    // Force Sync (ignore timer), Quiet (suppress toast)
+                    const promise = isGitHub ? fetchGitHubData(url, true, true) : fetchLiveDoc(url, true, true);
                     
                     if (promise && typeof promise.then === 'function') {
                         promise.then(() => {
