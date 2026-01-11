@@ -2285,13 +2285,43 @@ The word "Nua" means new and "Khai" means food.
             });
         }
 
+        function showRetryUI(loader) {
+            if (!loader) return;
+            loader.innerHTML = `
+                <div class="text-center p-6">
+                    <i class="fa-solid fa-wifi text-4xl text-gray-400 mb-4"></i>
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Connection Failed</h2>
+                    <p class="text-gray-500 mb-6 text-sm">Unable to fetch calendar data.</p>
+                    <button onclick="window.location.reload()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition transform active:scale-95">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Retry
+                    </button>
+                </div>
+            `;
+        }
+
+        // New Helper: Verify if Data is actually meaningful (Not just skeleton)
+        function hasValidData(state) {
+            if (!state || !state.monthsData || state.monthsData.length === 0) return false;
+            // If more than 1 month, it is likely valid data
+            if (state.monthsData.length > 1) return true;
+            
+            // If single month (could be default), check for content
+            const m = state.monthsData[0];
+            const hasEvents = m.events && m.events.length > 0;
+            const hasPanchang = m.panchang && Object.keys(m.panchang).length > 0;
+            const hasHoroscope = m.horoscope && m.horoscope.length > 0;
+            
+            return hasEvents || hasPanchang || hasHoroscope;
+        }
+
         function initApp() {
             // 1. Attempt Cache Load
             let dataFound = false;
             
             // Priority 1: JSON Cache
-            if (loadStateFromCache()) {
-                console.log("Loaded from JSON Cache");
+            // Updated Check: Must have VALID data, not just skeleton
+            if (loadStateFromCache() && hasValidData(appState)) {
+                console.log("Loaded valid data from JSON Cache");
                 dataFound = true;
             } 
             // Priority 2: Text Cache
@@ -2300,7 +2330,13 @@ The word "Nua" means new and "Khai" means food.
                 if (cachedText) {
                     console.log("Loaded from Text Cache");
                     parseInput(cachedText); // This populates appState
-                    dataFound = true;
+                    
+                    // Double check if the parsed text actually produced valid data
+                    if (hasValidData(appState)) {
+                        dataFound = true;
+                    } else {
+                        console.log("Text Cache present but data deemed invalid/empty.");
+                    }
                 }
             }
 
@@ -2319,6 +2355,7 @@ The word "Nua" means new and "Khai" means food.
                 }
                 
                 if (!dataFound) {
+                    // Use skeleton but mark as not found so we force sync
                     appState = window.exportedData;
                 }
             } else if (isEditor) {
@@ -2330,6 +2367,7 @@ The word "Nua" means new and "Khai" means food.
                 } else {
                     // Initial parse of default content
                     parseInput(editor.value);
+                    dataFound = true; // Editor always has default data
                 }
                 
                 // Auto-Save Listener
@@ -2360,34 +2398,38 @@ The word "Nua" means new and "Khai" means food.
                 }
 
                 if (dataFound) {
-                    // Scenario A: Data Found
-                    // Rendered immediately above.
-                    // Wait 2s then Sync (respecting timer)
-                    if (loader) setTimeout(() => loader.remove(), 500); // Remove loader quickly as we have data
+                    // Scenario A: Data Exists (Show it instantly, remove loader, update in background)
+                    if (loader) setTimeout(() => loader.remove(), 500); 
                     
+                    // Background Sync (respecting timer)
                     setTimeout(() => {
                         console.log("Scenario A: Background Sync...");
-                        const shouldForce = isEditor; // Editor forces, App respects timer
+                        const shouldForce = isEditor; 
                         if (isGitHub) fetchGitHubData(url, shouldForce);
                         else fetchLiveDoc(url, shouldForce);
                     }, 2000);
                 } else {
-                    // Scenario B: No Data / First Run (Cold Start)
-                    console.log("Scenario B: Cold Start - Fetching immediately (Force)");
+                    // Scenario B: No Data (Blank) -> FORCE Sync Immediately & Keep Loader
+                    console.log("Scenario B: Cold Start - Force Syncing...");
                     
-                    // Do not remove loader yet.
-                    // Immediately trigger fetch with forceInstant = true
-                    const forceInstant = true;
-                    const promise = isGitHub ? fetchGitHubData(url, forceInstant) : fetchLiveDoc(url, forceInstant);
+                    // Force Sync (ignore timer)
+                    const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url, true);
                     
-                    // Remove loader only after fetch finishes (Success or Fail)
                     if (promise && typeof promise.then === 'function') {
-                        promise.finally(() => {
-                            if (loader) loader.remove();
+                        promise.then(() => {
+                            // Check if we actually got data (monthsData should not be empty)
+                            if (hasValidData(appState)) {
+                                if (loader) loader.remove();
+                            } else {
+                                // Still no data? Show Retry
+                                showRetryUI(loader);
+                            }
+                        }).catch(() => {
+                            showRetryUI(loader);
                         });
                     } else {
-                        // Fallback if no promise returned
-                        if (loader) setTimeout(() => loader.remove(), 2000);
+                        // If logic fails to produce a promise, remove loader as safety
+                        if (loader) loader.remove();
                     }
                 }
             } else {
