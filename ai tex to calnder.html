@@ -3108,9 +3108,7 @@ The word "Nua" means new and "Khai" means food.
                 }
                 
                 if (iconHtml) {
-                    const iconSpan = document.createElement('span');
-                    iconSpan.innerHTML = iconHtml;
-                    contentWrapper.appendChild(iconSpan);
+                    contentWrapper.insertAdjacentHTML('beforeend', iconHtml);
                 }
                 // ------------------------
 
@@ -3355,10 +3353,10 @@ The word "Nua" means new and "Khai" means food.
             const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
             
             const filters = [ 
-                { id: '!', label: localizedFilters[0], icon: 'fa-gopuram', color: 'red' }, 
-                { id: '^', label: localizedFilters[1], icon: 'fa-om', color: 'green' }, 
-                { id: '*', label: localizedFilters[2], icon: 'fa-umbrella-beach', color: 'blue' },
-                { id: '>', label: localizedFilters[3] || "Other Events", icon: 'fa-calendar-days', color: 'gray' }
+                { id: '!', label: localizedFilters[0], icon: '<i class="fa-solid fa-gopuram"></i>', color: 'red' },
+                { id: '^', label: localizedFilters[1], icon: OM_ICON_SVG.replace('width="24" height="24"', 'width="14" height="14"').replace('fill="#d4af37"', 'fill="currentColor"'), color: 'green' },
+                { id: '*', label: localizedFilters[2], icon: '<i class="fa-solid fa-umbrella-beach"></i>', color: 'blue' },
+                { id: '>', label: localizedFilters[3] || "Other Events", icon: '<i class="fa-solid fa-calendar-days"></i>', color: 'gray' }
             ];
 
             filters.forEach(f => {
@@ -3392,7 +3390,7 @@ The word "Nua" means new and "Khai" means food.
                 
                 btn.className = `${className} ${colorClass}`;
                 const checkIcon = isSelected ? '<i class="fa-solid fa-check text-[10px]"></i>' : '';
-                btn.innerHTML = `${checkIcon} <i class="fa-solid ${f.icon}"></i> <span>${f.label}</span>`;
+                btn.innerHTML = `${checkIcon} ${f.icon} <span>${f.label}</span>`;
                 btn.onclick = () => toggleFilter(f.id);
                 filterContainer.appendChild(btn);
             });
