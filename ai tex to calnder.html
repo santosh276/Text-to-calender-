@@ -175,23 +175,29 @@
         }
 
         .nav-btn { 
-            width: 3rem; 
-            height: 3rem; 
-            border-radius: 0.75rem; 
-            background-color: #ffffff; 
-            border: 1px solid #e5e7eb; 
-            color: #4b5563; 
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #fb923c 0%, #ef4444 100%);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.4);
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            transition: all 0.2s; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
             cursor: pointer;
+            font-size: 1.1rem;
         }
         .nav-btn:hover {
-            background-color: #f9fafb;
-            color: #111827;
-            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.5);
+            background: linear-gradient(135deg, #fdba74 0%, #dc2626 100%);
+            color: #ffffff;
+        }
+        .nav-btn:active {
+            transform: scale(0.95);
         }
 
         /* STRICT CONTAINER MANAGEMENT: Formatting Guide */
@@ -642,7 +648,7 @@ The word "Nua" means new and "Khai" means food.
 
                          <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
                         <div class="flex items-center justify-between w-full gap-4 relative z-10">
-                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month"><i class="fa-solid fa-arrow-left"></i></button>
+                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
                             
                             <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
                                 <!-- Adaptive Month/Year Container -->
@@ -658,7 +664,7 @@ The word "Nua" means new and "Khai" means food.
                                 </button>
                             </div>
                             
-                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month" aria-label="Next Month"><i class="fa-solid fa-arrow-right"></i></button>
+                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month" aria-label="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
                         </div>
                     </div>
 
@@ -2290,6 +2296,9 @@ The word "Nua" means new and "Khai" means food.
                     render();
                     saveStateToCache(); // Update JSON Cache
                     
+                    // Reset Retry Counter on Success
+                    sessionStorage.removeItem('panchang_retry_count');
+
                     // Optional: Update title if changed in config
                     if (appState.config && appState.config.title) {
                          const titleEl = document.getElementById('app-title');
@@ -2305,9 +2314,22 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function retryAppInitialization() {
+            const retryCount = parseInt(sessionStorage.getItem('panchang_retry_count') || '0');
+
+            // Always clear data cache
             localStorage.removeItem('panchang_cached_state');
             localStorage.removeItem('panchang_autosave_text');
             localStorage.removeItem('panchang_last_sync_ts');
+
+            if (retryCount > 0) {
+                // 2nd Attempt: Nuclear Option (Reset Config too)
+                localStorage.removeItem('panchangConfig');
+                sessionStorage.removeItem('panchang_retry_count');
+            } else {
+                // 1st Attempt: Mark for next time
+                sessionStorage.setItem('panchang_retry_count', '1');
+            }
+
             window.location.reload();
         }
 
