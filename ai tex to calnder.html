@@ -3052,13 +3052,17 @@ The word "Nua" means new and "Khai" means food.
             
             document.getElementById('year-view-title').innerText = `${year} Year View`;
 
+            const today = new Date();
+
             // Generate 12 months
             for (let m = 0; m < 12; m++) {
                 // Check if we have data for this month
                 const monthData = appState.monthsData.find(d => d.month === m && d.year === year);
                 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl border border-gray-100 hover:border-orange-300 shadow-sm p-4 hover:shadow-md transition-all relative overflow-hidden group cursor-pointer";
+                // Updated Container Styles
+                card.className = "bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-orange-300 transition-all duration-300 p-5 cursor-pointer group flex flex-col h-full relative overflow-hidden";
+
                 card.onclick = () => {
                     // Navigate to this month
                     let targetIndex = appState.monthsData.findIndex(d => d.month === m && d.year === year);
@@ -3075,19 +3079,24 @@ The word "Nua" means new and "Khai" means food.
                 if (monthData) {
                     eventCount = monthData.events.filter(e => ['!','*','^'].includes(e.symbol)).length;
                 }
+
                 const badgeHtml = eventCount > 0 
-                    ? `<span class="bg-orange-100 text-[#92400e] text-xs font-bold px-3 py-1 rounded-full">${eventCount} ${eventCount === 1 ? 'Event' : 'Events'}</span>` 
+                    ? `<span class="bg-orange-100 text-orange-700 text-[9px] font-bold px-2 py-0.5 rounded-full ml-2">${eventCount} Events</span>`
                     : '';
 
+                // Header Section
                 card.innerHTML = `
-                    <div class="flex justify-between items-center mb-4 px-1">
-                        <h3 class="font-bold text-gray-900 text-lg">${months[m]}</h3>
+                    <div class="flex justify-center items-center mb-4 relative">
+                        <h3 class="font-bold text-gray-800 text-base group-hover:text-orange-600 transition-colors">${months[m]}</h3>
                         ${badgeHtml}
                     </div>
                 `;
 
+                // Calendar Grid
                 const daysContainer = document.createElement('div');
-                daysContainer.className = "grid grid-cols-7 gap-0.5 text-center";
+                daysContainer.className = "grid grid-cols-7 gap-0.5 text-center mb-auto"; // mb-auto to push footer down
+
+                // Weekday Headers
                 daysContainer.innerHTML = `
                     <div class="text-[9px] text-red-500 font-bold mb-1">S</div>
                     <div class="text-[9px] text-gray-400 font-bold mb-1">M</div>
@@ -3108,24 +3117,73 @@ The word "Nua" means new and "Khai" means food.
 
                 // Days
                 for (let d = 1; d <= daysInMonth; d++) {
-                    let bgClass = "text-gray-700 hover:bg-gray-50";
+                    const isSunday = new Date(year, m, d).getDay() === 0;
+                    const isToday = (m === today.getMonth() && year === today.getFullYear() && d === today.getDate());
+
+                    let bgClass = "text-gray-600 font-medium hover:bg-gray-50 rounded-full"; // Default
+                    if (isSunday) bgClass = "text-red-500 font-medium hover:bg-gray-50 rounded-full";
+
                     if (monthData) {
                         const ev = monthData.events.find(e => e.date === d);
                         if (ev) {
-                            if (ev.symbol === '!') bgClass = "bg-red-100 text-red-600 font-bold rounded-full";
-                            else if (ev.symbol === '^') bgClass = "bg-green-100 text-green-600 font-bold rounded-full";
-                            else if (ev.symbol === '*') bgClass = "bg-blue-100 text-blue-600 font-bold rounded-full";
-                            else if (ev.symbol === '>') bgClass = "bg-gray-100 text-gray-600 rounded-full";
+                            if (ev.symbol === '!') bgClass = "bg-red-100 text-red-700 font-bold rounded-full";
+                            else if (ev.symbol === '^') bgClass = "bg-green-100 text-green-700 font-bold rounded-full";
+                            else if (ev.symbol === '*') bgClass = "bg-blue-100 text-blue-700 font-bold rounded-full";
                         }
                     }
-                    // Sunday
-                    const isSunday = new Date(year, m, d).getDay() === 0;
-                    if (isSunday && !bgClass.includes('bg-')) bgClass = "text-red-500 font-semibold";
 
-                    daysContainer.innerHTML += `<div class="w-5 h-5 flex items-center justify-center text-[9px] mx-auto transition-colors ${bgClass}">${d}</div>`;
+                    if (isToday) {
+                        // Today Override
+                        bgClass = "bg-orange-500 text-white font-bold rounded-full transform scale-110 shadow-sm";
+                    }
+
+                    daysContainer.innerHTML += `<div class="w-6 h-6 flex items-center justify-center text-[9px] mx-auto transition-transform ${bgClass}">${d}</div>`;
                 }
                 
                 card.appendChild(daysContainer);
+
+                // Smart Reveal Footer
+                const isCurrentMonth = (m === today.getMonth() && year === today.getFullYear());
+
+                if (isCurrentMonth && monthData) {
+                     const todayDate = today.getDate();
+                     // Check for today's event
+                     const todayEvent = monthData.events.find(e => e.date === todayDate);
+
+                     let footerHtml = '';
+                     if (todayEvent) {
+                         footerHtml = `
+                            <div class="mt-4 pt-3 border-t border-gray-100 text-center">
+                                <span class="text-[10px] font-bold text-orange-600 animate-pulse block truncate">
+                                    Today: ${todayEvent.engName}
+                                </span>
+                            </div>`;
+                     } else {
+                         // Find next event
+                         const nextEvent = monthData.events
+                            .filter(e => e.date > todayDate && ['!','*','^'].includes(e.symbol))
+                            .sort((a,b) => a.date - b.date)[0];
+
+                         if (nextEvent) {
+                             footerHtml = `
+                                <div class="mt-4 pt-3 border-t border-gray-100 text-center">
+                                    <span class="text-[10px] font-medium text-gray-400 block truncate">
+                                        Next: ${nextEvent.engName}
+                                    </span>
+                                </div>`;
+                         } else {
+                              // Empty footer or "No more events"
+                             footerHtml = `
+                                <div class="mt-4 pt-3 border-t border-gray-100 text-center">
+                                    <span class="text-[10px] font-medium text-gray-300 block truncate">
+                                        No more events
+                                    </span>
+                                </div>`;
+                         }
+                     }
+                     card.insertAdjacentHTML('beforeend', footerHtml);
+                }
+
                 grid.appendChild(card);
             }
         }
