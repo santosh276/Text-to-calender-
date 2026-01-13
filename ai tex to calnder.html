@@ -3108,21 +3108,48 @@ The word "Nua" means new and "Khai" means food.
 
                 // Days
                 for (let d = 1; d <= daysInMonth; d++) {
-                    let bgClass = "text-gray-700 hover:bg-gray-50";
+                    let containerClass = "w-7 h-7 mx-auto flex flex-col items-center justify-center relative rounded-full transition-colors hover:bg-gray-50";
+                    let textClass = "text-xs z-10 leading-none";
+                    let dotHtml = "";
+
+                    const isSunday = new Date(year, m, d).getDay() === 0;
+
+                    // Event Logic
+                    let eventSymbol = null;
                     if (monthData) {
                         const ev = monthData.events.find(e => e.date === d);
-                        if (ev) {
-                            if (ev.symbol === '!') bgClass = "bg-red-100 text-red-600 font-bold rounded-full";
-                            else if (ev.symbol === '^') bgClass = "bg-green-100 text-green-600 font-bold rounded-full";
-                            else if (ev.symbol === '*') bgClass = "bg-blue-100 text-blue-600 font-bold rounded-full";
-                            else if (ev.symbol === '>') bgClass = "bg-gray-100 text-gray-600 rounded-full";
+                        if (ev) eventSymbol = ev.symbol;
+                    }
+
+                    // Today Logic
+                    const isToday = (year === new Date().getFullYear() && m === new Date().getMonth() && d === new Date().getDate());
+
+                    if (isToday) {
+                        containerClass = "w-7 h-7 mx-auto flex flex-col items-center justify-center relative rounded-full bg-orange-500 shadow-md";
+                        textClass = "text-xs font-bold text-white z-10 leading-none";
+                    } else {
+                        if (isSunday) {
+                            textClass += " text-red-500 font-medium";
+                        } else {
+                            textClass += " text-gray-700";
+                        }
+
+                        if (eventSymbol) {
+                            textClass = textClass.replace('font-medium', '').replace('text-gray-700', 'text-gray-900') + " font-bold";
+
+                            let dotColor = "bg-gray-400";
+                            if (eventSymbol === '!') dotColor = "bg-red-500";
+                            else if (eventSymbol === '^') dotColor = "bg-green-500";
+                            else if (eventSymbol === '*') dotColor = "bg-blue-500";
+
+                            dotHtml = `<div class="absolute bottom-1 w-1 h-1 rounded-full ${dotColor}"></div>`;
                         }
                     }
-                    // Sunday
-                    const isSunday = new Date(year, m, d).getDay() === 0;
-                    if (isSunday && !bgClass.includes('bg-')) bgClass = "text-red-500 font-semibold";
 
-                    daysContainer.innerHTML += `<div class="w-5 h-5 flex items-center justify-center text-[9px] mx-auto transition-colors ${bgClass}">${d}</div>`;
+                    daysContainer.innerHTML += `<div class="${containerClass}">
+                        <span class="${textClass}">${d}</span>
+                        ${dotHtml}
+                    </div>`;
                 }
 
                 card.appendChild(daysContainer);
@@ -3141,10 +3168,10 @@ The word "Nua" means new and "Khai" means food.
                             : todayEvent.engName;
 
                         const footer = document.createElement('div');
-                        footer.className = "mt-3 pt-2 border-t border-orange-100 text-center animate-pulse";
-                        footer.innerHTML = `<span class="text-orange-600 font-bold text-xs uppercase tracking-wide">Today: ${displayName}</span>`;
+                        footer.className = "mt-3 pt-2 border-t border-gray-100 text-center animate-pulse";
+                        footer.innerHTML = `<span class="text-orange-700 font-bold text-xs uppercase tracking-wide">Today: ${displayName}</span>`;
                         card.appendChild(footer);
-                        card.classList.add('ring-2', 'ring-orange-200'); // Highlight the card itself too
+                        card.classList.add('ring-2', 'ring-orange-200');
                     }
                 }
 
