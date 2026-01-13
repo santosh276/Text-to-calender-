@@ -3123,9 +3123,10 @@ The word "Nua" means new and "Khai" means food.
 
                 // Days
                 for (let d = 1; d <= daysInMonth; d++) {
-                    let baseClass = "w-5 h-5 flex items-center justify-center text-[9px] mx-auto rounded-full transition-all duration-200";
+                    let containerClass = "w-6 h-6 flex flex-col items-center justify-center text-[9px] mx-auto rounded-full transition-all duration-200";
                     let textClass = "text-gray-600 font-medium";
                     let bgClass = "hover:bg-gray-50";
+                    let dotHtml = "";
 
                     const isSunday = new Date(year, m, d).getDay() === 0;
                     const isToday = (isCurrentMonth && d === currentRealDay);
@@ -3135,18 +3136,23 @@ The word "Nua" means new and "Khai" means food.
                     if (monthData) {
                         const ev = monthData.events.find(e => e.date === d);
                         if (ev) {
-                            if (ev.symbol === '!') { bgClass = "bg-red-100"; textClass = "text-red-700 font-bold"; }
-                            else if (ev.symbol === '^') { bgClass = "bg-green-100"; textClass = "text-green-700 font-bold"; }
-                            else if (ev.symbol === '*') { bgClass = "bg-blue-100"; textClass = "text-blue-700 font-bold"; }
+                            textClass = "text-gray-900 font-bold"; // Bold for event days
+                            let dotColor = "bg-gray-400";
+                            if (ev.symbol === '!') dotColor = "bg-red-500";
+                            else if (ev.symbol === '^') dotColor = "bg-green-500";
+                            else if (ev.symbol === '*') dotColor = "bg-blue-500";
+
+                            dotHtml = `<div class="w-1 h-1 rounded-full ${dotColor} mt-0.5"></div>`;
                         }
                     }
 
                     if (isToday) {
                         bgClass = "bg-orange-500 shadow-md transform scale-110";
                         textClass = "text-white font-bold";
+                        dotHtml = ""; // Hide dot on Today
                     }
 
-                    daysContainer.innerHTML += `<div class="${baseClass} ${bgClass} ${textClass}">${d}</div>`;
+                    daysContainer.innerHTML += `<div class="${containerClass} ${bgClass} ${textClass}">${d}${dotHtml}</div>`;
                 }
                 
                 card.appendChild(daysContainer);
