@@ -3120,24 +3120,38 @@ The word "Nua" means new and "Khai" means food.
                     const isSunday = new Date(year, m, d).getDay() === 0;
                     const isToday = (m === today.getMonth() && year === today.getFullYear() && d === today.getDate());
 
-                    let bgClass = "text-gray-600 font-medium hover:bg-gray-50 rounded-full"; // Default
-                    if (isSunday) bgClass = "text-red-500 font-medium hover:bg-gray-50 rounded-full";
+                    let containerClass = "w-7 h-8 flex flex-col items-center justify-center mx-auto transition-transform cursor-pointer rounded-lg hover:bg-gray-50";
+                    let textClass = isSunday ? "text-red-500 font-medium" : "text-gray-600 font-medium";
+                    let dotHtml = '';
 
                     if (monthData) {
                         const ev = monthData.events.find(e => e.date === d);
                         if (ev) {
-                            if (ev.symbol === '!') bgClass = "bg-red-100 text-red-700 font-bold rounded-full";
-                            else if (ev.symbol === '^') bgClass = "bg-green-100 text-green-700 font-bold rounded-full";
-                            else if (ev.symbol === '*') bgClass = "bg-blue-100 text-blue-700 font-bold rounded-full";
+                            // Event: Bold text + Colored Dot
+                            textClass = isSunday ? "text-red-600 font-bold" : "text-gray-900 font-bold";
+
+                            let dotColor = "bg-gray-400";
+                            if (ev.symbol === '!') dotColor = "bg-red-500";
+                            else if (ev.symbol === '^') dotColor = "bg-green-500";
+                            else if (ev.symbol === '*') dotColor = "bg-blue-500";
+
+                            dotHtml = `<div class="w-1 h-1 rounded-full ${dotColor} mt-0.5"></div>`;
                         }
                     }
 
                     if (isToday) {
-                        // Today Override
-                        bgClass = "bg-orange-500 text-white font-bold rounded-full transform scale-110 shadow-sm";
+                        // Today Override: Solid Orange Circle, No Dot (or White Dot?)
+                        // Screenshot implies solid circle. We'll stick to that.
+                        containerClass = "w-7 h-7 flex items-center justify-center mx-auto bg-orange-500 rounded-full shadow-md transform scale-105";
+                        textClass = "text-white font-bold";
+                        dotHtml = ''; // Hide dot for today to keep it clean
                     }
 
-                    daysContainer.innerHTML += `<div class="w-6 h-6 flex items-center justify-center text-[9px] mx-auto transition-transform ${bgClass}">${d}</div>`;
+                    daysContainer.innerHTML += `
+                        <div class="${containerClass}">
+                            <span class="text-[10px] leading-none ${textClass}">${d}</span>
+                            ${dotHtml}
+                        </div>`;
                 }
                 
                 card.appendChild(daysContainer);
