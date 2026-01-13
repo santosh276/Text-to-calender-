@@ -3126,6 +3126,28 @@ The word "Nua" means new and "Khai" means food.
                 }
 
                 card.appendChild(daysContainer);
+
+                // Smart Event Reveal: Dynamic Footer for "Today"
+                const today = new Date();
+                const isCurrentMonth = (year === today.getFullYear() && m === today.getMonth());
+
+                if (isCurrentMonth) {
+                    const todayDate = today.getDate();
+                    const todayEvent = monthData ? monthData.events.find(e => e.date === todayDate) : null;
+
+                    if (todayEvent) {
+                        const displayName = todayEvent.locName
+                            ? `${todayEvent.engName} [${todayEvent.locName}]`
+                            : todayEvent.engName;
+
+                        const footer = document.createElement('div');
+                        footer.className = "mt-3 pt-2 border-t border-orange-100 text-center animate-pulse";
+                        footer.innerHTML = `<span class="text-orange-600 font-bold text-xs uppercase tracking-wide">Today: ${displayName}</span>`;
+                        card.appendChild(footer);
+                        card.classList.add('ring-2', 'ring-orange-200'); // Highlight the card itself too
+                    }
+                }
+
                 grid.appendChild(card);
             }
         }
