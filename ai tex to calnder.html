@@ -3076,12 +3076,12 @@ The word "Nua" means new and "Khai" means food.
                     eventCount = monthData.events.filter(e => ['!','*','^'].includes(e.symbol)).length;
                 }
                 const badgeHtml = eventCount > 0
-                    ? `<span class="bg-orange-50 text-orange-600 text-[9px] font-bold px-1.5 py-0.5 rounded-full absolute top-3 right-3">${eventCount}</span>`
+                    ? `<span class="bg-orange-100 text-[#92400e] text-xs font-bold px-3 py-1 rounded-full">${eventCount} ${eventCount === 1 ? 'Event' : 'Events'}</span>`
                     : '';
 
                 card.innerHTML = `
-                    <div class="text-center mb-3 relative">
-                        <h3 class="font-bold text-gray-800 text-sm">${months[m]}</h3>
+                    <div class="flex justify-between items-center mb-4 px-1">
+                        <h3 class="font-bold text-gray-900 text-lg">${months[m]}</h3>
                         ${badgeHtml}
                     </div>
                 `;
