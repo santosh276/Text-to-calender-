@@ -3058,7 +3058,7 @@ The word "Nua" means new and "Khai" means food.
                 const monthData = appState.monthsData.find(d => d.month === m && d.year === year);
                 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl border border-gray-100 hover:border-orange-300 shadow-sm p-4 hover:shadow-md transition-all relative overflow-hidden group cursor-pointer";
+                card.className = "bg-white rounded-2xl border border-gray-100 hover:border-orange-300 shadow-sm p-5 hover:shadow-md transition-all relative overflow-hidden group cursor-pointer flex flex-col justify-between h-full";
                 card.onclick = () => {
                     // Navigate to this month
                     let targetIndex = appState.monthsData.findIndex(d => d.month === m && d.year === year);
@@ -3070,32 +3070,22 @@ The word "Nua" means new and "Khai" means food.
                     }
                 };
 
-                // Badge for Event Count
-                let eventCount = 0;
-                if (monthData) {
-                    eventCount = monthData.events.filter(e => ['!','*','^'].includes(e.symbol)).length;
-                }
-                const badgeHtml = eventCount > 0 
-                    ? `<span class="bg-orange-100 text-[#92400e] text-xs font-bold px-3 py-1 rounded-full">${eventCount} ${eventCount === 1 ? 'Event' : 'Events'}</span>` 
-                    : '';
-
                 card.innerHTML = `
-                    <div class="flex justify-between items-center mb-4 px-1">
-                        <h3 class="font-bold text-gray-900 text-lg">${months[m]}</h3>
-                        ${badgeHtml}
+                    <div class="flex justify-between items-center mb-6 px-1">
+                        <h3 class="font-bold text-gray-900 text-xl">${months[m]}</h3>
                     </div>
                 `;
 
                 const daysContainer = document.createElement('div');
-                daysContainer.className = "grid grid-cols-7 gap-0.5 text-center";
+                daysContainer.className = "grid grid-cols-7 gap-1 text-center mb-auto";
                 daysContainer.innerHTML = `
-                    <div class="text-[9px] text-red-500 font-bold mb-1">S</div>
-                    <div class="text-[9px] text-gray-400 font-bold mb-1">M</div>
-                    <div class="text-[9px] text-gray-400 font-bold mb-1">T</div>
-                    <div class="text-[9px] text-gray-400 font-bold mb-1">W</div>
-                    <div class="text-[9px] text-gray-400 font-bold mb-1">T</div>
-                    <div class="text-[9px] text-gray-400 font-bold mb-1">F</div>
-                    <div class="text-[9px] text-gray-400 font-bold mb-1">S</div>
+                    <div class="text-[10px] text-red-500 font-bold mb-2">S</div>
+                    <div class="text-[10px] text-gray-400 font-bold mb-2">M</div>
+                    <div class="text-[10px] text-gray-400 font-bold mb-2">T</div>
+                    <div class="text-[10px] text-gray-400 font-bold mb-2">W</div>
+                    <div class="text-[10px] text-gray-400 font-bold mb-2">T</div>
+                    <div class="text-[10px] text-gray-400 font-bold mb-2">F</div>
+                    <div class="text-[10px] text-gray-400 font-bold mb-2">S</div>
                 `;
                 
                 const firstDay = new Date(year, m, 1).getDay();
@@ -3107,25 +3097,54 @@ The word "Nua" means new and "Khai" means food.
                 }
 
                 // Days
+                const todayDate = new Date();
                 for (let d = 1; d <= daysInMonth; d++) {
-                    let bgClass = "text-gray-700 hover:bg-gray-50";
+                    const isRealToday = (d === todayDate.getDate() && m === todayDate.getMonth() && year === todayDate.getFullYear());
+                    const isSunday = new Date(year, m, d).getDay() === 0;
+
+                    let cellClass = "w-8 h-8 flex flex-col items-center justify-center text-sm relative mx-auto transition-colors rounded-full";
+                    let numClass = "z-10 font-medium";
+                    let dotHtml = "";
+
+                    if (isRealToday) {
+                        cellClass += " bg-orange-500 text-white shadow-md font-bold";
+                    } else {
+                        cellClass += " text-gray-700 hover:bg-gray-50";
+                        if (isSunday) cellClass = cellClass.replace("text-gray-700", "text-red-500");
+                    }
+
                     if (monthData) {
                         const ev = monthData.events.find(e => e.date === d);
-                        if (ev) {
-                            if (ev.symbol === '!') bgClass = "bg-red-100 text-red-600 font-bold rounded-full";
-                            else if (ev.symbol === '^') bgClass = "bg-green-100 text-green-600 font-bold rounded-full";
-                            else if (ev.symbol === '*') bgClass = "bg-blue-100 text-blue-600 font-bold rounded-full";
-                            else if (ev.symbol === '>') bgClass = "bg-gray-100 text-gray-600 rounded-full";
+                        if (ev && !isRealToday) {
+                             let dotColor = "bg-gray-400";
+                             if (ev.symbol === '!') dotColor = "bg-red-500";
+                             else if (ev.symbol === '^') dotColor = "bg-green-500";
+                             else if (ev.symbol === '*') dotColor = "bg-blue-500";
+
+                             dotHtml = `<div class="w-1 h-1 rounded-full ${dotColor} absolute bottom-1.5"></div>`;
                         }
                     }
-                    // Sunday
-                    const isSunday = new Date(year, m, d).getDay() === 0;
-                    if (isSunday && !bgClass.includes('bg-')) bgClass = "text-red-500 font-semibold";
 
-                    daysContainer.innerHTML += `<div class="w-5 h-5 flex items-center justify-center text-[9px] mx-auto transition-colors ${bgClass}">${d}</div>`;
+                    daysContainer.innerHTML += `<div class="${cellClass}"><span class="${numClass}">${d}</span>${dotHtml}</div>`;
                 }
                 
                 card.appendChild(daysContainer);
+
+                // Footer for Today's Event
+                if (m === todayDate.getMonth() && year === todayDate.getFullYear()) {
+                     const todayD = todayDate.getDate();
+                     if (monthData) {
+                         const todayEv = monthData.events.find(e => e.date === todayD);
+                         if (todayEv) {
+                             const footer = document.createElement('div');
+                             footer.className = "mt-4 pt-3 border-t border-gray-100 text-center";
+                             const fullTitle = `${todayEv.engName} ${todayEv.locName ? '[' + todayEv.locName + ']' : ''}`;
+                             footer.innerHTML = `<span class="text-orange-700 font-bold text-sm">Today: ${fullTitle}</span>`;
+                             card.appendChild(footer);
+                         }
+                     }
+                }
+
                 grid.appendChild(card);
             }
         }
