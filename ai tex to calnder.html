@@ -188,7 +188,9 @@
             width: 2.75rem; 
             height: 2.75rem; 
             border-radius: 1rem; 
-            background: linear-gradient(135deg, #fb923c 0%, #ef4444 100%);
+            background: linear-gradient(270deg, #fb923c, #ef4444, #d97706, #fb923c);
+            background-size: 300% 300%;
+            animation: aurora-shift 8s ease infinite;
             color: #ffffff; 
             border: none;
             box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.4);
@@ -203,7 +205,6 @@
         .nav-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.5);
-            background: linear-gradient(135deg, #fdba74 0%, #dc2626 100%);
             color: #ffffff;
         }
         .nav-btn:active {
@@ -404,6 +405,18 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* Aurora Shift Animation */
+        @keyframes aurora-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .bg-aurora {
+            background: linear-gradient(270deg, #fb923c, #ef4444, #d97706, #fb923c);
+            background-size: 300% 300%;
+            animation: aurora-shift 8s ease infinite;
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -3562,9 +3575,8 @@ The word "Nua" means new and "Khai" means food.
                 else badgeText = `${upNextEvent.date} ${shortMonths[data.month]}`;
 
                 const card = document.createElement('div');
-                card.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
+                card.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95 bg-aurora";
                 card.onclick = () => openDayModal(upNextEvent.date, data);
-                card.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 100%)";
                 card.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
                 
                 card.innerHTML = `
