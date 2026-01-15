@@ -89,6 +89,7 @@
 .rounded-3xl{border-radius:1.5rem}
 .shadow-orange-100{--tw-shadow-color:rgb(255 237 213);--tw-shadow:var(--tw-shadow-colored)}
 .shadow-orange-100\/50{--tw-shadow-color:rgb(255 237 213 / 0.5);--tw-shadow:var(--tw-shadow-colored)}
+.backdrop-blur-md{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 </style>
 <style>
         @media (min-width: 1440px) {
@@ -482,7 +483,7 @@
                         <div class="guide-title"><i class="fa-regular fa-calendar"></i> 2. Calendar Grid Events</div>
                         <div class="code-block">
 ::: calendar
-<span class="hl-keyword">++ January 2025 ++</span>
+<span class="hl-keyword">++ January 2026 ++</span>
 01 <span class="hl-tag">*</span> New Year's Day [ନୂତନ ବର୍ଷ]
 14 <span class="hl-tag">!</span> Makar Sankranti
 23 <span class="hl-tag">!</span> Saraswati Puja / Netaji Jayanti [ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ]
@@ -572,7 +573,7 @@ Horoscope body text here.
 :::
 
 ::: calendar
-++ January 2025 ++
+++ January 2026 ++
 01 * New Year's Day [ନୂତନ ବର୍ଷ]
 14 ! Makar Sankranti [ମକର ସଂକ୍ରାନ୍ତି]
 26 * Republic Day [ଗଣତନ୍ତ୍ର ଦିବସ]
@@ -1364,6 +1365,7 @@ The word "Nua" means new and "Khai" means food.
         };
         
         let bannerInterval;
+        let liveClockInterval = null;
         let bannerCurrentIndex = 0;
         let currentBannerDataHash = "";
         let isBannerDismissed = false;
@@ -3477,7 +3479,31 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        function stopLiveClock() {
+            if (liveClockInterval) {
+                clearInterval(liveClockInterval);
+                liveClockInterval = null;
+            }
+        }
+
+        function startLiveClock() {
+            stopLiveClock();
+
+            const updateTime = () => {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                const el = document.getElementById('live-clock-time');
+                if (el) {
+                    el.innerText = timeString;
+                }
+            };
+
+            updateTime();
+            liveClockInterval = setInterval(updateTime, 1000);
+        }
+
         function renderFestivals(data) {
+            stopLiveClock();
             const section = document.getElementById('sec-festivals');
             section.innerHTML = '';
 
@@ -3537,22 +3563,32 @@ The word "Nua" means new and "Khai" means food.
                 card.style.background = "linear-gradient(135deg, #f97316 0%, #dc2626 100%)";
                 
                 card.innerHTML = `
-                    <div class="p-4 relative z-10 text-white">
-                        <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase mb-1 flex items-center gap-1"><i class="fa-solid fa-calendar-check"></i> UP NEXT</div>
-                        <div class="flex justify-between items-end gap-2">
-                    <div class="font-bold text-lg leading-tight truncate flex-1 min-w-0 pr-2">
-                                ${upNextEvent.engName}
-                            </div>
-                            <div class="shrink-0 bg-white/20 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-semibold border border-white/10 shadow-sm">
+                    <div class="p-4 relative z-10 text-white flex flex-col h-full justify-between gap-4">
+                        <div class="flex justify-between items-start">
+                             <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase flex items-center gap-2">
+                                <i class="fa-regular fa-calendar"></i> UP NEXT
+                             </div>
+                             <div class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold border border-white/10 shadow-sm">
                                 ${badgeText}
-                            </div>
+                             </div>
                         </div>
-                        <div class="text-xs font-medium opacity-80 mt-1 truncate font-oriya">${upNextEvent.locName || ''}</div>
+
+                        <div>
+                            <h3 class="font-extrabold text-2xl md:text-3xl leading-tight mb-1 drop-shadow-sm whitespace-normal">${upNextEvent.engName}</h3>
+                            <p class="text-sm font-medium opacity-90 font-oriya leading-relaxed">${upNextEvent.locName || ''}</p>
+                        </div>
+
+                        <div class="mt-auto bg-white/20 backdrop-blur-md border border-white/10 rounded-xl p-3 text-center shadow-inner relative overflow-hidden group">
+                             <div class="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                             <div id="live-clock-time" class="text-lg md:text-xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">--:--:-- --</div>
+                             <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
+                        </div>
                     </div>
-                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
-                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-16 h-16 rounded-full bg-black/5 blur-md"></div>
+                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
+                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-black/5 blur-xl"></div>
                 `;
                 section.appendChild(card);
+                startLiveClock();
             }
 
             // 3. Search Bar
