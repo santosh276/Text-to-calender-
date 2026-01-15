@@ -3561,7 +3561,8 @@ The word "Nua" means new and "Khai" means food.
                 const card = document.createElement('div');
                 card.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
                 card.onclick = () => openDayModal(upNextEvent.date, data);
-                card.style.background = "linear-gradient(135deg, #f97316 0%, #dc2626 100%)";
+                card.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 100%)";
+                card.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
                 
                 card.innerHTML = `
                     <div class="p-4 relative z-10 text-white flex flex-col h-full justify-between gap-4">
@@ -3569,7 +3570,7 @@ The word "Nua" means new and "Khai" means food.
                              <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase flex items-center gap-2">
                                 <i class="fa-regular fa-calendar"></i> UP NEXT
                              </div>
-                             <div class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold border border-white/10 shadow-sm">
+                             <div class="bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold border border-white/10 shadow-sm">
                                 ${badgeText}
                              </div>
                         </div>
@@ -3579,7 +3580,7 @@ The word "Nua" means new and "Khai" means food.
                             <p class="text-sm font-medium opacity-90 font-oriya leading-relaxed">${upNextEvent.locName || ''}</p>
                         </div>
 
-                        <div class="mt-auto bg-white/20 backdrop-blur-md border border-white/10 rounded-xl p-3 text-center shadow-inner relative overflow-hidden group">
+                        <div class="mt-auto bg-white/10 backdrop-blur-md border border-white/10 rounded-xl p-3 text-center shadow-inner relative overflow-hidden group">
                              <div class="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                              <div id="live-clock-time" class="text-lg md:text-xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">--:--:-- --</div>
                              <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
