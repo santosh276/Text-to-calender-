@@ -420,6 +420,11 @@
         .shadow-glow-red { box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4); }
         .shadow-glow-green { box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4); }
         .shadow-glow-blue { box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); }
+
+        .year-view-container-style {
+            border: 1px solid #F293BB !important;
+            box-shadow: 0 4px 15px rgba(242, 147, 187, 0.3) !important;
+        }
         
         /* Utility for Tablet Flex behavior if missing */
         @media (min-width: 640px) {
@@ -695,7 +700,7 @@ The word "Nua" means new and "Khai" means food.
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
-                <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-6 mb-8 flex items-center justify-between relative overflow-hidden">
+                <div class="bg-white rounded-3xl year-view-container-style p-6 mb-8 flex items-center justify-between relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-orange-50 to-transparent pointer-events-none"></div>
                     <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
                         <i class="fa-solid fa-arrow-left"></i> Back
@@ -3120,7 +3125,7 @@ The word "Nua" means new and "Khai" means food.
                 const isCurrentMonth = (m === currentRealMonth && year === currentRealYear);
                 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl border border-gray-100 hover:border-orange-300 shadow-sm p-4 hover:shadow-lg transition-all relative overflow-hidden group cursor-pointer hover:-translate-y-1";
+                card.className = "bg-white rounded-2xl year-view-container-style p-4 hover:shadow-lg transition-all relative overflow-hidden group cursor-pointer hover:-translate-y-1";
                 card.onclick = () => {
                     // Navigate to this month
                     let targetIndex = appState.monthsData.findIndex(d => d.month === m && d.year === year);
