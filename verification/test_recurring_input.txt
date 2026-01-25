@@ -1,0 +1,9 @@
+
+::: recurring
+26-01 * Republic Day
+:::
+
+::: calendar
+++ January 2025 ++
+01 * New Year's Day
+:::

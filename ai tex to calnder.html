@@ -1332,31 +1332,18 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function cycleSeasonCard() {
-            if (!appState.monthsData || appState.monthsData.length === 0) return;
+            // Simplified logic: Just jump 2 months ahead to ensure season change
+            // Since we have infinite nav, we don't strictly need to search `monthsData`
+            // But if we want to land on "content", we might.
+            // For now, let's just simulate "Next Season" by jumping 2 months.
+            // Seasons are roughly 2 months long.
             
-            const currentMonthData = appState.monthsData[appState.activeMonthIndex];
-            const currentSeason = getSeasonIndex(currentMonthData.month);
+            // Or better: find the start month of the next season.
+            // Season mapping: 0: (10,11/Dec-Jan?), 1: (0,1/Feb-Mar?), this depends on getSeasonIndex logic
+            // getSeasonIndex implementation: Math.floor((month + 10) % 12 / 2)
             
-            for (let i = 1; i <= 6; i++) {
-                const targetSeason = (currentSeason + i) % 6;
-                
-                // Find a month with this season, preferring the "next" one in the list
-                let foundIndex = -1;
-                for (let j = 1; j <= appState.monthsData.length; j++) {
-                    const checkIndex = (appState.activeMonthIndex + j) % appState.monthsData.length;
-                    const mData = appState.monthsData[checkIndex];
-                    if (getSeasonIndex(mData.month) === targetSeason) {
-                        foundIndex = checkIndex;
-                        break;
-                    }
-                }
-                
-                if (foundIndex !== -1) {
-                    appState.activeMonthIndex = foundIndex;
-                    render();
-                    return;
-                }
-            }
+            // Let's just move 2 months forward.
+            changeMonth(2);
         }
 
         function updateSeasonCardUI(index) {
@@ -1389,7 +1376,9 @@ The word "Nua" means new and "Khai" means food.
 
         const editor = document.getElementById('editor');
         let appState = {
-            activeMonthIndex: 0,
+            activeMonthIndex: 0, // Deprecated in favor of viewDate, kept for compatibility if needed
+            viewDate: { year: new Date().getFullYear(), month: new Date().getMonth() },
+            recurringEvents: [],
             monthsData: [],
             todayIndex: -1,
             details: {}, 
@@ -1762,12 +1751,9 @@ The word "Nua" means new and "Khai" means food.
         function openCropModal(previewUrl) {
             const image = document.getElementById('cropper-img');
             image.src = previewUrl;
-            let year = new Date().getFullYear();
-            let month = new Date().getMonth();
-            if (appState.monthsData && appState.monthsData.length > 0) {
-                const currentData = appState.monthsData[appState.activeMonthIndex];
-                if (currentData) { year = currentData.year; month = currentData.month; }
-            }
+            let year = appState.viewDate.year;
+            let month = appState.viewDate.month;
+
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const allDates = [];
             for (let d = 1; d <= daysInMonth; d++) {
@@ -1943,12 +1929,9 @@ The word "Nua" means new and "Khai" means food.
 
         function openLinkModal() {
             const modal = document.getElementById('link-modal');
-            let year = new Date().getFullYear();
-            let month = new Date().getMonth();
-            if (appState.monthsData && appState.monthsData.length > 0) {
-                const currentData = appState.monthsData[appState.activeMonthIndex];
-                if (currentData) { year = currentData.year; month = currentData.month; }
-            }
+            let year = appState.viewDate.year;
+            let month = appState.viewDate.month;
+
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const dropdown = document.getElementById('link-date-select');
             dropdown.innerHTML = '<option value="" disabled selected>Select Date</option>';
@@ -2647,7 +2630,40 @@ The word "Nua" means new and "Khai" means food.
                     else currentBlock = blockName;
                     return;
                 }
-                if (currentBlock === 'config') {
+                if (currentBlock === 'recurring') {
+                    // Syntax: DD-MM Symbol Name [LocalName]
+                    // Example: 01-01 * New Year
+                    const match = line.match(/^(\d{1,2})-(\d{1,2})\s+([!^*>])\s+(.+)/);
+                    if (match) {
+                        const day = parseInt(match[1]);
+                        const month = parseInt(match[2]) - 1; // 0-indexed
+                        const symbol = match[3];
+                        const rawText = match[4];
+                        let engPart = rawText;
+                        let locPart = "";
+                        const nameMatch = rawText.match(/(.*?)\[(.*?)\]/);
+                        if (nameMatch) { engPart = nameMatch[1]; locPart = nameMatch[2]; }
+
+                        tempConfig.recurringEvents = tempConfig.recurringEvents || [];
+                        // Store in global recurring array
+                        if (!appState.recurringEvents) appState.recurringEvents = [];
+
+                        // We push to a temp array first or directly to appState if we want immediate effect?
+                        // Better to collect in parsing var.
+                        // Actually, appState is being overwritten at the end.
+                        // But wait, appState.recurringEvents is separate from monthsData.
+                        // Let's add a recurringEvents array to the parsed result.
+                        if (!parsedDetails.recurring) parsedDetails.recurring = [];
+                        parsedDetails.recurring.push({
+                            day: day,
+                            month: month,
+                            symbol: symbol,
+                            engName: engPart.trim(),
+                            locName: locPart ? locPart.trim() : ""
+                        });
+                    }
+                }
+                else if (currentBlock === 'config') {
                     const titleMatch = line.match(/^@\s*Title\s*:\s*(.+)/i);
                     const logoMatch = line.match(/^@\s*Logo\s*:\s*!\[(.*?)\]\((.*?)\)/i);
                     const syncMatch = line.match(/^@\s*Live Sync GitHub trigger in every\s*:\s*(\d+)\s*(minute|hour|day)s?/i);
@@ -2775,10 +2791,35 @@ The word "Nua" means new and "Khai" means food.
             appState.horoscopeDetails = parsedHoroDetails;
             appState.customSeasonDescriptions = parsedSeasonDescs;
             appState.config = tempConfig;
+            if (parsedDetails.recurring) {
+                appState.recurringEvents = parsedDetails.recurring;
+            } else {
+                // Keep existing if none parsed? Or clear?
+                // Usually parseInput replaces state.
+                // If the block is missing, we assume no recurring events.
+                appState.recurringEvents = [];
+            }
             
+            // Initialize View Date to first available month if valid
+            if (parsedMonths.length > 0) {
+                // If we have a current "today" in the list, jump to it?
+                // Or just keep the first one.
+                // Existing logic preferred todayIndex.
+                const today = new Date();
+                const tIdx = parsedMonths.findIndex(d => d.month === today.getMonth() && d.year === today.getFullYear());
+
+                if (tIdx !== -1) {
+                    appState.viewDate = { year: parsedMonths[tIdx].year, month: parsedMonths[tIdx].month };
+                } else {
+                    appState.viewDate = { year: parsedMonths[0].year, month: parsedMonths[0].month };
+                }
+            } else {
+                // Default to real today
+                const now = new Date();
+                appState.viewDate = { year: now.getFullYear(), month: now.getMonth() };
+            }
+
             findTodayIndex();
-            if (appState.activeMonthIndex >= appState.monthsData.length) appState.activeMonthIndex = 0;
-            if (appState.todayIndex !== -1 && appState.activeMonthIndex === 0) appState.activeMonthIndex = appState.todayIndex;
             render();
         }
 
@@ -2788,18 +2829,87 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function changeMonth(direction) {
-            const newIndex = appState.activeMonthIndex + direction;
-            if (newIndex >= 0 && newIndex < appState.monthsData.length) { appState.activeMonthIndex = newIndex; render(); }
+            let newMonth = appState.viewDate.month + direction;
+            let newYear = appState.viewDate.year;
+
+            if (newMonth > 11) {
+                newMonth = 0;
+                newYear++;
+            } else if (newMonth < 0) {
+                newMonth = 11;
+                newYear--;
+            }
+
+            appState.viewDate = { month: newMonth, year: newYear };
+            render();
         }
+
+        function changeYear(direction) {
+            appState.viewDate.year += direction;
+            render();
+        }
+
         function jumpToToday() {
-            if (appState.todayIndex !== -1) { appState.activeMonthIndex = appState.todayIndex; render(); }
+            const now = new Date();
+            appState.viewDate = { year: now.getFullYear(), month: now.getMonth() };
+            render();
         }
         function resolveImageUrls(text) {
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
+        function getEffectiveMonthData(year, monthIndex) {
+            // 1. Try to find explicit data in monthsData
+            let data = appState.monthsData.find(m => m.year === year && m.month === monthIndex);
+
+            // 2. If found, clone it to avoid mutating original state. If not, create skeleton.
+            if (data) {
+                data = JSON.parse(JSON.stringify(data));
+            } else {
+                data = {
+                    month: monthIndex,
+                    year: year,
+                    events: [],
+                    panchang: {},
+                    horoscope: []
+                };
+            }
+
+            // 3. Inject Recurring Events
+            if (appState.recurringEvents && appState.recurringEvents.length > 0) {
+                // Determine days in this month/year to validate dates (e.g. Feb 29)
+                const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
+                appState.recurringEvents.forEach(rev => {
+                    // rev: { day: 1, month: 0, symbol: '*', engName: '...', locName: '...' }
+                    // Note: rev.month should be 0-indexed matches monthIndex
+                    if (rev.month === monthIndex && rev.day <= daysInMonth) {
+                        // Check if event already exists (manual override?)
+                        // Simple check: same date and name?
+                        // Or just append. Usually manual override implies the user wrote it in the specific month block.
+                        // If the user wrote it manually, it's already in 'data.events'.
+                        // We should probably deduplicate based on name?
+                        const exists = data.events.some(e => e.date === rev.day && e.engName === rev.engName);
+                        if (!exists) {
+                            data.events.push({
+                                date: rev.day,
+                                symbol: rev.symbol,
+                                engName: rev.engName,
+                                locName: rev.locName
+                            });
+                        }
+                    }
+                });
+
+                // Sort events by date after injection
+                data.events.sort((a,b) => a.date - b.date);
+            }
+
+            return data;
+        }
+
         function render() {
-            const currentData = appState.monthsData[appState.activeMonthIndex];
+            const currentData = getEffectiveMonthData(appState.viewDate.year, appState.viewDate.month);
             if (!currentData) return;
 
             // Ensure title is clean without extra badges
@@ -2850,7 +2960,8 @@ The word "Nua" means new and "Khai" means food.
             }
             
             const btnToday = document.getElementById('btn-today');
-            if (appState.todayIndex !== -1 && appState.activeMonthIndex !== appState.todayIndex) {
+            const now = new Date();
+            if (appState.viewDate.month !== now.getMonth() || appState.viewDate.year !== now.getFullYear()) {
                 btnToday.classList.remove('hidden'); btnToday.classList.add('flex');
             } else {
                 btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
@@ -3105,31 +3216,47 @@ The word "Nua" means new and "Khai" means food.
             const currentRealYear = todayDate.getFullYear();
             const currentRealDay = todayDate.getDate();
 
-            let year = currentRealYear;
-            // Use year from current active month if available
-            if (appState.monthsData && appState.monthsData.length > 0) {
-                year = appState.monthsData[appState.activeMonthIndex].year;
-            }
+            let year = appState.viewDate.year;
+
+            // Render Header with Navigation
+            const yearTitleContainer = document.getElementById('year-view-title');
+            yearTitleContainer.innerHTML = '';
+
+            // Flex container for buttons and year
+            const navWrapper = document.createElement('div');
+            navWrapper.className = "flex items-center gap-4";
+
+            const prevBtn = document.createElement('button');
+            prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+            prevBtn.className = "w-8 h-8 rounded-full bg-gray-100 hover:bg-orange-100 hover:text-orange-600 flex items-center justify-center transition";
+            prevBtn.onclick = () => changeYear(-1);
             
-            document.getElementById('year-view-title').innerText = `${year} Year View`;
+            const yearText = document.createElement('span');
+            yearText.innerText = `${year} Year View`;
+
+            const nextBtn = document.createElement('button');
+            nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+            nextBtn.className = "w-8 h-8 rounded-full bg-gray-100 hover:bg-orange-100 hover:text-orange-600 flex items-center justify-center transition";
+            nextBtn.onclick = () => changeYear(1);
+
+            navWrapper.appendChild(prevBtn);
+            navWrapper.appendChild(yearText);
+            navWrapper.appendChild(nextBtn);
+
+            yearTitleContainer.appendChild(navWrapper);
 
             // Generate 12 months
             for (let m = 0; m < 12; m++) {
-                // Check if we have data for this month
-                const monthData = appState.monthsData.find(d => d.month === m && d.year === year);
+                // Check if we have data for this month (Using effective data for recurrences)
+                const monthData = getEffectiveMonthData(year, m);
                 const isCurrentMonth = (m === currentRealMonth && year === currentRealYear);
                 
                 const card = document.createElement('div');
                 card.className = "bg-white rounded-2xl border border-gray-100 hover:border-orange-300 shadow-sm p-4 hover:shadow-lg transition-all relative overflow-hidden group cursor-pointer hover:-translate-y-1";
                 card.onclick = () => {
                     // Navigate to this month
-                    let targetIndex = appState.monthsData.findIndex(d => d.month === m && d.year === year);
-                    if (targetIndex !== -1) {
-                        appState.activeMonthIndex = targetIndex;
-                        toggleView('month');
-                    } else {
-                        showToast(`No data for ${months[m]}`);
-                    }
+                    appState.viewDate = { year: year, month: m };
+                    toggleView('month');
                 };
 
                 // Badge for Event Count
