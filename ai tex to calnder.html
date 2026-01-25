@@ -700,7 +700,11 @@ The word "Nua" means new and "Khai" means food.
                     <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
                         <i class="fa-solid fa-arrow-left"></i> Back
                     </button>
-                    <h2 class="text-xl md:text-3xl font-extrabold text-gray-900 z-10" id="year-view-title">2026 Year View</h2>
+                    <div class="flex items-center gap-4 z-10">
+                        <button onclick="changeYear(-1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/50 hover:bg-orange-100 text-gray-600 hover:text-orange-600 transition"><i class="fa-solid fa-chevron-left"></i></button>
+                        <h2 class="text-xl md:text-3xl font-extrabold text-gray-900" id="year-view-title">2026 Year View</h2>
+                        <button onclick="changeYear(1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/50 hover:bg-orange-100 text-gray-600 hover:text-orange-600 transition"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
                     <div class="w-16"></div> <!-- Spacer -->
                 </div>
                 <div id="year-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6"></div>
@@ -1390,7 +1394,10 @@ The word "Nua" means new and "Khai" means food.
         const editor = document.getElementById('editor');
         let appState = {
             activeMonthIndex: 0,
+            viewYear: new Date().getFullYear(),
+            viewMonth: new Date().getMonth(),
             monthsData: [],
+            recurringEvents: [],
             todayIndex: -1,
             details: {}, 
             horoscopeDetails: {},
@@ -2627,6 +2634,7 @@ The word "Nua" means new and "Khai" means food.
             let currentHoroSign = null;
             let parsedSeasonDescs = {};
             let currentSeasonIdx = -1;
+            let parsedRecurring = [];
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
             let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
@@ -2646,6 +2654,27 @@ The word "Nua" means new and "Khai" means food.
                     if (blockName === '') { currentBlock = null; currentDetailKey = null; currentHoroSign = null; }
                     else currentBlock = blockName;
                     return;
+                }
+                else if (currentBlock === 'recurring') {
+                    const match = line.match(/^(\d{1,2})-(\d{1,2})\s+([!^*>])?\s*(.+)/);
+                    if (match) {
+                        const day = parseInt(match[1]);
+                        const month = parseInt(match[2]);
+                        const symbol = match[3] || '>';
+                        let rawText = match[4];
+                        let engPart = rawText;
+                        let locPart = "";
+                        const nameMatch = rawText.match(/(.*?)\[(.*?)\]/);
+                        if (nameMatch) { engPart = nameMatch[1]; locPart = nameMatch[2]; }
+
+                        parsedRecurring.push({
+                            day: day,
+                            month: month,
+                            symbol: symbol,
+                            engName: engPart.trim(),
+                            locName: locPart ? locPart.trim() : ""
+                        });
+                    }
                 }
                 if (currentBlock === 'config') {
                     const titleMatch = line.match(/^@\s*Title\s*:\s*(.+)/i);
@@ -2775,10 +2804,30 @@ The word "Nua" means new and "Khai" means food.
             appState.horoscopeDetails = parsedHoroDetails;
             appState.customSeasonDescriptions = parsedSeasonDescs;
             appState.config = tempConfig;
+            appState.recurringEvents = parsedRecurring;
             
             findTodayIndex();
-            if (appState.activeMonthIndex >= appState.monthsData.length) appState.activeMonthIndex = 0;
-            if (appState.todayIndex !== -1 && appState.activeMonthIndex === 0) appState.activeMonthIndex = appState.todayIndex;
+
+            // Smart View Initialization
+            const today = new Date();
+            if (parsedMonths.length > 0) {
+                const hasToday = parsedMonths.some(m => m.month === today.getMonth() && m.year === today.getFullYear());
+                if (hasToday) {
+                    appState.viewMonth = today.getMonth();
+                    appState.viewYear = today.getFullYear();
+                } else {
+                    appState.viewMonth = parsedMonths[0].month;
+                    appState.viewYear = parsedMonths[0].year;
+                }
+            } else {
+                appState.viewMonth = today.getMonth();
+                appState.viewYear = today.getFullYear();
+            }
+
+            // Legacy support (optional, but good for safety)
+            if (appState.todayIndex !== -1) appState.activeMonthIndex = appState.todayIndex;
+            else appState.activeMonthIndex = 0;
+
             render();
         }
 
@@ -2788,18 +2837,85 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function changeMonth(direction) {
-            const newIndex = appState.activeMonthIndex + direction;
-            if (newIndex >= 0 && newIndex < appState.monthsData.length) { appState.activeMonthIndex = newIndex; render(); }
+            let newMonth = appState.viewMonth + direction;
+            let newYear = appState.viewYear;
+
+            if (newMonth > 11) {
+                newMonth = 0;
+                newYear++;
+            } else if (newMonth < 0) {
+                newMonth = 11;
+                newYear--;
+            }
+
+            appState.viewMonth = newMonth;
+            appState.viewYear = newYear;
+
+            // Sync legacy index for potential legacy dependencies
+            appState.activeMonthIndex = appState.monthsData.findIndex(d => d.month === newMonth && d.year === newYear);
+            if (appState.activeMonthIndex === -1) appState.activeMonthIndex = 0;
+
+            render();
         }
+
+        function changeYear(direction) {
+            appState.viewYear += direction;
+            render();
+        }
+
         function jumpToToday() {
-            if (appState.todayIndex !== -1) { appState.activeMonthIndex = appState.todayIndex; render(); }
+            const today = new Date();
+            appState.viewMonth = today.getMonth();
+            appState.viewYear = today.getFullYear();
+
+            appState.activeMonthIndex = appState.monthsData.findIndex(d => d.month === appState.viewMonth && d.year === appState.viewYear);
+            if (appState.activeMonthIndex === -1) appState.activeMonthIndex = 0;
+
+            render();
         }
         function resolveImageUrls(text) {
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
+        function getMonthData(year, month) {
+            // 1. Find existing data
+            let data = appState.monthsData.find(d => d.year === year && d.month === month);
+
+            // 2. If not found, create skeleton
+            if (!data) {
+                data = { month: month, year: year, events: [], panchang: {}, horoscope: [] };
+            } else {
+                // Clone to avoid mutating the original cached data with recurring events every render
+                data = JSON.parse(JSON.stringify(data));
+            }
+
+            // 3. Inject Recurring Events
+            if (appState.recurringEvents && appState.recurringEvents.length > 0) {
+                appState.recurringEvents.forEach(re => {
+                     // recurringEvents month is 1-based from parser
+                     if (re.month === month + 1) {
+                         // Check duplicates (don't override explicit events)
+                         const exists = data.events.some(e => e.date === re.day && e.engName === re.engName);
+                         if (!exists) {
+                             data.events.push({
+                                 date: re.day,
+                                 symbol: re.symbol || '*',
+                                 engName: re.engName,
+                                 locName: re.locName || ""
+                             });
+                         }
+                     }
+                });
+
+                // Sort events by date
+                data.events.sort((a, b) => a.date - b.date);
+            }
+
+            return data;
+        }
+
         function render() {
-            const currentData = appState.monthsData[appState.activeMonthIndex];
+            const currentData = getMonthData(appState.viewYear, appState.viewMonth);
             if (!currentData) return;
 
             // Ensure title is clean without extra badges
@@ -2850,7 +2966,10 @@ The word "Nua" means new and "Khai" means food.
             }
             
             const btnToday = document.getElementById('btn-today');
-            if (appState.todayIndex !== -1 && appState.activeMonthIndex !== appState.todayIndex) {
+            const today = new Date();
+            const isViewingToday = (appState.viewMonth === today.getMonth() && appState.viewYear === today.getFullYear());
+
+            if (!isViewingToday) {
                 btnToday.classList.remove('hidden'); btnToday.classList.add('flex');
             } else {
                 btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
@@ -3105,31 +3224,27 @@ The word "Nua" means new and "Khai" means food.
             const currentRealYear = todayDate.getFullYear();
             const currentRealDay = todayDate.getDate();
 
-            let year = currentRealYear;
-            // Use year from current active month if available
-            if (appState.monthsData && appState.monthsData.length > 0) {
-                year = appState.monthsData[appState.activeMonthIndex].year;
-            }
+            let year = appState.viewYear;
             
             document.getElementById('year-view-title').innerText = `${year} Year View`;
 
             // Generate 12 months
             for (let m = 0; m < 12; m++) {
-                // Check if we have data for this month
-                const monthData = appState.monthsData.find(d => d.month === m && d.year === year);
+                // Use getMonthData to include recurring events
+                const monthData = getMonthData(year, m);
                 const isCurrentMonth = (m === currentRealMonth && year === currentRealYear);
                 
                 const card = document.createElement('div');
                 card.className = "bg-white rounded-2xl border border-gray-100 hover:border-orange-300 shadow-sm p-4 hover:shadow-lg transition-all relative overflow-hidden group cursor-pointer hover:-translate-y-1";
                 card.onclick = () => {
-                    // Navigate to this month
-                    let targetIndex = appState.monthsData.findIndex(d => d.month === m && d.year === year);
-                    if (targetIndex !== -1) {
-                        appState.activeMonthIndex = targetIndex;
-                        toggleView('month');
-                    } else {
-                        showToast(`No data for ${months[m]}`);
-                    }
+                    appState.viewMonth = m;
+                    appState.viewYear = year;
+
+                    // Sync legacy index
+                    appState.activeMonthIndex = appState.monthsData.findIndex(d => d.month === m && d.year === year);
+                    if (appState.activeMonthIndex === -1) appState.activeMonthIndex = 0;
+
+                    toggleView('month');
                 };
 
                 // Badge for Event Count
