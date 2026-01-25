@@ -3645,7 +3645,7 @@ The word "Nua" means new and "Khai" means food.
                     class="block w-full pl-10 pr-10 py-2.5 text-sm text-gray-700 bg-white/50 backdrop-blur-sm border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-200 focus:border-orange-400 placeholder-gray-400 outline-none transition-all duration-300 shadow-sm hover:shadow-md" 
                     placeholder="Search..." 
                     autocomplete="off">
-                <button id="search-clear" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer hidden">
+                <button id="search-clear" class="absolute inset-y-0 right-2 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer hidden">
                     <i class="fa-solid fa-circle-xmark"></i>
                 </button>
             `;
@@ -3714,9 +3714,32 @@ The word "Nua" means new and "Khai" means food.
 
             input.oninput = (e) => {
                 const query = e.target.value.toLowerCase();
-                if (query.length > 0) clearBtn.classList.remove('hidden');
-                else clearBtn.classList.add('hidden');
-                renderFestivalListItems(list, listEvents, data, query);
+                if (query.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                    // Global Search: Aggregate all events
+                    let allEvents = [];
+                    if (appState.monthsData) {
+                        appState.monthsData.forEach(m => {
+                            // Filter allowed symbols first (using same logic as listEvents)
+                            const mEvents = m.events.filter(ev => ['!','^','*','>'].includes(ev.symbol));
+                            mEvents.forEach(ev => {
+                                // Attach context for global rendering
+                                allEvents.push({ ...ev, monthIndex: m.month, year: m.year, _monthData: m });
+                            });
+                        });
+                        // Sort by Date (Year, Month, Day)
+                        allEvents.sort((a,b) => {
+                            if (a.year !== b.year) return a.year - b.year;
+                            if (a.monthIndex !== b.monthIndex) return a.monthIndex - b.monthIndex;
+                            return a.date - b.date;
+                        });
+                    }
+                    renderFestivalListItems(list, allEvents, null, query);
+                }
+                else {
+                    clearBtn.classList.add('hidden');
+                    renderFestivalListItems(list, listEvents, data, "");
+                }
             };
             
             clearBtn.onclick = () => {
@@ -3747,14 +3770,19 @@ The word "Nua" means new and "Khai" means food.
             filtered.forEach(ev => {
                 const li = document.createElement('li');
                 li.className = "flex gap-3 items-center p-2 rounded-lg hover:bg-gray-50 border border-transparent transition-all cursor-pointer group";
-                li.onclick = () => openDayModal(ev.date, monthData);
+                
+                // Determine context (Global vs Local)
+                const mData = monthData || ev._monthData;
+                const mIndex = (monthData) ? monthData.month : ev.monthIndex;
+
+                li.onclick = () => openDayModal(ev.date, mData);
                 
                 let badgeClass = "bg-gray-600";
                 if (ev.symbol === '!') badgeClass = "bg-red-600"; 
                 else if (ev.symbol === '^') badgeClass = "bg-green-600"; 
                 else if (ev.symbol === '*') badgeClass = "bg-blue-600";
                 
-                const monthName = shortMonths[monthData.month];
+                const monthName = shortMonths[mIndex];
                 li.innerHTML = `
                     <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
                         <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
