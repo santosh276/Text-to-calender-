@@ -542,7 +542,18 @@
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 3. Detailed Day View</div>
+                        <div class="guide-title"><i class="fa-solid fa-repeat"></i> 3. Recurring Events</div>
+                        <div class="code-block">
+::: recurring
+<span class="hl-keyword">26-01</span> <span class="hl-tag">*</span> Republic Day
+<span class="hl-keyword">15-08</span> <span class="hl-tag">!</span> Independence Day
+:::
+                        </div>
+                        <p class="code-annotation">Define events that repeat every year on the same date (DD-MM). These appear automatically when navigating to any year.</p>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 4. Detailed Day View</div>
                         <div class="code-block">
 ::: details
 <span class="hl-keyword">>> 14-01-2025</span>
@@ -560,7 +571,7 @@ Makar Sankranti is a major harvest festival.
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 4. Monthly Panchang</div>
+                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 5. Monthly Panchang</div>
                         <div class="code-block">
 ::: panchang
 @ Tithi : <span class="hl-string">Shukla Paksha</span>
@@ -573,7 +584,7 @@ Makar Sankranti is a major harvest festival.
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 6. Custom Season Descriptions</div>
+                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 7. Custom Season Descriptions</div>
                         <div class="code-block">
 ::: seasons
 @ Spring : <span class="hl-string">Nature blooms, flowers everywhere.</span>
@@ -584,7 +595,7 @@ Makar Sankranti is a major harvest festival.
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-star"></i> 5. Horoscope (Short & Detail)</div>
+                        <div class="guide-title"><i class="fa-solid fa-star"></i> 6. Horoscope (Short & Detail)</div>
                         <div class="code-block">
 <span class="hl-comment"># Short (Sidebar)</span>
 ::: horoscope
@@ -3230,7 +3241,7 @@ The word "Nua" means new and "Khai" means food.
             prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
             prevBtn.className = "w-8 h-8 rounded-full bg-gray-100 hover:bg-orange-100 hover:text-orange-600 flex items-center justify-center transition";
             prevBtn.onclick = () => changeYear(-1);
-            
+
             const yearText = document.createElement('span');
             yearText.innerText = `${year} Year View`;
 
