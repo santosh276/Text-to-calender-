@@ -2513,9 +2513,13 @@ The word "Nua" means new and "Khai" means food.
                 
                 // Auto-Save Listener
                 let timeout;
+                let renderTimeout;
                 editor.addEventListener('input', (e) => { 
                     const val = e.target.value;
-                    parseInput(val);
+
+                    clearTimeout(renderTimeout);
+                    renderTimeout = setTimeout(() => parseInput(val), 300);
+
                     clearTimeout(timeout);
                     timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
                 });
