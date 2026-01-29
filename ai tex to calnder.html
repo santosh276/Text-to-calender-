@@ -1422,7 +1422,10 @@ The word "Nua" means new and "Khai" means food.
                 indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
                 seasonDescriptions: ["Spring is the season of new beginnings, characterized by blooming flowers and moderate temperatures. It marks the end of winter and the rejuvenation of nature.", "Summer brings intense heat and longer days. The sun shines brightly, and water levels in rivers may drop. It is a time for indoor activities and staying hydrated.", "Monsoon arrives with refreshing rains, bringing relief from the summer heat. The earth turns lush green, and it is a vital season for agriculture and water replenishment.", "Autumn marks the transition from monsoon to winter. The sky clears, and the weather becomes pleasant. It is a season of festivals and harvest.", "Pre-winter is the transitional period before winter, characterized by cooler temperatures and shorter days as fall ends. It is a time for preparing for the cold, where weather can be inconsistent, with mornings being chilly and afternoons warmer. In some regions, such as India, it is also referred to as \"late autumn\" or \"Hemant\" and occurs in November and December.", "Winter is the coldest season, with chilly winds and shorter days. Nature appears dormant, and people seek warmth. It is a time for cozy gatherings and hot meals."],
                 paksha: ["Shukla Paksha", "Krishna Paksha"],
-                tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
+                tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"],
+                nakshatras: ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"],
+                yogas: ["Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan", "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla", "Brahma", "Indra", "Vaidhriti"],
+                karanas: ["Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti (Bhadra)", "Shakuni", "Chatushpada", "Naga", "Kimstughna"]
             },
             hi: { 
                 days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], 
@@ -1536,7 +1539,7 @@ The word "Nua" means new and "Khai" means food.
             }
         };
 
-        function calculateTithi(dateObj) {
+        function calculatePanchang(dateObj) {
             // Use 06:00 AM Local Time for Tithi calculation to approximate Sunrise Tithi, or calculated Sunrise
             let hour = 6;
             let minute = 0;
@@ -1587,23 +1590,62 @@ The word "Nua" means new and "Khai" means food.
             lambda_moon -= 0.058 * sind(2 * (M_moon - 2 * D_elong));
             lambda_moon = normalize(lambda_moon);
 
+            // Determine Data
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+
             // --- TITHI CALCULATION ---
             // Tithi = (MoonLong - SunLong) / 12
             let diff = normalize(lambda_moon - lambda_sun);
             const tithiIndex = Math.floor(diff / 12); // 0 to 29
-
-            // Determine Data
-            const currentLang = appState.config.language || 'en';
-            const langObj = langData[currentLang] || langData['en'];
-            
-            // Safe index fetch (0-29)
-            const safeIndex = tithiIndex % 30;
-            const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
-            
+            const safeTithiIndex = tithiIndex % 30;
+            const tithiName = langObj.tithis ? langObj.tithis[safeTithiIndex] : `Tithi ${safeTithiIndex + 1}`;
             // 0-14 is Shukla (Waxing), 15-29 is Krishna (Waning)
-            const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
+            const pakshaName = langObj.paksha ? (safeTithiIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeTithiIndex < 15 ? "Shukla" : "Krishna");
             
-            return { tithi: tithiName, paksha: pakshaName, index: safeIndex };
+            // --- NAKSHATRA CALCULATION ---
+            // Nakshatra = MoonLong / (360/27)
+            const nakshatraIndex = Math.floor(lambda_moon * 27 / 360);
+            const nakshatraName = langObj.nakshatras ? langObj.nakshatras[nakshatraIndex % 27] : (langData.en.nakshatras[nakshatraIndex % 27] || `Nakshatra ${nakshatraIndex + 1}`);
+
+            // --- YOGA CALCULATION ---
+            // Yoga = (SunLong + MoonLong) / (360/27)
+            const yogaIndex = Math.floor(normalize(lambda_sun + lambda_moon) * 27 / 360);
+            const yogaName = langObj.yogas ? langObj.yogas[yogaIndex % 27] : (langData.en.yogas[yogaIndex % 27] || `Yoga ${yogaIndex + 1}`);
+
+            // --- KARANA CALCULATION ---
+            // Karana = (MoonLong - SunLong) / 6
+            // Note: Karana is half of a tithi.
+            const karanaIndex = Math.floor(diff / 6); // 0 to 59
+
+            let karanaName = "";
+            if (langObj.karanas || langData.en.karanas) {
+                const kList = langObj.karanas || langData.en.karanas;
+                if (karanaIndex === 0) karanaName = kList[10]; // Kimstughna (Fixed)
+                else if (karanaIndex >= 57) {
+                    if (karanaIndex === 57) karanaName = kList[7]; // Shakuni (Fixed)
+                    else if (karanaIndex === 58) karanaName = kList[8]; // Chatushpada (Fixed)
+                    else if (karanaIndex === 59) karanaName = kList[9]; // Naga (Fixed)
+                } else {
+                    // Movable Karanas cycle: Bava, Balava, Kaulava, Taitila, Gara, Vanija, Vishti
+                    // Index 1 = Bava (0 in movable list), Index 2 = Balava...
+                    karanaName = kList[(karanaIndex - 1) % 7];
+                }
+            } else {
+                karanaName = `Karana ${karanaIndex + 1}`;
+            }
+
+            return {
+                tithi: tithiName,
+                paksha: pakshaName,
+                index: safeTithiIndex,
+                nakshatra: nakshatraName,
+                nakshatraIndex: nakshatraIndex,
+                yoga: yogaName,
+                yogaIndex: yogaIndex,
+                karana: karanaName,
+                karanaIndex: karanaIndex
+            };
         }
 
         function toNativeNum(num, langCode) {
@@ -3367,14 +3409,14 @@ The word "Nua" means new and "Khai" means food.
 
                 // --- Tithi Icon Logic ---
                 const dateObj = new Date(data.year, data.month, d);
-                const tithiInfo = calculateTithi(dateObj);
+                const panchangInfo = calculatePanchang(dateObj);
                 
                 let iconHtml = '';
-                if (tithiInfo.index === 14) { // Purnima
+                if (panchangInfo.index === 14) { // Purnima
                     iconHtml = TITHI_ICONS.purnima;
-                } else if (tithiInfo.index === 29) { // Amavasya
+                } else if (panchangInfo.index === 29) { // Amavasya
                     iconHtml = TITHI_ICONS.amavasya;
-                } else if (tithiInfo.index === 10 || tithiInfo.index === 25) { // Ekadashi (Shukla=10, Krishna=25)
+                } else if (panchangInfo.index === 10 || panchangInfo.index === 25) { // Ekadashi (Shukla=10, Krishna=25)
                     iconHtml = TITHI_ICONS.ekadashi;
                 }
                 
@@ -3456,11 +3498,11 @@ The word "Nua" means new and "Khai" means food.
             } else {
                 targetDate = new Date(data.year, data.month, 1);
             }
-            const tithiInfo = calculateTithi(targetDate);
+            const panchangInfo = calculatePanchang(targetDate);
             
             const tithiDiv = document.createElement('div');
             tithiDiv.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-            tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
+            tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${panchangInfo.tithi}, ${panchangInfo.paksha}</span>`;
             list.appendChild(tithiDiv);
 
             if (Object.keys(data.panchang).length === 0) { 
@@ -3471,6 +3513,12 @@ The word "Nua" means new and "Khai" means food.
             
             // Calculate Sunrise/Sunset if location exists
             let calculatedPanchang = { ...data.panchang };
+
+            // --- Auto-fill missing Panchang Data ---
+            if (!calculatedPanchang['Tithi']) calculatedPanchang['Tithi'] = `${panchangInfo.tithi}, ${panchangInfo.paksha}`;
+            if (!calculatedPanchang['Nakshatra']) calculatedPanchang['Nakshatra'] = panchangInfo.nakshatra;
+            if (!calculatedPanchang['Yoga']) calculatedPanchang['Yoga'] = panchangInfo.yoga;
+            if (!calculatedPanchang['Karana']) calculatedPanchang['Karana'] = panchangInfo.karana;
             
             if (appState.config.location && SunCalc) {
                 // Use today's date or 1st of month for the display
@@ -3935,8 +3983,8 @@ The word "Nua" means new and "Khai" means food.
             document.getElementById('modal-full-date').innerText = `${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}`;
             
             // --- INJECT TITHI/PAKSHA ---
-            const tithiInfo = calculateTithi(dateObj);
-            currentModalTithiBlock = `<div class="mt-2 text-[#F5E6CA] opacity-90 text-xs uppercase tracking-wide font-semibold"><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</div>`;
+            const panchangInfo = calculatePanchang(dateObj);
+            currentModalTithiBlock = `<div class="mt-2 text-[#F5E6CA] opacity-90 text-xs uppercase tracking-wide font-semibold"><i class="fa-solid fa-moon mr-1"></i> ${panchangInfo.tithi}, ${panchangInfo.paksha}</div>`;
             // ---------------------------
 
             const detailsRaw = appState.details[dateKey];
