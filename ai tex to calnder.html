@@ -3533,21 +3533,6 @@ The word "Nua" means new and "Khai" means food.
                 list.appendChild(cardDiv);
             }
 
-            // 2. Calculated Tithi (for the month view)
-            const today = new Date();
-            let targetDate;
-            if (data.month === today.getMonth() && data.year === today.getFullYear()) {
-                targetDate = today;
-            } else {
-                targetDate = new Date(data.year, data.month, 1);
-            }
-            const tithiInfo = calculateTithi(targetDate);
-            
-            const tithiDiv = document.createElement('div');
-            tithiDiv.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-            tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
-            list.appendChild(tithiDiv);
-
             if (Object.keys(data.panchang).length === 0) { 
                 // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>'; 
             }
@@ -3557,6 +3542,7 @@ The word "Nua" means new and "Khai" means food.
             // --- AUTOMATIC CALCULATION MERGE ---
             // 1. Calculate Astronomical Data for the active view
             // (Use today or 1st of month)
+            const today = new Date();
             const calcDate = (data.month === today.getMonth() && data.year === today.getFullYear())
                            ? new Date()
                            : new Date(data.year, data.month, 1);
