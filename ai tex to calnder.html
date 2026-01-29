@@ -442,6 +442,92 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* --- New Panchang Styles --- */
+        .panchang-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .panchang-item {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s;
+        }
+
+        .panchang-item:hover {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-color: rgba(251, 146, 60, 0.3);
+        }
+
+        .panchang-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            color: #6b7280;
+            margin-bottom: 0.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .panchang-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.2;
+        }
+
+        .muhurat-strip {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+
+        .muhurat-pill {
+            flex: 1;
+            min-width: 80px;
+            border-radius: 0.5rem;
+            padding: 0.4rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+
+        .muhurat-bad { background: #fef2f2; border-color: #fee2e2; color: #991b1b; }
+        .muhurat-good { background: #f0fdf4; border-color: #dcfce7; color: #166534; }
+        .muhurat-neutral { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+
+        .astro-timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to right, #fff7ed, #eef2ff);
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #fed7aa;
+        }
+
+        .astro-time-point {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -3474,138 +3560,244 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        // --- NEW HELPER: Calculate Rahu Kalam, Yamaganda, Abhijit ---
+        function getSpecialTimes(date, sunrise, sunset) {
+            if (!sunrise || !sunset) return null;
+
+            const dayOfWeek = date.getDay(); // 0 = Sunday
+            const duration = (sunset - sunrise); // Duration in ms
+            const part = duration / 8; // Dividing day into 8 parts (Traditional method)
+
+            // Standard Vedic Slots (0-indexed parts of the day)
+            // Sun=7, Mon=1, Tue=6, Wed=4, Thu=5, Fri=3, Sat=2
+            const rahuSlots = [7, 1, 6, 4, 5, 3, 2];
+            // Sun=4, Mon=3, Tue=2, Wed=1, Thu=0, Fri=6, Sat=5
+            const yamaSlots = [4, 3, 2, 1, 0, 6, 5];
+
+            const formatTime = (ms) => {
+                const d = new Date(ms);
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            };
+
+            // Calculate Rahu Kalam
+            const rahuStart = new Date(sunrise.getTime() + (rahuSlots[dayOfWeek] * part));
+            const rahuEnd = new Date(rahuStart.getTime() + part);
+
+            // Calculate Yamaganda
+            const yamaStart = new Date(sunrise.getTime() + (yamaSlots[dayOfWeek] * part));
+            const yamaEnd = new Date(yamaStart.getTime() + part);
+
+            // Calculate Abhijit Muhurat (Midday - 24 mins to Midday + 24 mins approx)
+            // More precise: 8th Muhurat of the 15 Muhurats in the day.
+            const dayMid = new Date(sunrise.getTime() + (duration / 2));
+            const abhijitStart = new Date(dayMid.getTime() - (24 * 60 * 1000));
+            const abhijitEnd = new Date(dayMid.getTime() + (24 * 60 * 1000));
+
+            // Skip Abhijit on Wednesday (generally considered bad)
+            const hasAbhijit = dayOfWeek !== 3;
+
+            return {
+                rahu: `${formatTime(rahuStart)} - ${formatTime(rahuEnd)}`,
+                yama: `${formatTime(yamaStart)} - ${formatTime(yamaEnd)}`,
+                abhijit: hasAbhijit ? `${formatTime(abhijitStart)} - ${formatTime(abhijitEnd)}` : "None (Wed)"
+            };
+        }
+
+        // --- UPDATED MAIN RENDER FUNCTION ---
         function renderPanchang(data) {
+            const section = document.getElementById('sec-panchang');
             const pillsContainer = document.getElementById('panchang-pills');
-
-            const locContainer = document.getElementById('location-btn-container');
-            if (locContainer) {
-                if (appState.config.location) {
-                     const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
-                     locContainer.innerHTML = `<div class="text-center"><div class="text-xs text-green-600 font-bold mb-1"><i class="fa-solid fa-check-circle"></i> ${locName}</div><button id="btn-location" onclick="getUserLocation()" class="text-xs text-gray-500 hover:text-deepred underline">Update Location</button></div>`;
-                } else {
-                     locContainer.innerHTML = `<button id="btn-location" onclick="getUserLocation()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 px-4 rounded-full shadow-sm border border-gray-300 transition flex items-center gap-2"><i class="fa-solid fa-location-crosshairs text-red-500"></i> Use My Location</button>`;
-                }
-            }
-
             const list = document.getElementById('panchang-list');
+
+            // Clear containers
             pillsContainer.innerHTML = '';
             list.innerHTML = '';
-            
-            // 1. Display Season (Ritu)
+
+            // 1. Season (Ritu) Logic (Kept mostly same, but cleaner injection)
             const seasonIndex = getSeasonIndex(data.month);
+            const seasonConfig = seasonUIConfig[seasonIndex];
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
-            const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
-            const rawSeasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex]) 
-                               ? appState.customSeasonDescriptions[seasonIndex] 
-                               : (langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "");
-            const seasonDescHtml = formatSeasonDescription(rawSeasonDesc);
-            
-            if (seasonName) {
-                const config = seasonUIConfig[seasonIndex] || seasonUIConfig[0];
-                const cardDiv = document.createElement('div');
-                
-                // Using new UI Classes
-                cardDiv.className = "season-ui-card group"; 
-                cardDiv.id = "seasonCard";
-                cardDiv.onclick = cycleSeasonCard;
-                cardDiv.dataset.index = seasonIndex;
-                
-                cardDiv.innerHTML = `
-                    <div class="season-ui-icon-container" id="seasonIcon" style="transform: scale(1) rotate(0deg); opacity: 1;">
-                        ${config.icon}
-                    </div>
-                    <div class="season-ui-content w-full">
-                        <div class="flex justify-between items-start w-full">
-                            <div class="flex flex-col">
-                                <span class="season-ui-label">Season</span>
-                                <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
-                            </div>
-                            <button onclick="toggleSeasonDescription(this, event)" class="md:hidden text-gray-400 hover:text-gray-600 p-2 -mr-2 -mt-2 transition-transform active:scale-95 focus:outline-none">
-                                <i class="fa-solid fa-chevron-down text-sm season-toggle-icon"></i>
-                            </button>
-                        </div>
-                        <div class="season-desc-container mt-3 text-[11px] md:text-xs text-gray-600 leading-relaxed hidden md:block w-full border-t md:border-t-0 border-gray-100 pt-2 md:pt-1 font-sans">
-                            ${seasonDescHtml}
-                        </div>
-                    </div>
-                `;
-                list.appendChild(cardDiv);
-            }
+            const seasonName = langObj.indianSeasons[seasonIndex];
 
-            if (Object.keys(data.panchang).length === 0) { 
-                // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>'; 
-            }
-            
-            const iconMap = { 'tithi': 'fa-moon', 'nakshatra': 'fa-star', 'yoga': 'fa-bahai', 'karana': 'fa-hourglass-half', 'sunrise': 'fa-sun', 'sunset': 'fa-cloud-sun', 'month': 'fa-calendar' };
-            
-            // --- AUTOMATIC CALCULATION MERGE ---
-            // 1. Calculate Astronomical Data for the active view
-            // (Use today or 1st of month)
+            // Inject Season Card at the top of the list container
+            const seasonCard = document.createElement('div');
+            seasonCard.className = "season-ui-card group mb-4";
+            seasonCard.onclick = cycleSeasonCard;
+            seasonCard.innerHTML = `
+                <div class="season-ui-icon-container" style="transform: scale(1); opacity: 1;">${seasonConfig.icon}</div>
+                <div class="season-ui-content">
+                    <span class="season-ui-label">Current Ritu</span>
+                    <span class="season-ui-title text-xl" style="color: ${seasonConfig.color};">${seasonName}</span>
+                </div>
+            `;
+            list.appendChild(seasonCard);
+
+            // 2. Astronomical Calculations (Sun/Moon/Times)
             const today = new Date();
+            // Use Today if active month matches current, else 1st of active month
             const calcDate = (data.month === today.getMonth() && data.year === today.getFullYear())
                            ? new Date()
                            : new Date(data.year, data.month, 1);
 
             const autoData = calculateTithi(calcDate);
-
-            // 2. Prepare Display Object
-            // Priority: Manual Input (data.panchang) > Auto Calculation
-            let calculatedPanchang = { ...data.panchang };
-
-            // Fill missing keys with Auto Data
-            if (!calculatedPanchang['Tithi']) calculatedPanchang['Tithi'] = `${autoData.tithi} (${autoData.paksha})`;
-            if (!calculatedPanchang['Nakshatra']) calculatedPanchang['Nakshatra'] = autoData.nakshatra;
-            if (!calculatedPanchang['Yoga']) calculatedPanchang['Yoga'] = autoData.yoga;
-            if (!calculatedPanchang['Karana']) calculatedPanchang['Karana'] = autoData.karana;
             
+            // SunCalc Times
+            let sunTimes = { sunrise: null, sunset: null };
+            let moonTimes = { rise: null, set: null }; // Placeholder
+            let muhurats = null;
+
             if (appState.config.location && SunCalc) {
-                // Use today's date or 1st of month for the display
-                const today = new Date();
-                let calcDate;
-                if (data.month === today.getMonth() && data.year === today.getFullYear()) {
-                    calcDate = today;
-                } else {
-                    calcDate = new Date(data.year, data.month, 1);
+                sunTimes = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
+                // Calculate Moon Times (SunCalc supports this)
+                // Note: SunCalc library included in your file might be minimal.
+                // If getMoonTimes exists use it, otherwise skip.
+                if (SunCalc.getMoonTimes) {
+                    moonTimes = SunCalc.getMoonTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
                 }
                 
-                const times = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
-                if (times.sunrise && times.sunset) {
-                    const fmt = (d) => {
-                        let h = d.getHours();
-                        let m = d.getMinutes();
-                        const ampm = h >= 12 ? 'PM' : 'AM';
-                        h = h % 12;
-                        h = h ? h : 12; 
-                        m = m < 10 ? '0'+m : m;
-                        return `${h}:${m} ${ampm}`;
-                    };
-                    calculatedPanchang['Sunrise'] = fmt(times.sunrise) + " (GPS)";
-                    calculatedPanchang['Sunset'] = fmt(times.sunset) + " (GPS)";
-                }
+                // Calculate Muhurats
+                muhurats = getSpecialTimes(calcDate, sunTimes.sunrise, sunTimes.sunset);
             }
-            
-            for (const [key, value] of Object.entries(calculatedPanchang)) {
 
-                const lowerKey = key.toLowerCase();
-                let iconClass = iconMap[lowerKey] || 'fa-circle-info';
-                if (lowerKey === 'sunrise') {
-                    const pill = document.createElement('div');
-                    pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
-                    pillsContainer.appendChild(pill);
-                } else if (lowerKey === 'sunset') {
-                    const pill = document.createElement('div');
-                    pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
-                    pillsContainer.appendChild(pill);
-                } else {
-                    const li = document.createElement('div');
-                    li.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${key}:</span> <span class="text-gray-800 font-medium text-right">${value}</span>`;
-                    list.appendChild(li);
-                }
+            // 3. Render Astro Timeline (Sun/Moon Visual Strip)
+            if (sunTimes.sunrise && sunTimes.sunset) {
+                const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+
+                const timelineDiv = document.createElement('div');
+                timelineDiv.className = "astro-timeline";
+                timelineDiv.innerHTML = `
+                    <div class="astro-time-point text-orange-600">
+                        <i class="fa-solid fa-sun text-xl mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase opacity-70">Sunrise</span>
+                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunrise)}</span>
+                    </div>
+                    <div class="h-8 w-px bg-orange-200"></div>
+                    <div class="astro-time-point text-indigo-900">
+                        <i class="fa-solid fa-moon text-xl mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase opacity-70">Sunset</span>
+                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunset)}</span>
+                    </div>
+                `;
+                list.appendChild(timelineDiv);
             }
+
+            // 4. Merge Data (Manual > Auto)
+            let displayData = { ...data.panchang };
+            if (!displayData['Tithi']) displayData['Tithi'] = `${autoData.tithi} (${autoData.paksha})`;
+            if (!displayData['Nakshatra']) displayData['Nakshatra'] = autoData.nakshatra;
+            if (!displayData['Yoga']) displayData['Yoga'] = autoData.yoga;
+            if (!displayData['Karana']) displayData['Karana'] = autoData.karana;
+
+            // Remove Sunrise/Sunset from grid (since we showed them in visual strip)
+            delete displayData['Sunrise'];
+            delete displayData['Sunset'];
+            delete displayData['Month']; // Usually shown in header
+
+            // 5. Render Data Grid (Tithi, Nakshatra, Yoga, Karana)
+            const gridDiv = document.createElement('div');
+            gridDiv.className = "panchang-grid";
+
+            const keys = ['Tithi', 'Nakshatra', 'Yoga', 'Karana'];
+            const icons = {
+                'tithi': 'fa-cloud-moon',
+                'nakshatra': 'fa-star',
+                'yoga': 'fa-dharmachakra',
+                'karana': 'fa-hourglass-half'
+            };
+            const colors = {
+                'tithi': 'text-purple-600',
+                'nakshatra': 'text-amber-500',
+                'yoga': 'text-blue-500',
+                'karana': 'text-teal-500'
+            };
+
+            keys.forEach(key => {
+                let val = displayData[key] || displayData[key.toLowerCase()] || '-';
+                let icon = icons[key.toLowerCase()] || 'fa-circle';
+                let color = colors[key.toLowerCase()] || 'text-gray-500';
+
+                // Helper to bold the Paksha part in Tithi
+                if(key === 'Tithi' && val.includes('(')) {
+                    val = val.replace(/\((.*?)\)/, '<span class="text-[9px] block text-gray-400 font-normal uppercase tracking-wide">$1</span>');
+                }
+
+                gridDiv.innerHTML += `
+                    <div class="panchang-item">
+                        <div class="panchang-label ${color}">
+                            <i class="fa-solid ${icon}"></i> ${key}
+                        </div>
+                        <div class="panchang-value truncate" title="${val.replace(/<[^>]*>/g, '')}">
+                            ${val}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Add manual entries that are NOT in the standard keys
+            Object.keys(displayData).forEach(k => {
+                if (!keys.includes(k) && !keys.includes(k.charAt(0).toUpperCase() + k.slice(1))) {
+                     gridDiv.innerHTML += `
+                        <div class="panchang-item">
+                            <div class="panchang-label text-gray-500"><i class="fa-solid fa-info-circle"></i> ${k}</div>
+                            <div class="panchang-value truncate">${displayData[k]}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            list.appendChild(gridDiv);
+
+            // 6. Render Muhurat Strip (Rahu, Yama, Abhijit)
+            if (muhurats) {
+                const muhuratDiv = document.createElement('div');
+                muhuratDiv.innerHTML = `<h4 class="text-xs font-bold text-gray-500 mb-2 mt-4 uppercase tracking-wider pl-1">Auspicious Timings</h4>`;
+
+                const strip = document.createElement('div');
+                strip.className = "muhurat-strip custom-scroll";
+
+                strip.innerHTML = `
+                    <div class="muhurat-pill muhurat-good" title="Best time for new beginnings">
+                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Abhijit</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.abhijit}</span>
+                    </div>
+                    <div class="muhurat-pill muhurat-bad" title="Avoid auspicious work">
+                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Rahu Kalam</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.rahu}</span>
+                    </div>
+                    <div class="muhurat-pill muhurat-bad" title="Inauspicious time">
+                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Yamaganda</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.yama}</span>
+                    </div>
+                `;
+
+                muhuratDiv.appendChild(strip);
+                list.appendChild(muhuratDiv);
+            }
+
+            // 7. Location Button Logic (Moved to bottom of list)
+            const locContainer = document.createElement('div');
+            locContainer.id = 'location-btn-container';
+            locContainer.className = "mt-4 pt-3 border-t border-gray-100 flex justify-center";
+
+            if (appState.config.location) {
+                 const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
+                 locContainer.innerHTML = `
+                    <div class="text-center w-full">
+                        <div class="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold inline-flex items-center gap-2 mb-2 border border-green-100">
+                            <i class="fa-solid fa-location-dot"></i> ${locName}
+                        </div>
+                        <button id="btn-location" onclick="getUserLocation()" class="block w-full text-[10px] text-gray-400 hover:text-orange-500 uppercase font-bold tracking-widest transition">
+                            Update Location
+                        </button>
+                    </div>`;
+            } else {
+                 locContainer.innerHTML = `
+                    <button id="btn-location" onclick="getUserLocation()" class="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm border border-orange-200 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-location-crosshairs"></i> Set Location for Timings
+                    </button>`;
+            }
+            list.appendChild(locContainer);
         }
 
         function stopLiveClock() {
