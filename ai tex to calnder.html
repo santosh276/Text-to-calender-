@@ -3620,15 +3620,30 @@ The word "Nua" means new and "Khai" means food.
             const langObj = langData[currentLang] || langData['en'];
             const seasonName = langObj.indianSeasons[seasonIndex];
 
+            // Retrieve detailed description
+            const rawSeasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex])
+                               ? appState.customSeasonDescriptions[seasonIndex]
+                               : (langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "");
+            const seasonDescHtml = formatSeasonDescription(rawSeasonDesc);
+
             // Inject Season Card at the top of the list container
             const seasonCard = document.createElement('div');
-            seasonCard.className = "season-ui-card group mb-4";
+            seasonCard.className = "season-ui-card group mb-4 flex-col items-start gap-4"; // Changed layout to column for better fit
             seasonCard.onclick = cycleSeasonCard;
+
+            // Re-structured inner HTML to include description always visible
             seasonCard.innerHTML = `
-                <div class="season-ui-icon-container" style="transform: scale(1); opacity: 1;">${seasonConfig.icon}</div>
-                <div class="season-ui-content">
-                    <span class="season-ui-label">Current Ritu</span>
-                    <span class="season-ui-title text-xl" style="color: ${seasonConfig.color};">${seasonName}</span>
+                <div class="flex items-center gap-4 w-full">
+                    <div class="season-ui-icon-container" style="transform: scale(1); opacity: 1;">${seasonConfig.icon}</div>
+                    <div class="season-ui-content flex-1">
+                        <span class="season-ui-label">Current Ritu</span>
+                        <span class="season-ui-title text-xl" style="color: ${seasonConfig.color};">${seasonName}</span>
+                    </div>
+                </div>
+                <div class="w-full border-t border-gray-200 pt-2 mt-1">
+                    <div class="text-xs text-gray-600 leading-relaxed font-sans">
+                        ${seasonDescHtml}
+                    </div>
                 </div>
             `;
             list.appendChild(seasonCard);
