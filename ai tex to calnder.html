@@ -4175,27 +4175,35 @@ function renderCalendarGrid(data) {
                 const eventCard = document.createElement('div');
                 eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
                 eventCard.onclick = () => openDayModal(upNextEvent.date, data);
-                eventCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)";
-                eventCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
+                eventCard.style.background = "linear-gradient(135deg, #B91C1C 0%, #7F1D1D 100%)";
+                eventCard.style.boxShadow = "0 10px 15px -3px rgba(153, 27, 27, 0.4), 0 4px 6px -4px rgba(153, 27, 27, 0.4)";
                 
+                // Modified OM Icon for Watermark (currentColor + Large)
+                const watermarkIcon = OM_ICON_SVG.replace('width="24"', 'width="160"')
+                                                 .replace('height="24"', 'height="160"')
+                                                 .replace('fill="#d4af37"', 'fill="currentColor"');
+
                 eventCard.innerHTML = `
-                    <div class="p-4 relative z-10 text-white flex flex-col gap-3">
+                    <div class="p-4 relative z-20 text-white flex flex-col gap-3">
                         <div class="flex justify-between items-start">
                              <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase flex items-center gap-2">
                                 <i class="fa-regular fa-calendar"></i> UP NEXT
                              </div>
-                             <div class="bg-white/20 backdrop-blur-[10px] px-3 py-1 rounded-full text-[10px] font-bold border border-white/50 shadow-lg">
+                             <div class="bg-white/10 backdrop-blur-[10px] px-3 py-1 rounded-full text-[10px] font-bold border border-white/20 shadow-sm">
                                 ${badgeText}
                              </div>
                         </div>
 
                         <div>
-                            <h3 class="font-extrabold text-lg leading-tight mb-1 drop-shadow-sm whitespace-normal">${upNextEvent.engName}</h3>
-                            <p class="text-sm font-medium opacity-90 font-oriya leading-relaxed">${upNextEvent.locName || ''}</p>
+                            <h3 class="font-extrabold text-lg leading-tight mb-1 drop-shadow-sm whitespace-normal relative z-10">${upNextEvent.engName}</h3>
+                            <p class="text-sm font-medium opacity-90 font-oriya leading-relaxed relative z-10">${upNextEvent.locName || ''}</p>
                         </div>
                     </div>
-                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
-                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-black/5 blur-xl pointer-events-none"></div>
+
+                    <!-- Watermark -->
+                    <div class="absolute -right-8 -bottom-10 text-white/10 z-10 pointer-events-none transform rotate-12">
+                        ${watermarkIcon}
+                    </div>
                 `;
                 section.appendChild(eventCard);
 
