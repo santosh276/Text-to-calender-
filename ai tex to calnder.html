@@ -426,6 +426,14 @@
             .sm\:flex-none { flex: none; }
         }
 
+    /* Missing Tablet/Desktop Utilities */
+    @media (min-width: 768px) {
+        .md\:bg-white { --tw-bg-opacity: 1; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)); }
+        .md\:rounded-xl { border-radius: 0.75rem; }
+        .md\:p-3 { padding: 0.75rem; }
+        .md\:border-green-500 { --tw-border-opacity: 1; border-color: rgb(34 197 94 / var(--tw-border-opacity, 1)); }
+    }
+
         /* ANIMATION UTILITIES */
         .fade-enter-active {
             opacity: 1;
@@ -539,6 +547,60 @@
             .order-3 { order: 3 !important; }
             .order-4 { order: 4 !important; }
         }
+
+    /* --- 1. GRID LAYOUT --- */
+    /* Mobile: Tight gap (Original) */
+    #calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem; /* gap-1 from original */
+    }
+    
+    /* Desktop: Spacious gap (Reference) */
+    @media (min-width: 768px) {
+        #calendar-grid {
+            gap: 0.75rem; /* gap-3 */
+        }
+    }
+
+    /* --- 2. DESKTOP ONLY STYLES (Reference Look) --- */
+    .today-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #22c55e;
+        color: white;
+        font-size: 9px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-bottom-left-radius: 8px;
+        z-index: 20;
+        box-shadow: -1px 1px 4px rgba(0,0,0,0.1);
+        display: none; 
+    }
+    @media (min-width: 768px) { .today-badge { display: block; } }
+
+    .event-pill {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 100%;
+        margin-top: 2px;
+    }
+    
+    /* --- 3. MOBILE ONLY STYLES (Original Look) --- */
+    /* Ensures the SVG icons are positioned exactly like the original app */
+    .mobile-tithi-icon {
+        width: 14px; 
+        height: 14px; 
+        position: absolute; 
+        top: 2px; 
+        right: 2px;
+    }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -807,60 +869,64 @@ The word "Nua" means new and "Khai" means food.
             <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full mobile-contents">
-                    <!-- Calendar Header -->
-                    <div class="bg-white rounded-3xl shadow-xl shadow-red-100/50 p-4 md:p-6 relative overflow-hidden z-10 border border-gray-200 order-1">
-                        <!-- Gradient Glow -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent pointer-events-none z-0"></div>
+                    
+                    <!-- Wrapper for Header & Grid to reduce gap on mobile -->
+                    <div class="flex flex-col gap-2 order-1 w-full">
+                        <!-- Calendar Header -->
+                        <div class="bg-white rounded-3xl shadow-xl shadow-red-100/50 p-4 md:p-6 relative overflow-hidden z-10 border border-gray-200">
+                            <!-- Gradient Glow -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent pointer-events-none z-0"></div>
 
-                         <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
-                        <div class="flex items-center justify-between w-full gap-4 relative z-10">
-                            <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                            </button>
-                            
-                            <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
-                                <!-- Adaptive Month/Year Container -->
-                                <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
-                                    <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md"></span>
-                                    <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
-                                </div>
-
-                                <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
+                             <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
+                            <div class="flex items-center justify-between w-full gap-4 relative z-10">
+                                <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
                                 
-                                <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-50 text-orange-600 px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100">
-                                    <i class="fa-solid fa-calendar-day"></i> Today
+                                <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
+                                    <!-- Adaptive Month/Year Container -->
+                                    <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
+                                        <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md"></span>
+                                        <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
+                                    </div>
+
+                                    <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
+                                    
+                                    <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-50 text-orange-600 px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100">
+                                        <i class="fa-solid fa-calendar-day"></i> Today
+                                    </button>
+                                </div>
+                                
+                                <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month" aria-label="Next Month">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- MONTH BANNER CAROUSEL -->
+                        <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[3/1] md:aspect-[5/1] bg-gray-100 border-4 border-white">
+                            <!-- Slides Wrapper -->
+                            <div id="banner-slides" class="flex transition-transform duration-500 ease-out h-full"></div>
                             
-                            <button onclick="changeMonth(1)" class="nav-btn flex-shrink-0" title="Next Month" aria-label="Next Month">
+                            <!-- Navigation Arrows -->
+                            <button id="banner-prev" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            </button>
+                            <button id="banner-next" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm">
                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </button>
+                            
+                            <!-- Close Button -->
+                            <button onclick="dismissBanner(event)" class="absolute right-2 top-2 bg-black/30 hover:bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center transition z-30 backdrop-blur-sm"><i class="fa-solid fa-times text-xs"></i></button>
+
+                            <!-- Dots -->
+                            <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
                         </div>
-                    </div>
 
-                    <!-- MONTH BANNER CAROUSEL -->
-                    <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[3/1] md:aspect-[5/1] bg-gray-100 border-4 border-white order-1">
-                        <!-- Slides Wrapper -->
-                        <div id="banner-slides" class="flex transition-transform duration-500 ease-out h-full"></div>
-                        
-                        <!-- Navigation Arrows -->
-                        <button id="banner-prev" class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                        </button>
-                        <button id="banner-next" class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 md:w-10 md:h-10 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition z-20 backdrop-blur-sm">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </button>
-                        
-                        <!-- Close Button -->
-                        <button onclick="dismissBanner(event)" class="absolute right-2 top-2 bg-black/30 hover:bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center transition z-30 backdrop-blur-sm"><i class="fa-solid fa-times text-xs"></i></button>
-
-                        <!-- Dots -->
-                        <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
-                    </div>
-
-                    <div class="bg-white rounded-xl shadow-lg p-2 md:p-3 order-1">
-                        <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
-                        <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
+                        <div class="bg-white rounded-xl shadow-lg p-2 md:p-3">
+                            <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
+                            <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
+                        </div>
                     </div>
                     
                     <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-3">
@@ -1201,9 +1267,9 @@ The word "Nua" means new and "Khai" means food.
         const RETRY_ICON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>`;
 
         const TITHI_ICONS = {
-            purnima: `<svg viewBox="0 0 24 24" style="width: 14px; height: 14px; position: absolute; top: 2px; right: 2px;" class="text-amber-400 drop-shadow-md" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
-            amavasya: `<svg viewBox="0 0 24 24" style="width: 14px; height: 14px; position: absolute; top: 2px; right: 2px;" class="text-black" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
-            ekadashi: `<svg viewBox="0 0 512 512" style="width: 14px; height: 14px; position: absolute; top: 2px; right: 2px;" class="text-indigo-400" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`
+            purnima: `<svg viewBox="0 0 24 24" class="w-full h-full text-amber-400 drop-shadow-md" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
+            amavasya: `<svg viewBox="0 0 24 24" class="w-full h-full text-black" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
+            ekadashi: `<svg viewBox="0 0 512 512" class="w-full h-full text-indigo-400" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`
         };
 
         // Season UI Component Data
@@ -3506,149 +3572,177 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
-        function renderCalendarGrid(data) {
-            const grid = document.getElementById('calendar-grid');
-            const headerRow = document.getElementById('grid-header');
-            const currentLang = appState.config.language || 'en';
-            const localizedDays = langData[currentLang] ? langData[currentLang].days : langData.en.days;
-            const englishDays = langData.en.days; // English reference for dual mode
+function renderCalendarGrid(data) {
+    const grid = document.getElementById('calendar-grid');
+    const headerRow = document.getElementById('grid-header');
+    const currentLang = appState.config.language || 'en';
+    const localizedDays = langData[currentLang] ? langData[currentLang].days : langData.en.days;
+    const englishDays = langData.en.days;
 
-            headerRow.innerHTML = '';
-            
-            localizedDays.forEach((day, index) => {
-                const isSunday = index === 0;
-                const div = document.createElement('div');
-                
-                // SMART FONT SIZING LOGIC - UPDATED
-                let textSizeClass = 'text-sm md:text-base'; // Default (English/Hindi)
-                
-                if (currentLang !== 'en' && currentLang !== 'hi') {
-                   // Regional languages (Odia, Bengali, Marathi, etc.)
-                   textSizeClass = 'text-[14px] md:text-base'; 
-                   
-                   // Specific Check for Wide Scripts (Malayalam, Kannada, Telugu)
-                   if (['ml', 'kn', 'te'].includes(currentLang)) {
-                       textSizeClass = 'text-[11px] md:text-sm leading-tight tracking-normal';
-                   }
-                   // Specific Check for Tamil
-                   else if (currentLang === 'ta') {
-                       textSizeClass = 'text-[9px] md:text-sm leading-tight tracking-normal';
-                   }
-                }
-                
-                // Added flex-col to stack items vertically
-                // ADDED: min-w-[3rem] md:min-w-[4rem] and py-3 for increased height/width
-                div.className = `w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 ${isSunday ? 'text-red-600' : 'text-gray-600'}`;
-                
-                if (currentLang === 'en') {
-                     // English Mode: Just show the day name
-                     const span = document.createElement('span');
-                     span.className = textSizeClass;
-                     span.innerText = day;
-                     div.appendChild(span);
-                } else {
-                     // Regional Mode: Show Regional + English
-                     // Top: Regional Name
-                     const regionalSpan = `<span class="${textSizeClass} leading-none mb-0.5">${day}</span>`;
-                     
-                     // Bottom: English Name (Smaller, Title Case)
-                     const engDay = englishDays[index];
-                     const titleCaseEng = engDay.charAt(0) + engDay.slice(1).toLowerCase();
-                     const englishSpan = `<span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">${titleCaseEng}</span>`;
-                     
-                     div.innerHTML = regionalSpan + englishSpan;
-                }
-                
-                div.title = day; 
-                headerRow.appendChild(div);
-            });
+    // --- 1. RENDER HEADER (Responsive Text Sizing) ---
+    headerRow.innerHTML = '';
+    localizedDays.forEach((day, index) => {
+        const isSunday = index === 0;
+        const engDay = englishDays[index].substring(0, 3).toUpperCase();
+        
+        // Conditional Font Size for Tamil (Prevent Overlap)
+        const localTextSize = (currentLang === 'ta') ? 'text-[9px] md:text-[11px]' : 'text-xs md:text-sm';
 
-            grid.innerHTML = '';
-            const firstDay = new Date(data.year, data.month, 1).getDay();
-            const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
-            const today = new Date();
-            for (let i = 0; i < firstDay; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'h-16 md:h-32 bg-gray-50 rounded';
-                grid.appendChild(cell);
-            }
-            for (let d = 1; d <= daysInMonth; d++) {
-                const isSunday = new Date(data.year, data.month, d).getDay() === 0;
-                const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
-                const dateKey = `${data.year}-${data.month}-${d}`;
-                
-                const detailsList = appState.details[dateKey];
-                // Use first detail for grid preview
-                const detail = (detailsList && Array.isArray(detailsList) && detailsList.length > 0) ? detailsList[0] : (detailsList && !Array.isArray(detailsList) ? detailsList : null);
-                
-                const cell = document.createElement('div');
-                
-                // Determine Background Class (Mutually Exclusive)
-                let bgClass = 'bg-white';
-                if (isSunday) bgClass = 'bg-red-50';
+        const div = document.createElement('div');
+        div.className = `w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center`;
+        div.innerHTML = `
+            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ${isSunday ? 'text-red-500' : ''}">${engDay}</span>
+            ${currentLang !== 'en' ? `<span class="${localTextSize} font-bold text-red-600 font-oriya mt-0.5">${day}</span>` : ''}
+        `;
+        headerRow.appendChild(div);
+    });
 
-                // Determine primary event
-                const dayEvents = data.events.filter(e => e.date === d);
-                let primaryEvent = null;
-                if (dayEvents.length > 0) {
-                    if (dayEvents.some(e => e.symbol === '!')) primaryEvent = '!';
-                    else if (dayEvents.some(e => e.symbol === '^')) primaryEvent = '^';
-                    else if (dayEvents.some(e => e.symbol === '*')) primaryEvent = '*';
-                    else if (dayEvents.some(e => e.symbol === '>')) primaryEvent = '>';
-                }
+    // --- 2. RENDER GRID CELLS ---
+    grid.innerHTML = '';
+    const firstDay = new Date(data.year, data.month, 1).getDay();
+    const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
+    const today = new Date();
 
-                if (primaryEvent && !isToday) {
-                    if (primaryEvent === '!') bgClass = 'bg-red-100';
-                    else if (primaryEvent === '^') bgClass = 'bg-green-100';
-                    else if (primaryEvent === '*') bgClass = 'bg-blue-100';
-                    else if (primaryEvent === '>') bgClass = 'bg-gray-100';
-                }
+    // Empty slots
+    for (let i = 0; i < firstDay; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'bg-transparent'; // Invisible placeholder
+        grid.appendChild(cell);
+    }
 
-                if (detail && detail.gridBgUrl) bgClass = 'bg-white'; // Reset if image exists
+    // Days
+    for (let d = 1; d <= daysInMonth; d++) {
+        const isSunday = new Date(data.year, data.month, d).getDay() === 0;
+        const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
+        const dateKey = `${data.year}-${data.month}-${d}`;
+        const dateObj = new Date(data.year, data.month, d);
+        
+        // Calculations
+        const astro = calculateTithi(dateObj); 
+        const dayEvents = data.events.filter(e => e.date === d);
+        
+        // ==========================================
+        // CONFIG 1: MOBILE STYLES (ORIGINAL)
+        // ==========================================
+        
+        // 1. Mobile Background Logic (Exact Original Priority)
+        let mobileBgClass = 'bg-white';
+        if (isSunday) mobileBgClass = 'bg-red-50'; // Base Sunday color
 
-                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative ${bgClass} hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
-                
-                if (detail && detail.gridBgUrl) {
-                    const bgUrl = resolveImageUrls(detail.gridBgUrl);
-                    cell.classList.add('has-bg-image');
-                    cell.innerHTML += `<div class="grid-cell-bg-wrapper"><img src="${bgUrl}" class="grid-cell-bg-img"><div class="grid-cell-overlay"></div></div>`;
-                }
-                cell.onclick = () => openDayModal(d, data);
-                // Note: bg-red-50 for Sunday is already handled in bgClass logic
-                if (isToday) cell.classList.add('today-glow', 'border-orange-400');
-
-                const contentWrapper = document.createElement('div');
-                contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full items-center justify-center';
-                
-                const dateNum = document.createElement('span');
-                dateNum.className = `text-lg md:text-2xl font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'}`;
-                if (isToday) dateNum.classList.add('text-deepred', 'underline');
-                dateNum.innerText = toNativeNum(d, currentLang);
-                contentWrapper.appendChild(dateNum);
-
-                // --- Tithi Icon Logic ---
-                const dateObj = new Date(data.year, data.month, d);
-                const tithiInfo = calculateTithi(dateObj);
-                
-                let iconHtml = '';
-                if (tithiInfo.index === 14) { // Purnima
-                    iconHtml = TITHI_ICONS.purnima;
-                } else if (tithiInfo.index === 29) { // Amavasya
-                    iconHtml = TITHI_ICONS.amavasya;
-                } else if (tithiInfo.index === 10 || tithiInfo.index === 25) { // Ekadashi (Shukla=10, Krishna=25)
-                    iconHtml = TITHI_ICONS.ekadashi;
-                }
-                
-                // ------------------------
-
-                cell.appendChild(contentWrapper);
-                
-                if (iconHtml) {
-                    cell.insertAdjacentHTML('beforeend', iconHtml);
-                }
-                grid.appendChild(cell);
-            }
+        if (dayEvents.length > 0) {
+            // Override Sunday if event exists
+            if (dayEvents.some(e => e.symbol === '!')) mobileBgClass = 'bg-red-100';      // Festival
+            else if (dayEvents.some(e => e.symbol === '^')) mobileBgClass = 'bg-green-100'; // Auspicious
+            else if (dayEvents.some(e => e.symbol === '*')) mobileBgClass = 'bg-blue-100';  // Holiday
+            else if (dayEvents.some(e => e.symbol === '>')) mobileBgClass = 'bg-gray-100';  // Other
         }
+
+        // 2. Mobile Tithi Icons (Exact Original SVGs)
+        let originalIconHtml = '';
+        if (astro.index === 14) originalIconHtml = TITHI_ICONS.purnima;
+        else if (astro.index === 29) originalIconHtml = TITHI_ICONS.amavasya;
+        else if (astro.index === 10 || astro.index === 25) originalIconHtml = TITHI_ICONS.ekadashi;
+        
+        // Wrap for mobile positioning
+        if (originalIconHtml) {
+             // Inject the class directly into the SVG string if needed, or wrap it
+             // TITHI_ICONS strings usually contain absolute positioning styles inline.
+             // We ensure they appear only on mobile by wrapping in a div.
+             originalIconHtml = `<div class="mobile-tithi-icon md:hidden">${originalIconHtml}</div>`;
+        }
+
+        // ==========================================
+        // CONFIG 2: DESKTOP STYLES (REFERENCE)
+        // ==========================================
+        
+        // Desktop Colors (Dot Colors)
+        let tithiDotColor = "bg-gray-400"; 
+        if (astro.index === 10 || astro.index === 25) tithiDotColor = "bg-purple-500"; 
+        else if (astro.index === 14) tithiDotColor = "bg-orange-500"; 
+        else if (astro.index === 29) tithiDotColor = "bg-gray-800"; 
+        else if (astro.paksha.includes("Shukla")) tithiDotColor = "bg-green-400"; 
+        else tithiDotColor = "bg-blue-400";
+
+        // Desktop Pills
+        let desktopPills = '';
+        dayEvents.slice(0, 2).forEach(ev => {
+            let pillColor = "bg-gray-100 text-gray-600";
+            if(ev.symbol === '!') pillColor = "bg-red-50 text-red-800";
+            else if(ev.symbol === '*') pillColor = "bg-blue-50 text-blue-700";
+            else if(ev.symbol === '^') pillColor = "bg-orange-100 text-orange-800";
+            desktopPills += `<span class="event-pill ${pillColor}">${ev.engName}</span>`;
+        });
+
+        // ==========================================
+        // CONSTRUCT HTML
+        // ==========================================
+        const cell = document.createElement('div');
+        
+        // CONTAINER CLASSES MERGE:
+        // Mobile: Uses 'mobileBgClass', 'min-h-[4rem]', 'p-1' (Compact)
+        // Desktop: Uses 'md:bg-white', 'md:min-h-[140px]', 'md:p-3' (Spacious)
+        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:bg-white`;
+        
+        // BORDER COLOR MERGE:
+        // Mobile: Orange Border (Original)
+        // Desktop: Green Border (Reference)
+        if (isToday) containerClasses += " border-2 border-orange-400 md:border-green-500 shadow-md today-glow"; 
+        else containerClasses += " border-gray-200";
+        
+        // Height classes match Original (mobile) vs Reference (desktop)
+        containerClasses += " min-h-[4rem] md:min-h-[140px] h-auto flex flex-col overflow-hidden group";
+
+        cell.className = containerClasses;
+        cell.onclick = () => openDayModal(d, data);
+
+        // --- 1. MOBILE INNER HTML (Matches Original EXACTLY) ---
+        // text-lg, centered, absolute icon
+        const mobileView = `
+            <div class="md:hidden w-full h-full flex flex-col items-center justify-center cell-content-relative">
+                <span class="text-lg font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'} ${isToday ? 'text-deepred underline' : ''}">
+                    ${toNativeNum(d, currentLang)}
+                </span>
+                ${originalIconHtml}
+            </div>
+        `;
+
+        // --- 2. DESKTOP INNER HTML (Matches Reference EXACTLY) ---
+        // text-2xl, top-left align, pills, details
+        const desktopView = `
+            <div class="hidden md:flex flex-col h-full justify-between w-full">
+                ${isToday ? '<div class="today-badge">TODAY</div>' : ''}
+                
+                <div class="flex justify-between items-start">
+                    <span class="text-2xl font-bold text-gray-800 ${isSunday ? 'text-red-600' : ''}">
+                        ${toNativeNum(d, currentLang)}
+                    </span>
+                     <span class="text-xs opacity-60">
+                        ${astro.index === 14 ? '<i class="fa-solid fa-circle text-orange-400"></i>' : (astro.index === 29 ? '<i class="fa-regular fa-circle text-gray-800"></i>' : '<i class="fa-regular fa-moon"></i>')}
+                    </span>
+                </div>
+
+                <div class="mt-2 flex flex-col gap-0.5">
+                    <div class="flex items-center gap-1.5">
+                         <div class="w-2 h-2 rounded-full ${tithiDotColor} flex-shrink-0"></div>
+                         <div class="text-[11px] font-semibold text-gray-600 truncate">
+                            <span class="text-[9px] uppercase text-gray-400 tracking-wider mr-1">${astro.paksha.substring(0,1)}</span>
+                            ${astro.tithi.split(' ')[0]}
+                         </div>
+                    </div>
+                    <div class="text-[10px] text-green-600 font-medium pl-3.5 truncate">
+                        ${astro.nakshatra}
+                    </div>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                        ${desktopPills}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        cell.innerHTML = mobileView + desktopView;
+        grid.appendChild(cell);
+    }
+}
 
         // --- NEW HELPER: Calculate Rahu Kalam, Yamaganda, Abhijit ---
         function getSpecialTimes(date, sunrise, sunset) {
