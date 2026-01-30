@@ -539,6 +539,58 @@
             .order-3 { order: 3 !important; }
             .order-4 { order: 4 !important; }
         }
+
+    /* 1. Base Grid */
+    #calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem;
+    }
+
+    /* 2. Desktop Grid (Spaced out) */
+    @media (min-width: 768px) {
+        #calendar-grid {
+            gap: 0.75rem;
+        }
+    }
+
+    /* 3. Reference Style Elements (Desktop Only) */
+    .today-badge {
+        position: absolute;
+        top: -10px;
+        right: -5px;
+        background-color: #22c55e;
+        color: white;
+        font-size: 9px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+        z-index: 20;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: none;
+    }
+    @media (min-width: 768px) { .today-badge { display: block; } }
+
+    .event-pill {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 100%;
+        margin-top: 2px;
+    }
+
+    /* Ensure Tithi Icons position correctly in Mobile View */
+    .mobile-tithi-icon {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 14px;
+        height: 14px;
+    }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -1201,9 +1253,9 @@ The word "Nua" means new and "Khai" means food.
         const RETRY_ICON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>`;
 
         const TITHI_ICONS = {
-            purnima: `<svg viewBox="0 0 24 24" style="width: 14px; height: 14px; position: absolute; top: 2px; right: 2px;" class="text-amber-400 drop-shadow-md" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
-            amavasya: `<svg viewBox="0 0 24 24" style="width: 14px; height: 14px; position: absolute; top: 2px; right: 2px;" class="text-black" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
-            ekadashi: `<svg viewBox="0 0 512 512" style="width: 14px; height: 14px; position: absolute; top: 2px; right: 2px;" class="text-indigo-400" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`
+            purnima: `<svg viewBox="0 0 24 24" class="mobile-tithi-icon text-amber-400 drop-shadow-md" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
+            amavasya: `<svg viewBox="0 0 24 24" class="mobile-tithi-icon text-black" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
+            ekadashi: `<svg viewBox="0 0 512 512" class="mobile-tithi-icon text-indigo-400" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`
         };
 
         // Season UI Component Data
@@ -3511,141 +3563,140 @@ The word "Nua" means new and "Khai" means food.
             const headerRow = document.getElementById('grid-header');
             const currentLang = appState.config.language || 'en';
             const localizedDays = langData[currentLang] ? langData[currentLang].days : langData.en.days;
-            const englishDays = langData.en.days; // English reference for dual mode
+            const englishDays = langData.en.days;
 
+            // --- 1. HEADER ---
             headerRow.innerHTML = '';
-            
             localizedDays.forEach((day, index) => {
                 const isSunday = index === 0;
+                const engDay = englishDays[index].substring(0, 3).toUpperCase();
+                
                 const div = document.createElement('div');
-                
-                // SMART FONT SIZING LOGIC - UPDATED
-                let textSizeClass = 'text-sm md:text-base'; // Default (English/Hindi)
-                
-                if (currentLang !== 'en' && currentLang !== 'hi') {
-                   // Regional languages (Odia, Bengali, Marathi, etc.)
-                   textSizeClass = 'text-[14px] md:text-base'; 
-                   
-                   // Specific Check for Wide Scripts (Malayalam, Kannada, Telugu)
-                   if (['ml', 'kn', 'te'].includes(currentLang)) {
-                       textSizeClass = 'text-[11px] md:text-sm leading-tight tracking-normal';
-                   }
-                   // Specific Check for Tamil
-                   else if (currentLang === 'ta') {
-                       textSizeClass = 'text-[9px] md:text-sm leading-tight tracking-normal';
-                   }
-                }
-                
-                // Added flex-col to stack items vertically
-                // ADDED: min-w-[3rem] md:min-w-[4rem] and py-3 for increased height/width
-                div.className = `w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center font-bold tracking-wider truncate px-0 ${isSunday ? 'text-red-600' : 'text-gray-600'}`;
-                
-                if (currentLang === 'en') {
-                     // English Mode: Just show the day name
-                     const span = document.createElement('span');
-                     span.className = textSizeClass;
-                     span.innerText = day;
-                     div.appendChild(span);
-                } else {
-                     // Regional Mode: Show Regional + English
-                     // Top: Regional Name
-                     const regionalSpan = `<span class="${textSizeClass} leading-none mb-0.5">${day}</span>`;
-                     
-                     // Bottom: English Name (Smaller, Title Case)
-                     const engDay = englishDays[index];
-                     const titleCaseEng = engDay.charAt(0) + engDay.slice(1).toLowerCase();
-                     const englishSpan = `<span class="text-[10px] md:text-[11px] font-sans opacity-75 leading-none tracking-normal text-gray-500">${titleCaseEng}</span>`;
-                     
-                     div.innerHTML = regionalSpan + englishSpan;
-                }
-                
-                div.title = day; 
+                div.className = `w-full py-2 flex flex-col items-center justify-center text-center`;
+                div.innerHTML = `
+                    <span class="text-[10px] md:text-sm font-bold text-gray-700 uppercase tracking-wider ${isSunday ? 'text-red-500' : ''}">${engDay}</span>
+                    ${currentLang !== 'en' ? `<span class="text-[9px] md:text-xs text-green-600 font-oriya mt-0.5">${day}</span>` : ''}
+                `;
                 headerRow.appendChild(div);
             });
 
+            // --- 2. GRID CELLS ---
             grid.innerHTML = '';
             const firstDay = new Date(data.year, data.month, 1).getDay();
             const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
             const today = new Date();
+
+            // Empty slots
             for (let i = 0; i < firstDay; i++) {
                 const cell = document.createElement('div');
-                cell.className = 'h-16 md:h-32 bg-gray-50 rounded';
+                cell.className = 'bg-transparent';
                 grid.appendChild(cell);
             }
+
+            // Days
             for (let d = 1; d <= daysInMonth; d++) {
                 const isSunday = new Date(data.year, data.month, d).getDay() === 0;
                 const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
                 const dateKey = `${data.year}-${data.month}-${d}`;
+                const dateObj = new Date(data.year, data.month, d);
                 
-                const detailsList = appState.details[dateKey];
-                // Use first detail for grid preview
-                const detail = (detailsList && Array.isArray(detailsList) && detailsList.length > 0) ? detailsList[0] : (detailsList && !Array.isArray(detailsList) ? detailsList : null);
+                // Calculations
+                const astro = calculateTithi(dateObj);
+                const dayEvents = data.events.filter(e => e.date === d);
                 
+                // --- 1. DETERMINE MOBILE BACKGROUND COLOR (Original Logic) ---
+                let mobileBgClass = 'bg-white';
+                if (isSunday) mobileBgClass = 'bg-red-50'; // Sunday Base
+
+                // Event Priority for Background
+                if (dayEvents.length > 0) {
+                    if (dayEvents.some(e => e.symbol === '!')) mobileBgClass = 'bg-red-100';      // Festival
+                    else if (dayEvents.some(e => e.symbol === '^')) mobileBgClass = 'bg-green-100'; // Auspicious
+                    else if (dayEvents.some(e => e.symbol === '*')) mobileBgClass = 'bg-blue-100';  // Holiday
+                    else if (dayEvents.some(e => e.symbol === '>')) mobileBgClass = 'bg-gray-100';  // Other
+                }
+
+                // --- 2. TITHI ICONS (Original SVG Logic for Mobile) ---
+                let originalIconHtml = '';
+                if (astro.index === 14) originalIconHtml = TITHI_ICONS.purnima;
+                else if (astro.index === 29) originalIconHtml = TITHI_ICONS.amavasya;
+                else if (astro.index === 10 || astro.index === 25) originalIconHtml = TITHI_ICONS.ekadashi;
+
+                // --- 3. DESKTOP COLORS (Reference Logic) ---
+                let tithiColor = "bg-gray-400";
+                if (astro.index === 10 || astro.index === 25) tithiColor = "bg-purple-500";
+                else if (astro.index === 14) tithiColor = "bg-orange-500";
+                else if (astro.index === 29) tithiColor = "bg-gray-800";
+                else if (astro.paksha.includes("Shukla")) tithiColor = "bg-green-400";
+                else tithiColor = "bg-blue-400";
+
+                // --- HTML GENERATION ---
                 const cell = document.createElement('div');
                 
-                // Determine Background Class (Mutually Exclusive)
-                let bgClass = 'bg-white';
-                if (isSunday) bgClass = 'bg-red-50';
+                // CONTAINER CLASSES:
+                // 1. apply mobileBgClass (Visible on Mobile)
+                // 2. apply md:bg-white (Overrides to White on Desktop)
+                let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:bg-white`;
 
-                // Determine primary event
-                const dayEvents = data.events.filter(e => e.date === d);
-                let primaryEvent = null;
-                if (dayEvents.length > 0) {
-                    if (dayEvents.some(e => e.symbol === '!')) primaryEvent = '!';
-                    else if (dayEvents.some(e => e.symbol === '^')) primaryEvent = '^';
-                    else if (dayEvents.some(e => e.symbol === '*')) primaryEvent = '*';
-                    else if (dayEvents.some(e => e.symbol === '>')) primaryEvent = '>';
-                }
+                // BORDERS:
+                if (isToday) containerClasses += " border-2 border-orange-400 md:border-green-500 shadow-md today-glow";
+                else containerClasses += " border-gray-200";
 
-                if (primaryEvent && !isToday) {
-                    if (primaryEvent === '!') bgClass = 'bg-red-100';
-                    else if (primaryEvent === '^') bgClass = 'bg-green-100';
-                    else if (primaryEvent === '*') bgClass = 'bg-blue-100';
-                    else if (primaryEvent === '>') bgClass = 'bg-gray-100';
-                }
-
-                if (detail && detail.gridBgUrl) bgClass = 'bg-white'; // Reset if image exists
-
-                cell.className = `grid-cell min-h-[4rem] md:min-h-[8rem] h-auto border border-gray-200 rounded p-1 md:p-2 relative ${bgClass} hover:shadow-md transition flex flex-col overflow-hidden group cursor-pointer`;
-                
-                if (detail && detail.gridBgUrl) {
-                    const bgUrl = resolveImageUrls(detail.gridBgUrl);
-                    cell.classList.add('has-bg-image');
-                    cell.innerHTML += `<div class="grid-cell-bg-wrapper"><img src="${bgUrl}" class="grid-cell-bg-img"><div class="grid-cell-overlay"></div></div>`;
-                }
+                cell.className = containerClasses;
                 cell.onclick = () => openDayModal(d, data);
-                // Note: bg-red-50 for Sunday is already handled in bgClass logic
-                if (isToday) cell.classList.add('today-glow', 'border-orange-400');
 
-                const contentWrapper = document.createElement('div');
-                contentWrapper.className = 'cell-content-relative w-full flex flex-col h-full items-center justify-center';
-                
-                const dateNum = document.createElement('span');
-                dateNum.className = `text-lg md:text-2xl font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'}`;
-                if (isToday) dateNum.classList.add('text-deepred', 'underline');
-                dateNum.innerText = toNativeNum(d, currentLang);
-                contentWrapper.appendChild(dateNum);
+                // --- VIEW 1: MOBILE (Original Layout: Centered Date + Icon + Color Fill) ---
+                const mobileView = `
+                    <div class="md:hidden w-full h-full flex flex-col items-center justify-center min-h-[4rem] relative">
+                        <span class="text-lg font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'} ${isToday ? 'text-deepred underline' : ''}">
+                            ${toNativeNum(d, currentLang)}
+                        </span>
+                        ${originalIconHtml} </div>
+                `;
 
-                // --- Tithi Icon Logic ---
-                const dateObj = new Date(data.year, data.month, d);
-                const tithiInfo = calculateTithi(dateObj);
-                
-                let iconHtml = '';
-                if (tithiInfo.index === 14) { // Purnima
-                    iconHtml = TITHI_ICONS.purnima;
-                } else if (tithiInfo.index === 29) { // Amavasya
-                    iconHtml = TITHI_ICONS.amavasya;
-                } else if (tithiInfo.index === 10 || tithiInfo.index === 25) { // Ekadashi (Shukla=10, Krishna=25)
-                    iconHtml = TITHI_ICONS.ekadashi;
-                }
-                
-                // ------------------------
+                // --- VIEW 2: DESKTOP (Reference Layout: Top Left Date + Pills + White Bg) ---
+                let desktopPills = '';
+                dayEvents.slice(0, 2).forEach(ev => {
+                    let pillColor = "bg-gray-100 text-gray-600";
+                    if(ev.symbol === '!') pillColor = "bg-red-50 text-red-800";
+                    else if(ev.symbol === '*') pillColor = "bg-blue-50 text-blue-700";
+                    else if(ev.symbol === '^') pillColor = "bg-orange-50 text-orange-800";
+                    desktopPills += `<span class="event-pill ${pillColor}">${ev.engName}</span>`;
+                });
 
-                cell.appendChild(contentWrapper);
-                
-                if (iconHtml) {
-                    cell.insertAdjacentHTML('beforeend', iconHtml);
-                }
+                const desktopView = `
+                    <div class="hidden md:flex flex-col h-full justify-between w-full min-h-[140px]">
+                        ${isToday ? '<div class="today-badge">TODAY</div>' : ''}
+
+                        <div class="flex justify-between items-start">
+                            <span class="text-2xl font-bold text-gray-800 ${isSunday ? 'text-red-600' : ''}">
+                                ${toNativeNum(d, currentLang)}
+                            </span>
+                             <span class="text-xs opacity-60">
+                                ${astro.index === 14 ? '<i class="fa-solid fa-circle text-orange-400"></i>' : (astro.index === 29 ? '<i class="fa-regular fa-circle text-gray-800"></i>' : '<i class="fa-regular fa-moon"></i>')}
+                            </span>
+                        </div>
+
+                        <div class="mt-2 flex flex-col gap-0.5">
+                            <div class="flex items-center gap-1.5">
+                                 <div class="w-2 h-2 rounded-full ${tithiColor} flex-shrink-0"></div>
+                                 <div class="text-[11px] font-semibold text-gray-600 truncate">
+                                    <span class="text-[9px] uppercase text-gray-400 tracking-wider mr-1">${astro.paksha.substring(0,1)}</span>
+                                    ${astro.tithi.split(' ')[0]}
+                                 </div>
+                            </div>
+                            <div class="text-[10px] text-green-600 font-medium pl-3.5 truncate">
+                                ${astro.nakshatra}
+                            </div>
+                            <div class="flex flex-wrap gap-1 mt-1">
+
+          ${desktopPills}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                cell.innerHTML = mobileView + desktopView;
                 grid.appendChild(cell);
             }
         }
