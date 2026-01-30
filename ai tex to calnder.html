@@ -96,6 +96,7 @@
 </style>
 <style>
         /* Custom Dot Colors */
+        .w-1\.5{width:.375rem}.h-1\.5{height:.375rem}
         .bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247/var(--tw-bg-opacity,1))}
         .bg-rose-500{--tw-bg-opacity:1;background-color:rgb(244 63 94/var(--tw-bg-opacity,1))}
         .bg-green-400{--tw-bg-opacity:1;background-color:rgb(74 222 128/var(--tw-bg-opacity,1))}
@@ -3756,7 +3757,7 @@ function renderCalendarGrid(data) {
         const dotColor = getTithiDotColor(astro.index, astro.paksha);
         const tithiRows = `
             <div class="flex items-center gap-2 pl-0.5 mt-1">
-                 <div class="w-2 h-2 rounded-full ${dotColor} flex-shrink-0 shadow-sm"></div>
+                 <div class="w-1.5 h-1.5 rounded-full ${dotColor} flex-shrink-0 shadow-sm"></div>
                  <div class="text-sm font-extrabold text-gray-900 truncate leading-tight tracking-tight">
                     ${astro.tithi}
                  </div>
