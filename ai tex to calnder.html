@@ -4174,7 +4174,8 @@ function renderCalendarGrid(data) {
                 const card = document.createElement('div');
                 card.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
                 card.onclick = () => openDayModal(upNextEvent.date, data);
-                card.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 100%)";
+                // Updated gradient to transition to Maroon (#800000) on the right side
+                card.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)";
                 card.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
                 
                 card.innerHTML = `
