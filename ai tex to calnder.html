@@ -3746,21 +3746,16 @@ function renderCalendarGrid(data) {
         `;
 
         // --- 2. DESKTOP INNER HTML ---
-        // Render All Tithis (Stacked)
-        let tithiRows = '';
-        const tithisToRender = astro.allTithis || [astro]; // Fallback to single if missing
-
-        tithisToRender.forEach(t => {
-            const dotColor = getTithiDotColor(t.index, t.paksha);
-            tithiRows += `
-                <div class="flex items-center gap-2 pl-0.5 mt-1">
-                     <div class="w-2 h-2 rounded-full ${dotColor} flex-shrink-0 shadow-sm"></div>
-                     <div class="text-sm font-extrabold text-gray-900 truncate leading-tight tracking-tight">
-                        ${t.tithi}
-                     </div>
-                </div>
-            `;
-        });
+        // Render Single Tithi (Primary)
+        const dotColor = getTithiDotColor(astro.index, astro.paksha);
+        const tithiRows = `
+            <div class="flex items-center gap-2 pl-0.5 mt-1">
+                 <div class="w-2 h-2 rounded-full ${dotColor} flex-shrink-0 shadow-sm"></div>
+                 <div class="text-sm font-extrabold text-gray-900 truncate leading-tight tracking-tight">
+                    ${astro.tithi}
+                 </div>
+            </div>
+        `;
 
         const desktopView = `
             <div class="hidden md:flex flex-col h-full justify-between w-full">
