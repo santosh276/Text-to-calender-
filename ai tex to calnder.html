@@ -442,6 +442,103 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* --- New Panchang Styles --- */
+        .panchang-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        @media (min-width: 1024px) {
+            .panchang-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .panchang-item {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s;
+        }
+
+        .panchang-item:hover {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-color: rgba(251, 146, 60, 0.3);
+        }
+
+        .panchang-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            color: #6b7280;
+            margin-bottom: 0.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .panchang-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.2;
+        }
+
+        .muhurat-strip {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .muhurat-pill {
+            flex: 1 1 110px;
+            border-radius: 0.5rem;
+            padding: 0.4rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+
+        .muhurat-bad { background: #fef2f2; border-color: #fee2e2; color: #991b1b; }
+        .muhurat-good { background: #f0fdf4; border-color: #dcfce7; color: #166534; }
+        .muhurat-neutral { background: #f3f4f6; border-color: #e5e7eb; color: #374151; }
+
+        .astro-timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to right, #fff7ed, #eef2ff);
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #fed7aa;
+        }
+
+        .astro-time-point {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        @media (max-width: 1023px) {
+            .mobile-contents { display: contents !important; }
+            .order-1 { order: 1 !important; }
+            .order-2 { order: 2 !important; }
+            .order-3 { order: 3 !important; }
+            .order-4 { order: 4 !important; }
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -512,7 +609,7 @@
                         <div class="guide-title"><i class="fa-solid fa-gear"></i> 1. App Configuration</div>
                         <div class="code-block">
 ::: config
-@ Title : <span class="hl-string">My Calendar 2025</span>
+@ Title : My Calendar 2026
 @ Logo : <span class="hl-string">![Logo](URL_or_Use_Upload_Btn)</span>
 @ Live Sync GitHub trigger in every : <span class="hl-string">24 hours</span>
 :::
@@ -524,7 +621,7 @@
                         <div class="guide-title"><i class="fa-regular fa-calendar"></i> 2. Calendar Grid Events</div>
                         <div class="code-block">
 ::: calendar
-<span class="hl-keyword">++ January 2025 ++</span>
+<span class="hl-keyword">++ January 2026 ++</span>
 01 <span class="hl-tag">*</span> New Year's Day [ନୂତନ ବର୍ଷ]
 14 <span class="hl-tag">!</span> Makar Sankranti
 23 <span class="hl-tag">!</span> Saraswati Puja / Netaji Jayanti [ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ]
@@ -545,7 +642,7 @@
                         <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 3. Detailed Day View</div>
                         <div class="code-block">
 ::: details
-<span class="hl-keyword">>> 14-01-2025</span>
+<span class="hl-keyword">>> 14-01-2026</span>
 <span class="hl-tag">![Banner](https://image.url)</span>
 <span class="hl-tag">@ Tag : Festival</span>
 
@@ -614,11 +711,12 @@ Horoscope body text here.
 :::
 
 ::: calendar
-++ January 2025 ++
+++ January 2026 ++
 01 * New Year's Day [ନୂତନ ବର୍ଷ]
 14 ! Makar Sankranti [ମକର ସଂକ୍ରାନ୍ତି]
 23 ! Saraswati Puja / Netaji Jayanti [ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ]
 26 * Republic Day [ଗଣତନ୍ତ୍ର ଦିବସ]
+31 ! Monthly Closing [ମାସାନ୍ତ]
 :::
 
 ::: horoscope_details
@@ -652,7 +750,7 @@ Financial matters improve today. Stay patient with loved ones and focus on long-
 -----------------------------------
 
 ::: calendar
-++ November 2025 ++
+++ November 2026 ++
 02 > Daily Meeting [ଦୈନିକ ବୈଠକ]
 20 ^ Special Community Setup
 21 ! Nuakhai [ନୂଆଖାଇ]
@@ -660,7 +758,7 @@ Financial matters improve today. Stay patient with loved ones and focus on long-
 :::
 
 ::: details
->> 21-11-2025
+>> 21-11-2026
 @ Tag : Major Agricultural Festival
 
 Nuakhai is the most important social festival of Western Odisha and Sambalpur region.
@@ -708,9 +806,9 @@ The word "Nua" means new and "Khai" means food.
 
             <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
-                <div class="flex-grow lg:w-3/4 space-y-2 w-full">
+                <div class="flex-grow lg:w-3/4 space-y-2 w-full mobile-contents">
                     <!-- Calendar Header -->
-                    <div class="bg-white rounded-3xl shadow-xl shadow-red-100/50 p-4 md:p-6 relative overflow-hidden z-10 border border-gray-200">
+                    <div class="bg-white rounded-3xl shadow-xl shadow-red-100/50 p-4 md:p-6 relative overflow-hidden z-10 border border-gray-200 order-1">
                         <!-- Gradient Glow -->
                         <div class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent pointer-events-none z-0"></div>
 
@@ -741,7 +839,7 @@ The word "Nua" means new and "Khai" means food.
                     </div>
 
                     <!-- MONTH BANNER CAROUSEL -->
-                    <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[3/1] md:aspect-[5/1] bg-gray-100 border-4 border-white">
+                    <div id="month-banner-container" class="hidden relative group overflow-hidden rounded-xl shadow-lg aspect-[3/1] md:aspect-[5/1] bg-gray-100 border-4 border-white order-1">
                         <!-- Slides Wrapper -->
                         <div id="banner-slides" class="flex transition-transform duration-500 ease-out h-full"></div>
                         
@@ -760,25 +858,26 @@ The word "Nua" means new and "Khai" means food.
                         <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-lg p-2 md:p-3">
+                    <div class="bg-white rounded-xl shadow-lg p-2 md:p-3 order-1">
                         <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
                         <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
                     </div>
-                </div>
-
-                <!-- Sidebar Section -->
-                <div class="lg:w-1/4 space-y-6">
-                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden">
-                        <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
-                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
-                        <ul id="festival-list" class="space-y-2 text-sm"></ul>
-                    </div>
-                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300">
+                    
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-3">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i>Month's Panchang</h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"></div>
                     </div>
-                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300">
+                </div>
+
+                <!-- Sidebar Section -->
+                <div class="lg:w-1/4 space-y-6 mobile-contents">
+                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden order-2">
+                        <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
+                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
+                        <ul id="festival-list" class="space-y-2 text-sm"></ul>
+                    </div>
+                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300 order-4">
                         <h3 class="font-bold text-amber-800 mb-3 border-b pb-1"><i class="fa-solid fa-hand-sparkles text-amber-500 mr-2"></i>Horoscope</h3>
                         <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
                     </div>
@@ -1133,6 +1232,134 @@ The word "Nua" means new and "Khai" means food.
             return { getTimes: getTimes };
         })();
 
+        /* --- VEDIC ASTRONOMY ALGORITHMS --- */
+        const VedicAstro = (function() {
+            // 1. Constants
+            const NAKSHATRAS = [
+                "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", 
+                "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", 
+                "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", 
+                "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", 
+                "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+            ];
+
+            const YOGAS = [
+                "Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", 
+                "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", 
+                "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan", 
+                "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla", 
+                "Brahma", "Indra", "Vaidhriti"
+            ];
+
+            const KARANAS = [
+                "Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti", // Movable (x8 cycles)
+                "Shakuni", "Chatushpada", "Naga", "Kimstughna" // Fixed (End of month)
+            ];
+
+            // 2. Math Helpers
+            const D2R = Math.PI / 180;
+            const R2D = 180 / Math.PI;
+            function normalize360(deg) { return ((deg % 360) + 360) % 360; }
+            function sin(deg) { return Math.sin(deg * D2R); }
+            function cos(deg) { return Math.cos(deg * D2R); }
+            function tan(deg) { return Math.tan(deg * D2R); }
+            function asin(val) { return Math.asin(val) * R2D; }
+            function atan2(y, x) { return Math.atan2(y, x) * R2D; }
+
+            // 3. Astronomical Calculations
+            function getJulianDay(date) {
+                return (date.getTime() / 86400000) + 2440587.5;
+            }
+
+            // Calculate Lahiri Ayanamsa (Precession)
+            function getAyanamsa(jd) {
+                const t = (jd - 2451545.0) / 36525;
+                // Standard Lahiri Ayanamsa formula approximation
+                return 23.85616 + 1.3962971 * t; 
+            }
+
+            function getSunLong(jd) {
+                const d = jd - 2451545.0;
+                const g = normalize360(357.529 + 0.98560028 * d); // Mean Anomaly
+                const q = normalize360(280.459 + 0.98564736 * d); // Mean Longitude
+                const L = normalize360(q + 1.915 * sin(g) + 0.020 * sin(2 * g)); // Geocentric Ecliptic Longitude (Tropical)
+                return L;
+            }
+
+            function getMoonLong(jd) {
+                const d = jd - 2451545.0;
+                const L = normalize360(218.316 + 13.176396 * d); // Mean Longitude
+                const M = normalize360(134.963 + 13.064993 * d); // Mean Anomaly
+                const F = normalize360(93.272 + 13.229350 * d);  // Dist from Node
+                
+                let l = L + 6.289 * sin(M); // Equation of center
+                l -= 1.274 * sin(M - 2 * (L - (280.459 + 0.98564736 * d))); // Evection (simplified)
+                l += 0.658 * sin(2 * (L - (280.459 + 0.98564736 * d))); // Variation
+                l -= 0.114 * sin(2 * F); 
+                return normalize360(l);
+            }
+
+            // 4. Public Function: Calculate Panchang
+            function calculate(dateObj) {
+                // We calculate for 6:00 AM local time (approx Sunrise Tithi)
+                const d = new Date(dateObj);
+                d.setHours(6, 0, 0, 0); 
+                
+                const jd = getJulianDay(d);
+                const ayanamsa = getAyanamsa(jd);
+                
+                // Get Tropical positions
+                const sunTrop = getSunLong(jd);
+                const moonTrop = getMoonLong(jd);
+
+                // Convert to Sidereal (Nirayana) by subtracting Ayanamsa
+                const sunSid = normalize360(sunTrop - ayanamsa);
+                const moonSid = normalize360(moonTrop - ayanamsa);
+
+                // --- CALCULATIONS ---
+
+                // 1. TITHI: (Moon - Sun) / 12
+                const diff = normalize360(moonSid - sunSid);
+                const tithiVal = diff / 12;
+                const tithiIndex = Math.floor(tithiVal);
+                const tithiLeft = 1 - (tithiVal - tithiIndex); // Percentage left
+
+                // 2. NAKSHATRA: Moon / 13.3333 (13 degrees 20 mins)
+                const nakVal = moonSid / (13 + (20/60));
+                const nakIndex = Math.floor(nakVal);
+
+                // 3. YOGA: (Sun + Moon) / 13.3333
+                const yogaVal = normalize360(sunSid + moonSid) / (13 + (20/60));
+                const yogaIndex = Math.floor(yogaVal);
+
+                // 4. KARANA: Half Tithi
+                // Logic: 1 Tithi = 2 Karanas. 
+                const karanaCalc = diff / 6; // divide by 6 degrees instead of 12
+                const kIndexTotal = Math.floor(karanaCalc);
+                // Map 1-60 total karan segments to the 11 specific Karana names
+                let karanaIndex = 0;
+                if (kIndexTotal === 0) karanaIndex = 7; // Shakuni
+                else if (kIndexTotal === 57) karanaIndex = 7; // Shakuni
+                else if (kIndexTotal === 58) karanaIndex = 8; // Chatushpada
+                else if (kIndexTotal === 59) karanaIndex = 9; // Naga
+                else if (kIndexTotal === 60) karanaIndex = 10; // Kimstughna
+                else {
+                    // Movable karanas cycle (1-7)
+                    karanaIndex = ((kIndexTotal - 1) % 7);
+                }
+
+                return {
+                    tithiIndex: tithiIndex % 30, // 0-29
+                    nakshatra: NAKSHATRAS[nakIndex % 27],
+                    yoga: YOGAS[yogaIndex % 27],
+                    karana: KARANAS[karanaIndex] || "Bava",
+                    ayanamsa: ayanamsa.toFixed(2)
+                };
+            }
+
+            return { calculate };
+        })();
+
         const SeasonIcons = {
             // Sun behind small cloud
             hemant: `
@@ -1413,197 +1640,231 @@ The word "Nua" means new and "Khai" means food.
         let isBannerDismissed = false;
 
         const langData = {
-            en: { 
-                days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
-                nums: ["0","1","2","3","4","5","6","7","8","9"], 
-                filters: ["Festivals", "Auspicious", "Holidays", "Other festivals"], 
-                horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
-                indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
-                indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
-                seasonDescriptions: ["Spring is the season of new beginnings, characterized by blooming flowers and moderate temperatures. It marks the end of winter and the rejuvenation of nature.", "Summer brings intense heat and longer days. The sun shines brightly, and water levels in rivers may drop. It is a time for indoor activities and staying hydrated.", "Monsoon arrives with refreshing rains, bringing relief from the summer heat. The earth turns lush green, and it is a vital season for agriculture and water replenishment.", "Autumn marks the transition from monsoon to winter. The sky clears, and the weather becomes pleasant. It is a season of festivals and harvest.", "Pre-winter is the transitional period before winter, characterized by cooler temperatures and shorter days as fall ends. It is a time for preparing for the cold, where weather can be inconsistent, with mornings being chilly and afternoons warmer. In some regions, such as India, it is also referred to as \"late autumn\" or \"Hemant\" and occurs in November and December.", "Winter is the coldest season, with chilly winds and shorter days. Nature appears dormant, and people seek warmth. It is a time for cozy gatherings and hot meals."],
-                paksha: ["Shukla Paksha", "Krishna Paksha"],
-                tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
-            },
-            hi: { 
-                days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], 
-                nums: ["०","१","२","३","४","५","६","७","८","९"], 
-                filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ", "अन्य त्यौहार"], 
-                horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
-                indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
-                indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
-                seasonDescriptions: ["वसंत नई शुरुआत का मौसम है, जिसमें फूल खिलते हैं और तापमान मध्यम रहता है। यह सर्दियों के अंत और प्रकृति के कायाकल्प का प्रतीक है।", "ग्रीष्म ऋतु तीव्र गर्मी और लंबे दिन लाती है। सूर्य चमकता है, और नदियों में जल स्तर गिर सकता है। यह घर के अंदर रहने और हाइड्रेटेड रहने का समय है।", "मानसून ताजी बारिश के साथ आता है, जो गर्मी से राहत दिलाता है। धरती हरी-भरी हो जाती है, और यह कृषि और जल पुनःपूर्ति के लिए एक महत्वपूर्ण मौसम है।", "शरद ऋतु मानसून से सर्दियों में संक्रमण का प्रतीक है। आकाश साफ हो जाता है, और मौसम सुहावना हो जाता है। यह त्योहारों और फसल का मौसम है।", "हेमंत ऋतु सर्दियों से पहले का संक्रमणकालीन समय है, जो ठंडक और छोटे दिनों की विशेषता है। यह ठंड की तैयारी का समय है, सुबह ठंडी और दोपहर गर्म होती है।", "शिशिर (सर्दी) सबसे ठंडा मौसम है, जिसमें ठंडी हवाएँ और छोटे दिन होते हैं। प्रकृति सुप्त दिखाई देती है, और लोग गर्मी की तलाश करते हैं। यह आरामदायक मुलाकातों और गर्म भोजन का समय है।"],
-                paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
-                tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
-            },
-            or: { 
-                days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], 
-                nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], 
-                filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ", "ଅନ୍ୟାନ୍ୟ ପର୍ବ"], 
-                horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" },
-                indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ", "ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼", "ଆଷାଢ଼ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ରବ", "ଭାଦ୍ରବ / ଆଶ୍ୱିନ", "ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"],
-                indianSeasons: ["ବସନ୍ତ", "ଗ୍ରୀଷ୍ମ", "ବର୍ଷା", "ଶରତ", "ହେମନ୍ତ", "ଶିଶିର"],
-                seasonDescriptions: ["ବସନ୍ତ ହେଉଛି ନୂତନ ଆରମ୍ଭର ଋତୁ, ଯେଉଁଥିରେ ଫୁଲ ଫୁଟେ ଏବଂ ତାପମାତ୍ରା ମଧ୍ୟମ ରହେ । ଏହା ଶୀତର ସମାପ୍ତି ଏବଂ ପ୍ରକୃତିର ନବୀକରଣକୁ ସୂଚିତ କରେ ।", "ଗ୍ରୀଷ୍ମ ପ୍ରଚଣ୍ଡ ଉତ୍ତାପ ଏବଂ ଲମ୍ବା ଦିନ ଆଣିଥାଏ । ସୂର୍ଯ୍ୟ ତେଜରେ କିରଣ ଦିଅନ୍ତି ଏବଂ ନଦୀର ଜଳସ୍ତର କମିଯାଏ । ଏହା ଘରେ ରହିବା ଏବଂ ପାଣି ପିଇବା ସମୟ ।", "ବର୍ଷା ଋତୁ ଶାନ୍ତିଦାୟକ ବର୍ଷା ସହ ଆସେ, ଯାହା ଗ୍ରୀଷ୍ମ ତାପରୁ ମୁକ୍ତି ଦିଏ । ପୃଥିବୀ ସବୁଜ ହୋଇଯାଏ ଏବଂ ଏହା କୃଷି ପାଇଁ ଏକ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଋତୁ ।", "ଶରତ ଋତୁ ବର୍ଷାରୁ ଶୀତକୁ ପରିବର୍ତ୍ତନର ସମୟ । ଆକାଶ ନିର୍ମଳ ହୁଏ ଏବଂ ପାଗ ମନୋରମ ହୋଇଯାଏ । ଏହା ପର୍ବପର୍ବାଣି ଏବଂ ଅମଳର ଋତୁ ।", "ହେମନ୍ତ ହେଉଛି ଶୀତ ପୂର୍ବର ସମୟ, ଯେଉଁଥିରେ ତାପମାତ୍ରା କମିଯାଏ ଏବଂ ଦିନ ଛୋଟ ହୁଏ । ଏହା ଶୀତ ପାଇଁ ପ୍ରସ୍ତୁତିର ସମୟ, ସକାଳ ଥଣ୍ଡା ଏବଂ ଅପରାହ୍ନ ଟିକେ ଗରମ ଥାଏ ।", "ଶିଶିର ହେଉଛି ସବୁଠାରୁ ଥଣ୍ଡା ଋତୁ, ଯେଉଁଥିରେ ଥଣ୍ଡା ପବନ ବହେ ଏବଂ ଦିନ ସବୁଠାରୁ ଛୋଟ ହୁଏ । ଲୋକମାନେ ଉଷୁମ ଖୋଜନ୍ତି ଏବଂ ଗରମ ଖାଦ୍ୟ ଖାଇବାକୁ ପସନ୍ଦ କରନ୍ତି ।"],
-                paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
-                tithis: ["ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ଅମାବାସ୍ୟା"]
-            },
-            bn: { 
-                days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], 
-                nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
-                filters: ["উৎসব", "শুভ দিন", "ছুটি", "অন্যান্য উৎসব"], 
-                horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "সিংহ", virgo: "কন্যা", libra: "তুলা", scorpio: "বৃশ্চিক", sagittarius: "ধনু", capricorn: "মकर", aquarius: "কুম্ভ", pisces: "মীন" },
-                indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
-                indianSeasons: ["বসন্ত", "গ্রীষ্ম", "বর্ষা", "শরৎ", "হেমন্ত", "শিশির"],
-                seasonDescriptions: ["বসন্ত হলো নতুন শুরুর ঋতু, যা ফুল ফোটা এবং মাঝারি তাপমাত্রা দ্বারা চিহ্নিত। এটি শীতের শেষ এবং প্রকৃতির পুনরুজ্জীবনের প্রতীক।", "গ্রীষ্ম তীব্র তাপ এবং দীর্ঘ দিন নিয়ে আসে। সূর্য উজ্জ্বলভাবে কিরণ দেয় এবং নদীর জলস্তর কমে যেতে পারে। এটি ঘরের ভেতরে থাকা এবং হাইড্রেটেড থাকার সময়।", "বর্ষা সতেজ বৃষ্টি নিয়ে আসে, যা গ্রীষ্মের তাপ থেকে মুক্তি দেয়। পৃথিবী সজীব সবুজ হয়ে ওঠে এবং এটি কৃষি ও জল পুনর্ভরণের জন্য একটি গুরুত্বপূর্ণ ঋতু।", "শরৎ বর্ষা থেকে শীতে রূপান্তরের সময়। আকাশ পরিষ্কার হয়ে যায় এবং আবহাওয়া মনোরম হয়। এটি উৎসব এবং ফসলের ঋতু।", "হেমন্ত হলো শীতের আগের ক্রান্তিকাল, যা শীতল তাপমাত্রা এবং ছোট দিন দ্বারা চিহ্নিত। এটি শীতের প্রস্তুতির সময়, যেখানে সকাল ঠান্ডা এবং বিকেল উষ্ণ হতে পারে।", "শীত হলো সবচেয়ে ঠান্ডা ঋতু, যেখানে ঠান্ডা বাতাস এবং ছোট দিন থাকে। প্রকৃতি সুপ্ত মনে হয় এবং মানুষ উষ্ণতা খোঁজে। এটি আরামদায়ক সমাবেশ এবং গরম খাবারের সময়।"],
-                paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
-                tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
-            },
-            mr: { 
-                days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], 
-                nums: ["०","१","२","३","४","५","६","७","८","९"], 
-                filters: ["सण", "शुभ दिवस", "सुट्ट्या", "इतर सण"], 
-                horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
-                indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
-                indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
-                seasonDescriptions: ["वसंत ऋतू नवीन सुरुवातीचा काळ आहे, जो फुललेली फुले आणि मध्यम तापमानाने ओळखला जातो. हा हिवाळ्याचा शेवट आणि निसर्गाच्या पुनरुज्जीवनाचा काळ आहे.", "ग्रीष्म ऋतू तीव्र उष्णता आणि मोठे दिवस आणतो. सूर्य प्रखर असतो आणि नद्यांमधील पाण्याची पातळी कमी होऊ शकते. हा घरात राहण्याचा आणि हायड्रेटेड राहण्याचा काळ आहे.", "वर्षा ऋतू रिमझिम पावसासह येतो, जो उन्हाळ्याच्या उष्णतेपासून दिलासा देतो. पृथ्वी हिरवीगार होते आणि शेती व पाण्याच्या पुनर्भरासाठी हा महत्त्वाचा ऋतू आहे.", "शरद ऋतू पावसाळ्याकडून हिवाळ्याकडे होणारा बदल दर्शवतो. आकाश निरभ्र होते आणि हवामान आल्हाददायक असते. हा सण आणि कापणीचा काळ आहे.", "हेमंत ऋतू हिवाळ्यापूर्वीचा संक्रमण काळ आहे, जो थंड तापमान आणि लहान दिवसांनी ओळखला जातो. हा थंडीची तयारी करण्याचा काळ आहे, जिथे सकाळ थंड आणि दुपार उबदार असते.", "शिशिर (हिवाळा) हा सर्वात थंड ऋतू आहे, ज्यामध्ये थंड वारे आणि लहान दिवस असतात. निसर्ग शांत दिसतो आणि लोक उबदारपणा शोधतात. हा उबदार भेटीगाठी आणि गरम जेवणाचा काळ आहे."],
-                paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
-                tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
-            },
-            gu: { 
-                days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], 
-                nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], 
-                filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ", "અન્ય તહેવારો"], 
-                horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચિક", sagittarius: "ધનુ", capricorn: "મકર", aquarius: "કુંભ", pisces: "મીન" },
-                indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"],
-                indianSeasons: ["વસંત", "ગ્રીષ્મ", "વર્ષા", "શરદ", "હેમંત", "શિશિર"],
-                seasonDescriptions: ["વસંત નવી શરૂઆતની ઋતુ છે, જે ખીલેલા ફૂલો અને મધ્યમ તાપમાન દ્વારા વર્ગીકૃત થયેલ છે. તે શિયાળાનો અંત અને પ્રકૃતિના પુનર્જીવનનું પ્રતીક છે.", "ગ્રીષ્મ ઋતુ તીવ્ર ગરમી અને લાંબા દિવસો લાવે છે. સૂર્ય તેજસ્વી રીતે ચમકે છે, અને નદીઓમાં પાણીનું સ્તર ઘટી શકે છે. આ અંદર રહેવાનો અને હાઇડ્રેટેડ રહેવાનો સમય છે.", "વર્ષા ઋતુ તાજગીભર્યા વરસાદ સાથે આવે છે, જે ગરમીથી રાહત આપે છે. ધરતી લીલીછમ બની જાય છે, અને તે ખેતી અને પાણીના પુનઃભરણ માટે મહત્વપૂર્ણ ઋતુ છે.", "શરદ ઋતુ ચોમાસાથી શિયાળામાં સંક્રમણ સૂચવે છે. આકાશ સ્વચ્છ બને છે, અને હવામાન ખુશનુમા બને છે. તે તહેવારો અને લણણીની ઋતુ છે.", "હેમંત ઋતુ શિયાળા પહેલાનો સંક્રમણ સમય છે, જે ઠંડા તાપમાન અને ટૂંકા દિવસો દ્વારા વર્ગીકૃત થયેલ છે. આ ઠંડી માટે તૈયારી કરવાનો સમય છે.", "શિશિર (શિયાળો) સૌથી ઠંડી ઋતુ છે, જેમાં ઠંડા પવનો અને ટૂંકા દિવસો હોય છે. પ્રકૃતિ શાંત દેખાય છે, અને લોકો હૂંફ શોધે છે."],
-                paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
-                tithis: ["પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "પૂનમ", "પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "અમાસ"]
-            },
-            pa: { 
-                days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], 
-                nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], 
-                filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ", "ਹੋਰ ਤਿਉਹਾਰ"], 
-                horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" },
-                indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
-                indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"],
-                seasonDescriptions: ["ਬਸੰਤ ਨਵੀਂ ਸ਼ੁਰੂਆਤ ਦਾ ਮੌਸਮ ਹੈ, ਜੋ ਖਿੜੇ ਹੋਏ ਫੁੱਲਾਂ ਅਤੇ ਦਰਮਿਆਨੇ ਤਾਪਮਾਨ ਦੁਆਰਾ ਦਰਸਾਇਆ ਜਾਂਦਾ ਹੈ। ਇਹ ਸਰਦੀਆਂ ਦੇ ਅੰਤ ਅਤੇ ਕੁਦਰਤ ਦੇ ਪੁਨਰਜਨਮ ਦਾ ਪ੍ਰਤੀਕ ਹੈ।", "ਗਰਮੀ ਦਾ ਮੌਸਮ ਤੇਜ਼ ਗਰਮੀ ਅਤੇ ਲੰਬੇ ਦਿਨ ਲਿਆਉਂਦਾ ਹੈ। ਸੂਰਜ ਚਮਕਦਾ ਹੈ ਅਤੇ ਨਦੀਆਂ ਵਿੱਚ ਪਾਣੀ ਦਾ ਪੱਧਰ ਘੱਟ ਸਕਦਾ ਹੈ।", "ਬਰਸਾਤ ਦਾ ਮੌਸਮ ਤਾਜ਼ਗੀ ਭਰਪੂਰ ਮੀਂਹ ਨਾਲ ਆਉਂਦਾ ਹੈ, ਜੋ ਗਰਮੀ ਤੋਂ ਰਾਹਤ ਦਿੰਦਾ ਹੈ। ਧਰਤੀ ਹਰੀ-ਭਰੀ ਹੋ ਜਾਂਦੀ ਹੈ ਅਤੇ ਇਹ ਖੇਤੀਬਾੜੀ ਲਈ ਮਹੱਤਵਪੂਰਨ ਹੈ।", "ਪਤਝੜ (ਸ਼ਰਦ) ਬਰਸਾਤ ਤੋਂ ਸਰਦੀਆਂ ਵਿੱਚ ਤਬਦੀਲੀ ਦਾ ਪ੍ਰਤੀਕ ਹੈ। ਅਸਮਾਨ ਸਾਫ਼ ਹੋ ਜਾਂਦਾ ਹੈ ਅਤੇ ਮੌਸਮ ਸੁਹਾਵਣਾ ਹੋ ਜਾਂਦਾ ਹੈ।", "ਹੇਮੰਤ ਸਰਦੀਆਂ ਤੋਂ ਪਹਿਲਾਂ ਦਾ ਸਮਾਂ ਹੈ, ਜਿਸ ਵਿੱਚ ਠੰਡਾ ਤਾਪਮਾਨ ਅਤੇ ਛੋਟੇ ਦਿਨ ਹੁੰਦੇ ਹਨ। ਇਹ ਠੰਡ ਲਈ ਤਿਆਰੀ ਕਰਨ ਦਾ ਸਮਾਂ ਹੈ।", "ਸਰਦੀ (ਸ਼ਿਸ਼ਿਰ) ਸਭ ਤੋਂ ਠੰਡਾ ਮੌਸਮ ਹੈ, ਜਿਸ ਵਿੱਚ ਠੰਡੀਆਂ ਹਵਾਵਾਂ ਅਤੇ ਛੋਟੇ ਦਿਨ ਹੁੰਦੇ ਹਨ। ਕੁਦਰਤ ਸ਼ਾਂਤ ਦਿਖਾਈ ਦਿੰਦੀ ਹੈ ਅਤੇ ਲੋਕ ਨਿੱਘ ਭਾਲਦੇ ਹਨ।"],
-                paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
-                tithis: ["ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਮਾਸ਼ੀ", "ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਮੱਸਿਆ"]
-            },
-            ta: { 
-                days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], 
-                nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], 
-                filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை", "மற்ற பண்டிகைகள்"], 
-                horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" },
-                indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"],
-                indianSeasons: ["இளவேனில்", "முதுவேனில்", "கார்", "குளிர்", "முன்பனி", "பின்பனி"],
-                seasonDescriptions: ["இளவேனில் (வசந்த காலம்) என்பது சித்திரை மற்றும் வைகாசி மாதங்களை உள்ளடக்கியது. இது மிதமான வெப்பம் மற்றும் மரங்கள் துளிர்க்கும் புதிய தொடக்கங்களின் காலம்.", "முதுவேனில் (கோடை காலம்) என்பது ஆனி மற்றும் ஆடி மாதங்களை உள்ளடக்கியது. இது கத்திரி வெயில் மற்றும் மிகுந்த வெப்பம் நிறைந்த காலம்.", "கார் காலம் (மழைக்காலம்) என்பது ஆவணி மற்றும் புரட்டாசி மாதங்களை உள்ளடக்கியது. இது கருமேகங்கள் சூழ்ந்து மழை பொழியும் பசுமையான காலம்.", "கூதிர் காலம் (குளிர் காற்று) என்பது ஐப்பசி மற்றும் கார்த்திகை மாதங்களை உள்ளடக்கியது. இது மழை குறைந்து குளிர்ந்த காற்று வீசும் காலம்.", "முன்பனிக்காலம் என்பது மார்கழி மற்றும் தை மாதங்களை உள்ளடக்கியது. இது அதிகாலை நேரங்களில் பனிப்பொழிவு அதிகமாக இருக்கும் காலம்.", "பின்பனிக்காலம் என்பது மாசி மற்றும் பங்குனி மாதங்களை உள்ளடக்கியது. இது பனி விலகி வெயில் மிதமாகத் தொடங்கும் காலம்."],
-                paksha: ["வளர்பிறை", "தேய்பிறை"],
-                tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "அமாவாசை"]
-            },
-            te: { 
-                days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], 
-                nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], 
-                filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు", "ఇతర పండుగలు"], 
-                horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" },
-                indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"],
-                indianSeasons: ["వసంత", "గ్రీష్మ", "వర్ష", "శరత్", "హేమంత", "శిశిర"],
-                seasonDescriptions: ["వసంత ఋతువు (Spring) కొత్త ఆరంభాలకు చిహ్నం. చైత్రం మరియు వైశాఖ మాసాలలో చెట్లు చిగురించి, పూలు పూసి ప్రకృతి అందంగా మారుతుంది.", "గ్రీష్మ ఋతువు (Summer) తీవ్రమైన ఎండలను తెస్తుంది. జ్యేష్ఠం మరియు ఆషాఢ మాసాలలో పగటి సమయం ఎక్కువగా ఉండి, నదులు ఎండిపోవచ్చు.", "వర్ష ఋతువు (Monsoon) శ్రావణం మరియు భాద్రపద మాసాలలో వస్తుంది. వర్షాలతో నేల పచ్చగా మారుతుంది, ఇది వ్యవసాయానికి కీలకమైన సమయం.", "శరదృతువు (Autumn) ఆశ్వయుజం మరియు కార్తీక మాసాలలో వస్తుంది. ఆకాశం నిర్మలంగా ఉంటుంది, వెన్నెల కాస్తుంది, మరియు ఇది పండుగలకు ప్రసిద్ధి.", "హేమంత ఋతువు (Pre-Winter) మార్గశిరం మరియు పుష్య మాసాలలో వస్తుంది. చలి గాలులు మొదలై, ఉదయం పూట మంచు కురుస్తుంది.", "శిశిర ఋతువు (Winter) మాఘం మరియు ఫాల్గుణ మాసాలలో ఉంటుంది. ఇది అత్యంత చలిగా ఉండే కాలం, చెట్లు ఆకులు రాల్చే సమయం."],
-                paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
-                tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "అమావాస్య"]
-            },
-            kn: { 
-                days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], 
-                nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], 
-                filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು", "ಇತರ ಹಬ್ಬಗಳು"], 
-                horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" },
-                indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"],
-                indianSeasons: ["ವಸಂತ", "ಗ್ರೀಷ್ಮ", "ವರ್ಷ", "ಶರತ್", "ಹೇಮಂತ", "ಶಿಶಿರ"],
-                seasonDescriptions: ["ವಸಂತ ಋತು (Spring) ಹೊಸ ಆರಂಭದ ಕಾಲ. ಚೈತ್ರ ಮತ್ತು ವೈಶಾಖ ಮಾಸಗಳಲ್ಲಿ ಗಿಡಮರಗಳು ಚಿಗುರಿ, ಹೂಗಳು ಅರಳಿ ಪ್ರಕೃತಿ ಸುಂದರವಾಗಿ ಕಾಣುತ್ತದೆ.", "ಗ್ರೀಷ್ಮ ಋತು (Summer) ಬಿಸಿಲಿನ ತಾಪವನ್ನು ತರುತ್ತದೆ. ಜ್ಯೇಷ್ಠ ಮತ್ತು ಆಷಾಢ ಮಾಸಗಳಲ್ಲಿ ಹಗಲು ದೀರ್ಘವಾಗಿರುತ್ತದೆ ಮತ್ತು ನೀರಿನ ಮಟ್ಟ ಕಡಿಮೆಯಾಗಬಹುದು.", "ವರ್ಷ ಋತು (Monsoon) ಶ್ರಾವಣ ಮತ್ತು ಭಾದ್ರಪದ ಮಾಸಗಳಲ್ಲಿ ಬರುತ್ತದೆ. ಮಳೆಯಿಂದ ಭೂಮಿ ಹಸಿರಾಗುತ್ತದೆ, ಇದು ಕೃಷಿಗೆ ಪ್ರಮುಖ ಕಾಲ.", "ಶರದೃತು (Autumn) ಆಶ್ವಯುಜ ಮತ್ತು ಕಾರ್ತಿಕ ಮಾಸಗಳಲ್ಲಿ ಬರುತ್ತದೆ. ಆಕಾಶ ಸ್ವಚ್ಛವಾಗಿರುತ್ತದೆ ಮತ್ತು ಹಬ್ಬಗಳಿಗೆ ಇದು ಸೂಕ್ತ ಸಮಯ.", "ಹೇಮಂತ ಋತು (Pre-Winter) ಮಾರ್ಗಶಿರ ಮತ್ತು ಪುಷ್ಯ ಮಾಸಗಳಲ್ಲಿ ಬರುತ್ತದೆ. ತಂಪು ಹವೆ ಮತ್ತು ಇಬ್ಬನಿ ಬೀಳುವ ಕಾಲವಿದು.", "ಶಿಶಿರ ಋತು (Winter) ಮಾಘ ಮತ್ತು ಫಾಲ್ಗುಣ ಮಾಸಗಳಲ್ಲಿ ಇರುತ್ತದೆ. ಇದು ಅತಿ ಹೆಚ್ಚು ಚಳಿ ಮತ್ತು ಎಲೆ ಉದುರುವ ಕಾಲ."],
-                paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
-                tithis: ["ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಅಮಾವಾಸ್ಯೆ"]
-            },
-            ml: { 
-                days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], 
-                nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], 
-                filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി", "മറ്റ് ഉത്സവങ്ങൾ"], 
-                horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" },
-                indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"],
-                indianSeasons: ["വസന്തം", "ഗ്രീഷ്മം", "വർഷം", "ശരത്", "ഹേമന്തം", "ശിശിരം"],
-                seasonDescriptions: ["വസന്തം (Spring) പുതിയ തുടക്കങ്ങളുടെ കാലമാണ്. പൂക്കൾ വിരിയുകയും പ്രകൃതി മനോഹരമാവുകയും ചെയ്യുന്ന ഈ കാലം ശൈത്യകാലത്തിന്റെ അവസാനത്തെ കുറിക്കുന്നു.", "ഗ്രീഷ്മം (Summer) കഠിനമായ ചൂടും നീണ്ട പകലുകളും കൊണ്ടുവരുന്നു. സൂര്യൻ പ്രകാശിക്കുന്നു, ജലനിരപ്പ് താഴാൻ സാധ്യതയുണ്ട്. വേനൽക്കാല വസ്ത്രങ്ങൾ ധരിക്കേണ്ട സമയമാണിത്.", "വർഷം (Monsoon) മഴക്കാലമാണ്. ഭൂമി പച്ചപ്പണിയുന്നു, കാർഷികാവശ്യങ്ങൾക്കും ജലസംഭരണത്തിനും ഇത് വളരെ പ്രധാനപ്പെട്ട സമയമാണ്.", "ശരത് (Autumn) മഴക്കാലത്തിൽ നിന്ന് ശൈത്യകാലത്തിലേക്കുള്ള മാറ്റമാണ്. ആകാശം തെളിയുകയും അന്തരീക്ഷം സുഖകരമാവുകയും ചെയ്യുന്നു. ഇത് ഉത്സവങ്ങളുടെ കാലമാണ്.", "ഹേമന്തം (Pre-Winter) ശൈത്യകാലത്തിന് മുൻപുള്ള സമയമാണ്. തണുത്ത കാലാവസ്ഥയും ചെറിയ പകലുകളും ഇതിന്റെ പ്രത്യേകതയാണ്. തണുപ്പിനെ നേരിടാൻ തയ്യാറെടുക്കേണ്ട സമയമാണിത്.", "ശിശിരം (Winter) ഏറ്റവും തണുപ്പുള്ള കാലമാണ്. തണുത്ത കാറ്റും ചെറിയ പകലുകളും ഉണ്ടാകും. പ്രകൃതി ശാന്തമാകുന്നു, ആളുകൾ ചൂട് തേടുന്നു."],
-                paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
-                tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "പൗർണ്ണമി", "പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "അമാവാസി"]
-            }
-        };
+    en: { 
+        days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
+        nums: ["0","1","2","3","4","5","6","7","8","9"], 
+        filters: ["Festivals", "Auspicious", "Holidays", "Other festivals"], 
+        horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
+        indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
+        indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
+        seasonDescriptions: [
+            "Vasant Ritu is the season of rejuvenation, where nature awakens with vibrant colors and blooming flowers like the Flame of the Forest. It signifies the arrival of hope and joy, celebrated grandly with the playful colors of Holi, the harvest cheer of Baisakhi, and the wisdom of Vasant Panchami dedicated to Goddess Saraswati.", 
+            "Grishma Ritu brings the intensity of the sun, marked by long days and the sweet aroma of ripening mangoes and melons. While the heat rises, it is a time for spiritual observances like Ram Navami and Akshaya Tritiya, and seeking coolness in traditional refreshments like buttermilk and sandalwood.", 
+            "Varsha Ritu transforms the parched earth into a lush green paradise with the rhythm of falling rain and the croaking of frogs. This season of life and devotion is marked by the holy month of Shravan, the sibling bond of Raksha Bandhan, and the birth of Lord Krishna on Janmashtami.", 
+            "Sharad Ritu clears the skies and brings a pleasant coolness, signaling the start of India's grandest festivities under the moonlight. The landscape is adorned with white Kash flowers as the country celebrates the nine nights of Navratri, the victory of Dussehra, and the bright moon of Sharad Purnima.", 
+            "Hemant Ritu introduces a crisp chill in the air, making it the perfect time for lighting earthen lamps and enjoying warm family gatherings. The season glows with the spiritual radiance of Diwali, the devotion of Chhath Puja to the Sun God, and the sibling bond of Bhai Dooj.", 
+            "Shishir Ritu is the season of cold winds and cozy comforts, where people gather around bonfires to enjoy winter treats made of sesame and jaggery. It is a time of harvest and transition, celebrated with Makar Sankranti, the warmth of Lohri, and the patriotic spirit of Republic Day."
+        ],
+        paksha: ["Shukla Paksha", "Krishna Paksha"],
+        tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
+    },
+    hi: { 
+        days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], 
+        nums: ["०","१","२","३","४","५","६","७","८","९"], 
+        filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ", "अन्य त्यौहार"], 
+        horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
+        indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
+        indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
+        seasonDescriptions: [
+            "वसंत ऋतु उत्तर भारत में पीली सरसों के खेतों और टेसू के फूलों की बहार लेकर आती है, जो धरती को सुनहरी चादर में लपेट देती है। यह उल्लास का समय है जब हम होली के रंगों में सराबोर होते हैं, बसंत पंचमी पर विद्या की देवी की पूजा करते हैं और महाशिवरात्रि की भक्ति का आनंद लेते हैं।", 
+            "ग्रीष्म ऋतु की तेज धूप और 'लू' के थपेड़ों के बीच, मिट्टी के घड़े का पानी और रसीले दशहरी आम जीवन को शीतलता प्रदान करते हैं। तपती गर्मी के बावजूद, राम नवमी का जन्मोत्सव, हनुमान जयंती और अक्षय तृतीया की शुभ खरीदारी इस समय को खास बनाती है।", 
+            "वर्षा ऋतु रिमझिम फुहारों के साथ धरती की प्यास बुझाती है, और बागों में सावन के झूले पड़ते हैं जो हरियाली का उत्सव मनाते हैं। यह समय कांवड़ यात्रा की भक्ति, रक्षाबंधन के पवित्र प्रेम, हरियाली तीज और कृष्ण जन्माष्टमी के उल्लास से भरा होता है।", 
+            "शरद ऋतु में आसमान साफ नीला हो जाता है और मौसम में गुलाबी ठंडक घुलने लगती है, जो त्योहारों के आगमन का संकेत है। यह शक्ति की आराधना का सबसे बड़ा समय है, जब नवरात्रि के नौ दिन, विजयदशमी (दशहरा) और करवा चौथ का व्रत हर घर में मनाया जाता है।", 
+            "हेमंत ऋतु में ठंड की दस्तक के साथ दिन छोटे और सुहावने होने लगते हैं, जो मेल-मिलाप और पकवानों के लिए उपयुक्त हैं। यह दीपों के महापर्व दिवाली, गोवर्धन पूजा और सूर्य देव को समर्पित छठ पूजा की पवित्रता और आस्था का समय है।", 
+            "शिशिर ऋतु कड़ाके की ठंड और कोहरे वाली सुबह लाती है, जब लोग अलाव के पास बैठकर गज्जक, रेवड़ी और मूंगफली का आनंद लेते हैं। इस मौसम में मकर संक्रांति पर खिचड़ी खाने, लोहड़ी की पवित्र आग और गणतंत्र दिवस का जोश देखने को मिलता है।"
+        ],
+        paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
+        tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
+    },
+    or: { 
+        days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], 
+        nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], 
+        filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ", "ଅନ୍ୟାନ୍ୟ ପର୍ବ"], 
+        horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" },
+        indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ", "ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼", "ଆଷାଢ଼ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ରବ", "ଭାଦ୍ରବ / ଆଶ୍ୱିନ", "ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"],
+        indianSeasons: ["ବସନ୍ତ", "ଗ୍ରୀଷ୍ମ", "ବର୍ଷା", "ଶରତ", "ହେମନ୍ତ", "ଶିଶିର"],
+        seasonDescriptions: [
+            "ବସନ୍ତ ଋତୁରେ ପ୍ରକୃତି ନୂଆ ରୂପ ନିଏ, ଓଡ଼ିଶାର ବଣଜଙ୍ଗଲ କୃଷ୍ଣଚୂଡ଼ା ଓ ପଳାଶ ଫୁଲରେ ନାଲି ରଙ୍ଗରେ ରଙ୍ଗୀନ ଦିଶେ । ଏହି ସମୟରେ ଦୋଳ ପୂର୍ଣ୍ଣିମାରେ ରାଧା-କୃଷ୍ଣଙ୍କ ଝୁଲଣ ଯାତ୍ରା, ହୋଲିର ରଙ୍ଗ ଖେଳ ଏବଂ ମହାଶିବରାତ୍ରିର ଜାଗର ଦୀପ ପ୍ରଜ୍ୱଳିତ ହୁଏ ।", 
+            "ଗ୍ରୀଷ୍ମ ଋତୁର ପ୍ରଚଣ୍ଡ ଖରାରେ ଜନଜୀବନ ଅସ୍ତବ୍ୟସ୍ତ ହୁଏ, କିନ୍ତୁ ଏହା ମହାପ୍ରଭୁ ଜଗନ୍ନାଥଙ୍କ ଚନ୍ଦନ ଯାତ୍ରା ଓ ଅକ୍ଷୟ ତୃତୀୟାରେ ରଥ ନିର୍ମାଣ ଆରମ୍ଭ ହେବାର ପବିତ୍ର ସମୟ । ପଣା ସଂକ୍ରାନ୍ତିରେ ବେଲ ପଣା ପିଇ ଲୋକେ ଓଡ଼ିଆ ନବବର୍ଷ ପାଳନ କରନ୍ତି ଏବଂ ଶୀତଳ ଷଷ୍ଠୀର ଉତ୍ସବ ମନାନ୍ତି ।", 
+            "ବର୍ଷା ଋତୁ ଧରିତ୍ରୀକୁ ଶୀତଳ କରେ ଏବଂ ଚାଷ କାର୍ଯ୍ୟ ପାଇଁ ଆଶୀର୍ବାଦ ସାଜେ, ଏହି ସମୟରେ ବିଶ୍ୱପ୍ରସିଦ୍ଧ ରଥଯାତ୍ରା ପୁରୀରେ ଅନୁଷ୍ଠିତ ହୁଏ । କୁମାରୀମାନେ ରଜ ପର୍ବରେ ଦୋଳି ଖେଳି, ପୋଡ଼ ପିଠା ଖାଇ ଏବଂ ସଜବାଜ ହୋଇ ମୌଜ କରନ୍ତି ।", 
+            "ଶରତ ଋତୁର ନିର୍ମଳ ଆକାଶ, ନଦୀ ପଠାରେ କାଶତଣ୍ଡି ଫୁଲ ଓ ଗଙ୍ଗଶିଉଳିର ବାସ୍ନା ଦୁର୍ଗା ପୂଜାର ଆଗମନ ସୂଚାଏ । ଏହି ସମୟରେ ଢେଙ୍କାନାଳର ଗଜଲକ୍ଷ୍ମୀ ପୂଜାର ଧୂମଧାମ ଏବଂ କୁମାର ପୂର୍ଣ୍ଣିମାରେ ଚନ୍ଦ୍ର ପୂଜାର ପରମ୍ପରା ଓଡ଼ିଶାର ଘରେ ଘରେ ଦେଖିବାକୁ ମିଳେ ।", 
+            "ହେମନ୍ତ ଋତୁରେ ଶୀତର ପ୍ରାରମ୍ଭ ହୁଏ ଏବଂ ଧାନ ଅମଳର ଖୁସିରେ ନବାନ୍ନ ଖିଆଯାଏ, ଯାହା ଗାଁ ଗହଳିରେ ଖୁସି ଆଣେ । ଏହି ସମୟରେ କଟକର ଐତିହାସିକ ବାଲିଯାତ୍ରା, ପ୍ରଥମାଷ୍ଟମୀର ଏଣ୍ଡୁରି ପିଠା ଓ କାର୍ତ୍ତିକ ପୂର୍ଣ୍ଣିମାର ଡଙ୍ଗା ଭସାଣ ପରମ୍ପରା ପାଳିତ ହୁଏ ।", 
+            "ଶିଶିର ଋତୁର ହାଡ଼ଭଙ୍ଗା ଶୀତରେ ଲୋକେ ଉଷୁମ ଖୋଜନ୍ତି, ଏହା ପିକ୍ନିକ୍ ଏବଂ ବୁଲାବୁଲି ପାଇଁ ଶ୍ରେଷ୍ଠ ସମୟ । ଏହା ପଶ୍ଚିମ ଓଡ଼ିଶାର କୃଷିଭିତ୍ତିକ ପର୍ବ ପୁଷପୁନି, ବିଶ୍ୱର ବୃହତ୍ତମ ମୁକ୍ତାକାଶ ରଙ୍ଗମଞ୍ଚ ଧନୁ ଯାତ୍ରା ଏବଂ ମକର ସଂକ୍ରାନ୍ତି ପାଳନ କରିବାର ସମୟ ।"
+        ],
+        paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
+        tithis: ["ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ଅମାବାସ୍ୟା"]
+    },
+    bn: { 
+        days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], 
+        nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
+        filters: ["উৎসব", "শুভ দিন", "ছুটি", "অন্যান্য উৎসব"], 
+        horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "সিংহ", virgo: "কন্যা", libra: "তুলা", scorpio: "বৃশ্চিক", sagittarius: "ধনু", capricorn: "মकर", aquarius: "কুম্ভ", pisces: "মীন" },
+        indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
+        indianSeasons: ["বসন্ত", "গ্রীষ্ম", "বর্ষা", "শরৎ", "হেমন্ত", "শিশির"],
+        seasonDescriptions: [
+            "বসন্ত ঋতু পলাশ ও শিমুল ফুলের রক্তিম রঙে প্রকৃতিকে নতুন করে সাজিয়ে তোলে, যা কবিগুরুর গানে ও কবিতায় বারবার উঠে আসে। দোলযাত্রার আবির খেলা, শান্তিনিকেতনের ঐতিহ্যবাহী বসন্ত উৎসব আর পহেলা বৈশাখের প্রস্তুতির মধ্য দিয়ে এই ঋতু বাঙালির মনে নতুন আনন্দের সঞ্চার করে।", 
+            "গ্রীষ্মের প্রখর তাপে প্রকৃতি শুষ্ক হয়ে উঠলেও, কালবৈশাখীর ঝড় আর বৃষ্টির ছোঁয়া মাঝে মাঝে স্বস্তি দেয়। এটি মধুর ফলের ঋতু—জামাইষষ্ঠীর ভুরিভোজ, বুদ্ধ পূর্ণিমার শান্তি আর হিমসাগর আম ও কাঁঠালের গন্ধে বাতাস ভারি হয়ে ওঠে, যা গরমের কষ্ট ভুলিয়ে দেয়।", 
+            "আষাঢ়ের কালো মেঘ আর অবিরাম বৃষ্টি নিয়ে আসে বর্ষা ঋতু, যা বাংলার নদী-নালা, পুকুর আর ধানের ক্ষেতকে সজীব করে তোলে। এই সময়ে রথযাত্রার ধুমধাম, মনসা পূজা আর বৃষ্টির দিনে খিচুড়ি-ইলিশ ভাজার আমেজ প্রতিটি বাঙালি ঘরে দেখা যায়।", 
+            "শরৎ মানেই নীল আকাশে পেঁজা তুলোর মতো সাদা মেঘ, ঢাকের আওয়াজ আর নদীর ধারে দোল খাওয়া কাশফুল। এই ঋতু বাঙালির শ্রেষ্ঠ উৎসব দুর্গাপূজা, লক্ষ্মী পূজা আর বিজয়া দশমীর আনন্দ বার্তা নিয়ে আসে, যখন জাতি-ধর্ম নির্বিশেষে সবাই উৎসবে মত্ত হয়।", 
+            "হেমন্ত ঋতুতে প্রকৃতি শান্ত হয় এবং নবান্ন উৎসবের মাধ্যমে নতুন ধানের গন্ধে গ্রাম বাংলা মেতে ওঠে। ঘরে ঘরে নতুন চালের পিঠেপুলি তৈরির ধুম, কার্তিক পূজা আর চন্দননগরের বিখ্যাত জগদ্ধাত্রী পূজার আলোকসজ্জা এই সময়েই দেখার মতো হয়।", 
+            "শিশিরের হিমেল হাওয়া আর ঘন কুয়াশা জানান দেয় শীতের আগমন, যখন লেপ-কম্বলের ওম খুব প্রিয় হয়ে ওঠে। পৌষ মেলার বাউল গান, বড়দিনের কেক আর খেজুরের গুড়ের (নলেন গুড়) গন্ধে এই সময়টি মুখর থাকে, সাথে মকর সংক্রান্তির পুণ্যস্নান তো আছেই।"
+        ],
+        paksha: ["শুক্ল পক্ষ", "कृष्ण পক্ষ"],
+        tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
+    },
+    mr: { 
+        days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], 
+        nums: ["०","१","२","३","४","५","६","७","८","९"], 
+        filters: ["सण", "शुभ दिवस", "सुट्ट्या", "इतर सण"], 
+        horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
+        indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
+        indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
+        seasonDescriptions: [
+            "वसंत ऋतू पालवी फुटण्याचा आणि निसर्ग रंगांनी नटण्याचा काळ आहे, जेव्हा कोकणातील आमराई मोहरते। गुढीपाडव्याची उंच गुढी उभारून नवीन वर्षाचे स्वागत, होळीचे रंग आणि राम नवमीचा उत्साह या ऋतूला महाराष्ट्रामध्ये विशेष आणि मंगलमय बनवतात।", 
+            "ग्रीष्म ऋतूच्या तडाख्यात सूर्य आग ओकतो, पण हा रसाळ हापूस आंबे आणि फणसाचा गोडवा चाखण्याचा काळ आहे, सोबत पन्हं पिऊन थंडावा मिळवला जातो। अक्षय तृतीयेचा साडेतीन मुहूर्तांपैकी एक सण, बुद्ध पौर्णिमा आणि सुवासिनींसाठी वटपौर्णिमेची तयारी याच काळात सुरू होते।", 
+            "वर्षा ऋतू धरणीला शांत करतो आणि सह्याद्रीच्या रांगा धबधब्यांनी आणि हिरवळीने नटून पर्यटकांना आकर्षित करतात। आषाढी एकादशीच्या वारकरी मेळ्यात पंढरपूर दुमदुमते, नागपंचमीचा सण आणि नारळी पौर्णिमेच्या कोळी उत्सवात महाराष्ट्र भक्तीत तल्लीन होतो।", 
+            "शरद ऋतूत पाऊस ओसरतो आणि आकाश निरभ्र होते, जे सणांसाठी योग्य वातावरण तयार करते। गणपती बाप्पाचे आगमन, गौरी आवाहन आणि नवरात्रीचा भोंडला व गरबा या काळाला अत्यंत उत्सवी बनवतात, आणि कोजागिरी पौर्णिमेला मसाला दूध पिण्याची मजा असते।", 
+            "हेमंत ऋतू थंडीची चाहूल घेऊन येतो, जेव्हा शेते पिकांनी डोलू लागतात आणि झेंडूची फुले बहरतात। नरक चतुर्दशीचे पहाटेचे अभ्यंगस्नान, दिवाळीचे किल्ले आणि आकाशकंदील, तसेच तुळशी विवाहाचा सोहळा या ऋतूला प्रकाशमय आणि पवित्र करतात।", 
+            "शिशिर ऋतूत कडाक्याची थंडी असते, जी आरोग्यासाठी उत्तम मानली जाते आणि शेतात 'हुरडा पार्टी' करण्याची हीच खरी मजा आहे। मकर संक्रांतिला 'तिळगुळ घ्या, गोड बोला' म्हणत आणि रथसप्तमीच्या सूर्याची उपासना करत लोक नात्यांमध्ये गोडवा आणतात।"
+        ],
+        paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
+        tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
+    },
+    gu: { 
+        days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], 
+        nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], 
+        filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ", "અન્ય તહેવારો"], 
+        horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચિક", sagittarius: "ધનુ", capricorn: "મકર", aquarius: "કુંભ", pisces: "મીન" },
+        indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"],
+        indianSeasons: ["વસંત", "ગ્રીષ્મ", "વર્ષા", "શરદ", "હેમંત", "શિશિર"],
+        seasonDescriptions: [
+            "વસંત ઋતુ ગુજરાતમાં પ્રકૃતિનો નવો ઉલ્લાસ લાવે છે, કેસુડાના કેસરી ફૂલોથી વનરાજી શોભી ઉઠે છે. આ ઋતુમાં હોળીના રંગો, ધુળેટીનો આનંદ અને રામ નવમીની ભક્તિ ડાકોર અને અન્ય મંદિરોમાં છવાઈ જાય છે.", 
+            "ગ્રીષ્મ ઋતુમાં સૂર્યનો તાપ વધે છે, પણ સાથોસાથ ગીરની કેસર કેરીનો રસ અને ઠંડી છાશ માણવાની મજા પણ આવે છે. વણજોયું મુહૂર્ત ગણાતી અક્ષય તૃતીયા (અખાત્રીજ) અને ગંગા દશેરા જેવા શુભ દિવસો આ ઋતુમાં આવે છે.", 
+            "વર્ષા ઋતુ સુકી કાઠિયાવાડી ધરતીને લીલીછમ બનાવે છે અને ખેડૂતોમાં વાવણીનો આનંદ લાવે છે. તરણેતરનો મેળો, જન્માષ્ટમીનો ભવ્ય ઉત્સવ, રક્ષાબંધનની પવિત્રતા અને ગણેશ ચતુર્થી આ ઋતુની શોભા વધારે છે.", 
+            "શરદ ઋતુ એટલે ગુજરાતનો સૌથી મોટો ઉત્સવ, જ્યારે નવરાત્રીના નવ દિવસના ગરબાનો થનગનાટ આખા વિશ્વમાં ગુંજે છે. શરદ પૂનમની રાત્રે દૂધ-પૌંઆ ખાવાની અને દશેરાએ ફાફડા-જલેબી ખાવાની પરંપરા આ ઋતુને સ્વાદિષ્ટ બનાવે છે.", 
+            "હેમંત ઋતુમાં ગુલાબી ઠંડીની શરૂઆત થાય છે અને લાભ પાંચમથી વેપારમાં નવી શરૂઆત થાય છે. દિવાળીના દીવાઓ, ચોપડા પૂજન અને બેસતા વર્ષના સંકલ્પો સાથે આ સમય પરિવાર સાથે ધામધૂમથી ઉજવાય છે.", 
+            "શિશિર ઋતુમાં કડકડતી ઠંડી પડે છે અને ઉત્તરાયણમાં પતંગોથી આકાશ રંગબેરંગી થઈ જાય છે, જ્યારે 'કાઈપો છે' ના નારા ગુંજે છે. મહાશિવરાત્રીની ભક્તિ, ગિરનારની લીલી પરિક્રમા અને ઊંધિયું-જલેબીની જયાફત આ ઋતુમાં જ માણવા મળે છે."
+        ],
+        paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
+        tithis: ["પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "પૂનમ", "પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "અમાસ"]
+    },
+    pa: { 
+        days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], 
+        nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], 
+        filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ", "ਹੋਰ ਤਿਉਹਾਰ"], 
+        horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" },
+        indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
+        indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"],
+        seasonDescriptions: [
+            "ਬਸੰਤ ਰੁੱਤ ਵਿੱਚ ਪੰਜਾਬ ਦੇ ਸਰ੍ਹੋਂ ਦੇ ਖੇਤ ਪੀਲੇ ਫੁੱਲਾਂ ਨਾਲ ਲਹਿਰਾਉਂਦੇ ਹਨ, ਜੋ ਧਰਤੀ ਨੂੰ ਸੁਨਹਿਰੀ ਬਣਾ ਦਿੰਦੇ ਹਨ। ਬਸੰਤ ਪੰਚਮੀ ਦੀਆਂ ਪਤੰਗਾਂ ਅਸਮਾਨ ਨੂੰ ਭਰ ਦਿੰਦੀਆਂ ਹਨ, ਅਤੇ ਆਨੰਦਪੁਰ ਸਾਹਿਬ ਵਿੱਚ ਹੋਲਾ ਮਹੱਲਾ ਦਾ ਜੌਹਰ ਵੇਖਣਯੋਗ ਹੁੰਦਾ ਹੈ।", 
+            "ਗ੍ਰੀਸ਼ਮ ਰੁੱਤ ਵਿੱਚ ਕੜਾਕੇ ਦੀ ਧੁੱਪ ਹੁੰਦੀ ਹੈ, ਪਰ ਇਹ ਕਣਕ ਦੀ ਵਾਢੀ ਅਤੇ ਵਿਸਾਖੀ ਦੇ ਭੰਗੜਿਆਂ ਦਾ ਸਮਾਂ ਹੈ। ਕਿਸਾਨ ਆਪਣੀ ਸਾਲ ਭਰ ਦੀ ਮਿਹਨਤ ਦਾ ਫਲ ਪਾ ਕੇ ਜਸ਼ਨ ਮਨਾਉਂਦੇ ਹਨ ਅਤੇ ਗੁਰੂ ਘਰਾਂ ਵਿੱਚ ਸ਼ਰਧਾ ਜੁੜਦੀ ਹੈ, ਨਾਲ ਹੀ ਠੰਡੀ ਲੱਸੀ ਦਾ ਆਨੰਦ ਲਿਆ ਜਾਂਦਾ ਹੈ।", 
+            "ਵਰਖਾ ਰੁੱਤ ਪੰਜਾਬ ਦੀ ਤਪਦੀ ਧਰਤੀ 'ਤੇ ਠੰਢਕ ਅਤੇ ਝੋਨੇ ਦੀ ਫਸਲ ਲਈ ਵਰਦਾਨ ਬਣ ਕੇ ਆਉਂਦੀ ਹੈ। ਕੁੜੀਆਂ ਲਈ ਤੀਆਂ ਦਾ ਤਿਉਹਾਰ ਜਿੱਥੇ ਗਿੱਧਾ ਪਾਇਆ ਜਾਂਦਾ ਹੈ, ਭੈਣ-ਭਰਾ ਦਾ ਰੱਖੜੀ ਦਾ ਪਵਿੱਤਰ ਬੰਧਨ ਅਤੇ ਜਨਮਾਸ਼ਟਮੀ ਦੀਆਂ ਰੌਣਕਾਂ ਇਸ ਰੁੱਤ ਨੂੰ ਖਾਸ ਬਣਾਉਂਦੀਆਂ ਹਨ।", 
+            "ਸ਼ਰਦ ਰੁੱਤ ਵਿੱਚ ਮੌਸਮ ਸੁਹਾਵਣਾ ਹੋ ਜਾਂਦਾ ਹੈ, ਰਾਤਾਂ ਠੰਡੀਆਂ ਹੁੰਦੀਆਂ ਹਨ ਅਤੇ ਨਰਾਤਿਆਂ ਦੀ ਪੂਜਾ ਸ਼ੁਰੂ ਹੁੰਦੀ ਹੈ। ਇਹ ਸਮਾਂ ਦੁਸਹਿਰੇ ਦੇ ਮੇਲਿਆਂ, ਰਾਮ ਲੀਲਾ ਅਤੇ ਵਾਲਮੀਕਿ ਜਯੰਤੀ ਵਰਗੇ ਧਾਰਮਿਕ ਸਮਾਗਮਾਂ ਲਈ ਜਾਣਿਆ ਜਾਂਦਾ ਹੈ।", 
+            "ਹੇਮੰਤ ਰੁੱਤ ਵਿੱਚ ਠੰਢੀ ਹਵਾ ਚੱਲਣ ਲੱਗਦੀ ਹੈ ਅਤੇ ਦੀਵਾਲੀ ਦੇ ਦੀਵੇ ਘਰ-ਘਰ ਜਗਮਗਾਉਂਦੇ ਹਨ। ਇਹ ਮੌਸਮ ਬੰਦੀ ਛੋੜ ਦਿਵਸ ਦੀਆਂ ਖੁਸ਼ੀਆਂ, ਗੁਰੂ ਨਾਨਕ ਦੇਵ ਜੀ ਦੇ ਪ੍ਰਕਾਸ਼ ਪੁਰਬ ਦੀਆਂ ਰੌਣਕਾਂ ਅਤੇ ਸਰ੍ਹੋਂ ਦੇ ਸਾਗ ਦੀ ਸ਼ੁਰੂਆਤ ਨਾਲ ਭਰਿਆ ਹੁੰਦਾ ਹੈ।", 
+            "ਸ਼ਿਸ਼ਿਰ ਰੁੱਤ ਦੀ ਕੜਾਕੇ ਦੀ ਠੰਢ ਅਤੇ ਧੁੰਦ ਵਿੱਚ ਲੋਹੜੀ ਦੀ ਅੱਗ ਸੇਕਣ ਅਤੇ 'ਸੁੰਦਰ ਮੁੰਦਰੀਏ' ਗਾਉਣ ਦਾ ਵੱਖਰਾ ਹੀ ਮਜ਼ਾ ਹੈ। ਲੋਕ ਮੂੰਗਫਲੀ-ਰਿਉੜੀਆਂ ਅਤੇ ਮੱਕੀ ਦੀ ਰੋਟੀ ਖਾ ਕੇ ਮਾਘੀ ਦਾ ਮੇਲਾ ਅਤੇ ਗਣਤੰਤਰ ਦਿਵਸ ਉਤਸ਼ਾਹ ਨਾਲ ਮਨਾਉਂਦੇ ਹਨ।"
+        ],
+        paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
+        tithis: ["ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਮਾਸ਼ੀ", "ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਮੱਸਿਆ"]
+    },
+    ta: { 
+        days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], 
+        nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], 
+        filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை", "மற்ற பண்டிகைகள்"], 
+        horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" },
+        indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"],
+        indianSeasons: ["இளவேனில்", "முதுவேனில்", "கார்", "குளிர்", "முன்பனி", "பின்பனி"],
+        seasonDescriptions: [
+            "இளவேனில் என்பது புதிய தொடக்கங்களின் காலம், வேப்ப மரங்கள் பூத்துக் குலுங்கும் நேரம். தமிழ் புத்தாண்டு (சித்திரை திருவிழா), உலகப் புகழ்பெற்ற மதுரை கள்ளழகர் ஆற்றில் இறங்கும் வைபவம் மற்றும் பங்குனி உத்திரம் போன்ற பண்டிகைகள் இந்த காலத்தில் வெகு விமர்சையாக கொண்டாடப்படுகின்றன.", 
+            "முதுவேனில் காலம் கடுமையான வெப்பத்தை (அக்னி நட்சத்திரம்) கொண்டு வருகிறது, ஆனால் இது கோவில் திருவிழாக்களின் காலம். இந்த நேரத்தில் ஆடிப்பெருக்கு விழா நதிகளை போற்றும் விதமாகவும், வைகாசி விசாகம் முருகப்பெருமானை வழிபடும் விதமாகவும், கூழ் ஊற்றும் வைபவங்களும் கொண்டாடப்படுகின்றன.", 
+            "கார் காலம் மழையை வரவேற்கும் காலமாகும், இது விவசாயத்திற்கு உயிரூட்டுகிறது மற்றும் காவேரி பாயும் நிலங்களை செழிக்கச் செய்கிறது. இக்காலத்தில் ஆவணி அவிட்டம், கிருஷ்ண ஜெயந்தி (கோகுலாஷ்டமி) மற்றும் விநாயகர் சதுர்த்தி போன்ற பண்டிகைகள் கோலாகலமாக கொண்டாடப்படுகின்றன.", 
+            "குளிர் காலம் மழையின் நிறைவையும் குளிர்ச்சியின் தொடக்கத்தையும் குறிக்கிறது, மாலை நேரங்கள் இதமாக இருக்கும். இது நவராத்திரி கொலு வைபவம், ஆயுத பூஜை, சரஸ்வதி பூஜை மற்றும் தீபாவளி போன்ற ஒளியும் வண்ணமும் நிறைந்த பண்டிகைகளின் காலமாகும்.", 
+            "முன்பனி காலம் பனி படர்ந்த அதிகாலைகளையும் ஆன்மீக சிந்தனைகளையும் கொண்டு வருகிறது. வீடுகளில் ஏற்றப்படும் கார்த்திகை தீபம், வைகுண்ட ஏகாதசி சொர்க்கவாசல் திறப்பு மற்றும் மார்கழி மாத பஜனைகள் & கோலங்கள் இந்த காலத்தை தெய்வீகமாக்குகின்றன.", 
+            "பின்பனி காலம் அறுவடைக்கான நேரமாகும், உழவர்கள் தங்கள் உழைப்பின் பலனை அறுவடை செய்கிறார்கள். தமிழர்களின் மிக முக்கிய பண்டிகையான தைப் பொங்கல், ஜல்லிக்கட்டு வீரம், மாட்டுப் பொங்கல் மற்றும் தைப்பூசம் ஆகியவை இந்த காலத்தில் தான் சிறப்பாக கொண்டாடப்படுகின்றன."
+        ],
+        paksha: ["வளர்பிறை", "தேய்பிறை"],
+        tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "அமாவாசை"]
+    },
+    te: { 
+        days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], 
+        nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], 
+        filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు", "ఇతర పండుగలు"], 
+        horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" },
+        indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"],
+        indianSeasons: ["వసంత", "గ్రీష్మ", "వర్ష", "శరత్", "హేమంత", "శిశిర"],
+        seasonDescriptions: [
+            "వసంత ఋతువు ప్రకృతికి కొత్త కళను తెస్తుంది, వేప పూత వాసనతో మరియు కోయిలల గానంతో తెలుగు పల్లెలు నిండిపోతాయి. ఈ సమయంలో షడ్రుచుల ఉగాది పచ్చడితో కొత్త సంవత్సరాన్ని, భద్రాచలంలో శ్రీరామ నవమి కల్యాణం మరియు హనుమాన్ జయంతి పండుగలను భక్తిశ్రద్ధలతో జరుపుకుంటారు.", 
+            "గ్రీష్మ ఋతువులో ఎండలు మండుతాయి, కానీ ఇదే సమయంలో తియ్యటి మామిడి పండ్ల రుచిని మరియు తాటి ముంజలను ఆస్వాదించవచ్చు. తెలుగు ప్రజలు ఎంతో ఘనంగా జరుపుకునే మహానాడు, ఎరువువాక (రైతు పండుగ) మరియు అక్షయ తృతీయ వంటి పర్వదినాలు ఈ కాలంలోనే వస్తాయి.", 
+            "వర్ష ఋతువు తొలకరి జల్లులతో నేలను తడిపి రైతుల ముఖాల్లో ఆనందాన్ని నింపుతుంది, గోదావరి మరియు కృష్ణా నదులు పరవళ్లు తొక్కుతాయి. తెలంగాణలో ఆషాఢ బోనాలు, మరియు ఇల్లాలి సౌభాగ్యం కోసం వరలక్ష్మీ వ్రతం, వినాయక చవితి వంటి పవిత్రమైన పండుగలు ఈ కాలంలో ఘనంగా జరుగుతాయి.", 
+            "శరదృతువులో ఆకాశం నిర్మలంగా ఉంటుంది మరియు రాత్రి వేళ వెన్నెల కాస్తుంది. ఇది దసరా నవరాత్రులు మరియు బతుకమ్మ పండుగలకు ప్రసిద్ధి, ఇక్కడ రంగురంగుల పూలతో గౌరమ్మను కొలిచే సంప్రదాయం ప్రపంచవ్యాప్తంగా గుర్తింపు పొందింది.", 
+            "హేమంత ఋతువు చలి గాలులు మరియు మంచు కురిసే ఉదయాలను తీసుకువస్తుంది. శివునికి ప్రీతిపాత్రమైన కార్తీక మాస దీపారాధనలు, నాగుల చవితి పుట్టలో పాలు పోయడం మరియు స్నేహితులతో వనభోజనాలు ఈ కాలాన్ని ఆధ్యాత్మికంగా మరియు ఆహ్లాదకరంగా మారుస్తాయి.", 
+            "శిశిర ఋతువు ఆకులు రాలే కాలం అయినప్పటికీ, ఇది తెలుగు వారి అతి పెద్ద పండుగ సంక్రాంతికి వేదిక. భోగి మంటలు, గాలిపటాలు, హరిదాసు కీర్తనలు, గంగిరెద్దుల ఆటలు, ముక్కోటి ఏకాదశి మరియు మహాశివరాత్రి జాగరణలతో తెలుగు లోగిళ్లు కళకళలాడతాయి."
+        ],
+        paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
+        tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "అమావాస్య"]
+    },
+    kn: { 
+        days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], 
+        nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], 
+        filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು", "ಇತರ ಹಬ್ಬಗಳು"], 
+        horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" },
+        indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"],
+        indianSeasons: ["ವಸಂತ", "ಗ್ರೀಷ್ಮ", "ವರ್ಷ", "ಶರತ್", "ಹೇಮಂತ", "ಶಿಶಿರ"],
+        seasonDescriptions: [
+            "ವಸಂತ ಋತುವು ಪ್ರಕೃತಿಯಲ್ಲಿ ಹೊಸ ಚೈತನ್ಯವನ್ನು ತರುತ್ತದೆ, ಮರಗಳು ಹಸಿರಾಗಿ ಹೂಗಳು ಅರಳುತ್ತವೆ. ಯುಗಾದಿಯ ಬೇವು-ಬೆಲ್ಲದ ಸವಿಯೊಂದಿಗೆ ಹೊಸ ವರ್ಷವನ್ನು ಸ್ವಾಗತಿಸುವುದು, ಶ್ರೀರಾಮ ನವಮಿ ಮತ್ತು ಬಸವ ಜಯಂತಿ ಆಚರಣೆಗಳು ಈ ಕಾಲದ ವಿಶೇಷತೆಗಳಾಗಿವೆ.", 
+            "ಗ್ರೀಷ್ಮ ಋತುವಿನಲ್ಲಿ ಬಿಸಿಲು ಹೆಚ್ಚಾಗಿರುತ್ತದೆ, ಆದರೆ ಇದು ಅಕ್ಷಯ ತೃತೀಯದಂತಹ ಶುಭ ಕಾರ್ಯಗಳಿಗೆ ಪ್ರಶಸ್ತ ಕಾಲ. ಬೆಂಗಳೂರಿನ ಐತಿಹಾಸಿಕ ಕರಗ ಮಹೋತ್ಸವ ಮತ್ತು ಶಂಕರ ಜಯಂತಿ ಆಚರಣೆಗಳು ಈ ಋತುವನ್ನು ಭಕ್ತಿಮಯವಾಗಿಸುತ್ತವೆ, ಜೊತೆಗೆ ಮಲೆನಾಡಿನ ಕಡೆಯ ಮಾವಿನ ಹಣ್ಣಿನ ರುಚಿ ನೋಡುವ ಸಮಯ.", 
+            "ವರ್ಷ ಋತುವು ಮುಂಗಾರು ಮಳೆಯೊಂದಿಗೆ ನಾಡನ್ನು ತಂಪಾಗಿಸುತ್ತದೆ ಮತ್ತು ಕಾವೇರಿ ನದಿ ಮೈದುಂಬಿ ಹರಿಯುತ್ತದೆ. ವರಮಹಾಲಕ್ಷ್ಮಿ ವ್ರತ, ನಾಗರ ಪಂಚಮಿ ಮತ್ತು ಗೌರಿ-ಗಣೇಶ ಹಬ್ಬಗಳ ಭಕ್ತಿಭಾವದೊಂದಿಗೆ ಕೃಷಿ ಚಟುವಟಿಕೆಗಳು ಗರಿಗೆದರುತ್ತವೆ.", 
+            "ಶರತ್ ಋತುವು ತಿಳಿಯಾದ ಆಕಾಶ ಮತ್ತು ಹಿತವಾದ ವಾತಾವರಣವನ್ನು ತರುತ್ತದೆ. ಇದು ವಿಶ್ವವಿಖ್ಯಾತ ಮೈಸೂರು ದಸರಾ ವೈಭವ, ಆಯುಧ ಪೂಜೆ ಮತ್ತು ವಾಲ್ಮೀಕಿ ಜಯಂತಿ ಉತ್ಸವಗಳ ಕಾಲವಾಗಿದ್ದು, ಇಡೀ ರಾಜ್ಯವು ದೀಪಾಲಂಕಾರಗಳಿಂದ ಕಂಗೊಳಿಸುತ್ತದೆ.", 
+            "ಹೇಮಂತ ಋತುವಿನಲ್ಲಿ ಮುಂಜಾನೆಯ ಇಬ್ಬನಿ ಮತ್ತು ತಂಪು ಹವೆ ಇರುತ್ತದೆ, ಹಳ್ಳಿಗಳಲ್ಲಿ ಕಡಲೆಕಾಯಿ ಪರಿಷೆಯ ಸಂಭ್ರಮವಿರುತ್ತದೆ. ದೀಪಾವಳಿಯ ಬೆಳಕು, ಗೋಪೂಜೆ, ಬಲಿ ಪಾಡ್ಯಮಿ ಮತ್ತು ಕನ್ನಡ ರಾಜ್ಯೋತ್ಸವದ ಸಂಭ್ರಮ ಈ ಸಮಯವನ್ನು ಪವಿತ್ರ ಮತ್ತು ಹಬ್ಬದಾಯಕವಾಗಿಸುತ್ತದೆ.", 
+            "ಶಿಶಿರ ಋತುವು ಚಳಿಗಾಲದ ಪರಾಕಾಷ್ಠೆ, ಆದರೂ ಇದು ಸುಗ್ಗಿ ಹಬ್ಬದ ಸಮಯ. ಮಕರ ಸಂಕ್ರಾಂತಿಯ ಎಳ್ಳು-ಬೆಲ್ಲ ಹಂಚುವ ಸಂಪ್ರದಾಯ, ರಥಸಪ್ತಮಿ ಮತ್ತು ಮಹಾಶಿವರಾತ್ರಿಯ ಜಾಗರಣೆಯೊಂದಿಗೆ ಭಕ್ತರು ಈ ಕಾಲವನ್ನು ಕಳೆಯುತ್ತಾರೆ."
+        ],
+        paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
+        tithis: ["ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಅಮಾವಾಸ್ಯೆ"]
+    },
+    ml: { 
+        days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], 
+        nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], 
+        filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി", "മറ്റ് ഉത്സവങ്ങൾ"], 
+        horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" },
+        indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"],
+        indianSeasons: ["വസന്തം", "ഗ്രീഷ്മം", "വർഷം", "ശരത്", "ഹേമന്തം", "ശിശിരം"],
+        seasonDescriptions: [
+            "വസന്തം പൂക്കൾ വിരിയുന്നതും പ്രകൃതി സുന്ദരമാകുന്നതുമായ കാലമാണ്, മഞ്ഞ കണിക്കൊന്ന പൂക്കൾ ഇതിന് സാക്ഷ്യം വഹിക്കുന്നു. വിഷുവിന്റെ കണികാണലും കൈനീട്ടവും, ഒപ്പം ശിവരാത്രിയും ഈ ഋതുവിനെ മലയാളികൾക്ക് പ്രിയപ്പെട്ടതാക്കുന്നു, കാർഷിക വര്ഷാരംഭം കൂടിയാണിത്.", 
+            "ഗ്രീഷ്മം കഠിനമായ ചൂട് കൊണ്ടുവരുന്നുവെങ്കിലും, ലോകപ്രശസ്തമായ തൃശ്ശൂർ പൂരം പോലുള്ള വർണ്ണാഭമായ ക്ഷേത്ര ഉത്സവങ്ങൾ കേരളത്തിന് ആവേശം പകരുന്നു. വിഷു കഴിഞ്ഞുള്ള കാലം അക്ഷയ തൃതീയയുടെയും, മാമ്പഴത്തിന്റെയും ചക്കയുടെയും സ്വാദ് അറിയുന്ന സമയമാണ്.", 
+            "വർഷം (മഴക്കാലം) കേരളത്തിൽ ഇടവപ്പാതിയായി പെയ്തിറങ്ങുന്നു, പ്രകൃതി പച്ചപ്പണിയുകയും നദികൾ നിറയുകയും ചെയ്യുന്നു. കർക്കടക മാസത്തിലെ രാമായണ പാരായണവും, ഔഷധ കഞ്ഞി കുടിക്കുന്നതും, തൃക്കാക്കരയപ്പന്റെ പൂജയും ഈ സമയത്ത് നടക്കുന്നു.", 
+            "ശരത് കാലം മഴ മാറി തെളിഞ്ഞ നീലാകാശം സമ്മാനിക്കുന്നു, ചുണ്ടൻ വള്ളംകളികൾ കായലുകളിൽ ആവേശം നിറയ്ക്കുന്നു. ഓണത്തിന്റെ പൂക്കളങ്ങളും സദ്യയും, നവരാത്രി ആഘോഷങ്ങളും ചേർന്നുള്ള സമയം മലയാളികൾക്ക് ഗൃഹാതുരത്വം നിറഞ്ഞതാണ്.", 
+            "ഹേമന്തം മഞ്ഞുകാലത്തിന്റെ തുടക്കമാണ്, രാവിലെയും വൈകുന്നേരവും സുഖകരമായ തണുപ്പ് അനുഭവപ്പെടുന്നു. തൃക്കാർത്തികയുടെ ദീപാലങ്കാരങ്ങൾ വീടുകളെ പ്രകാശമാനമാക്കുന്ന ഭക്തിസാന്ദ്രമായ സമയമാണിത്, ഒപ്പം ശബരിമല മണ്ഡലകാല വ്രതവും ആരംഭിക്കുന്നു.", 
+            "ശിശിരം കേരളത്തിലെ തണുപ്പുകാലമാണ്, ധനുമാസത്തിലെ തിരുവാതിര ആഘോഷങ്ങൾക്ക് ഇത് സാക്ഷ്യം വഹിക്കുന്നു. ശബരിമല മകരവിളക്കും, ക്രിസ്മസ് ആഘോഷങ്ങളും, തൈപ്പൂയവും ഭക്തിയുടെയും സന്തോഷത്തിന്റെയും നിറവിൽ നിൽക്കുന്ന സമയമാണിത്."
+        ],
+        paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
+        tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "ನവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "പൗർണ്ണമി", "പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "അമാവാസി"]
+    }
+};
 
         function calculateTithi(dateObj) {
-            // Use 06:00 AM Local Time for Tithi calculation to approximate Sunrise Tithi, or calculated Sunrise
-            let hour = 6;
-            let minute = 0;
+            // Use the new Vedic Astro Engine
+            const astroData = VedicAstro.calculate(dateObj);
             
-            if (appState.config.location && SunCalc) {
-                const times = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
-                if (times.sunrise && !isNaN(times.sunrise.getTime())) {
-                    hour = times.sunrise.getHours();
-                    minute = times.sunrise.getMinutes();
-                }
-            }
-            
-            const targetDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), hour, minute, 0);
-
-            // 1. Convert to Julian Day (J2000.0)
-            const msPerDay = 86400000;
-            const jd = (targetDate.getTime() / msPerDay) + 2440587.5;
-            const d = jd - 2451545.0; // Days since J2000
-
-            // Helper: Normalize to 0-360
-            function normalize(deg) {
-                deg = deg % 360;
-                if (deg < 0) deg += 360;
-                return deg;
-            }
-            // Helper: Degrees to Radians
-            function rad(deg) { return deg * (Math.PI / 180); }
-            // Helper: Sin in degrees
-            function sind(deg) { return Math.sin(rad(deg)); }
-
-            // --- SUN COORDINATES (Low Precision) ---
-            const L_sun = normalize(280.460 + 0.9856474 * d);
-            const g_sun = normalize(357.528 + 0.9856003 * d);
-            const lambda_sun = normalize(L_sun + 1.915 * sind(g_sun) + 0.020 * sind(2 * g_sun));
-
-            // --- MOON COORDINATES (Low Precision - Major Terms) ---
-            const L_moon = normalize(218.316 + 13.176396 * d);
-            const M_moon = normalize(134.963 + 13.064993 * d);
-            const F_moon = normalize(93.272 + 13.229350 * d);
-            const D_elong = normalize(297.850 + 12.190749 * d);
-
-            let lambda_moon = L_moon;
-            lambda_moon += 6.289 * sind(M_moon);             // Equation of Center
-            lambda_moon -= 1.274 * sind(M_moon - 2 * D_elong); // Evection
-            lambda_moon += 0.658 * sind(2 * D_elong);        // Variation
-            lambda_moon -= 0.185 * sind(g_sun);              // Annual Equation
-            lambda_moon -= 0.114 * sind(2 * F_moon);
-            lambda_moon -= 0.058 * sind(2 * (M_moon - 2 * D_elong));
-            lambda_moon = normalize(lambda_moon);
-
-            // --- TITHI CALCULATION ---
-            // Tithi = (MoonLong - SunLong) / 12
-            let diff = normalize(lambda_moon - lambda_sun);
-            const tithiIndex = Math.floor(diff / 12); // 0 to 29
-
-            // Determine Data
+            // Determine Data for Localization
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
             
-            // Safe index fetch (0-29)
-            const safeIndex = tithiIndex % 30;
+            // Get Localized Tithi Name
+            const safeIndex = astroData.tithiIndex;
             const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
             
-            // 0-14 is Shukla (Waxing), 15-29 is Krishna (Waning)
+            // Determine Paksha (0-14 is Shukla, 15-29 is Krishna)
             const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
             
-            return { tithi: tithiName, paksha: pakshaName, index: safeIndex };
+            // Return extended data including Nakshatra/Yoga for the renderer
+            return { 
+                tithi: tithiName, 
+                paksha: pakshaName, 
+                index: safeIndex,
+                // Pass these through for the Panchang Panel
+                nakshatra: astroData.nakshatra,
+                yoga: astroData.yoga,
+                karana: astroData.karana
+            };
         }
 
         function toNativeNum(num, langCode) {
@@ -3389,136 +3650,259 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+        // --- NEW HELPER: Calculate Rahu Kalam, Yamaganda, Abhijit ---
+        function getSpecialTimes(date, sunrise, sunset) {
+            if (!sunrise || !sunset) return null;
+
+            const dayOfWeek = date.getDay(); // 0 = Sunday
+            const duration = (sunset - sunrise); // Duration in ms
+            const part = duration / 8; // Dividing day into 8 parts (Traditional method)
+
+            // Standard Vedic Slots (0-indexed parts of the day)
+            // Sun=7, Mon=1, Tue=6, Wed=4, Thu=5, Fri=3, Sat=2
+            const rahuSlots = [7, 1, 6, 4, 5, 3, 2]; 
+            // Sun=4, Mon=3, Tue=2, Wed=1, Thu=0, Fri=6, Sat=5
+            const yamaSlots = [4, 3, 2, 1, 0, 6, 5]; 
+
+            const formatTime = (ms) => {
+                const d = new Date(ms);
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            };
+
+            // Calculate Rahu Kalam
+            const rahuStart = new Date(sunrise.getTime() + (rahuSlots[dayOfWeek] * part));
+            const rahuEnd = new Date(rahuStart.getTime() + part);
+
+            // Calculate Yamaganda
+            const yamaStart = new Date(sunrise.getTime() + (yamaSlots[dayOfWeek] * part));
+            const yamaEnd = new Date(yamaStart.getTime() + part);
+
+            // Calculate Abhijit Muhurat (Midday - 24 mins to Midday + 24 mins approx)
+            // More precise: 8th Muhurat of the 15 Muhurats in the day.
+            const dayMid = new Date(sunrise.getTime() + (duration / 2));
+            const abhijitStart = new Date(dayMid.getTime() - (24 * 60 * 1000));
+            const abhijitEnd = new Date(dayMid.getTime() + (24 * 60 * 1000));
+            
+            // Skip Abhijit on Wednesday (generally considered bad)
+            const hasAbhijit = dayOfWeek !== 3; 
+
+            return {
+                rahu: `${formatTime(rahuStart)} - ${formatTime(rahuEnd)}`,
+                yama: `${formatTime(yamaStart)} - ${formatTime(yamaEnd)}`,
+                abhijit: hasAbhijit ? `${formatTime(abhijitStart)} - ${formatTime(abhijitEnd)}` : "None (Wed)"
+            };
+        }
+
+        // --- UPDATED MAIN RENDER FUNCTION ---
         function renderPanchang(data) {
+            const section = document.getElementById('sec-panchang');
             const pillsContainer = document.getElementById('panchang-pills');
-
-            const locContainer = document.getElementById('location-btn-container');
-            if (locContainer) {
-                if (appState.config.location) {
-                     const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
-                     locContainer.innerHTML = `<div class="text-center"><div class="text-xs text-green-600 font-bold mb-1"><i class="fa-solid fa-check-circle"></i> ${locName}</div><button id="btn-location" onclick="getUserLocation()" class="text-xs text-gray-500 hover:text-deepred underline">Update Location</button></div>`;
-                } else {
-                     locContainer.innerHTML = `<button id="btn-location" onclick="getUserLocation()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 px-4 rounded-full shadow-sm border border-gray-300 transition flex items-center gap-2"><i class="fa-solid fa-location-crosshairs text-red-500"></i> Use My Location</button>`;
-                }
-            }
-
             const list = document.getElementById('panchang-list');
+            
+            // Clear containers
             pillsContainer.innerHTML = '';
             list.innerHTML = '';
-            
-            // 1. Display Season (Ritu)
+
+            // 1. Season (Ritu) Logic (Kept mostly same, but cleaner injection)
             const seasonIndex = getSeasonIndex(data.month);
+            const seasonConfig = seasonUIConfig[seasonIndex];
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
-            const seasonName = langObj.indianSeasons ? langObj.indianSeasons[seasonIndex] : "";
+            const seasonName = langObj.indianSeasons[seasonIndex];
+            
+            // Retrieve detailed description
             const rawSeasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex]) 
                                ? appState.customSeasonDescriptions[seasonIndex] 
                                : (langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "");
             const seasonDescHtml = formatSeasonDescription(rawSeasonDesc);
+
+            // Inject Season Card at the top of the list container
+            const seasonCard = document.createElement('div');
+            seasonCard.className = "season-ui-card group mb-4 flex-col items-start gap-4"; // Changed layout to column for better fit
+            seasonCard.onclick = cycleSeasonCard;
             
-            if (seasonName) {
-                const config = seasonUIConfig[seasonIndex] || seasonUIConfig[0];
-                const cardDiv = document.createElement('div');
-                
-                // Using new UI Classes
-                cardDiv.className = "season-ui-card group"; 
-                cardDiv.id = "seasonCard";
-                cardDiv.onclick = cycleSeasonCard;
-                cardDiv.dataset.index = seasonIndex;
-                
-                cardDiv.innerHTML = `
-                    <div class="season-ui-icon-container" id="seasonIcon" style="transform: scale(1) rotate(0deg); opacity: 1;">
-                        ${config.icon}
+            // Re-structured inner HTML to include description always visible
+            seasonCard.innerHTML = `
+                <div class="flex items-center gap-4 w-full">
+                    <div class="season-ui-icon-container" style="transform: scale(1); opacity: 1;">${seasonConfig.icon}</div>
+                    <div class="season-ui-content flex-1">
+                        <span class="season-ui-label">Current Ritu</span>
+                        <span class="season-ui-title text-xl" style="color: ${seasonConfig.color};">${seasonName}</span>
                     </div>
-                    <div class="season-ui-content w-full">
-                        <div class="flex justify-between items-start w-full">
-                            <div class="flex flex-col">
-                                <span class="season-ui-label">Season</span>
-                                <span class="season-ui-title fade-enter-active" id="seasonTitle" style="color: ${config.color};">${seasonName}</span>
-                            </div>
-                            <button onclick="toggleSeasonDescription(this, event)" class="md:hidden text-gray-400 hover:text-gray-600 p-2 -mr-2 -mt-2 transition-transform active:scale-95 focus:outline-none">
-                                <i class="fa-solid fa-chevron-down text-sm season-toggle-icon"></i>
-                            </button>
+                </div>
+                <div class="w-full border-t border-gray-200 pt-2 mt-1">
+                    <div class="text-xs text-gray-600 leading-relaxed font-sans">
+                        ${seasonDescHtml}
+                    </div>
+                </div>
+            `;
+            list.appendChild(seasonCard);
+
+            // 2. Astronomical Calculations (Sun/Moon/Times)
+            const today = new Date();
+            // Use Today if active month matches current, else 1st of active month
+            const calcDate = (data.month === today.getMonth() && data.year === today.getFullYear()) 
+                           ? new Date() 
+                           : new Date(data.year, data.month, 1);
+            
+            const autoData = calculateTithi(calcDate);
+            
+            // SunCalc Times
+            let sunTimes = { sunrise: null, sunset: null };
+            let moonTimes = { rise: null, set: null }; // Placeholder
+            let muhurats = null;
+
+            if (appState.config.location && SunCalc) {
+                sunTimes = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
+                // Calculate Moon Times (SunCalc supports this)
+                // Note: SunCalc library included in your file might be minimal. 
+                // If getMoonTimes exists use it, otherwise skip.
+                if (SunCalc.getMoonTimes) {
+                    moonTimes = SunCalc.getMoonTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
+                }
+                
+                // Calculate Muhurats
+                muhurats = getSpecialTimes(calcDate, sunTimes.sunrise, sunTimes.sunset);
+            }
+
+            // 3. Render Astro Timeline (Sun/Moon Visual Strip)
+            if (sunTimes.sunrise && sunTimes.sunset) {
+                const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+                
+                const timelineDiv = document.createElement('div');
+                timelineDiv.className = "astro-timeline";
+                timelineDiv.innerHTML = `
+                    <div class="astro-time-point text-orange-600">
+                        <i class="fa-solid fa-sun text-xl mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase opacity-70">Sunrise</span>
+                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunrise)}</span>
+                    </div>
+                    <div class="h-8 w-px bg-orange-200"></div>
+                    <div class="astro-time-point text-indigo-900">
+                        <i class="fa-solid fa-moon text-xl mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase opacity-70">Sunset</span>
+                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunset)}</span>
+                    </div>
+                `;
+                list.appendChild(timelineDiv);
+            }
+
+            // 4. Merge Data (Manual > Auto)
+            let displayData = { ...data.panchang };
+            if (!displayData['Tithi']) displayData['Tithi'] = `${autoData.tithi} (${autoData.paksha})`;
+            if (!displayData['Nakshatra']) displayData['Nakshatra'] = autoData.nakshatra;
+            if (!displayData['Yoga']) displayData['Yoga'] = autoData.yoga;
+            if (!displayData['Karana']) displayData['Karana'] = autoData.karana;
+
+            // Remove Sunrise/Sunset from grid (since we showed them in visual strip)
+            delete displayData['Sunrise'];
+            delete displayData['Sunset'];
+            delete displayData['Month']; // Usually shown in header
+
+            // 5. Render Data Grid (Tithi, Nakshatra, Yoga, Karana)
+            const gridDiv = document.createElement('div');
+            gridDiv.className = "panchang-grid";
+
+            const keys = ['Tithi', 'Nakshatra', 'Yoga', 'Karana'];
+            const icons = { 
+                'tithi': 'fa-cloud-moon', 
+                'nakshatra': 'fa-star', 
+                'yoga': 'fa-dharmachakra', 
+                'karana': 'fa-hourglass-half' 
+            };
+            const colors = {
+                'tithi': 'text-purple-600',
+                'nakshatra': 'text-amber-500',
+                'yoga': 'text-blue-500',
+                'karana': 'text-teal-500'
+            };
+
+            keys.forEach(key => {
+                let val = displayData[key] || displayData[key.toLowerCase()] || '-';
+                let icon = icons[key.toLowerCase()] || 'fa-circle';
+                let color = colors[key.toLowerCase()] || 'text-gray-500';
+
+                // Helper to bold the Paksha part in Tithi
+                if(key === 'Tithi' && val.includes('(')) {
+                    val = val.replace(/\((.*?)\)/, '<span class="text-[9px] block text-gray-400 font-normal uppercase tracking-wide">$1</span>');
+                }
+
+                gridDiv.innerHTML += `
+                    <div class="panchang-item">
+                        <div class="panchang-label ${color}">
+                            <i class="fa-solid ${icon}"></i> ${key}
                         </div>
-                        <div class="season-desc-container mt-3 text-[11px] md:text-xs text-gray-600 leading-relaxed hidden md:block w-full border-t md:border-t-0 border-gray-100 pt-2 md:pt-1 font-sans">
-                            ${seasonDescHtml}
+                        <div class="panchang-value truncate" title="${val.replace(/<[^>]*>/g, '')}">
+                            ${val}
                         </div>
                     </div>
                 `;
-                list.appendChild(cardDiv);
-            }
+            });
 
-            // 2. Calculated Tithi (for the month view)
-            const today = new Date();
-            let targetDate;
-            if (data.month === today.getMonth() && data.year === today.getFullYear()) {
-                targetDate = today;
-            } else {
-                targetDate = new Date(data.year, data.month, 1);
-            }
-            const tithiInfo = calculateTithi(targetDate);
-            
-            const tithiDiv = document.createElement('div');
-            tithiDiv.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-            tithiDiv.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid fa-moon text-saffron w-5 text-center mr-1"></i>Tithi (${targetDate.getDate()}th):</span> <span class="text-gray-800 font-medium text-right">${tithiInfo.tithi}, ${tithiInfo.paksha}</span>`;
-            list.appendChild(tithiDiv);
-
-            if (Object.keys(data.panchang).length === 0) { 
-                // list.innerHTML += '<li class="text-gray-400 italic text-xs">No manual Panchang data.</li>'; 
-            }
-            
-            const iconMap = { 'tithi': 'fa-moon', 'nakshatra': 'fa-star', 'yoga': 'fa-bahai', 'karana': 'fa-hourglass-half', 'sunrise': 'fa-sun', 'sunset': 'fa-cloud-sun', 'month': 'fa-calendar' };
-            
-            // Calculate Sunrise/Sunset if location exists
-            let calculatedPanchang = { ...data.panchang };
-            
-            if (appState.config.location && SunCalc) {
-                // Use today's date or 1st of month for the display
-                const today = new Date();
-                let calcDate;
-                if (data.month === today.getMonth() && data.year === today.getFullYear()) {
-                    calcDate = today;
-                } else {
-                    calcDate = new Date(data.year, data.month, 1);
+            // Add manual entries that are NOT in the standard keys
+            Object.keys(displayData).forEach(k => {
+                if (!keys.includes(k) && !keys.includes(k.charAt(0).toUpperCase() + k.slice(1))) {
+                     gridDiv.innerHTML += `
+                        <div class="panchang-item">
+                            <div class="panchang-label text-gray-500"><i class="fa-solid fa-info-circle"></i> ${k}</div>
+                            <div class="panchang-value truncate">${displayData[k]}</div>
+                        </div>
+                    `;
                 }
+            });
+
+            list.appendChild(gridDiv);
+
+            // 6. Render Muhurat Strip (Rahu, Yama, Abhijit)
+            if (muhurats) {
+                const muhuratDiv = document.createElement('div');
+                muhuratDiv.innerHTML = `<h4 class="text-xs font-bold text-gray-500 mb-2 mt-4 uppercase tracking-wider pl-1">Auspicious Timings</h4>`;
                 
-                const times = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
-                if (times.sunrise && times.sunset) {
-                    const fmt = (d) => {
-                        let h = d.getHours();
-                        let m = d.getMinutes();
-                        const ampm = h >= 12 ? 'PM' : 'AM';
-                        h = h % 12;
-                        h = h ? h : 12; 
-                        m = m < 10 ? '0'+m : m;
-                        return `${h}:${m} ${ampm}`;
-                    };
-                    calculatedPanchang['Sunrise'] = fmt(times.sunrise) + " (GPS)";
-                    calculatedPanchang['Sunset'] = fmt(times.sunset) + " (GPS)";
-                }
-            }
-            
-            for (const [key, value] of Object.entries(calculatedPanchang)) {
+                const strip = document.createElement('div');
+                strip.className = "muhurat-strip custom-scroll";
 
-                const lowerKey = key.toLowerCase();
-                let iconClass = iconMap[lowerKey] || 'fa-circle-info';
-                if (lowerKey === 'sunrise') {
-                    const pill = document.createElement('div');
-                    pill.className = "bg-[#FFF6E8] border border-orange-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-sun text-2xl text-orange-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-orange-400 uppercase tracking-wider mb-0.5">SUNRISE</span><span class="text-lg font-bold text-[#92400e]">${value}</span></div>`;
-                    pillsContainer.appendChild(pill);
-                } else if (lowerKey === 'sunset') {
-                    const pill = document.createElement('div');
-                    pill.className = "bg-[#EEF2FF] border border-indigo-100 rounded-full px-3 py-2 flex items-center gap-3 flex-1 min-w-[130px] shadow-sm";
-                    pill.innerHTML = `<i class="fa-solid fa-cloud-moon text-2xl text-indigo-500"></i><div class="flex flex-col leading-none"><span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">SUNSET</span><span class="text-lg font-bold text-indigo-900">${value}</span></div>`;
-                    pillsContainer.appendChild(pill);
-                } else {
-                    const li = document.createElement('div');
-                    li.className = "w-full flex justify-between border-b border-gray-100 pb-1 mb-1 items-center px-1";
-                    li.innerHTML = `<span class="font-semibold text-gray-600 text-xs uppercase tracking-wide"><i class="fa-solid ${iconClass} text-saffron w-5 text-center mr-1"></i>${key}:</span> <span class="text-gray-800 font-medium text-right">${value}</span>`;
-                    list.appendChild(li);
-                }
+                strip.innerHTML = `
+                    <div class="muhurat-pill muhurat-good" title="Best time for new beginnings">
+                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Abhijit</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.abhijit}</span>
+                    </div>
+                    <div class="muhurat-pill muhurat-bad" title="Avoid auspicious work">
+                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Rahu Kalam</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.rahu}</span>
+                    </div>
+                    <div class="muhurat-pill muhurat-bad" title="Inauspicious time">
+                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Yamaganda</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.yama}</span>
+                    </div>
+                `;
+                
+                muhuratDiv.appendChild(strip);
+                list.appendChild(muhuratDiv);
             }
+
+            // 7. Location Button Logic (Moved to bottom of list)
+            const locContainer = document.createElement('div');
+            locContainer.id = 'location-btn-container';
+            locContainer.className = "mt-4 pt-3 border-t border-gray-100 flex justify-center";
+            
+            if (appState.config.location) {
+                 const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
+                 locContainer.innerHTML = `
+                    <div class="text-center w-full">
+                        <div class="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold inline-flex items-center gap-2 mb-2 border border-green-100">
+                            <i class="fa-solid fa-location-dot"></i> ${locName}
+                        </div>
+                        <button id="btn-location" onclick="getUserLocation()" class="block w-full text-[10px] text-gray-400 hover:text-orange-500 uppercase font-bold tracking-widest transition">
+                            Update Location
+                        </button>
+                    </div>`;
+            } else {
+                 locContainer.innerHTML = `
+                    <button id="btn-location" onclick="getUserLocation()" class="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm border border-orange-200 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-location-crosshairs"></i> Set Location for Timings
+                    </button>`;
+            }
+            list.appendChild(locContainer);
         }
 
         function stopLiveClock() {
