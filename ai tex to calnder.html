@@ -3584,8 +3584,8 @@ function renderCalendarGrid(data) {
         const div = document.createElement('div');
         div.className = `w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center`;
         div.innerHTML = `
-            <span class="text-[10px] md:text-sm font-bold text-gray-700 uppercase tracking-wider ${isSunday ? 'text-red-500' : ''}">${engDay}</span>
-            ${currentLang !== 'en' ? `<span class="text-[9px] md:text-xs text-green-600 font-oriya mt-0.5">${day}</span>` : ''}
+            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ${isSunday ? 'text-red-500' : ''}">${engDay}</span>
+            ${currentLang !== 'en' ? `<span class="text-xs md:text-sm text-green-600 font-oriya mt-0.5">${day}</span>` : ''}
         `;
         headerRow.appendChild(div);
     });
