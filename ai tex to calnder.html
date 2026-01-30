@@ -1366,10 +1366,10 @@ The word "Nua" means new and "Khai" means food.
             }
 
             // 4. Public Function: Calculate Panchang
-            function calculate(dateObj) {
-                // We calculate for 6:00 AM local time (approx Sunrise Tithi)
+            function calculate(dateObj, hour = 6) {
+                // We calculate for specified hour (default 6:00 AM local time)
                 const d = new Date(dateObj);
-                d.setHours(6, 0, 0, 0); 
+                d.setHours(hour, 0, 0, 0);
                 
                 const jd = getJulianDay(d);
                 const ayanamsa = getAyanamsa(jd);
@@ -1908,28 +1908,48 @@ The word "Nua" means new and "Khai" means food.
 
         function calculateTithi(dateObj) {
             // Use the new Vedic Astro Engine
-            const astroData = VedicAstro.calculate(dateObj);
+            // 1. Calculate at Start of Day (6 AM)
+            const astroDataStart = VedicAstro.calculate(dateObj, 6);
             
+            // 2. Calculate at End of Day (Next Day 5:59 AM) to check for change
+            const nextDay = new Date(dateObj);
+            nextDay.setDate(nextDay.getDate() + 1);
+            const astroDataEnd = VedicAstro.calculate(nextDay, 5.9);
+
             // Determine Data for Localization
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
             
-            // Get Localized Tithi Name
-            const safeIndex = astroData.tithiIndex;
-            const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
-            
-            // Determine Paksha (0-14 is Shukla, 15-29 is Krishna)
-            const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
-            
+            // Helper to format a single Tithi object
+            const formatTithi = (data) => {
+                const safeIndex = data.tithiIndex;
+                const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
+                const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
+                return {
+                    tithi: tithiName,
+                    paksha: pakshaName,
+                    index: safeIndex,
+                    nakshatra: data.nakshatra,
+                    yoga: data.yoga,
+                    karana: data.karana
+                };
+            };
+
+            const startTithi = formatTithi(astroDataStart);
+            const endTithi = formatTithi(astroDataEnd);
+
+            // Check if Tithi changed
+            let allTithis = [startTithi];
+            if (startTithi.index !== endTithi.index) {
+                allTithis.push(endTithi);
+            }
+
             // Return extended data including Nakshatra/Yoga for the renderer
+            // We return the primary (start) tithi as top-level properties for backward compatibility
+            // And a new 'allTithis' array for the grid to use.
             return { 
-                tithi: tithiName, 
-                paksha: pakshaName, 
-                index: safeIndex,
-                // Pass these through for the Panchang Panel
-                nakshatra: astroData.nakshatra,
-                yoga: astroData.yoga,
-                karana: astroData.karana
+                ...startTithi,
+                allTithis: allTithis
             };
         }
 
@@ -3655,13 +3675,14 @@ function renderCalendarGrid(data) {
         // CONFIG 2: DESKTOP STYLES (REFERENCE)
         // ==========================================
         
-        // Desktop Colors (Dot Colors)
-        let tithiDotColor = "bg-gray-400"; 
-        if (astro.index === 10 || astro.index === 25) tithiDotColor = "bg-purple-500"; 
-        else if (astro.index === 14) tithiDotColor = "bg-orange-500"; 
-        else if (astro.index === 29) tithiDotColor = "bg-gray-800"; 
-        else if (astro.paksha.includes("Shukla")) tithiDotColor = "bg-green-400"; 
-        else tithiDotColor = "bg-blue-400";
+        // Helper: Get Color for Tithi
+        const getTithiDotColor = (idx, pakshaName) => {
+            if (idx === 10 || idx === 25) return "bg-purple-500";
+            if (idx === 14) return "bg-orange-500";
+            if (idx === 29) return "bg-gray-800";
+            if (pakshaName && pakshaName.includes("Shukla")) return "bg-green-400";
+            return "bg-blue-400";
+        };
 
         // --- NEW: Paksha Badge Logic ---
         const isShukla = astro.index < 15;
@@ -3724,8 +3745,23 @@ function renderCalendarGrid(data) {
             </div>
         `;
 
-        // --- 2. DESKTOP INNER HTML (Matches Reference EXACTLY) ---
-        // text-2xl, top-left align, pills, details
+        // --- 2. DESKTOP INNER HTML ---
+        // Render All Tithis (Stacked)
+        let tithiRows = '';
+        const tithisToRender = astro.allTithis || [astro]; // Fallback to single if missing
+
+        tithisToRender.forEach(t => {
+            const dotColor = getTithiDotColor(t.index, t.paksha);
+            tithiRows += `
+                <div class="flex items-center gap-2 pl-0.5 mt-1">
+                     <div class="w-2 h-2 rounded-full ${dotColor} flex-shrink-0 shadow-sm"></div>
+                     <div class="text-sm font-extrabold text-gray-900 truncate leading-tight tracking-tight">
+                        ${t.tithi}
+                     </div>
+                </div>
+            `;
+        });
+
         const desktopView = `
             <div class="hidden md:flex flex-col h-full justify-between w-full">
                 ${isToday ? '<div class="today-badge">TODAY</div>' : ''}
@@ -3744,12 +3780,7 @@ function renderCalendarGrid(data) {
                         ${pakshaBadgeHtml}
                     </div>
 
-                    <div class="flex items-center gap-2 pl-0.5 mt-1">
-                         <div class="w-2 h-2 rounded-full ${tithiDotColor} flex-shrink-0 shadow-sm"></div>
-                         <div class="text-sm font-extrabold text-gray-900 truncate leading-tight tracking-tight">
-                            ${astro.tithi}
-                         </div>
-                    </div>
+                    ${tithiRows}
 
                     <div class="text-[11px] text-green-600 font-bold pl-3 truncate leading-tight">
                         ${astro.nakshatra}
