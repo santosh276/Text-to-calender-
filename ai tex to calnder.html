@@ -4199,23 +4199,24 @@ function renderCalendarGrid(data) {
                 `;
                 section.appendChild(eventCard);
 
-                // --- CARD 2: Clock ---
-                const clockCard = document.createElement('div');
-                clockCard.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg";
-                clockCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)"; // Same gradient aesthetic
-                clockCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
-
-                clockCard.innerHTML = `
-                    <div class="p-3 relative z-10 text-white text-center flex flex-col items-center justify-center h-full">
-                         <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">--:--:-- --</div>
-                         <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
-                    </div>
-                    <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
-                `;
-                section.appendChild(clockCard);
-
-                startLiveClock();
             }
+
+            // --- CARD 2: Clock (Always Visible) ---
+            const clockCard = document.createElement('div');
+            clockCard.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg";
+            clockCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)"; // Same gradient aesthetic
+            clockCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
+
+            clockCard.innerHTML = `
+                <div class="p-3 relative z-10 text-white text-center flex flex-col items-center justify-center h-full">
+                     <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">--:--:-- --</div>
+                     <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
+                </div>
+                <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
+            `;
+            section.appendChild(clockCard);
+
+            startLiveClock();
 
             // 3. Search Bar
             const searchWrapper = document.createElement('div');
