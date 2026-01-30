@@ -101,6 +101,7 @@
             }
         }
 
+        .text-\[\#800000\] { color: #800000; }
         .pointer-events-auto { pointer-events: auto !important; }
         .z-\[200\] { z-index: 200; }
         .z-\[300\] { z-index: 300; }
@@ -3592,7 +3593,7 @@ function renderCalendarGrid(data) {
         div.className = `w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center`;
         div.innerHTML = `
             <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ${isSunday ? 'text-red-500' : ''}">${engDay}</span>
-            ${currentLang !== 'en' ? `<span class="${localTextSize} font-bold text-green-600 font-oriya mt-0.5">${day}</span>` : ''}
+            ${currentLang !== 'en' ? `<span class="${localTextSize} font-bold text-[#800000] font-oriya mt-0.5">${day}</span>` : ''}
         `;
         headerRow.appendChild(div);
     });
