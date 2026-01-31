@@ -111,10 +111,12 @@
         /* 1. LEVITATION (FLOAT) */
         @keyframes float-gentle {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); } /* Reduced scale for header */
+            50% { transform: translateY(-6px); }
         }
 
         /* 2. DOUBLE-LAYERED AURA */
+
+        /* Layer 1: Soft Aura (Expands wide and diffuse) */
         @keyframes ripple-aura {
             0% {
                 transform: scale(0.8);
@@ -122,12 +124,13 @@
                 box-shadow: 0 0 0 0 rgba(252, 211, 77, 0.5);
             }
             100% {
-                transform: scale(2.0); /* Reduced from 2.5 for header */
+                transform: scale(2.5);
                 opacity: 0;
-                box-shadow: 0 0 15px 15px rgba(252, 211, 77, 0);
+                box-shadow: 0 0 30px 30px rgba(252, 211, 77, 0);
             }
         }
 
+        /* Layer 2: Sharp Wave (Thin energetic ring) */
         @keyframes ripple-wave {
             0% {
                 transform: scale(0.9);
@@ -136,7 +139,7 @@
                 border-color: rgba(255, 255, 255, 0.8);
             }
             100% {
-                transform: scale(1.6); /* Reduced from 1.8 */
+                transform: scale(1.8);
                 opacity: 0;
                 border-width: 0px;
                 border-color: rgba(255, 255, 255, 0);
