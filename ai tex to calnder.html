@@ -108,89 +108,146 @@
         .font-serif { font-family: 'Playfair Display', serif; }
 
         /* --- DIVINE ANIMATED ICON STYLES --- */
-        /* 1. LEVITATION (FLOAT) */
-        @keyframes float-gentle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); } /* Reduced from 6px for smaller icon */
-        }
-
-        /* 2. DOUBLE-LAYERED AURA */
-        @keyframes ripple-aura {
-            0% { 
-                transform: scale(0.85); 
-                opacity: 0.5; 
-                box-shadow: 0 0 0 0 rgba(252, 211, 77, 0.5); 
-            }
-            100% { 
-                transform: scale(2.0); /* Reduced from 2.4 */
-                opacity: 0; 
-                box-shadow: 0 0 15px 15px rgba(252, 211, 77, 0); 
-            }
-        }
-
-        @keyframes ripple-wave {
-            0% { 
-                transform: scale(0.95); 
-                opacity: 0.8; 
-                border-width: 1.5px;
-                border-color: rgba(255, 255, 255, 0.7);
-            }
-            100% { 
-                transform: scale(1.5); /* Reduced from 1.7 */
-                opacity: 0; 
-                border-width: 0px;
-                border-color: rgba(255, 255, 255, 0);
-            }
-        }
-
-        /* 3. OM BREATHING */
-        @keyframes om-breathe {
-            0%, 100% { transform: scale(1); text-shadow: 0 1px 2px rgba(185, 28, 28, 0.2); }
-            50% { transform: scale(1.1); text-shadow: 0 2px 4px rgba(185, 28, 28, 0.4); }
-        }
-
-        /* 4. COIN SURFACE STYLING */
-        .coin-premium {
-            background: linear-gradient(135deg, #FFD700 0%, #F59E0B 40%, #D97706 100%);
-            box-shadow: 
-                inset 1px 1px 2px rgba(255, 255, 255, 0.6),
-                inset -1px -1px 2px rgba(180, 83, 9, 0.4),
-                inset 0 0 0 2px rgba(217, 119, 6, 0.2), /* Reduced from 3px */
-                0 4px 6px -1px rgba(0, 0, 0, 0.3); /* Adjusted for header size */
-            border: 1px solid rgba(251, 191, 36, 0.5);
-        }
-
-        /* COMPONENT CLASSES */
-        .coin-container {
-            animation: float-gentle 3s ease-in-out infinite;
+        /* --- 1. THE COIN (Core Styles) --- */
+        .coin-wrapper {
             position: relative;
             z-index: 10;
+            /* Animation: Levitation */
+            animation: float-gentle 3s ease-in-out infinite;
         }
 
-        .coin-ripple::before {
+        .coin {
+            width: 5rem;  /* w-20 (approx 80px) */
+            height: 5rem; /* h-20 */
+            border-radius: 50%;
+
+            /* Gradient: roughly Tailwind from-amber-300 to-amber-600 */
+            background: linear-gradient(135deg, #FCD34D 0%, #D97706 100%);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            /* Borders & Shadows */
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.5), /* Deep shadow */
+                inset 0 2px 4px rgba(255, 255, 255, 0.3); /* Inner shine for 3D effect */
+
+            position: relative;
+            z-index: 20;
+        }
+
+        /* --- 2. THE SYMBOL (OM) --- */
+        .om-symbol {
+            color: #B91C1C;
+
+            /* SIZE: 3.5rem (Maintained) */
+            font-size: 3.5rem;
+
+            font-weight: bold;
+            line-height: 1;
+
+            /* POSITIONING: 0.6rem (Maintained) */
+            padding-top: 0.6rem;
+
+            user-select: none;
+
+            /* Offline Font Stack */
+            font-family: "Georgia", "Times New Roman", Times, serif;
+
+            /* Animation: Improved Breathing with Glow */
+            animation: om-breathe-glow 3s ease-in-out infinite;
+
+            /* Ensure smooth rendering */
+            will-change: transform, text-shadow, filter;
+        }
+
+        /* --- 3. ANIMATIONS (Keyframes) --- */
+
+        /* Float Up/Down */
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* NEW: Enhanced Breathing with Aura */
+        @keyframes om-breathe-glow {
+            0%, 100% {
+                transform: scale(1);
+                /* Subtle shadow when exhaled */
+                text-shadow: 0 2px 4px rgba(185, 28, 28, 0.1);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.15);
+                /* Complex Shadow for "Divine" effect:
+                   1. Deep red shadow for distance (0 5px 10px)
+                   2. Golden Glow (0 0 20px)
+                */
+                text-shadow:
+                    0 5px 10px rgba(185, 28, 28, 0.3),
+                    0 0 20px rgba(255, 215, 0, 0.5);
+
+                /* Light up slightly */
+                filter: brightness(1.15);
+            }
+        }
+
+        /* --- 4. RIPPLE EFFECTS (Pseudo-elements) --- */
+        .ripple-effect::before,
+        .ripple-effect::after {
             content: '';
             position: absolute;
-            inset: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center strictly */
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(252, 211, 77, 0.3) 0%, rgba(252, 211, 77, 0) 70%);
+            width: 100%;
+            height: 100%;
             z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Layer 1: Soft Golden Glow */
+        .ripple-effect::before {
+            background: radial-gradient(circle, rgba(252, 211, 77, 0.4) 0%, rgba(252, 211, 77, 0) 70%);
             animation: ripple-aura 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
         }
 
-        .coin-ripple::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
+        /* Layer 2: Sharp Energy Ring */
+        .ripple-effect::after {
             border: 1px solid rgba(252, 211, 77, 0.6);
-            z-index: -1;
             animation: ripple-wave 2s ease-out infinite;
             animation-delay: 0.6s;
         }
 
-        .om-animated {
-            animation: om-breathe 3s ease-in-out infinite;
-            font-family: 'Playfair Display', serif;
+        @keyframes ripple-aura {
+            0% {
+                width: 100%; height: 100%;
+                opacity: 0.6;
+                box-shadow: 0 0 0 0 rgba(252, 211, 77, 0.5);
+            }
+            100% {
+                width: 300%; height: 300%; /* Grows outward */
+                opacity: 0;
+                box-shadow: 0 0 30px 30px rgba(252, 211, 77, 0);
+            }
+        }
+
+        @keyframes ripple-wave {
+            0% {
+                width: 90%; height: 90%;
+                opacity: 0.9;
+                border-width: 2px;
+                border-color: rgba(255, 255, 255, 0.8);
+            }
+            100% {
+                width: 200%; height: 200%;
+                opacity: 0;
+                border-width: 0px;
+                border-color: rgba(255, 255, 255, 0);
+            }
         }
 
         /* Custom Dot Colors */
@@ -3334,9 +3391,9 @@ The word "Nua" means new and "Khai" means food.
                 logoContainer.innerHTML = `<img id="app-logo-img" src="${src}" alt="Logo" class="w-12 h-12 rounded-full object-cover border border-white/10 shadow-lg">`;
             } else {
                 logoContainer.innerHTML = `
-                <div class="relative coin-container coin-ripple">
-                    <div class="w-12 h-12 rounded-full coin-premium flex items-center justify-center z-10 relative">
-                        <span class="text-deep-red text-2xl font-bold om-animated select-none mt-1">ॐ</span>
+                <div class="coin-wrapper ripple-effect">
+                    <div class="coin">
+                        <span class="om-symbol">ॐ</span>
                     </div>
                 </div>`;
             }
