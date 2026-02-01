@@ -338,13 +338,15 @@
             50% { box-shadow: 0 0 25px rgba(255, 153, 51, 0.8); border-color: #CC0000; }
         }
 
-        .today-glow {
-            animation: pulse-orange 2s infinite ease-in-out;
-            background-color: #fff7ed !important;
-            transform: scale(1.02);
-            z-index: 10;
-            border-width: 2px;
-            border-style: solid;
+        @media (min-width: 768px) {
+            .today-glow {
+                animation: pulse-orange 2s infinite ease-in-out;
+                background-color: #fff7ed !important;
+                transform: scale(1.02);
+                z-index: 10;
+                border-width: 2px;
+                border-style: solid;
+            }
         }
 
         .filter-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -3893,6 +3895,11 @@ function renderCalendarGrid(data) {
             else if (dayEvents.some(e => e.symbol === '>')) mobileBgClass = 'bg-gray-100';  // Other
         }
 
+        // OVERRIDE for Today (Mobile)
+        if (isToday) {
+            mobileBgClass = 'bg-[#B91C1C] shadow-lg shadow-red-200';
+        }
+
         // 2. Mobile Tithi Icons (Exact Original SVGs)
         let originalIconHtml = '';
         if (astro.index === 14) originalIconHtml = TITHI_ICONS.purnima;
@@ -3961,7 +3968,7 @@ function renderCalendarGrid(data) {
         // BORDER COLOR MERGE:
         // Mobile: Orange Border (Original)
         // Desktop: Green Border (Reference)
-        if (isToday) containerClasses += " border-2 border-orange-400 md:border-green-500 shadow-md today-glow"; 
+        if (isToday) containerClasses += " border-2 border-[#B91C1C] md:border-green-500 shadow-md today-glow";
         else containerClasses += " border-gray-200";
         
         // Height classes match Original (mobile) vs Reference (desktop)
@@ -3972,9 +3979,10 @@ function renderCalendarGrid(data) {
 
         // --- 1. MOBILE INNER HTML (Matches Original EXACTLY) ---
         // text-lg, centered, absolute icon
+        const mobileTextClass = isToday ? 'text-white' : (isSunday ? 'text-deepred' : 'text-gray-700');
         const mobileView = `
             <div class="md:hidden w-full h-full flex flex-col items-center justify-center cell-content-relative">
-                <span class="text-lg font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'} ${isToday ? 'text-deepred' : ''}">
+                <span class="text-lg font-bold leading-none ${mobileTextClass}">
                     ${toNativeNum(d, currentLang)}
                 </span>
                 ${originalIconHtml}
