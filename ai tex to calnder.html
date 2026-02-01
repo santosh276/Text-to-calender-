@@ -4127,9 +4127,11 @@ function renderCalendarGrid(data) {
         const astro = calculateTithi(dateObj); 
 
         // --- NEW CODE: DUPLICATE FIX ---
-        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
+        // If today is Amavasya (29) or Ekadashi (10, 25) AND yesterday was the same, hide this one.
         let effectiveTithiIndex = astro.index;
-        if (astro.index === 29 && lastTithiIndex === 29) {
+        if ((astro.index === 29 && lastTithiIndex === 29) ||
+            (astro.index === 10 && lastTithiIndex === 10) ||
+            (astro.index === 25 && lastTithiIndex === 25)) {
             effectiveTithiIndex = -1; // Set to -1 so no icon appears
         }
         // Update tracker for the next iteration
