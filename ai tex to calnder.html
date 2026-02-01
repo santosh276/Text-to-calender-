@@ -1680,11 +1680,21 @@ The word "Nua" means new and "Khai" means food.
 
             // 4. Public Function: Calculate Panchang
             function calculate(dateObj, hour = 6, locationData = null) {
-                // Time T in Julian Centuries since J2000
-                const d = new Date(dateObj);
-                d.setHours(hour, 0, 0, 0); // Calculate at sunrise (approx 6am if no location)
+                let targetTime;
                 
-                const jd = getJulianDay(d);
+                // FIXED: If hour is explicitly null, use dateObj as the exact absolute moment (Date object)
+                if (hour === null) {
+                    targetTime = new Date(dateObj);
+                } else {
+                    // Legacy Mode: Reset to midnight of the provided date and add decimal hours correctly
+                    targetTime = new Date(dateObj);
+                    targetTime.setHours(0, 0, 0, 0); // Reset to midnight local
+                    // Add decimal hours (e.g. 5.5 = 5h 30m)
+                    targetTime.setTime(targetTime.getTime() + (hour * 60 * 60 * 1000));
+                }
+
+                // Time T in Julian Centuries since J2000
+                const jd = getJulianDay(targetTime);
                 const T = (jd - 2451545.0) / 36525;
 
                 const ayanamsa = getAyanamsa(T);
@@ -2228,7 +2238,7 @@ The word "Nua" means new and "Khai" means food.
             // 2. Calculate next day at same time to check transitions
             const nextDay = new Date(dateObj);
             nextDay.setDate(nextDay.getDate() + 1);
-            const astroDataEnd = VedicAstro.calculate(nextDay, customHour - 0.1); // Slightly before next sunrise
+            const astroDataEnd = VedicAstro.calculate(nextDay, customHour === null ? null : customHour - 0.1); // Slightly before next sunrise
 
             // Determine Data for Localization
             const currentLang = appState.config.language || 'en';
@@ -4124,7 +4134,15 @@ function renderCalendarGrid(data) {
         const dateObj = new Date(data.year, data.month, d);
         
         // Calculations
-        const astro = calculateTithi(dateObj); 
+        // Use location-based sunrise for grid accuracy if available
+        let gridSunrise = null;
+        if (appState.config.location && SunCalc) {
+             const s = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+             if (s && s.sunrise) gridSunrise = s.sunrise;
+        }
+
+        // Pass exact sunrise if known, else default
+        const astro = calculateTithi(gridSunrise ? gridSunrise : dateObj, gridSunrise ? null : 6);
 
         // --- NEW CODE: DUPLICATE FIX ---
         // If today is Amavasya (29) or Ekadashi (10, 25) AND yesterday was the same, hide this one.
@@ -4397,11 +4415,14 @@ function renderCalendarGrid(data) {
             let moonTimes = { rise: null, set: null }; // Placeholder
             let muhurats = null;
             let sunriseHour = 6; // Default
+            let exactSunrise = null;
 
             if (appState.config.location && SunCalc) {
                 sunTimes = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
                 if (sunTimes && sunTimes.sunrise) {
-                    // Convert sunrise object to decimal hour (e.g. 06:30 -> 6.5)
+                    // Use exact sunrise timestamp to avoid hour rollover issues
+                    exactSunrise = sunTimes.sunrise;
+                    // Legacy hour for display
                     sunriseHour = sunTimes.sunrise.getHours() + (sunTimes.sunrise.getMinutes() / 60);
                 }
 
@@ -4416,7 +4437,8 @@ function renderCalendarGrid(data) {
                 muhurats = getSpecialTimes(calcDate, sunTimes.sunrise, sunTimes.sunset);
             }
 
-            const autoData = calculateTithi(calcDate, sunriseHour);
+            // Use exactSunrise if available (passing null as hour), otherwise legacy sunriseHour
+            const autoData = calculateTithi(exactSunrise ? exactSunrise : calcDate, exactSunrise ? null : sunriseHour);
 
             // 3. Render Astro Timeline (Sun/Moon Visual Strip)
             if (sunTimes.sunrise && sunTimes.sunset) {
