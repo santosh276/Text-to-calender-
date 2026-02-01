@@ -1063,12 +1063,18 @@ The word "Nua" means new and "Khai" means food.
                     </button>
                     
                     <div class="flex items-center gap-3 md:gap-4 z-10">
+                        <button onclick="changeToLeapYear(-1)" title="Previous Leap Year" class="hidden md:flex w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 hover:bg-purple-50 hover:border-purple-200 items-center justify-center text-gray-400 hover:text-purple-600 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </button>
                         <button onclick="changeYear(-1)" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 hover:bg-orange-50 hover:border-orange-200 flex items-center justify-center text-gray-600 hover:text-orange-600 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
                         <h2 class="text-xl md:text-3xl font-extrabold text-gray-900 min-w-[140px] text-center" id="year-view-title">2026 Year View</h2>
                         <button onclick="changeYear(1)" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 hover:bg-orange-50 hover:border-orange-200 flex items-center justify-center text-gray-600 hover:text-orange-600 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <button onclick="changeToLeapYear(1)" title="Next Leap Year" class="hidden md:flex w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 hover:bg-purple-50 hover:border-purple-200 items-center justify-center text-gray-400 hover:text-purple-600 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-angles-right"></i>
                         </button>
                     </div>
 
@@ -3527,6 +3533,19 @@ The word "Nua" means new and "Khai" means food.
             render();
         }
 
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        function changeToLeapYear(direction) {
+            let targetYear = appState.viewDate.year + direction;
+            while (!isLeapYear(targetYear)) {
+                targetYear += direction;
+                if (Math.abs(targetYear - appState.viewDate.year) > 20) break; // Safety break
+            }
+            changeYear(targetYear - appState.viewDate.year);
+        }
+
         function jumpToToday() {
             const today = new Date();
             appState.viewDate = { month: today.getMonth(), year: today.getFullYear() };
@@ -3889,7 +3908,8 @@ The word "Nua" means new and "Khai" means food.
                 year = appState.monthsData[appState.activeMonthIndex].year;
             }
             
-            document.getElementById('year-view-title').innerText = `${year} Year View`;
+            const isLeap = isLeapYear(year);
+            document.getElementById('year-view-title').innerHTML = `${year} Year View ${isLeap ? '<span class="ml-2 bg-purple-100 text-purple-700 text-[10px] px-2 py-0.5 rounded-full align-middle border border-purple-200 uppercase tracking-wider">Leap Year</span>' : ''}`;
 
             // Generate 12 months
             for (let m = 0; m < 12; m++) {
