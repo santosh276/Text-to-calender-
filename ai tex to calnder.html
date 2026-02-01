@@ -333,13 +333,13 @@
         }
         
         /* Pulsing Glow Effect */
-        @keyframes pulse-orange {
-            0%, 100% { box-shadow: 0 0 15px rgba(255, 153, 51, 0.5); border-color: #FF9933; }
-            50% { box-shadow: 0 0 25px rgba(255, 153, 51, 0.8); border-color: #CC0000; }
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); border-color: #FFD700; }
+            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.9); border-color: #FFEA00; }
         }
 
         .today-glow {
-            animation: pulse-orange 2s infinite ease-in-out;
+            animation: pulse-gold 2s infinite ease-in-out;
             transform: scale(1.02);
             z-index: 10;
             border-width: 2px;
@@ -3969,9 +3969,9 @@ function renderCalendarGrid(data) {
         let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:bg-white`;
         
         // BORDER COLOR MERGE:
-        // Mobile: Orange Border (Original)
-        // Desktop: Green Border (Reference)
-        if (isToday) containerClasses += " border-2 border-orange-400 md:border-green-500 shadow-md today-glow"; 
+        // Mobile: Amber/Gold Border
+        // Desktop: Amber/Gold Border
+        if (isToday) containerClasses += " border-2 border-amber-400 md:border-amber-500 shadow-md today-glow";
         else containerClasses += " border-gray-200";
         
         // Height classes match Original (mobile) vs Reference (desktop)
