@@ -82,6 +82,7 @@
 .-rotate-12 { transform: rotate(-12deg); }
 .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
 .from-red-500\/10 { --tw-gradient-from: rgb(239 68 68 / 0.1); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+        .bg-gradient-upnext { background: linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%); }
 .bg-clip-text { -webkit-background-clip: text; background-clip: text; }
 .text-transparent { color: transparent; }
 .from-orange-400 { --tw-gradient-from: #fb923c; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
@@ -3899,7 +3900,7 @@ function renderCalendarGrid(data) {
 
         // Today overrides everything on Mobile
         if (isToday) {
-            mobileBgClass = 'bg-deep-red';
+            mobileBgClass = 'bg-gradient-upnext';
         }
 
         // 2. Mobile Tithi Icons (Exact Original SVGs)
