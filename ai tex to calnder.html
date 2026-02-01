@@ -1069,7 +1069,10 @@ The word "Nua" means new and "Khai" means food.
                         <button onclick="changeYear(-1)" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 hover:bg-orange-50 hover:border-orange-200 flex items-center justify-center text-gray-600 hover:text-orange-600 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
-                        <h2 class="text-xl md:text-3xl font-extrabold text-gray-900 min-w-[140px] text-center" id="year-view-title">2026 Year View</h2>
+                        <div class="flex flex-col items-center justify-center min-w-[140px]">
+                            <h2 class="text-xl md:text-3xl font-extrabold text-gray-900 text-center leading-none" id="year-view-title">2026 Year View</h2>
+                            <div id="leap-year-badge" class="mt-1 h-5"></div>
+                        </div>
                         <button onclick="changeYear(1)" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 hover:bg-orange-50 hover:border-orange-200 flex items-center justify-center text-gray-600 hover:text-orange-600 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>
@@ -3909,7 +3912,11 @@ The word "Nua" means new and "Khai" means food.
             }
             
             const isLeap = isLeapYear(year);
-            document.getElementById('year-view-title').innerHTML = `${year} Year View ${isLeap ? '<span class="ml-2 bg-purple-100 text-purple-700 text-[10px] px-2 py-0.5 rounded-full align-middle border border-purple-200 uppercase tracking-wider">Leap Year</span>' : ''}`;
+            document.getElementById('year-view-title').innerText = `${year} Year View`;
+            const badgeContainer = document.getElementById('leap-year-badge');
+            if (badgeContainer) {
+                badgeContainer.innerHTML = isLeap ? '<span class="inline-block bg-purple-100 text-purple-700 text-[10px] px-3 py-0.5 rounded-full border border-purple-200 uppercase tracking-wider font-bold shadow-sm">Leap Year</span>' : '';
+            }
 
             // Generate 12 months
             for (let m = 0; m < 12; m++) {
