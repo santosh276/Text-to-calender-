@@ -4060,6 +4060,7 @@ function renderCalendarGrid(data) {
     }
 
     // Days
+    let lastTithiIndex = -1;
     for (let d = 1; d <= daysInMonth; d++) {
         const isSunday = new Date(data.year, data.month, d).getDay() === 0;
         const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
@@ -4068,6 +4069,17 @@ function renderCalendarGrid(data) {
         
         // Calculations
         const astro = calculateTithi(dateObj); 
+
+        // --- NEW CODE: DUPLICATE FIX ---
+        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
+        let effectiveTithiIndex = astro.index;
+        if (astro.index === 29 && lastTithiIndex === 29) {
+            effectiveTithiIndex = -1; // Set to -1 so no icon appears
+        }
+        // Update tracker for the next iteration
+        lastTithiIndex = astro.index;
+        // -------------------------------
+
         const dayEvents = data.events.filter(e => e.date === d);
         
         // ==========================================
@@ -4093,9 +4105,9 @@ function renderCalendarGrid(data) {
 
         // 2. Mobile Tithi Icons (Exact Original SVGs)
         let originalIconHtml = '';
-        if (astro.index === 14) originalIconHtml = TITHI_ICONS.purnima;
-        else if (astro.index === 29) originalIconHtml = TITHI_ICONS.amavasya;
-        else if (astro.index === 10 || astro.index === 25) originalIconHtml = TITHI_ICONS.ekadashi;
+        if (effectiveTithiIndex === 14) originalIconHtml = TITHI_ICONS.purnima;
+        else if (effectiveTithiIndex === 29) originalIconHtml = TITHI_ICONS.amavasya;
+        else if (effectiveTithiIndex === 10 || effectiveTithiIndex === 25) originalIconHtml = TITHI_ICONS.ekadashi;
         
         // Wrap for mobile positioning
         if (originalIconHtml) {
