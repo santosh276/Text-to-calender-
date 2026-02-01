@@ -909,7 +909,7 @@ Makar Sankranti is a major harvest festival.
 - Flying kites
 :::
                         </div>
-                        <p class="code-annotation">Use <span class="font-mono bg-gray-800 px-1">>> DD-MM-YYYY</span> to target a date.</p>
+                        <p class="code-annotation">Use <span class="font-mono bg-gray-800 px-1">>> DD-MM-YYYY</span> for specific dates or <span class="font-mono bg-gray-800 px-1">>> DD-MM</span> for recurring details.</p>
                     </div>
 
                     <div class="guide-section">
@@ -1923,6 +1923,7 @@ The word "Nua" means new and "Khai" means food.
             activeMonthIndex: 0,
             monthsData: [],
             recurringEvents: [],
+            recurringDetails: {},
             viewDate: { month: new Date().getMonth(), year: new Date().getFullYear() },
             todayIndex: -1,
             details: {}, 
@@ -3210,6 +3211,7 @@ The word "Nua" means new and "Khai" means food.
             let parsedRecurring = [];
             let currentMonthObj = null;
             let parsedDetails = {};
+            let parsedRecurringDetails = {};
             let parsedHoroDetails = {};
             let currentDetailKey = null;
             let currentHoroSign = null;
@@ -3295,14 +3297,32 @@ The word "Nua" means new and "Khai" means food.
                 }
                 else if (currentBlock === 'details') {
                     const dateHeader = line.match(/^>>\s+(\d{1,2}-\d{1,2}-\d{4})/);
+                    const recurringHeader = line.match(/^>>\s+(\d{1,2}-\d{1,2})\s*$/); // Strict end anchor
+
                     if (dateHeader) {
                         const parts = dateHeader[1].split('-');
+                        // Key: YYYY-MonthIndex-Day
                         currentDetailKey = `${parts[2]}-${parseInt(parts[1]) - 1}-${parseInt(parts[0])}`; 
                         if (!parsedDetails[currentDetailKey]) parsedDetails[currentDetailKey] = [];
                         parsedDetails[currentDetailKey].push({ tags: [], bodyLines: [], bannerUrl: null, gridBgUrl: null });
-                    } else if (currentDetailKey) {
-                        const detailsList = parsedDetails[currentDetailKey];
-                        const currentDetail = detailsList[detailsList.length - 1];
+                    }
+                    else if (recurringHeader) {
+                        const parts = recurringHeader[1].split('-');
+                        // Key: MonthIndex-Day (e.g. 0-14 for Jan 14)
+                        currentDetailKey = `rec-${parseInt(parts[1]) - 1}-${parseInt(parts[0])}`;
+                        if (!parsedRecurringDetails[currentDetailKey]) parsedRecurringDetails[currentDetailKey] = [];
+                        parsedRecurringDetails[currentDetailKey].push({ tags: [], bodyLines: [], bannerUrl: null, gridBgUrl: null });
+                    }
+                    else if (currentDetailKey) {
+                        // Check where to push
+                        let currentDetail;
+                        if (currentDetailKey.startsWith('rec-')) {
+                            const list = parsedRecurringDetails[currentDetailKey];
+                            currentDetail = list[list.length - 1];
+                        } else {
+                            const list = parsedDetails[currentDetailKey];
+                            currentDetail = list[list.length - 1];
+                        }
                         
                         const tagMatch = line.match(/^@\s*Tag\s*:\s*(.+)/i);
                         const bannerMatch = line.match(/^!\[Banner\]\((.*?)\)/i);
@@ -3379,6 +3399,7 @@ The word "Nua" means new and "Khai" means food.
 
             appState.monthsData = parsedMonths;
             appState.recurringEvents = parsedRecurring;
+            appState.recurringDetails = parsedRecurringDetails;
             appState.details = parsedDetails;
             appState.horoscopeDetails = parsedHoroDetails;
             appState.customSeasonDescriptions = parsedSeasonDescs;
@@ -3615,7 +3636,10 @@ The word "Nua" means new and "Khai" means food.
 
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateKey = `${data.year}-${data.month}-${d}`;
-                const details = appState.details[dateKey]; // Array
+                const recKey = `rec-${data.month}-${d}`;
+
+                let details = appState.details[dateKey]; // specific
+                if (!details) details = appState.recurringDetails[recKey]; // fallback
                 
                 if (details && Array.isArray(details)) {
                      details.forEach(detail => {
@@ -4860,7 +4884,14 @@ function renderCalendarGrid(data) {
             currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold"><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</div>`;
             // ---------------------------
 
-            const detailsRaw = appState.details[dateKey];
+            let detailsRaw = appState.details[dateKey];
+
+            // Fallback to recurring details
+            if (!detailsRaw) {
+                const recKey = `rec-${monthData.month}-${day}`;
+                detailsRaw = appState.recurringDetails[recKey];
+            }
+
             currentModalDetails = (detailsRaw && Array.isArray(detailsRaw)) ? detailsRaw : (detailsRaw ? [detailsRaw] : []);
             
             const rawDayEvents = monthData.events.filter(e => e.date === day);
