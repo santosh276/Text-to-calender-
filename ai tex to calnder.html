@@ -343,7 +343,7 @@
             animation: pulse-orange 2s infinite ease-in-out;
             transform: scale(1.02);
             z-index: 10;
-            border-width: 2px;
+            border-width: 3px;
             border-style: solid;
         }
         @media (min-width: 768px) {
@@ -3971,7 +3971,7 @@ function renderCalendarGrid(data) {
         // BORDER COLOR MERGE:
         // Mobile: Orange Border (Original)
         // Desktop: Green Border (Reference)
-        if (isToday) containerClasses += " border-2 border-orange-400 md:border-green-500 shadow-md today-glow"; 
+        if (isToday) containerClasses += " border-orange-400 md:border-green-500 shadow-md today-glow";
         else containerClasses += " border-gray-200";
         
         // Height classes match Original (mobile) vs Reference (desktop)
