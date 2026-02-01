@@ -753,6 +753,28 @@
     }
     @media (min-width: 768px) { .today-badge { display: block; } }
 
+    .leap-year-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #22c55e;
+        color: white;
+        font-size: 9px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-bottom-left-radius: 8px;
+        z-index: 20;
+        box-shadow: -1px 1px 4px rgba(0,0,0,0.1);
+        pointer-events: none;
+    }
+    @media (min-width: 768px) {
+        .leap-year-badge {
+            font-size: 11px;
+            padding: 4px 12px;
+            border-bottom-left-radius: 12px;
+        }
+    }
+
     .event-pill {
         font-size: 10px;
         padding: 2px 6px;
@@ -1056,7 +1078,7 @@ The word "Nua" means new and "Khai" means food.
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
-                <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
+                <div id="year-view-header" class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-orange-50 to-transparent pointer-events-none"></div>
                     <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
                         <i class="fa-solid fa-arrow-left"></i> Back
@@ -3890,6 +3912,21 @@ The word "Nua" means new and "Khai" means food.
             }
             
             document.getElementById('year-view-title').innerText = `${year} Year View`;
+
+            // LEAP YEAR BADGE LOGIC
+            const header = document.getElementById('year-view-header');
+            if (header) {
+                const existingBadge = header.querySelector('.leap-year-badge');
+                if (existingBadge) existingBadge.remove();
+
+                const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+                if (isLeap) {
+                    const badge = document.createElement('div');
+                    badge.className = 'leap-year-badge';
+                    badge.innerText = 'LEAP YEAR';
+                    header.appendChild(badge);
+                }
+            }
 
             // Generate 12 months
             for (let m = 0; m < 12; m++) {
