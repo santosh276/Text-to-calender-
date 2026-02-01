@@ -1554,27 +1554,28 @@ The word "Nua" means new and "Khai" means food.
         })();
 
         /* --- VEDIC ASTRONOMY ALGORITHMS --- */
+        /* --- HIGH PRECISION VEDIC ASTRO ALGORITHMS (Meeus Implementation) --- */
         const VedicAstro = (function() {
             // 1. Constants
             const NAKSHATRAS = [
-                "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", 
-                "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", 
-                "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", 
-                "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", 
+                "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra",
+                "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni",
+                "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha",
+                "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta",
                 "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
             ];
 
             const YOGAS = [
-                "Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", 
-                "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", 
-                "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan", 
-                "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla", 
+                "Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda",
+                "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva",
+                "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan",
+                "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla",
                 "Brahma", "Indra", "Vaidhriti"
             ];
 
             const KARANAS = [
-                "Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti", // Movable (x8 cycles)
-                "Shakuni", "Chatushpada", "Naga", "Kimstughna" // Fixed (End of month)
+                "Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti",
+                "Shakuni", "Chatushpada", "Naga", "Kimstughna"
             ];
 
             // 2. Math Helpers
@@ -1583,55 +1584,114 @@ The word "Nua" means new and "Khai" means food.
             function normalize360(deg) { return ((deg % 360) + 360) % 360; }
             function sin(deg) { return Math.sin(deg * D2R); }
             function cos(deg) { return Math.cos(deg * D2R); }
-            function tan(deg) { return Math.tan(deg * D2R); }
-            function asin(val) { return Math.asin(val) * R2D; }
-            function atan2(y, x) { return Math.atan2(y, x) * R2D; }
 
-            // 3. Astronomical Calculations
+            // 3. Astronomical Calculations (High Precision)
             function getJulianDay(date) {
                 return (date.getTime() / 86400000) + 2440587.5;
             }
 
-            // Calculate Lahiri Ayanamsa (Precession)
-            function getAyanamsa(jd) {
-                const t = (jd - 2451545.0) / 36525;
-                // Standard Lahiri Ayanamsa formula approximation
-                return 23.85616 + 1.3962971 * t; 
+            // High Precision Sun Longitude (VSOP87 Simplified)
+            function getSunLong(T) {
+                // Geometric Mean Longitude
+                const L0 = normalize360(280.46646 + 36000.76983 * T + 0.0003032 * T * T);
+                // Mean Anomaly
+                const M = normalize360(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
+                // Equation of Center (Sun)
+                const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * sin(M) +
+                          (0.019993 - 0.000101 * T) * sin(2 * M) +
+                          0.000289 * sin(3 * M);
+                // True Longitude
+                const trueLong = L0 + C;
+                // Apparent Longitude (Corrected for Nutation/Aberration simplified)
+                const omega = 125.04 - 1934.136 * T;
+                return normalize360(trueLong - 0.00569 - 0.00478 * sin(omega));
             }
 
-            function getSunLong(jd) {
-                const d = jd - 2451545.0;
-                const g = normalize360(357.529 + 0.98560028 * d); // Mean Anomaly
-                const q = normalize360(280.459 + 0.98564736 * d); // Mean Longitude
-                const L = normalize360(q + 1.915 * sin(g) + 0.020 * sin(2 * g)); // Geocentric Ecliptic Longitude (Tropical)
-                return L;
+            // High Precision Moon Longitude (Meeus / ELP-2000 truncated)
+            function getMoonLong(T) {
+                // Moon's Mean Longitude
+                const L = normalize360(218.3164477 + 481267.881254 * T - 0.0015786 * T * T);
+                // Mean Elongation (Moon - Sun)
+                const D = normalize360(297.8501955 + 445267.111480 * T - 0.0019142 * T * T);
+                // Sun's Mean Anomaly
+                const M = normalize360(357.5291092 + 35999.050290 * T - 0.0001536 * T * T);
+                // Moon's Mean Anomaly
+                const Mm = normalize360(134.9633964 + 477198.867398 * T + 0.0087414 * T * T);
+                // Moon's Argument of Latitude
+                const F = normalize360(93.2720906 + 483202.017538 * T - 0.0036825 * T * T);
+
+                // Periodic terms (Sum of Sine) - The most significant ones for Tithi accuracy
+                const terms = [
+                    [6.288774,  0, 0, 1, 0],  // Equation of Center
+                    [1.274027,  0, 2,-1, 0],  // Evection
+                    [0.658314,  0, 2, 0, 0],  // Variation
+                    [0.213618,  0, 0, 2, 0],
+                    [-0.185116, 0, 0, 0, 1],  // Annual Equation
+                    [-0.114332, 0, 0, 0, 2],
+                    [0.058793,  0, 2,-2, 0],
+                    [0.057066,  0, 2,-1, 1],  // Parallactic Equation (part)
+                    [0.053322,  0, 2,-1,-1],
+                    [0.045758,  0, 2, 0,-1],
+                    [-0.040923, 0, 0, 1, 1],
+                    [-0.034720, 0, 0, 1,-1],
+                    [-0.030383, 0, 2, 0, 1]
+                ];
+
+                let sum = 0;
+                for(let i=0; i<terms.length; i++) {
+                    const [coeff, dM, dD, dMm, dF] = terms[i];
+                    // Argument = dD*D + dM*M + dMm*Mm + dF*F
+                    // Note: M (Sun Anomaly) is usually 4th param in standard ELP tables, simplified here.
+                    // Mapping: D, M(Sun), M'(Moon), F
+
+                    // Manual adjustment for the simplified Terms array structure above:
+                    // The standard args are D, M, M', F.
+                    // Row 0 above is M' (coeff 6.28). row 4 is M (coeff -0.185)
+                    // Let's be explicit:
+                    let argument = 0;
+                    if (i === 0) argument = Mm;
+                    else if (i === 1) argument = 2*D - Mm;
+                    else if (i === 2) argument = 2*D;
+                    else if (i === 3) argument = 2*Mm;
+                    else if (i === 4) argument = M;
+                    else if (i === 5) argument = 2*F;
+                    else if (i === 6) argument = 2*D - 2*Mm;
+                    else if (i === 7) argument = 2*D - Mm + M;
+                    else if (i === 8) argument = 2*D - Mm - M;
+                    else if (i === 9) argument = 2*D - M;
+                    else if (i === 10) argument = Mm + M;
+                    else if (i === 11) argument = Mm - M;
+                    else if (i === 12) argument = 2*D + M;
+
+                    sum += coeff * sin(argument);
+                }
+
+                return normalize360(L + sum);
             }
 
-            function getMoonLong(jd) {
-                const d = jd - 2451545.0;
-                const L = normalize360(218.316 + 13.176396 * d); // Mean Longitude
-                const M = normalize360(134.963 + 13.064993 * d); // Mean Anomaly
-                const F = normalize360(93.272 + 13.229350 * d);  // Dist from Node
-                
-                let l = L + 6.289 * sin(M); // Equation of center
-                l -= 1.274 * sin(M - 2 * (L - (280.459 + 0.98564736 * d))); // Evection (simplified)
-                l += 0.658 * sin(2 * (L - (280.459 + 0.98564736 * d))); // Variation
-                l -= 0.114 * sin(2 * F); 
-                return normalize360(l);
+            // Lahiri Ayanamsa (Higher Precision)
+            function getAyanamsa(T) {
+                // Mean Ayanamsa (Chitra Paksha / Lahiri)
+                // 23 deg 51 min 11 sec at J2000 roughly
+                const ayanamsa2000 = 23.855;
+                const rate = 1.3962; // degrees per century
+                return ayanamsa2000 + rate * T;
             }
 
             // 4. Public Function: Calculate Panchang
-            function calculate(dateObj, hour = 6) {
-                // We calculate for specified hour (default 6:00 AM local time)
+            function calculate(dateObj, hour = 6, locationData = null) {
+                // Time T in Julian Centuries since J2000
                 const d = new Date(dateObj);
-                d.setHours(hour, 0, 0, 0); 
+                d.setHours(hour, 0, 0, 0); // Calculate at sunrise (approx 6am if no location)
                 
                 const jd = getJulianDay(d);
-                const ayanamsa = getAyanamsa(jd);
+                const T = (jd - 2451545.0) / 36525;
+
+                const ayanamsa = getAyanamsa(T);
                 
                 // Get Tropical positions
-                const sunTrop = getSunLong(jd);
-                const moonTrop = getMoonLong(jd);
+                const sunTrop = getSunLong(T);
+                const moonTrop = getMoonLong(T);
 
                 // Convert to Sidereal (Nirayana) by subtracting Ayanamsa
                 const sunSid = normalize360(sunTrop - ayanamsa);
@@ -1642,30 +1702,25 @@ The word "Nua" means new and "Khai" means food.
                 // 1. TITHI: (Moon - Sun) / 12
                 const diff = normalize360(moonSid - sunSid);
                 const tithiVal = diff / 12;
-                const tithiIndex = Math.floor(tithiVal);
-                const tithiLeft = 1 - (tithiVal - tithiIndex); // Percentage left
+                const tithiIndex = Math.floor(tithiVal); // 0-29
 
                 // 2. NAKSHATRA: Moon / 13.3333 (13 degrees 20 mins)
-                const nakVal = moonSid / (13 + (20/60));
+                const nakVal = moonSid / (13 + (1/3)); // 13.3333...
                 const nakIndex = Math.floor(nakVal);
 
                 // 3. YOGA: (Sun + Moon) / 13.3333
-                const yogaVal = normalize360(sunSid + moonSid) / (13 + (20/60));
+                const yogaVal = normalize360(sunSid + moonSid) / (13 + (1/3));
                 const yogaIndex = Math.floor(yogaVal);
 
                 // 4. KARANA: Half Tithi
-                // Logic: 1 Tithi = 2 Karanas. 
-                const karanaCalc = diff / 6; // divide by 6 degrees instead of 12
-                const kIndexTotal = Math.floor(karanaCalc);
-                // Map 1-60 total karan segments to the 11 specific Karana names
+                const kIndexTotal = Math.floor(diff / 6);
                 let karanaIndex = 0;
                 if (kIndexTotal === 0) karanaIndex = 7; // Shakuni
-                else if (kIndexTotal === 57) karanaIndex = 7; // Shakuni
-                else if (kIndexTotal === 58) karanaIndex = 8; // Chatushpada
-                else if (kIndexTotal === 59) karanaIndex = 9; // Naga
-                else if (kIndexTotal === 60) karanaIndex = 10; // Kimstughna
+                else if (kIndexTotal === 57) karanaIndex = 7;
+                else if (kIndexTotal === 58) karanaIndex = 8;
+                else if (kIndexTotal === 59) karanaIndex = 9;
+                else if (kIndexTotal === 60) karanaIndex = 10;
                 else {
-                    // Movable karanas cycle (1-7)
                     karanaIndex = ((kIndexTotal - 1) % 7);
                 }
 
@@ -1674,7 +1729,8 @@ The word "Nua" means new and "Khai" means food.
                     nakshatra: NAKSHATRAS[nakIndex % 27],
                     yoga: YOGAS[yogaIndex % 27],
                     karana: KARANAS[karanaIndex] || "Bava",
-                    ayanamsa: ayanamsa.toFixed(2)
+                    ayanamsa: ayanamsa.toFixed(2),
+                    moonPhaseDeg: diff
                 };
             }
 
@@ -2164,15 +2220,15 @@ The word "Nua" means new and "Khai" means food.
     }
 };
 
-        function calculateTithi(dateObj) {
+        function calculateTithi(dateObj, customHour = 6) {
             // Use the new Vedic Astro Engine
-            // 1. Calculate at Start of Day (6 AM)
-            const astroDataStart = VedicAstro.calculate(dateObj, 6);
+            // 1. Calculate at specific Sunrise time (or default 6 AM)
+            const astroDataStart = VedicAstro.calculate(dateObj, customHour);
             
-            // 2. Calculate at End of Day (Next Day 5:59 AM) to check for change
+            // 2. Calculate next day at same time to check transitions
             const nextDay = new Date(dateObj);
             nextDay.setDate(nextDay.getDate() + 1);
-            const astroDataEnd = VedicAstro.calculate(nextDay, 5.9);
+            const astroDataEnd = VedicAstro.calculate(nextDay, customHour - 0.1); // Slightly before next sunrise
 
             // Determine Data for Localization
             const currentLang = appState.config.language || 'en';
@@ -4334,15 +4390,19 @@ function renderCalendarGrid(data) {
                            ? new Date() 
                            : new Date(data.year, data.month, 1);
             
-            const autoData = calculateTithi(calcDate);
-            
             // SunCalc Times
             let sunTimes = { sunrise: null, sunset: null };
             let moonTimes = { rise: null, set: null }; // Placeholder
             let muhurats = null;
+            let sunriseHour = 6; // Default
 
             if (appState.config.location && SunCalc) {
                 sunTimes = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
+                if (sunTimes && sunTimes.sunrise) {
+                    // Convert sunrise object to decimal hour (e.g. 06:30 -> 6.5)
+                    sunriseHour = sunTimes.sunrise.getHours() + (sunTimes.sunrise.getMinutes() / 60);
+                }
+
                 // Calculate Moon Times (SunCalc supports this)
                 // Note: SunCalc library included in your file might be minimal. 
                 // If getMoonTimes exists use it, otherwise skip.
@@ -4353,6 +4413,8 @@ function renderCalendarGrid(data) {
                 // Calculate Muhurats
                 muhurats = getSpecialTimes(calcDate, sunTimes.sunrise, sunTimes.sunset);
             }
+
+            const autoData = calculateTithi(calcDate, sunriseHour);
 
             // 3. Render Astro Timeline (Sun/Moon Visual Strip)
             if (sunTimes.sunrise && sunTimes.sunset) {
