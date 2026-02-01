@@ -3974,7 +3974,7 @@ function renderCalendarGrid(data) {
         // text-lg, centered, absolute icon
         const mobileView = `
             <div class="md:hidden w-full h-full flex flex-col items-center justify-center cell-content-relative">
-                <span class="text-lg font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'} ${isToday ? 'text-deepred underline' : ''}">
+                <span class="text-lg font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'} ${isToday ? 'text-deepred' : ''}">
                     ${toNativeNum(d, currentLang)}
                 </span>
                 ${originalIconHtml}
