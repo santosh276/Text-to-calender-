@@ -82,6 +82,7 @@
 .-rotate-12 { transform: rotate(-12deg); }
 .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
 .from-red-500\/10 { --tw-gradient-from: rgb(239 68 68 / 0.1); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+        .bg-gradient-upnext { background: linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%); }
 .bg-clip-text { -webkit-background-clip: text; background-clip: text; }
 .text-transparent { color: transparent; }
 .from-orange-400 { --tw-gradient-from: #fb923c; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
@@ -340,11 +341,15 @@
 
         .today-glow {
             animation: pulse-orange 2s infinite ease-in-out;
-            background-color: #fff7ed !important;
             transform: scale(1.02);
             z-index: 10;
-            border-width: 2px;
+            border-width: 3px;
             border-style: solid;
+        }
+        @media (min-width: 768px) {
+            .today-glow {
+                background-color: #fff7ed !important;
+            }
         }
 
         .filter-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -488,7 +493,7 @@
         .text-val-blue { color: #2563eb; }
         .compat-pill { background-color: #f3f4f6; color: #374151; font-size: 0.8rem; font-weight: 500; padding: 6px 14px; border-radius: 9999px; display: inline-block; }
         .custom-modal-border { border-top: 8px solid #FF9933; border-bottom: 1px solid #fed7aa; border-left: 1px solid #fed7aa; border-right: 1px solid #fed7aa; border-radius: 24px; }
-        .premium-header-bg { background: linear-gradient(135deg, #78350f 0%, #92400e 100%); position: relative; overflow: hidden; }
+        .premium-header-bg { background: linear-gradient(135deg, #800000 0%, #ed1c24 65%, #f15a24 100%); position: relative; overflow: hidden; }
         .premium-header-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 30%); pointer-events: none; }
         #app-logo-img { height: 40px; width: auto; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         
@@ -1389,14 +1394,14 @@ The word "Nua" means new and "Khai" means food.
         <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDayModal()"></div>
         <div class="modal-content bg-white rounded-3xl shadow-2xl w-full max-w-[500px] relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
             <div id="modal-header-background" class="premium-header-bg p-6 relative shrink-0">
-                <button onclick="closeDayModal()" class="absolute top-4 right-4 bg-[#F5E6CA] hover:bg-white text-[#5D4037] rounded-full w-8 h-8 flex items-center justify-center shadow-md z-20 transition active:scale-95"><i class="fa-solid fa-times text-sm"></i></button>
+                <button onclick="closeDayModal()" class="absolute top-4 right-4 bg-white/20 backdrop-blur-md border border-white/20 hover:bg-white/30 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md z-20 transition active:scale-95"><i class="fa-solid fa-times text-sm"></i></button>
                 <div class="flex gap-5 items-center relative z-10">
-                    <div class="bg-[#F5E6CA] rounded-xl w-20 h-20 flex flex-col items-center justify-center shrink-0 shadow-lg text-[#5D4037]">
+                    <div class="bg-white/20 backdrop-blur-md border border-white/20 rounded-xl w-20 h-20 flex flex-col items-center justify-center shrink-0 shadow-lg text-white">
                         <span id="modal-month-short" class="text-[11px] font-bold uppercase tracking-widest opacity-80">NOV</span>
                         <span id="modal-date-num" class="text-4xl font-bold leading-none mt-0.5">21</span>
                     </div>
                     <div class="text-white">
-                        <h2 id="modal-full-date" class="text-[#F5E6CA]/90 text-[10px] uppercase tracking-widest font-semibold mb-1">Friday, November 21, 2025</h2>
+                        <h2 id="modal-full-date" class="text-white/80 text-[10px] uppercase tracking-widest font-semibold mb-1">Friday, November 21, 2025</h2>
                         <h1 id="modal-main-title" class="text-2xl font-bold leading-tight font-oriya drop-shadow-md">Nuakhai</h1>
                         <div id="modal-tag-pill" class="mt-2 inline-block"></div>
                     </div>
@@ -3892,6 +3897,11 @@ function renderCalendarGrid(data) {
             else if (dayEvents.some(e => e.symbol === '*')) mobileBgClass = 'bg-blue-100';  // Holiday
             else if (dayEvents.some(e => e.symbol === '>')) mobileBgClass = 'bg-gray-100';  // Other
         }
+        
+        // Today overrides everything on Mobile
+        if (isToday) {
+            mobileBgClass = 'bg-deep-red';
+        }
 
         // 2. Mobile Tithi Icons (Exact Original SVGs)
         let originalIconHtml = '';
@@ -3961,7 +3971,7 @@ function renderCalendarGrid(data) {
         // BORDER COLOR MERGE:
         // Mobile: Orange Border (Original)
         // Desktop: Green Border (Reference)
-        if (isToday) containerClasses += " border-2 border-orange-400 md:border-green-500 shadow-md today-glow"; 
+        if (isToday) containerClasses += " border-orange-400 md:border-green-500 shadow-md today-glow"; 
         else containerClasses += " border-gray-200";
         
         // Height classes match Original (mobile) vs Reference (desktop)
@@ -3974,7 +3984,7 @@ function renderCalendarGrid(data) {
         // text-lg, centered, absolute icon
         const mobileView = `
             <div class="md:hidden w-full h-full flex flex-col items-center justify-center cell-content-relative">
-                <span class="text-lg font-bold leading-none ${isSunday ? 'text-deepred' : 'text-gray-700'} ${isToday ? 'text-deepred' : ''}">
+                <span class="text-lg font-bold leading-none ${isToday ? 'text-white' : (isSunday ? 'text-deepred' : 'text-gray-700')}">
                     ${toNativeNum(d, currentLang)}
                 </span>
                 ${originalIconHtml}
@@ -4714,7 +4724,7 @@ function renderCalendarGrid(data) {
             
             // --- INJECT TITHI/PAKSHA ---
             const tithiInfo = calculateTithi(dateObj);
-            currentModalTithiBlock = `<div class="mt-2 text-[#F5E6CA] opacity-90 text-xs uppercase tracking-wide font-semibold"><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</div>`;
+            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold"><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</div>`;
             // ---------------------------
 
             const detailsRaw = appState.details[dateKey];
@@ -4864,7 +4874,7 @@ function renderCalendarGrid(data) {
                 
                 if (detail.tags.length > 0) {
                     const tagText = detail.tags[0]; 
-                    tagPillContainer.innerHTML = `<span class="bg-[#F5E6CA] text-[#5D4037] text-[11px] font-bold px-3 py-1 rounded-full shadow-sm border border-white/20 mr-2">${tagText}</span>`;
+                    tagPillContainer.innerHTML = `<span class="bg-white/20 backdrop-blur-md border border-white/20 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-sm mr-2">${tagText}</span>`;
                 }
                 
                 // Add "Page X of Y" if multiple
