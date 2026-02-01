@@ -1061,8 +1061,18 @@ The word "Nua" means new and "Khai" means food.
                     <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
                         <i class="fa-solid fa-arrow-left"></i> Back
                     </button>
-                    <h2 class="text-xl md:text-3xl font-extrabold text-gray-900 z-10" id="year-view-title">2026 Year View</h2>
-                    <div class="w-16"></div> <!-- Spacer -->
+
+                    <div class="flex items-center gap-3 md:gap-4 z-10">
+                        <button onclick="changeYear(-1)" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 hover:bg-orange-50 hover:border-orange-200 flex items-center justify-center text-gray-600 hover:text-orange-600 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <h2 class="text-xl md:text-3xl font-extrabold text-gray-900 min-w-[140px] text-center" id="year-view-title">2026 Year View</h2>
+                        <button onclick="changeYear(1)" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 hover:bg-orange-50 hover:border-orange-200 flex items-center justify-center text-gray-600 hover:text-orange-600 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="w-16 hidden md:block"></div> <!-- Spacer -->
                 </div>
                 <div id="year-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6"></div>
             </div>
@@ -3506,6 +3516,17 @@ The word "Nua" means new and "Khai" means food.
             render();
         }
 
+        function changeYear(offset) {
+            let { month, year } = appState.viewDate;
+            year += offset;
+            appState.viewDate = { month, year };
+
+            // Sync activeMonthIndex if possible
+            appState.activeMonthIndex = appState.monthsData.findIndex(m => m.month === month && m.year === year);
+
+            render();
+        }
+
         function jumpToToday() {
             const today = new Date();
             appState.viewDate = { month: today.getMonth(), year: today.getFullYear() };
@@ -3591,7 +3612,10 @@ The word "Nua" means new and "Khai" means food.
             }
             
             const btnToday = document.getElementById('btn-today');
-            if (appState.todayIndex !== -1 && appState.activeMonthIndex !== appState.todayIndex) {
+            const realToday = new Date();
+            const isViewingToday = (month === realToday.getMonth() && year === realToday.getFullYear());
+
+            if (!isViewingToday) {
                 btnToday.classList.remove('hidden'); btnToday.classList.add('flex');
             } else {
                 btnToday.classList.add('hidden'); btnToday.classList.remove('flex');
