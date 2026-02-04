@@ -1556,73 +1556,77 @@ The word "Nua" means new and "Khai" means food.
         })();
 
         /* --- VEDIC ASTRONOMY ALGORITHMS --- */
-        /* --- REFINED VEDIC ASTRONOMY ENGINE (V3.0 - High Precision) --- */
+        /* --- VEDIC ASTRONOMY ENGINE (V4.0 - Professional Grade) --- */
         const VedicAstro = (function() {
             const NAKSHATRAS = ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"];
             const YOGAS = ["Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan", "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla", "Brahma", "Indra", "Vaidhriti"];
             const KARANAS = ["Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti", "Shakuni", "Chatushpada", "Naga", "Kimstughna"];
 
             const D2R = Math.PI / 180;
-            const R2D = 180 / Math.PI;
-            const rad = (d) => d * D2R;
-            const deg = (r) => r * R2D;
             const norm = (d) => ((d % 360) + 360) % 360;
 
-            function getJulianDay(dateObj) {
-                return (dateObj.getTime() / 86400000) + 2440587.5;
-            }
-
-            // Precise Lahiri Ayanamsa
-            function getAyanamsa(jd) {
-                const t = (jd - 2451545.0) / 36525;
-                return 23.85616 + 1.396042 * t + 0.000307 * t * t;
-            }
-
-            // Higher precision Solar Longitude
+            // High Precision Solar Longitude (Meeus Algorithms)
             function getSunLong(jd) {
-                const d = jd - 2451545.0;
-                const g = norm(357.529 + 0.98560028 * d);
-                const q = norm(280.459 + 0.98564736 * d);
-                return norm(q + 1.915 * Math.sin(rad(g)) + 0.020 * Math.sin(rad(2 * g)));
+                const T = (jd - 2451545.0) / 36525;
+                const L0 = norm(280.46646 + 36000.76983 * T + 0.0003032 * T * T);
+                const M = norm(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
+                const C = (1.914602 - 0.004817 * T) * Math.sin(M * D2R)
+                        + (0.019993 - 0.000101 * T) * Math.sin(2 * M * D2R)
+                        + 0.000289 * Math.sin(3 * M * D2R);
+                return norm(L0 + C);
             }
 
-            // Precise Lunar Longitude (Accounts for major perturbations)
+            // Professional Lunar Longitude (15 Periodic Terms)
             function getMoonLong(jd) {
-                const d = jd - 2451545.0;
-                const L0 = norm(218.316 + 13.176396 * d); // Mean Longitude
-                const M = norm(134.963 + 13.064993 * d);  // Mean Anomaly
-                const F = norm(93.272 + 13.229350 * d);   // Mean distance from node
-                const D = norm(297.850 + 12.190749 * d);  // Mean elongation
-                const Me = norm(357.529 + 0.98560028 * d); // Sun Mean Anomaly
+                const T = (jd - 2451545.0) / 36525;
+                const Lprime = norm(218.316447 + 481267.881234 * T); // Mean Long
+                const D = norm(297.850192 + 445267.111403 * T);    // Elongation
+                const M = norm(357.529109 + 35999.050291 * T);     // Sun Mean Anomaly
+                const Mprime = norm(134.963396 + 477198.867505 * T); // Moon Mean Anomaly
+                const F = norm(93.272095 + 483202.017523 * T);     // Dist from Node
+
+                let sumLong = 6.288774 * Math.sin(Mprime * D2R);
+                sumLong += 1.274027 * Math.sin((2 * D - Mprime) * D2R);
+                sumLong += 0.658309 * Math.sin(2 * D * D2R);
+                sumLong += 0.213618 * Math.sin(2 * Mprime * D2R);
+                sumLong -= 0.185116 * Math.sin(M * D2R);
+                sumLong -= 0.114332 * Math.sin(2 * F * D2R);
+                sumLong += 0.058793 * Math.sin((2 * D - 2 * Mprime) * D2R);
+                sumLong += 0.057066 * Math.sin((2 * D - M - Mprime) * D2R);
+                sumLong += 0.053322 * Math.sin((2 * D + Mprime) * D2R);
+                sumLong += 0.045758 * Math.sin((2 * D - M) * D2R);
+                sumLong -= 0.040923 * Math.sin((M - Mprime) * D2R);
+                sumLong -= 0.034720 * Math.sin(D * D2R);
+                sumLong -= 0.030383 * Math.sin((M + Mprime) * D2R);
+                sumLong += 0.015327 * Math.sin((2 * D - 2 * F) * D2R);
                 
-                let lon = L0;
-                lon += 6.289 * Math.sin(rad(M));             // Center
-                lon -= 1.274 * Math.sin(rad(M - 2 * D));     // Evection
-                lon += 0.658 * Math.sin(rad(2 * D));         // Variation
-                lon -= 0.186 * Math.sin(rad(Me));            // Annual Equation
-                lon -= 0.114 * Math.sin(rad(2 * F));         // Node Correction
-                return norm(lon);
+                return norm(Lprime + sumLong);
+            }
+
+            function getAyanamsa(jd) {
+                const T = (jd - 2451545.0) / 36525;
+                // True Lahiri Ayanamsa formula
+                return 23.85616 + 1.396042 * T + 0.000307 * T * T;
             }
 
             return {
                 calculate: function(dateObj, hour = 6) {
                     const d = new Date(dateObj);
+                    // Reference: 6:00 AM IST is approx 00:30 UTC.
                     // Support legacy hour argument but normalize minutes/seconds
-                    const h = hour || 6;
+                    const h = (hour === undefined || hour === null) ? 6 : hour;
                     const hours = Math.floor(h);
                     const minutes = Math.floor((h % 1) * 60);
                     d.setHours(hours, minutes, 0, 0);
 
-                    const jd = getJulianDay(d);
-                    const ayanamsa = getAyanamsa(jd);
+                    const jd = (d.getTime() / 86400000) + 2440587.5;
+                    const aya = getAyanamsa(jd);
 
-                    // Nirayana (Sidereal) positions
-                    const sunSid = norm(getSunLong(jd) - ayanamsa);
-                    const moonSid = norm(getMoonLong(jd) - ayanamsa);
+                    const sunSid = norm(getSunLong(jd) - aya);
+                    const moonSid = norm(getMoonLong(jd) - aya);
 
-                    // Tithi Calculation: (Moon - Sun) / 12
-                    // Precision offset of 0.01 added to handle edge-case sunrise timings
-                    const diff = norm(moonSid - sunSid + 0.01);
+                    // Tithi = (Moon - Sun) / 12. Add 0.001 buffer for precision.
+                    const diff = norm(moonSid - sunSid + 0.001);
                     const tithiIndex = Math.floor(diff / 12);
 
                     // Nakshatra: Moon / 13.3333
