@@ -24,7 +24,7 @@ def run():
         page.wait_for_timeout(1000)
 
         # Take screenshot
-        page.screenshot(path="verification/calendar_may_2026.png")
+        page.screenshot(path="verification/calendar_may_2026_v3.png")
 
         browser.close()
 

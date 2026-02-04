@@ -1556,7 +1556,7 @@ The word "Nua" means new and "Khai" means food.
         })();
 
         /* --- VEDIC ASTRONOMY ALGORITHMS --- */
-        /* --- REFINED VEDIC ASTRONOMY ENGINE (V2.1) --- */
+        /* --- REFINED VEDIC ASTRONOMY ENGINE (V3.0 - High Precision) --- */
         const VedicAstro = (function() {
             const NAKSHATRAS = ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"];
             const YOGAS = ["Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan", "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla", "Brahma", "Indra", "Vaidhriti"];
@@ -1564,12 +1564,12 @@ The word "Nua" means new and "Khai" means food.
 
             const D2R = Math.PI / 180;
             const R2D = 180 / Math.PI;
-            function rad(d) { return d * D2R; }
-            function deg(r) { return r * R2D; }
-            function norm(d) { return ((d % 360) + 360) % 360; }
+            const rad = (d) => d * D2R;
+            const deg = (r) => r * R2D;
+            const norm = (d) => ((d % 360) + 360) % 360;
 
-            function getJulianDay(date) {
-                return (date.getTime() / 86400000) + 2440587.5;
+            function getJulianDay(dateObj) {
+                return (dateObj.getTime() / 86400000) + 2440587.5;
             }
 
             // Precise Lahiri Ayanamsa
@@ -1583,8 +1583,7 @@ The word "Nua" means new and "Khai" means food.
                 const d = jd - 2451545.0;
                 const g = norm(357.529 + 0.98560028 * d);
                 const q = norm(280.459 + 0.98564736 * d);
-                const L = norm(q + 1.915 * Math.sin(rad(g)) + 0.020 * Math.sin(rad(2 * g)));
-                return L;
+                return norm(q + 1.915 * Math.sin(rad(g)) + 0.020 * Math.sin(rad(2 * g)));
             }
 
             // Precise Lunar Longitude (Accounts for major perturbations)
@@ -1594,19 +1593,26 @@ The word "Nua" means new and "Khai" means food.
                 const M = norm(134.963 + 13.064993 * d);  // Mean Anomaly
                 const F = norm(93.272 + 13.229350 * d);   // Mean distance from node
                 const D = norm(297.850 + 12.190749 * d);  // Mean elongation
+                const Me = norm(357.529 + 0.98560028 * d); // Sun Mean Anomaly
                 
-                let lon = L0 + 6.289 * Math.sin(rad(M)); // Center
-                lon += -1.274 * Math.sin(rad(M - 2 * D)); // Evection
-                lon += 0.658 * Math.sin(rad(2 * D));      // Variation
-                lon += 0.214 * Math.sin(rad(2 * M));      // Higher order
-                lon += -0.114 * Math.sin(rad(2 * F));     // Node Correction
+                let lon = L0;
+                lon += 6.289 * Math.sin(rad(M));             // Center
+                lon -= 1.274 * Math.sin(rad(M - 2 * D));     // Evection
+                lon += 0.658 * Math.sin(rad(2 * D));         // Variation
+                lon -= 0.186 * Math.sin(rad(Me));            // Annual Equation
+                lon -= 0.114 * Math.sin(rad(2 * F));         // Node Correction
                 return norm(lon);
             }
 
             return {
                 calculate: function(dateObj, hour = 6) {
                     const d = new Date(dateObj);
-                    d.setHours(hour, 0, 0, 0);
+                    // Support legacy hour argument but normalize minutes/seconds
+                    const h = hour || 6;
+                    const hours = Math.floor(h);
+                    const minutes = Math.floor((h % 1) * 60);
+                    d.setHours(hours, minutes, 0, 0);
+
                     const jd = getJulianDay(d);
                     const ayanamsa = getAyanamsa(jd);
 
@@ -1615,11 +1621,9 @@ The word "Nua" means new and "Khai" means food.
                     const moonSid = norm(getMoonLong(jd) - ayanamsa);
 
                     // Tithi Calculation: (Moon - Sun) / 12
-                    // We add a tiny offset (0.005) to handle floating point precision
-                    // for days where the Tithi changes exactly at sunrise.
-                    const diff = norm(moonSid - sunSid + 0.005);
-                    const tithiVal = diff / 12;
-                    const tithiIndex = Math.floor(tithiVal);
+                    // Precision offset of 0.01 added to handle edge-case sunrise timings
+                    const diff = norm(moonSid - sunSid + 0.01);
+                    const tithiIndex = Math.floor(diff / 12);
 
                     // Nakshatra: Moon / 13.3333
                     const nakIndex = Math.floor(moonSid / (13 + 1/3));
