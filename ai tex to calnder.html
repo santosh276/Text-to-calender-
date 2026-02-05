@@ -4059,7 +4059,10 @@ function renderCalendarGrid(data) {
     }
 
     // Days
-    let lastTithiIndex = -1;
+    // Initialize lastTithiIndex for the day before start of month
+    const prevMonthDate = new Date(data.year, data.month, 0);
+    let lastTithiIndex = VedicAstro.getTithiAtSunrise(prevMonthDate).tithiIndex;
+
     for (let d = 1; d <= daysInMonth; d++) {
         const isSunday = new Date(data.year, data.month, d).getDay() === 0;
         const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
@@ -4069,12 +4072,16 @@ function renderCalendarGrid(data) {
         // Calculations
         const astro = calculateTithi(dateObj); 
         
-        // --- NEW CODE: DUPLICATE FIX ---
-        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
+        // --- SUNRISE RULE LOGIC ---
+        // Prevent "Double" (Vriddhi) Tithis from showing special icons twice.
+        // Rule: Only show Ekadashi/Purnima/Amavasya on the first day they occur at sunrise.
         let effectiveTithiIndex = astro.index;
-        if (astro.index === 29 && lastTithiIndex === 29) {
-            effectiveTithiIndex = -1; // Set to -1 so no icon appears
+        const specialTithis = [10, 25, 14, 29]; // Ekadashi (S/K), Purnima, Amavasya
+        
+        if (specialTithis.includes(astro.index) && lastTithiIndex === astro.index) {
+            effectiveTithiIndex = -1; // Hide icon on duplicate day
         }
+        
         // Update tracker for the next iteration
         lastTithiIndex = astro.index;
         // -------------------------------
