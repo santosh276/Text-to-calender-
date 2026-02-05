@@ -4069,12 +4069,20 @@ function renderCalendarGrid(data) {
         // Calculations
         const astro = calculateTithi(dateObj); 
         
-        // --- NEW CODE: DUPLICATE FIX ---
-        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
+            // --- NEW CODE: DAWN-CHECK & DUPLICATE FIX ---
+            // Udaya Tithi Rule: The Tithi active at sunrise rules the day.
+            // We also compare with previous day to avoid duplicates if Tithi spans two sunrises.
+            // Targets: Ekadashi (10, 25), Purnima (14), Amavasya (29)
         let effectiveTithiIndex = astro.index;
-        if (astro.index === 29 && lastTithiIndex === 29) {
-            effectiveTithiIndex = -1; // Set to -1 so no icon appears
+
+            // Check if this Tithi is one of the special ones we track
+            if ([10, 14, 25, 29].includes(astro.index)) {
+                // If it matches the previous day's sunrise Tithi, suppress the icon
+                if (astro.index === lastTithiIndex) {
+                    effectiveTithiIndex = -1;
+                }
         }
+
         // Update tracker for the next iteration
         lastTithiIndex = astro.index;
         // -------------------------------
