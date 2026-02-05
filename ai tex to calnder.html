@@ -4059,7 +4059,11 @@ function renderCalendarGrid(data) {
     }
 
     // Days
-    let lastTithiIndex = -1;
+    // Calculate previous month's last day Tithi for initialization
+    const prevMonthLastDay = new Date(data.year, data.month, 0);
+    const prevAstro = calculateTithi(prevMonthLastDay);
+    let lastTithiIndex = prevAstro.index;
+
     for (let d = 1; d <= daysInMonth; d++) {
         const isSunday = new Date(data.year, data.month, d).getDay() === 0;
         const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
@@ -4070,9 +4074,9 @@ function renderCalendarGrid(data) {
         const astro = calculateTithi(dateObj); 
         
         // --- NEW CODE: DUPLICATE FIX ---
-        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
+        // If today is Amavasya (29) or Ekadashi (10, 25) AND yesterday was also the SAME, hide this one.
         let effectiveTithiIndex = astro.index;
-        if (astro.index === 29 && lastTithiIndex === 29) {
+        if ((astro.index === 29 || astro.index === 10 || astro.index === 25) && lastTithiIndex === astro.index) {
             effectiveTithiIndex = -1; // Set to -1 so no icon appears
         }
         // Update tracker for the next iteration
