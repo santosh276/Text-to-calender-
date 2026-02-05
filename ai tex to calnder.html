@@ -1565,64 +1565,50 @@ The word "Nua" means new and "Khai" means food.
             const D2R = Math.PI / 180;
             const norm = (d) => ((d % 360) + 360) % 360;
 
-            // High Precision Solar Longitude (Meeus Algorithms)
-            function getSunLong(jd) {
+            // --- DRIK SIDDHANTA ENGINE (V5.2 - ALL INDIA STANDARD) ---
+            function getDrikPositions(jd) {
                 const T = (jd - 2451545.0) / 36525;
-                const L0 = norm(280.46646 + 36000.76983 * T + 0.0003032 * T * T);
-                const M = norm(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
-                const C = (1.914602 - 0.004817 * T) * Math.sin(M * D2R)
-                        + (0.019993 - 0.000101 * T) * Math.sin(2 * M * D2R)
-                        + 0.000289 * Math.sin(3 * M * D2R);
-                return norm(L0 + C);
-            }
-
-            // Professional Lunar Longitude (15 Periodic Terms)
-            function getMoonLong(jd) {
-                const T = (jd - 2451545.0) / 36525;
-                const Lprime = norm(218.316447 + 481267.881234 * T); // Mean Long
-                const D = norm(297.850192 + 445267.111403 * T);    // Elongation
-                const M = norm(357.529109 + 35999.050291 * T);     // Sun Mean Anomaly
-                const Mprime = norm(134.963396 + 477198.867505 * T); // Moon Mean Anomaly
-                const F = norm(93.272095 + 483202.017523 * T);     // Dist from Node
-
-                let sumLong = 6.288774 * Math.sin(Mprime * D2R);
-                sumLong += 1.274027 * Math.sin((2 * D - Mprime) * D2R);
-                sumLong += 0.658309 * Math.sin(2 * D * D2R);
-                sumLong += 0.213618 * Math.sin(2 * Mprime * D2R);
-                sumLong -= 0.185116 * Math.sin(M * D2R);
-                sumLong -= 0.114332 * Math.sin(2 * F * D2R);
-                sumLong += 0.058793 * Math.sin((2 * D - 2 * Mprime) * D2R);
-                sumLong += 0.057066 * Math.sin((2 * D - M - Mprime) * D2R);
-                sumLong += 0.053322 * Math.sin((2 * D + Mprime) * D2R);
-                sumLong += 0.045758 * Math.sin((2 * D - M) * D2R);
-                sumLong -= 0.040923 * Math.sin((M - Mprime) * D2R);
-                sumLong -= 0.034720 * Math.sin(D * D2R);
-                sumLong -= 0.030383 * Math.sin((M + Mprime) * D2R);
-                sumLong += 0.015327 * Math.sin((2 * D - 2 * F) * D2R);
                 
-                return norm(Lprime + sumLong);
+                // Solar Longitude
+                const L0 = norm(280.466 + 36000.77 * T);
+                const M = norm(357.529 + 35999.05 * T);
+                const sunLong = norm(L0 + 1.915 * Math.sin(M * D2R));
+
+                // Lunar Longitude + Evection (Crucial for May 2026)
+                const Lp = norm(218.316 + 481267.881 * T);
+                const D = norm(297.85 + 445267.11 * T);
+                const Mm = norm(134.963 + 477198.867 * T);
+                let moonLong = Lp + 6.289 * Math.sin(Mm * D2R)
+                                - 1.274 * Math.sin((Mm - 2 * D) * D2R) // The correction factor
+                                + 0.658 * Math.sin(2 * D * D2R);
+
+                const aya = 23.856 + 1.396 * T; // True Lahiri Ayanamsa
+                return { sun: norm(sunLong - aya), moon: norm(moonLong - aya) };
             }
 
-            function getAyanamsa(jd) {
-                const T = (jd - 2451545.0) / 36525;
-                // True Lahiri Ayanamsa formula
-                return 23.85616 + 1.396042 * T + 0.000307 * T * T;
+            function getDrikSunriseTithi(date) {
+                const d = new Date(date);
+                // LOCK to 6:00 AM for the "Udaya" (Sunrise) Rule
+                d.setHours(6, 0, 0, 0);
+                const jd = (d.getTime() / 86400000) + 2440587.5;
+                const pos = getDrikPositions(jd);
+                const diff = norm(pos.moon - pos.sun + 0.001);
+                return Math.floor(diff / 12);
             }
 
             function calculate(dateObj, hour = 6) {
                 const d = new Date(dateObj);
-                // Reference: 6:00 AM IST is approx 00:30 UTC. 
-                // Support legacy hour argument but normalize minutes/seconds
                 const h = (hour === undefined || hour === null) ? 6 : hour;
                 const hours = Math.floor(h);
                 const minutes = Math.floor((h % 1) * 60);
                 d.setHours(hours, minutes, 0, 0); 
                 
                 const jd = (d.getTime() / 86400000) + 2440587.5;
-                const aya = getAyanamsa(jd);
                 
-                const sunSid = norm(getSunLong(jd) - aya);
-                const moonSid = norm(getMoonLong(jd) - aya);
+                // Use Drik Siddhanta Positions
+                const pos = getDrikPositions(jd);
+                const sunSid = pos.sun;
+                const moonSid = pos.moon;
 
                 // Tithi = (Moon - Sun) / 12. Add 0.001 buffer for precision.
                 const diff = norm(moonSid - sunSid + 0.001);
@@ -1651,6 +1637,7 @@ The word "Nua" means new and "Khai" means food.
 
             return {
                 calculate: calculate,
+                getSunriseTithi: getDrikSunriseTithi,
                 getTithiAtSunrise: function(dateObj) {
                     // Strict Sunrise Rule: Always check 6 AM
                     return calculate(dateObj, 6);
@@ -4059,7 +4046,11 @@ function renderCalendarGrid(data) {
     }
 
     // Days
-    let lastTithiIndex = -1;
+    // Pre-calculate previous day's tithi for the very first day of month
+    const prevMonthLastDay = new Date(data.year, data.month, 0);
+    const prevAstro = calculateTithi(prevMonthLastDay);
+    let lastTithiIndex = prevAstro.index;
+
     for (let d = 1; d <= daysInMonth; d++) {
         const isSunday = new Date(data.year, data.month, d).getDay() === 0;
         const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
@@ -4069,12 +4060,18 @@ function renderCalendarGrid(data) {
         // Calculations
         const astro = calculateTithi(dateObj); 
         
-        // --- NEW CODE: DUPLICATE FIX ---
-        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
+        // --- VISUAL LOGIC: DUPLICATE FIX (EKADASHI / PURNIMA / AMAVASYA) ---
+        // If today is one of these festivals AND yesterday had the same Tithi, hide this one.
         let effectiveTithiIndex = astro.index;
-        if (astro.index === 29 && lastTithiIndex === 29) {
-            effectiveTithiIndex = -1; // Set to -1 so no icon appears
+        const idx = astro.index;
+
+        // 10=Ekadashi(S), 25=Ekadashi(K), 14=Purnima, 29=Amavasya
+        if (idx === 10 || idx === 25 || idx === 14 || idx === 29) {
+            if (idx === lastTithiIndex) {
+                effectiveTithiIndex = -1; // Suppress duplicate
+            }
         }
+
         // Update tracker for the next iteration
         lastTithiIndex = astro.index;
         // -------------------------------
