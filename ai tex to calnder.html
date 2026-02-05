@@ -1530,8 +1530,6 @@ The word "Nua" means new and "Khai" means food.
         }
 
         // Season UI Component Data
-        
-        // Minimal SunCalc Implementation
         const SunCalc = (function() {
             var J1970 = 2440588, dayMs = 1000 * 60 * 60 * 24, J2000 = 2451545, rad = Math.PI / 180, e = rad, J0 = 0.0009;
             function toJulian(date) { return date.valueOf() / dayMs - 0.5 + J1970; }
@@ -1555,110 +1553,117 @@ The word "Nua" means new and "Khai" means food.
             return { getTimes: getTimes };
         })();
 
-        /* --- VEDIC ASTRONOMY ALGORITHMS --- */
-        /* --- REFINED VEDIC ASTRONOMY ENGINE (V2.1) --- */
-        const VedicAstro = (function() {
-            const NAKSHATRAS = ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"];
-            const YOGAS = ["Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan", "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla", "Brahma", "Indra", "Vaidhriti"];
-            const KARANAS = ["Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti", "Shakuni", "Chatushpada", "Naga", "Kimstughna"];
+/* --- REFINED VEDIC ASTRONOMY ENGINE (V2.1) --- */
+const VedicAstro = (function() {
+    const NAKSHATRAS = ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"];
+    const YOGAS = ["Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan", "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla", "Brahma", "Indra", "Vaidhriti"];
+    const KARANAS = ["Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti", "Shakuni", "Chatushpada", "Naga", "Kimstughna"];
 
-            const D2R = Math.PI / 180;
-            const R2D = 180 / Math.PI;
-            function rad(d) { return d * D2R; }
-            function deg(r) { return r * R2D; }
-            function norm(d) { return ((d % 360) + 360) % 360; }
+    const D2R = Math.PI / 180;
+    const R2D = 180 / Math.PI;
+    function rad(d) { return d * D2R; }
+    function deg(r) { return r * R2D; }
+    function norm(d) { return ((d % 360) + 360) % 360; }
 
-            function getJulianDay(date) {
-                return (date.getTime() / 86400000) + 2440587.5;
-            }
+    function getJulianDay(date) {
+        return (date.getTime() / 86400000) + 2440587.5;
+    }
 
-            // Precise Lahiri Ayanamsa
-            function getAyanamsa(jd) {
-                const t = (jd - 2451545.0) / 36525;
-                return 23.85616 + 1.396042 * t + 0.000307 * t * t;
-            }
+    // Precise Lahiri Ayanamsa
+    function getAyanamsa(jd) {
+        const t = (jd - 2451545.0) / 36525;
+        return 23.85616 + 1.396042 * t + 0.000307 * t * t;
+    }
 
-            // Higher precision Solar Longitude
-            function getSunLong(jd) {
-                const d = jd - 2451545.0;
-                const g = norm(357.529 + 0.98560028 * d);
-                const q = norm(280.459 + 0.98564736 * d);
-                const L = norm(q + 1.915 * Math.sin(rad(g)) + 0.020 * Math.sin(rad(2 * g)));
-                return L;
-            }
+    // Higher precision Solar Longitude
+    function getSunLong(jd) {
+        const d = jd - 2451545.0;
+        const g = norm(357.529 + 0.98560028 * d);
+        const q = norm(280.459 + 0.98564736 * d);
+        const L = norm(q + 1.915 * Math.sin(rad(g)) + 0.020 * Math.sin(rad(2 * g)));
+        return L;
+    }
 
-            // Precise Lunar Longitude (Accounts for major perturbations)
-            function getMoonLong(jd) {
-                const d = jd - 2451545.0;
-                const L0 = norm(218.316 + 13.176396 * d); // Mean Longitude
-                const M = norm(134.963 + 13.064993 * d);  // Mean Anomaly
-                const F = norm(93.272 + 13.229350 * d);   // Mean distance from node
-                const D = norm(297.850 + 12.190749 * d);  // Mean elongation
-                
-                let lon = L0 + 6.289 * Math.sin(rad(M)); // Center
-                lon += -1.274 * Math.sin(rad(M - 2 * D)); // Evection
-                lon += 0.658 * Math.sin(rad(2 * D));      // Variation
-                lon += 0.214 * Math.sin(rad(2 * M));      // Higher order
-                lon += -0.114 * Math.sin(rad(2 * F));     // Node Correction
-                return norm(lon);
-            }
+    // Precise Lunar Longitude (Accounts for major perturbations)
+    function getMoonLong(jd) {
+        const d = jd - 2451545.0;
+        const L0 = norm(218.316 + 13.176396 * d); // Mean Longitude
+        const M = norm(134.963 + 13.064993 * d);  // Mean Anomaly
+        const F = norm(93.272 + 13.229350 * d);   // Mean distance from node
+        const D = norm(297.850 + 12.190749 * d);  // Mean elongation
 
-            function calculate(dateObj, hour = 6) {
-                const d = new Date(dateObj);
-                // Handle fractional hours (e.g. 5.9)
-                const h = (hour === undefined || hour === null) ? 6 : hour;
-                const hh = Math.floor(h);
-                const mm = Math.floor((h % 1) * 60);
-                d.setHours(hh, mm, 0, 0);
+        let lon = L0 + 6.289 * Math.sin(rad(M)); // Center
+        lon += -1.274 * Math.sin(rad(M - 2 * D)); // Evection
+        lon += 0.658 * Math.sin(rad(2 * D));      // Variation
+        lon += 0.214 * Math.sin(rad(2 * M));      // Higher order
+        lon += -0.114 * Math.sin(rad(2 * F));     // Node Correction
+        return norm(lon);
+    }
 
-                const jd = getJulianDay(d);
-                const ayanamsa = getAyanamsa(jd);
+    return {
+        calculate: function(dateObj, hour = 6) {
+            const d = new Date(dateObj);
+            d.setHours(hour, 0, 0, 0);
+            const jd = getJulianDay(d);
+            const ayanamsa = getAyanamsa(jd);
 
-                // Nirayana (Sidereal) positions
-                const sunSid = norm(getSunLong(jd) - ayanamsa);
-                const moonSid = norm(getMoonLong(jd) - ayanamsa);
+            // Nirayana (Sidereal) positions
+            const sunSid = norm(getSunLong(jd) - ayanamsa);
+            const moonSid = norm(getMoonLong(jd) - ayanamsa);
 
-                // Tithi Calculation: (Moon - Sun) / 12
-                // We add a tiny offset (0.005) to handle floating point precision
-                // for days where the Tithi changes exactly at sunrise.
-                const diff = norm(moonSid - sunSid + 0.005);
-                const tithiVal = diff / 12;
-                const tithiIndex = Math.floor(tithiVal);
+            // Tithi Calculation: (Moon - Sun) / 12
+            // We add a tiny offset (0.005) to handle floating point precision
+            // for days where the Tithi changes exactly at sunrise.
+            const diff = norm(moonSid - sunSid + 0.005);
+            const tithiVal = diff / 12;
+            const tithiIndex = Math.floor(tithiVal);
 
-                // Nakshatra: Moon / 13.3333
-                const nakIndex = Math.floor(moonSid / (13 + 1/3));
+            // Nakshatra: Moon / 13.3333
+            const nakIndex = Math.floor(moonSid / (13 + 1/3));
 
-                // Yoga: (Sun + Moon) / 13.3333
-                const yogaIndex = Math.floor(norm(sunSid + moonSid) / (13 + 1/3));
+            // Yoga: (Sun + Moon) / 13.3333
+            const yogaIndex = Math.floor(norm(sunSid + moonSid) / (13 + 1/3));
 
-                // Karana logic
-                const kIndexTotal = Math.floor(diff / 6);
-                let karanaIndex = 0;
-                if (kIndexTotal === 0) karanaIndex = 10; // Kimstughna
-                else if (kIndexTotal >= 57) karanaIndex = 7 + (kIndexTotal - 57); // Fixed
-                else karanaIndex = (kIndexTotal - 1) % 7; // Movable
-
-                return {
-                    tithiIndex: tithiIndex % 30,
-                    nakshatra: NAKSHATRAS[nakIndex % 27],
-                    yoga: YOGAS[yogaIndex % 27],
-                    karana: KARANAS[karanaIndex]
-                };
-            }
+            // Karana logic
+            const kIndexTotal = Math.floor(diff / 6);
+            let karanaIndex = 0;
+            if (kIndexTotal === 0) karanaIndex = 10; // Kimstughna
+            else if (kIndexTotal >= 57) karanaIndex = 7 + (kIndexTotal - 57); // Fixed
+            else karanaIndex = (kIndexTotal - 1) % 7; // Movable
 
             return {
-                calculate: calculate,
-                getUdayaTithi: function(dateObj) {
-                    const res = calculate(dateObj, 6);
-                    return res.tithiIndex;
-                },
-                getTithiAtSunrise: function(dateObj) {
-                    return calculate(dateObj, 6);
-                }
+                tithiIndex: tithiIndex % 30,
+                nakshatra: NAKSHATRAS[nakIndex % 27],
+                yoga: YOGAS[yogaIndex % 27],
+                karana: KARANAS[karanaIndex]
             };
-        })();
+        },
+        // ALIASES for compatibility
+        getUdayaTithi: function(dateObj) {
+            return this.calculate(dateObj, 6).tithiIndex;
+        },
+        getTithiAtSunrise: function(dateObj) {
+            return this.calculate(dateObj, 6);
+        },
+        calculateTithi: function(dateObj) {
+             const res = this.calculate(dateObj, 6);
+             const isShukla = res.tithiIndex < 15;
+             const tithiNum = (res.tithiIndex % 15) + 1;
+             const tithiNames = ["Pratipada","Dwitiya","Tritiya","Chaturthi","Panchami","Shashthi","Saptami","Ashtami","Navami","Dashami","Ekadashi","Dwadashi","Trayodashi","Chaturdashi","Purnima","Amavasya"];
+             const tName = (res.tithiIndex === 14) ? "Purnima" : (res.tithiIndex === 29) ? "Amavasya" : tithiNames[tithiNum-1];
+
+             return {
+                 index: res.tithiIndex,
+                 tithi: tName,
+                 paksha: isShukla ? "Shukla Paksha" : "Krishna Paksha",
+                 nakshatra: res.nakshatra,
+                 yoga: res.yoga,
+                 karana: res.karana
+             };
+        }
+    };
+})();
         const SeasonIcons = {
-            // Sun behind small cloud
             hemant: `
                 <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -4074,16 +4079,7 @@ function renderCalendarGrid(data) {
         const astro = calculateTithi(dateObj); 
         const tithiToday = VedicAstro.getUdayaTithi(dateObj);
         
-        // --- SUNRISE RULE LOGIC (Double Ekadashi Fix) ---
-        // Only show Ekadashi/Purnima/Amavasya if it wasn't already the same Tithi yesterday.
         let effectiveTithiIndex = tithiToday;
-        const specialTithis = [10, 25, 14, 29];
-
-        if (specialTithis.includes(tithiToday) && lastTithiIndex === tithiToday) {
-            effectiveTithiIndex = -1; // Hide icon/label on subsequent days
-        }
-
-        // Update tracker
         lastTithiIndex = tithiToday;
         // -------------------------------
 
