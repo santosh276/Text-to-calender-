@@ -1617,15 +1617,33 @@ The word "Nua" means new and "Khai" means food.
             }
 
             function calculate(dateObj, hour = 6) {
+                // Enforce IST (Indian Standard Time) for calculations
+                // Input dateObj is treated as Local Date in India.
+                // Input hour is IST hour.
+                // We convert this to UTC for astronomical algorithms. IST = UTC + 5.5
+
                 const d = new Date(dateObj);
-                // Reference: 6:00 AM IST is approx 00:30 UTC. 
-                // Support legacy hour argument but normalize minutes/seconds
                 const h = (hour === undefined || hour === null) ? 6 : hour;
-                const hours = Math.floor(h);
-                const minutes = Math.floor((h % 1) * 60);
-                d.setHours(hours, minutes, 0, 0); 
                 
-                const jd = (d.getTime() / 86400000) + 2440587.5;
+                // Extract Year, Month, Day from input (Local context assumed to be India)
+                const y = d.getFullYear();
+                const m = d.getMonth();
+                const day = d.getDate();
+
+                // Construct UTC time: Target IST - 5.5 hours
+                // dateObj is just YMD holder.
+                // 6:00 AM IST = 00:30 AM UTC
+
+                // Create Base UTC Date (00:00:00 UTC)
+                const utcBase = Date.UTC(y, m, day, 0, 0, 0);
+
+                // Add Hour Offset (Hour - 5.5) in milliseconds
+                // If hour is 6, offset is 0.5 hours.
+                const msOffset = (h - 5.5) * 60 * 60 * 1000;
+
+                const finalTime = utcBase + msOffset;
+
+                const jd = (finalTime / 86400000.0) + 2440587.5;
                 const aya = getAyanamsa(jd);
                 
                 const sunSid = norm(getSunLong(jd) - aya);
@@ -1659,8 +1677,8 @@ The word "Nua" means new and "Khai" means food.
             return {
                 calculate: calculate,
                 getTithiAtSunrise: function(dateObj) {
-                    // Strict Sunrise Rule: Always check 6 AM
-                    return calculate(dateObj, 6);
+                    // Strict Sunrise Rule: Always check 5:30 AM IST (Standard)
+                    return calculate(dateObj, 5.5);
                 }
             };
         })();
