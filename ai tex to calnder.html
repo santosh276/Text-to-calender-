@@ -4020,6 +4020,22 @@ The word "Nua" means new and "Khai" means food.
             }
         }
 
+function getGenericMoonPhaseIcon(tithiIndex) {
+    const isWaxing = tithiIndex < 15;
+    let phaseVal;
+    if (isWaxing) phaseVal = (tithiIndex + 1) / 15;
+    else phaseVal = 1 - ((tithiIndex - 14) / 15);
+    phaseVal = Math.max(0, Math.min(1, phaseVal));
+
+    const rx = 9 * Math.abs(2 * phaseVal - 1);
+    const sweep = phaseVal > 0.5 ? 1 : 0;
+    let d = "";
+    if (isWaxing) d = `M 12 3 A 9 9 0 0 1 12 21 A ${rx.toFixed(2)} 9 0 0 ${sweep} 12 3 Z`;
+    else d = `M 12 21 A 9 9 0 0 1 12 3 A ${rx.toFixed(2)} 9 0 0 ${sweep} 12 21 Z`;
+
+    return `<svg viewBox="0 0 24 24" class="w-full h-full" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="${d}" /></svg>`;
+}
+
 function renderCalendarGrid(data) {
     const grid = document.getElementById('calendar-grid');
     const headerRow = document.getElementById('grid-header');
@@ -4059,7 +4075,6 @@ function renderCalendarGrid(data) {
     }
 
     // Days
-    let lastTithiIndex = -1;
     for (let d = 1; d <= daysInMonth; d++) {
         const isSunday = new Date(data.year, data.month, d).getDay() === 0;
         const isToday = (d === today.getDate() && data.month === today.getMonth() && data.year === today.getFullYear());
@@ -4068,16 +4083,32 @@ function renderCalendarGrid(data) {
         
         // Calculations
         const astro = calculateTithi(dateObj); 
-        
-        // --- NEW CODE: DUPLICATE FIX ---
-        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
-        let effectiveTithiIndex = astro.index;
-        if (astro.index === 29 && lastTithiIndex === 29) {
-            effectiveTithiIndex = -1; // Set to -1 so no icon appears
+        // 1. Calculate Tithi for the current day at 6:00 AM
+        const astroToday = VedicAstro.calculate(dateObj, 6);
+        const todayTithi = astroToday.tithiIndex;
+
+        // 2. Calculate Yesterday's Tithi at 6:00 AM for Udaya Tithi Check
+        const prevDate = new Date(dateObj);
+        prevDate.setDate(prevDate.getDate() - 1);
+        const astroYesterday = VedicAstro.calculate(prevDate, 6);
+        const yesterdayTithi = astroYesterday.tithiIndex;
+
+        // Udaya Tithi Logic: Only show icon if Tithi CHANGED at Sunrise
+        let displayIconHtml = '';
+        let isUdayaTithiEvent = false;
+
+        if (todayTithi !== yesterdayTithi) {
+            if (todayTithi === 14) {
+                displayIconHtml = TITHI_ICONS.purnima;
+                isUdayaTithiEvent = true;
+            } else if (todayTithi === 29) {
+                displayIconHtml = TITHI_ICONS.amavasya;
+                isUdayaTithiEvent = true;
+            } else if (todayTithi === 10 || todayTithi === 25) {
+                displayIconHtml = TITHI_ICONS.ekadashi;
+                isUdayaTithiEvent = true;
+            }
         }
-        // Update tracker for the next iteration
-        lastTithiIndex = astro.index;
-        // -------------------------------
 
         const dayEvents = data.events.filter(e => e.date === d);
         
@@ -4102,18 +4133,10 @@ function renderCalendarGrid(data) {
             mobileBgClass = 'bg-deep-red';
         }
 
-        // 2. Mobile Tithi Icons (Exact Original SVGs)
-        let originalIconHtml = '';
-        if (effectiveTithiIndex === 14) originalIconHtml = TITHI_ICONS.purnima;
-        else if (effectiveTithiIndex === 29) originalIconHtml = TITHI_ICONS.amavasya;
-        else if (effectiveTithiIndex === 10 || effectiveTithiIndex === 25) originalIconHtml = TITHI_ICONS.ekadashi;
-        
-        // Wrap for mobile positioning
-        if (originalIconHtml) {
-             // Inject the class directly into the SVG string if needed, or wrap it
-             // TITHI_ICONS strings usually contain absolute positioning styles inline.
-             // We ensure they appear only on mobile by wrapping in a div.
-             originalIconHtml = `<div class="mobile-tithi-icon md:hidden">${originalIconHtml}</div>`;
+        // 2. Mobile Tithi Icons (Udaya Logic)
+        let originalIconHtml = ''; // Variable name kept for template compatibility
+        if (isUdayaTithiEvent && displayIconHtml) {
+             originalIconHtml = `<div class="mobile-tithi-icon md:hidden">${displayIconHtml}</div>`;
         }
 
         // ==========================================
@@ -4191,6 +4214,19 @@ function renderCalendarGrid(data) {
         `;
 
         // --- 2. DESKTOP INNER HTML ---
+
+        // Desktop Icon Logic (Udaya vs Generic)
+        let desktopIconHtml = '';
+        if (isUdayaTithiEvent && displayIconHtml) {
+             desktopIconHtml = displayIconHtml; // Use the special icon
+        } else if (todayTithi === 14 || todayTithi === 29) {
+             // Suppressed Purnima/Amavasya: Show generic phase instead of special icon
+             desktopIconHtml = getGenericMoonPhaseIcon(todayTithi);
+        } else {
+             // Normal day or Suppressed Ekadashi (which gets generic icon anyway)
+             desktopIconHtml = getMoonPhaseIcon(todayTithi);
+        }
+
         // Render Single Tithi (Primary)
         const dotColor = getTithiDotColor(astro.index, astro.paksha);
         const tithiRows = `
@@ -4211,7 +4247,7 @@ function renderCalendarGrid(data) {
                         ${toNativeNum(d, currentLang)}
                     </span>
                      <span class="w-4 h-4 opacity-80 block mt-1">
-                        ${getMoonPhaseIcon(astro.index)}
+                        ${desktopIconHtml}
                     </span>
                 </div>
 
