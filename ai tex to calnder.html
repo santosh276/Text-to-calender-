@@ -1579,11 +1579,11 @@ The word "Nua" means new and "Khai" means food.
             // Professional Lunar Longitude (15 Periodic Terms)
             function getMoonLong(jd) {
                 const T = (jd - 2451545.0) / 36525;
-                const Lprime = norm(218.316447 + 481267.881234 * T); // Mean Long
-                const D = norm(297.850192 + 445267.111403 * T);    // Elongation
-                const M = norm(357.529109 + 35999.050291 * T);     // Sun Mean Anomaly
-                const Mprime = norm(134.963396 + 477198.867505 * T); // Moon Mean Anomaly
-                const F = norm(93.272095 + 483202.017523 * T);     // Dist from Node
+                const Lprime = norm(218.316447 + 481267.881234 * T - 0.0015786 * T * T); // Mean Long
+                const D = norm(297.850192 + 445267.111403 * T - 0.0019142 * T * T);    // Elongation
+                const M = norm(357.529109 + 35999.050291 * T - 0.0001536 * T * T);     // Sun Mean Anomaly
+                const Mprime = norm(134.963396 + 477198.867505 * T + 0.0087414 * T * T); // Moon Mean Anomaly
+                const F = norm(93.272095 + 483202.017523 * T - 0.0036539 * T * T);     // Dist from Node
 
                 let sumLong = 6.288774 * Math.sin(Mprime * D2R);
                 sumLong += 1.274027 * Math.sin((2 * D - Mprime) * D2R);
