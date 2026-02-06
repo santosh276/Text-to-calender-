@@ -1654,6 +1654,45 @@ The word "Nua" means new and "Khai" means food.
                 getTithiAtSunrise: function(dateObj) {
                     // Strict Sunrise Rule: Always check 6 AM
                     return calculate(dateObj, 6);
+                },
+                getTithiEndTime: function(dateObj, currentTithiIndex) {
+                    // Binary Search Implementation for Performance (Offline Pro Algorithm)
+                    let startH = 6.0;
+                    let endH = 34.0; // Look ahead up to 28 hours
+
+                    // Check bounds to avoid infinite loops if data is inconsistent
+                    const startIdx = calculate(dateObj, startH).tithiIndex;
+                    // If current index doesn't match start index (e.g. edge case), return empty
+                    if (startIdx !== currentTithiIndex && currentTithiIndex !== undefined) return "";
+
+                    const endIdx = calculate(dateObj, endH).tithiIndex;
+                    if (endIdx === currentTithiIndex) return ""; // No change in window
+
+                    // Binary Search for transition (Precision: 1 min)
+                    const precision = 1 / 60;
+
+                    while ((endH - startH) > precision) {
+                        const midH = (startH + endH) / 2;
+                        const midIdx = calculate(dateObj, midH).tithiIndex;
+
+                        if (midIdx === currentTithiIndex) {
+                            startH = midH; // Change is later
+                        } else {
+                            endH = midH; // Change is sooner (or at mid)
+                        }
+                    }
+
+                    // endH is the approximate transition time
+                    const finalH = endH;
+                    const d = new Date(dateObj);
+
+                    const h = Math.floor(finalH);
+                    const m = Math.floor((finalH % 1) * 60);
+
+                    // setHours handles overflow (e.g. 25 -> 1 AM next day)
+                    d.setHours(h, m);
+
+                    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
             };
         })();
@@ -4335,6 +4374,12 @@ function renderCalendarGrid(data) {
             
             const autoData = calculateTithi(calcDate);
             
+            // Calculate Tithi End Time
+            let tithiEndStr = "";
+            if (VedicAstro.getTithiEndTime) {
+                 tithiEndStr = VedicAstro.getTithiEndTime(calcDate, autoData.index);
+            }
+
             // SunCalc Times
             let sunTimes = { sunrise: null, sunset: null };
             let moonTimes = { rise: null, set: null }; // Placeholder
@@ -4377,7 +4422,13 @@ function renderCalendarGrid(data) {
 
             // 4. Merge Data (Manual > Auto)
             let displayData = { ...data.panchang };
-            if (!displayData['Tithi']) displayData['Tithi'] = `${autoData.tithi} (${autoData.paksha})`;
+            if (!displayData['Tithi']) {
+                let tithiDisplay = `${autoData.tithi} (${autoData.paksha})`;
+                if (tithiEndStr) {
+                    tithiDisplay += `<span class="block text-[9px] text-gray-400 font-bold uppercase tracking-wider mt-0.5"><i class="fa-regular fa-clock mr-1"></i>Ends ${tithiEndStr}</span>`;
+                }
+                displayData['Tithi'] = tithiDisplay;
+            }
             if (!displayData['Nakshatra']) displayData['Nakshatra'] = autoData.nakshatra;
             if (!displayData['Yoga']) displayData['Yoga'] = autoData.yoga;
             if (!displayData['Karana']) displayData['Karana'] = autoData.karana;
