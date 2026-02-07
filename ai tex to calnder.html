@@ -904,6 +904,7 @@
 <span class="hl-keyword">>> 14-01-2026</span>
 <span class="hl-tag">![Banner](https://image.url)</span>
 <span class="hl-tag">@ Tag : Festival</span>
+<span class="hl-tag">@ Tithi : Purnima</span>
 
 Makar Sankranti is a major harvest festival.
 
@@ -2142,49 +2143,46 @@ The word "Nua" means new and "Khai" means food.
 };
 
         function calculateTithi(dateObj) {
-            // Use the new Vedic Astro Engine
-            // 1. Calculate at Start of Day (Sunrise Rule)
-            const astroDataStart = VedicAstro.getTithiAtSunrise(dateObj);
+            const dateKey = `${dateObj.getFullYear()}-${dateObj.getMonth()}-${dateObj.getDate()}`;
+            const recKey = `rec-${dateObj.getMonth()}-${dateObj.getDate()}`;
             
-            // 2. Calculate at End of Day (Next Day 5:59 AM) to check for change
-            const nextDay = new Date(dateObj);
-            nextDay.setDate(nextDay.getDate() + 1);
-            const astroDataEnd = VedicAstro.calculate(nextDay, 5.9);
+            // 1. Search for a Manual Override in Details
+            let manualIndex = null;
+            const detailList = appState.details[dateKey] || appState.recurringDetails[recKey];
 
-            // Determine Data for Localization
+            if (detailList) {
+                const details = Array.isArray(detailList) ? detailList : [detailList];
+                details.forEach(d => {
+                    if (d.manualTithiIndex !== undefined) manualIndex = d.manualTithiIndex;
+                });
+            }
+
+            // 2. The Hybrid Bridge
+            let astro;
+            if (manualIndex !== null) {
+                // Use manual index, but fetch Nakshatra/Yoga from math (Hybrid)
+                const mathData = VedicAstro.getTithiAtSunrise(dateObj);
+                astro = { ...mathData, tithiIndex: manualIndex };
+            } else {
+                // No manual data? Use 100% math
+                astro = VedicAstro.getTithiAtSunrise(dateObj);
+            }
+
+            // 3. Localization
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
             
-            // Helper to format a single Tithi object
-            const formatTithi = (data) => {
-                const safeIndex = data.tithiIndex;
-                const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
-                const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
-                return {
-                    tithi: tithiName,
-                    paksha: pakshaName,
-                    index: safeIndex,
-                    nakshatra: data.nakshatra,
-                    yoga: data.yoga,
-                    karana: data.karana
-                };
-            };
+            const safeIndex = astro.tithiIndex;
+            const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
+            const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
 
-            const startTithi = formatTithi(astroDataStart);
-            const endTithi = formatTithi(astroDataEnd);
-
-            // Check if Tithi changed
-            let allTithis = [startTithi];
-            if (startTithi.index !== endTithi.index) {
-                allTithis.push(endTithi);
-            }
-
-            // Return extended data including Nakshatra/Yoga for the renderer
-            // We return the primary (start) tithi as top-level properties for backward compatibility
-            // And a new 'allTithis' array for the grid to use.
-            return { 
-                ...startTithi,
-                allTithis: allTithis
+            return {
+                tithi: tithiName,
+                paksha: pakshaName,
+                index: safeIndex,
+                nakshatra: astro.nakshatra,
+                yoga: astro.yoga,
+                karana: astro.karana
             };
         }
 
@@ -3321,9 +3319,22 @@ The word "Nua" means new and "Khai" means food.
                         const tagMatch = line.match(/^@\s*Tag\s*:\s*(.+)/i);
                         const bannerMatch = line.match(/^!\[Banner\]\((.*?)\)/i);
                         const gridBgMatch = line.match(/^!\[GridBg\]\((.*?)\)/i);
+                        const tithiMatch = line.match(/^@\s*Tithi\s*:\s*(.+)/i);
+
                         if (tagMatch) currentDetail.tags.push(tagMatch[1]);
                         else if (bannerMatch) currentDetail.bannerUrl = bannerMatch[1];
                         else if (gridBgMatch) currentDetail.gridBgUrl = gridBgMatch[1];
+                        else if (tithiMatch) {
+                            let tVal = tithiMatch[1].trim().toLowerCase();
+                            // Map names to indices
+                            if (tVal.includes('purnima')) currentDetail.manualTithiIndex = 14;
+                            else if (tVal.includes('amavasya')) currentDetail.manualTithiIndex = 29;
+                            else if (tVal.includes('ekadashi')) currentDetail.manualTithiIndex = 10;
+                            else {
+                                const parsedInt = parseInt(tVal);
+                                if (!isNaN(parsedInt)) currentDetail.manualTithiIndex = parsedInt;
+                            }
+                        }
                         else currentDetail.bodyLines.push(line);
                     }
                 }
