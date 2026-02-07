@@ -849,16 +849,32 @@
             <!-- Enhanced Syntax Guide -->
             <div id="syntax-guide" class="text-gray-100 relative z-40">
                 <div class="p-6 pb-12 text-sm">
+                    <!-- NEW: Quick Start Tutorial -->
+                    <div class="guide-section">
+                        <div class="guide-title text-green-400"><i class="fa-solid fa-play"></i> Quick Start Tutorial</div>
+                        <ol class="list-decimal pl-5 space-y-2 text-gray-300">
+                            <li><strong>Set Title:</strong> Start with a <code>::: config</code> block to set your App Title.</li>
+                            <li><strong>Define Month:</strong> Use <code>::: calendar</code> and <code>++ Month Year ++</code> to start a month.</li>
+                            <li><strong>Add Events:</strong> List dates like <code>01 * New Year</code>. Use symbols for colors!</li>
+                            <li><strong>Add Details:</strong> Use <code>::: details</code> and <code>>> Date</code> to add stories, images, and rituals.</li>
+                            <li><strong>Customize:</strong> Add Panchang, Horoscopes, and Seasons to make it professional.</li>
+                        </ol>
+                    </div>
+
                     <div class="guide-section">
                         <div class="guide-title"><i class="fa-solid fa-gear"></i> 1. App Configuration</div>
                         <div class="code-block">
 ::: config
 @ Title : My Calendar 2026
-@ Logo : <span class="hl-string">![Logo](URL_or_Use_Upload_Btn)</span>
+@ Logo : <span class="hl-string">![Logo](https://example.com/logo.png)</span>
 @ Live Sync GitHub trigger in every : <span class="hl-string">24 hours</span>
 :::
                         </div>
-                        <p class="code-annotation">Sets the main title of your app and the top-left logo. Sync interval supports minutes, hours, or days.</p>
+                        <p class="code-annotation">
+                            - <strong>Title:</strong> Appears in the top header.<br>
+                            - <strong>Logo:</strong> URL or uploaded image path.<br>
+                            - <strong>Live Sync:</strong> Auto-update interval (minutes/hours/days).
+                        </p>
                     </div>
 
                     <div class="guide-section">
@@ -868,19 +884,20 @@
 <span class="hl-keyword">++ January 2026 ++</span>
 01 <span class="hl-tag">*</span> New Year's Day [ନୂତନ ବର୍ଷ]
 14 <span class="hl-tag">!</span> Makar Sankranti
-23 <span class="hl-tag">!</span> Saraswati Puja / Netaji Jayanti [ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ]
+23 <span class="hl-tag">!</span> Saraswati Puja / Netaji Jayanti
 26 <span class="hl-tag">^</span> Republic Day
 05 <span class="hl-tag">></span> Office Meeting
 :::
                         </div>
-                        <div class="mt-2 text-xs space-y-1 text-gray-400">
-                            <p><span class="font-mono text-white bg-gray-700 px-1 rounded">++ Month Year ++</span> : Starts a new month.</p>
-                            <p><span class="font-mono text-white bg-red-600 px-1.5 rounded">!</span> : Festival (Red)</p>
-                            <p><span class="font-mono text-white bg-blue-600 px-1.5 rounded">*</span> : Holiday (Blue)</p>
-                            <p><span class="font-mono text-white bg-green-600 px-1.5 rounded">^</span> : Auspicious (Green)</p>
-                            <p><span class="font-mono text-white bg-gray-600 px-1.5 rounded">></span> : Generic Event (Gray)</p>
-                            <p class="mt-2 pt-1 border-t border-gray-700 text-gray-300">
-                                <strong>Note:</strong> Use a forward slash <span class="font-mono bg-gray-800 px-1">/</span> to list multiple festivals (e.g., <span class="italic">Saraswati Puja / Netaji Jayanti</span>). The app renders them as a combined entry.
+                        <div class="mt-2 text-xs space-y-2 text-gray-400">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><span class="font-mono text-white bg-red-600 px-1.5 rounded">!</span> Festival (Red)</div>
+                                <div><span class="font-mono text-white bg-blue-600 px-1.5 rounded">*</span> Holiday (Blue)</div>
+                                <div><span class="font-mono text-white bg-green-600 px-1.5 rounded">^</span> Auspicious (Green)</div>
+                                <div><span class="font-mono text-white bg-gray-600 px-1.5 rounded">></span> Event (Gray)</div>
+                            </div>
+                            <p class="pt-1 border-t border-gray-700">
+                                <strong>Bilingual Support:</strong> Use <code>[Local Text]</code> brackets to show regional text below the English name.
                             </p>
                         </div>
                     </div>
@@ -894,33 +911,52 @@
 15-08 <span class="hl-tag">!</span> Independence Day
 :::
                         </div>
-                        <p class="code-annotation">Events that repeat every year on the same date (Gregorian). Use format <span class="font-mono bg-gray-800 px-1">DD-MM</span>.</p>
+                        <p class="code-annotation">Events that repeat every year on the same Gregorian date. Format: <span class="font-mono bg-gray-800 px-1">DD-MM</span>.</p>
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 3. Detailed Day View</div>
+                        <div class="guide-title"><i class="fa-solid fa-calendar-check"></i> 3. Tithi Overrides (Hybrid Mode)</div>
+                        <p class="text-gray-400 mb-2">Manually force a Tithi for specific dates (overrides calculation).</p>
+                        <div class="code-block">
+::: tithi
+14-01-2026 : <span class="hl-string">Purnima</span>
+25-01-2026 : <span class="hl-string">10</span>
+29-01 : <span class="hl-string">Amavasya</span> <span class="hl-comment"># Applies every year</span>
+:::
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 4. Detailed Day View</div>
+                        <p class="text-gray-400 mb-2">Add rich content and banners for any date.</p>
                         <div class="code-block">
 ::: details
 <span class="hl-keyword">>> 14-01-2026</span>
-<span class="hl-tag">![Banner](https://image.url)</span>
-<span class="hl-tag">@ Tag : Festival</span>
+<span class="hl-tag">![Banner](https://image.url/banner.jpg)</span>
+<span class="hl-tag">@ Tag : Major Festival</span>
 
-Makar Sankranti is a major harvest festival.
+# Significance
+**Makar Sankranti** is a major harvest festival.
+It marks the sun's transit into *Makara* (Capricorn).
 
-<span class="hl-keyword"># Rituals</span>
+# Rituals
 - Holy dip in river
 - Flying kites
-
-<span class="hl-keyword">>> 26-01</span>
-<span class="hl-tag">@ Tag : National Holiday</span>
-Republic Day parade description here...
 :::
                         </div>
-                        <p class="code-annotation">Use <span class="font-mono bg-gray-800 px-1">>> DD-MM-YYYY</span> for specific dates or <span class="font-mono bg-gray-800 px-1">>> DD-MM</span> for recurring details. Specific dates take priority over recurring ones.</p>
+                        <div class="mt-2 text-xs space-y-1 text-gray-400">
+                            <p><strong>Syntax Features:</strong></p>
+                            <ul class="list-disc pl-4 space-y-1">
+                                <li><code>>> DD-MM-YYYY</code> : Target a specific date.</li>
+                                <li><code>![Banner](url)</code> : Add a top banner image.</li>
+                                <li><code># Header</code> : Section titles.</li>
+                                <li><code>**Bold**</code>, <code>*Italic*</code> : Text styling.</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 4. Monthly Panchang</div>
+                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 5. Monthly Panchang</div>
                         <div class="code-block">
 ::: panchang
 @ Tithi : <span class="hl-string">Shukla Paksha</span>
@@ -930,38 +966,39 @@ Republic Day parade description here...
 @ Sunrise : <span class="hl-string">06:20 AM</span>
 :::
                         </div>
+                        <p class="code-annotation">Data appears in the "Month's Panchang" card. <br>Note: Tithi/Nakshatra are also auto-calculated if omitted!</p>
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 6. Custom Season Descriptions</div>
+                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 6. Seasons (Ritu)</div>
                         <div class="code-block">
 ::: seasons
-@ Spring : <span class="hl-string">Nature blooms, flowers everywhere.</span>
-@ Summer : <span class="hl-string">It's getting hot in here.</span>
+@ Spring : <span class="hl-string">Flowers blooming everywhere.</span>
+@ Summer : <span class="hl-string">Scorching sun, mango season.</span>
 :::
                         </div>
-                        <p class="code-annotation">Customize descriptions for Vasant (Spring), Grishma (Summer), Varsha (Monsoon), Sharad (Autumn), Hemant (Pre-Winter), Shishir (Winter).</p>
+                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).</p>
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-star"></i> 5. Horoscope (Short & Detail)</div>
+                        <div class="guide-title"><i class="fa-solid fa-star"></i> 7. Horoscope</div>
                         <div class="code-block">
-<span class="hl-comment"># Short (Sidebar)</span>
+<span class="hl-comment"># Simple (Sidebar List)</span>
 ::: horoscope
 ~ Aries : <span class="hl-string">Good day for work.</span>
+~ Taurus : <span class="hl-string">Travel is likely.</span>
 :::
 
-<span class="hl-comment"># Detail (Popup)</span>
+<span class="hl-comment"># Detailed (Popup Card)</span>
 ::: horoscope_details
 <span class="hl-keyword">>> Taurus</span>
 @ Element : <span class="hl-string">Earth</span>
 @ Ruler : <span class="hl-string">Venus</span>
-@ DateRange : <span class="hl-string">Apr 20 - May 20</span>
 @ Lucky Number : <span class="hl-string">6</span>
 @ Lucky Color : <span class="hl-string">Green</span>
 @ Compatible : <span class="hl-string">Virgo, Capricorn</span>
 
-Horoscope body text here.
+Detailed prediction text goes here...
 :::
                         </div>
                     </div>
@@ -1921,6 +1958,7 @@ The word "Nua" means new and "Khai" means food.
             viewDate: { month: new Date().getMonth(), year: new Date().getFullYear() },
             todayIndex: -1,
             details: {}, 
+            manualTithis: {}, // New storage for dedicated Tithi overrides
             horoscopeDetails: {},
             customSeasonDescriptions: {},
             images: {}, 
@@ -2142,49 +2180,43 @@ The word "Nua" means new and "Khai" means food.
 };
 
         function calculateTithi(dateObj) {
-            // Use the new Vedic Astro Engine
-            // 1. Calculate at Start of Day (Sunrise Rule)
-            const astroDataStart = VedicAstro.getTithiAtSunrise(dateObj);
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
             
-            // 2. Calculate at End of Day (Next Day 5:59 AM) to check for change
-            const nextDay = new Date(dateObj);
-            nextDay.setDate(nextDay.getDate() + 1);
-            const astroDataEnd = VedicAstro.calculate(nextDay, 5.9);
+            const fullDateKey = `${day}-${month}-${year}`; // e.g., 14-01-2026
+            const recDateKey = `${day}-${month}`;        // e.g., 14-01
 
-            // Determine Data for Localization
-            const currentLang = appState.config.language || 'en';
-            const langObj = langData[currentLang] || langData['en'];
-            
-            // Helper to format a single Tithi object
-            const formatTithi = (data) => {
-                const safeIndex = data.tithiIndex;
-                const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
-                const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
-                return {
-                    tithi: tithiName,
-                    paksha: pakshaName,
-                    index: safeIndex,
-                    nakshatra: data.nakshatra,
-                    yoga: data.yoga,
-                    karana: data.karana
-                };
-            };
-
-            const startTithi = formatTithi(astroDataStart);
-            const endTithi = formatTithi(astroDataEnd);
-
-            // Check if Tithi changed
-            let allTithis = [startTithi];
-            if (startTithi.index !== endTithi.index) {
-                allTithis.push(endTithi);
+            // 1. Check for Manual Overrides first
+            let manualIndex = null;
+            if (appState.manualTithis && appState.manualTithis[fullDateKey] !== undefined) {
+                manualIndex = appState.manualTithis[fullDateKey];
+            } else if (appState.manualTithis && appState.manualTithis[recDateKey] !== undefined) {
+                manualIndex = appState.manualTithis[recDateKey];
             }
 
-            // Return extended data including Nakshatra/Yoga for the renderer
-            // We return the primary (start) tithi as top-level properties for backward compatibility
-            // And a new 'allTithis' array for the grid to use.
-            return { 
-                ...startTithi,
-                allTithis: allTithis
+            let astro;
+            if (manualIndex !== null) {
+                // Hybrid: Use manual Tithi but keep math-based Nakshatra/Yoga
+                const mathData = VedicAstro.calculate(dateObj);
+                astro = { ...mathData, tithiIndex: manualIndex };
+            } else {
+                // Default: Pure mathematical calculation
+                astro = VedicAstro.getTithiAtSunrise(dateObj);
+            }
+
+            // 2. Localization & Rendering
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+            const safeIndex = astro.tithiIndex;
+            
+            return {
+                tithi: langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`,
+                paksha: langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna"),
+                index: safeIndex,
+                nakshatra: astro.nakshatra,
+                yoga: astro.yoga,
+                karana: astro.karana
             };
         }
 
@@ -3206,6 +3238,7 @@ The word "Nua" means new and "Khai" means food.
             let currentMonthObj = null;
             let parsedDetails = {};
             let parsedRecurringDetails = {};
+            let parsedManualTithis = {};
             let parsedHoroDetails = {};
             let currentDetailKey = null;
             let currentHoroSign = null;
@@ -3289,6 +3322,26 @@ The word "Nua" means new and "Khai" means food.
                         parsedRecurring.push({ day, month, symbol, engName: engPart.trim(), locName: locPart ? locPart.trim() : "" });
                     }
                 }
+                else if (currentBlock === 'tithi') {
+                    // Matches format "DD-MM-YYYY : TithiName" or "DD-MM : TithiName"
+                    const tithiEntry = line.match(/^(\d{1,2}-\d{1,2}(?:-\d{4})?)\s*:\s*(.+)/);
+                    if (tithiEntry) {
+                        const dateKey = tithiEntry[1]; 
+                        const tValue = tithiEntry[2].trim().toLowerCase();
+                        let index = null;
+
+                        // Map common terms to their internal indices
+                        if (tValue.includes('purnima')) index = 14;
+                        else if (tValue.includes('amavasya')) index = 29;
+                        else if (tValue.includes('ekadashi')) index = 10; 
+                        else index = parseInt(tValue);
+
+                        if (!isNaN(index) && index !== null) {
+                            // Save the override using the date string as the key
+                            parsedManualTithis[dateKey] = index;
+                        }
+                    }
+                }
                 else if (currentBlock === 'details') {
                     const dateHeader = line.match(/^>>\s+(\d{1,2}-\d{1,2}-\d{4})/);
                     const recurringHeader = line.match(/^>>\s+(\d{1,2}-\d{1,2})\s*$/); // Strict end anchor
@@ -3321,9 +3374,22 @@ The word "Nua" means new and "Khai" means food.
                         const tagMatch = line.match(/^@\s*Tag\s*:\s*(.+)/i);
                         const bannerMatch = line.match(/^!\[Banner\]\((.*?)\)/i);
                         const gridBgMatch = line.match(/^!\[GridBg\]\((.*?)\)/i);
+                        const tithiMatch = line.match(/^@\s*Tithi\s*:\s*(.+)/i);
+
                         if (tagMatch) currentDetail.tags.push(tagMatch[1]);
                         else if (bannerMatch) currentDetail.bannerUrl = bannerMatch[1];
                         else if (gridBgMatch) currentDetail.gridBgUrl = gridBgMatch[1];
+                        else if (tithiMatch) {
+                            let tVal = tithiMatch[1].trim().toLowerCase();
+                            // Map names to indices
+                            if (tVal.includes('purnima')) currentDetail.manualTithiIndex = 14;
+                            else if (tVal.includes('amavasya')) currentDetail.manualTithiIndex = 29;
+                            else if (tVal.includes('ekadashi')) currentDetail.manualTithiIndex = 10; 
+                            else {
+                                const parsedInt = parseInt(tVal);
+                                if (!isNaN(parsedInt)) currentDetail.manualTithiIndex = parsedInt;
+                            }
+                        }
                         else currentDetail.bodyLines.push(line);
                     }
                 }
@@ -3394,6 +3460,7 @@ The word "Nua" means new and "Khai" means food.
             appState.monthsData = parsedMonths;
             appState.recurringEvents = parsedRecurring;
             appState.recurringDetails = parsedRecurringDetails;
+            appState.manualTithis = parsedManualTithis;
             appState.details = parsedDetails;
             appState.horoscopeDetails = parsedHoroDetails;
             appState.customSeasonDescriptions = parsedSeasonDescs;
