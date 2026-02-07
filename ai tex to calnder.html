@@ -434,9 +434,14 @@
             border-bottom: 1px solid #374151;
         }
         #syntax-guide.open { 
-            max-height: 250px; /* Fixed height for mobile safety */
+            max-height: 400px;
             opacity: 1; 
-            overflow-y: auto; /* Scroll only when open */
+            overflow-y: auto;
+        }
+        @media (min-width: 768px) {
+            #syntax-guide.open {
+                max-height: 600px;
+            }
         }
         
         .guide-section { margin-bottom: 1.5rem; border-bottom: 1px solid #374151; padding-bottom: 1rem; }
@@ -840,8 +845,8 @@
                 </div>
                 <div class="mt-2 border-t border-gray-800 pt-3">
                     <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
-                        <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i> Formatting Guide</span>
-                        <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
+                        <span class="font-bold flex items-center gap-2"><i id="guide-toggle-icon" class="fa-solid fa-book-open text-indigo-400 transition-transform duration-300"></i> Formatting Guide</span>
+                        <span id="guide-toggle-text" class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
                     </button>
                 </div>
             </div>
@@ -2332,7 +2337,22 @@ The word "Nua" means new and "Khai" means food.
 
         function toggleSyntaxGuide() {
             const guide = document.getElementById('syntax-guide');
+            const textSpan = document.getElementById('guide-toggle-text');
+            const icon = document.getElementById('guide-toggle-icon');
+
             guide.classList.toggle('open');
+            const isOpen = guide.classList.contains('open');
+
+            if (textSpan) textSpan.innerText = isOpen ? "Close Guide" : "Click to Expand";
+            if (icon) {
+                if (isOpen) {
+                    icon.classList.remove('fa-book-open');
+                    icon.classList.add('fa-book-open-reader');
+                } else {
+                    icon.classList.remove('fa-book-open-reader');
+                    icon.classList.add('fa-book-open');
+                }
+            }
         }
 
         function openClearModal() {
