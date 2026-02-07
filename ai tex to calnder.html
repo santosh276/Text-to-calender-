@@ -848,160 +848,158 @@
 
             <!-- Enhanced Syntax Guide -->
             <div id="syntax-guide" class="text-gray-100 relative z-40">
-                <div class="p-6 pb-12 text-sm">
-                    <!-- NEW: Quick Start Tutorial -->
-                    <div class="guide-section">
-                        <div class="guide-title text-green-400"><i class="fa-solid fa-play"></i> Quick Start Tutorial</div>
+                <div class="p-6 pb-12 text-sm space-y-8">
+
+                    <!-- 1. QUICK START -->
+                    <div class="guide-section border-b border-gray-700 pb-6">
+                        <div class="guide-title text-green-400 text-lg mb-3"><i class="fa-solid fa-play"></i> Quick Start</div>
                         <ol class="list-decimal pl-5 space-y-2 text-gray-300">
-                            <li><strong>Set Title:</strong> Start with a <code>::: config</code> block to set your App Title.</li>
-                            <li><strong>Define Month:</strong> Use <code>::: calendar</code> and <code>++ Month Year ++</code> to start a month.</li>
-                            <li><strong>Add Events:</strong> List dates like <code>01 * New Year</code>. Use symbols for colors!</li>
-                            <li><strong>Add Details:</strong> Use <code>::: details</code> and <code>>> Date</code> to add stories, images, and rituals.</li>
-                            <li><strong>Customize:</strong> Add Panchang, Horoscopes, and Seasons to make it professional.</li>
+                            <li><strong>Config:</strong> Set your app title using <code>::: config</code>.</li>
+                            <li><strong>Calendar:</strong> Define months and events using <code>::: calendar</code>.</li>
+                            <li><strong>Details:</strong> Add stories and images with <code>::: details</code>.</li>
+                            <li><strong>Tithi:</strong> Override astronomical calculations with <code>::: tithi</code>.</li>
                         </ol>
                     </div>
 
+                    <!-- 2. CONFIGURATION -->
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-gear"></i> 1. App Configuration</div>
-                        <div class="code-block">
+                        <div class="guide-title text-amber-400"><i class="fa-solid fa-gear"></i> 1. Configuration Block</div>
+                        <p class="text-gray-400 mb-2">Set global app settings. Place this at the top.</p>
+                        <div class="code-block p-3 bg-gray-900 rounded border border-gray-700 font-mono text-xs">
 ::: config
-@ Title : My Calendar 2026
-@ Logo : <span class="hl-string">![Logo](https://example.com/logo.png)</span>
+@ Title : <span class="hl-string">My Vedic Calendar</span>
+@ Logo : <span class="hl-string">![Logo](https://link.to/logo.png)</span>
 @ Live Sync GitHub trigger in every : <span class="hl-string">24 hours</span>
+@ Language : <span class="hl-string">en</span>
+@ Location : <span class="hl-string">20.2961, 85.8245</span> <span class="hl-comment"># Lat, Lng</span>
 :::
                         </div>
-                        <p class="code-annotation">
-                            - <strong>Title:</strong> Appears in the top header.<br>
-                            - <strong>Logo:</strong> URL or uploaded image path.<br>
-                            - <strong>Live Sync:</strong> Auto-update interval (minutes/hours/days).
-                        </p>
                     </div>
 
+                    <!-- 3. CALENDAR DATA -->
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-regular fa-calendar"></i> 2. Calendar Grid Events</div>
-                        <div class="code-block">
+                        <div class="guide-title text-amber-400"><i class="fa-regular fa-calendar"></i> 2. Calendar Data</div>
+                        <p class="text-gray-400 mb-2">Define months and daily events.</p>
+                        <div class="code-block p-3 bg-gray-900 rounded border border-gray-700 font-mono text-xs">
 ::: calendar
 <span class="hl-keyword">++ January 2026 ++</span>
-01 <span class="hl-tag">*</span> New Year's Day [ନୂତନ ବର୍ଷ]
+01 <span class="hl-tag">*</span> New Year's Day [Local Name]
 14 <span class="hl-tag">!</span> Makar Sankranti
-23 <span class="hl-tag">!</span> Saraswati Puja / Netaji Jayanti
 26 <span class="hl-tag">^</span> Republic Day
-05 <span class="hl-tag">></span> Office Meeting
+
+<span class="hl-keyword">++ February 2026 ++</span>
+14 <span class="hl-tag">></span> Valentine's Day
 :::
                         </div>
-                        <div class="mt-2 text-xs space-y-2 text-gray-400">
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><span class="font-mono text-white bg-red-600 px-1.5 rounded">!</span> Festival (Red)</div>
-                                <div><span class="font-mono text-white bg-blue-600 px-1.5 rounded">*</span> Holiday (Blue)</div>
-                                <div><span class="font-mono text-white bg-green-600 px-1.5 rounded">^</span> Auspicious (Green)</div>
-                                <div><span class="font-mono text-white bg-gray-600 px-1.5 rounded">></span> Event (Gray)</div>
-                            </div>
-                            <p class="pt-1 border-t border-gray-700">
-                                <strong>Bilingual Support:</strong> Use <code>[Local Text]</code> brackets to show regional text below the English name.
-                            </p>
+                        <div class="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-400">
+                            <div><code>!</code> : Festival (Red)</div>
+                            <div><code>*</code> : Holiday (Blue)</div>
+                            <div><code>^</code> : Auspicious (Green)</div>
+                            <div><code>&gt;</code> : Other (Gray)</div>
                         </div>
                     </div>
 
+                    <!-- 4. RECURRING EVENTS -->
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-rotate"></i> 2a. Recurring Events</div>
-                        <div class="code-block">
+                        <div class="guide-title text-amber-400"><i class="fa-solid fa-rotate"></i> 3. Recurring Events</div>
+                        <p class="text-gray-400 mb-2">Events that repeat every year on the same Gregorian date.</p>
+                        <div class="code-block p-3 bg-gray-900 rounded border border-gray-700 font-mono text-xs">
 ::: recurring
 01-01 <span class="hl-tag">*</span> New Year
-26-01 <span class="hl-tag">^</span> Republic Day
 15-08 <span class="hl-tag">!</span> Independence Day
+02-10 <span class="hl-tag">></span> Gandhi Jayanti
 :::
                         </div>
-                        <p class="code-annotation">Events that repeat every year on the same Gregorian date. Format: <span class="font-mono bg-gray-800 px-1">DD-MM</span>.</p>
                     </div>
 
+                    <!-- 5. TITHI OVERRIDES -->
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-calendar-check"></i> 3. Tithi Overrides (Hybrid Mode)</div>
-                        <p class="text-gray-400 mb-2">Manually force a Tithi for specific dates (overrides calculation).</p>
-                        <div class="code-block">
+                        <div class="guide-title text-amber-400"><i class="fa-solid fa-moon"></i> 4. Tithi Overrides (Hybrid)</div>
+                        <p class="text-gray-400 mb-2">Force a specific Tithi for a date, overriding calculations.</p>
+                        <div class="code-block p-3 bg-gray-900 rounded border border-gray-700 font-mono text-xs">
 ::: tithi
+<span class="hl-comment"># Specific Year</span>
 14-01-2026 : <span class="hl-string">Purnima</span>
-25-01-2026 : <span class="hl-string">10</span>
-29-01 : <span class="hl-string">Amavasya</span> <span class="hl-comment"># Applies every year</span>
+
+<span class="hl-comment"># Recurring (Every Year)</span>
+29-01 : <span class="hl-string">Amavasya</span>
+10-02 : <span class="hl-string">Ekadashi</span>
 :::
                         </div>
                     </div>
 
+                    <!-- 6. DETAILED VIEW -->
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 4. Detailed Day View</div>
-                        <p class="text-gray-400 mb-2">Add rich content and banners for any date.</p>
-                        <div class="code-block">
+                        <div class="guide-title text-amber-400"><i class="fa-solid fa-circle-info"></i> 5. Detailed Day View</div>
+                        <p class="text-gray-400 mb-2">Rich content, images, and banners for specific dates.</p>
+                        <div class="code-block p-3 bg-gray-900 rounded border border-gray-700 font-mono text-xs">
 ::: details
 <span class="hl-keyword">>> 14-01-2026</span>
-<span class="hl-tag">![Banner](https://image.url/banner.jpg)</span>
-<span class="hl-tag">@ Tag : Major Festival</span>
+<span class="hl-tag">![Banner](https://link.to/banner.jpg)</span>
+<span class="hl-tag">@ Tag : Harvest Festival</span>
 
 # Significance
-**Makar Sankranti** is a major harvest festival.
-It marks the sun's transit into *Makara* (Capricorn).
+Makar Sankranti marks the transition of the Sun...
 
 # Rituals
-- Holy dip in river
-- Flying kites
+- Holy bath in river
+- Kite flying
 :::
-                        </div>
-                        <div class="mt-2 text-xs space-y-1 text-gray-400">
-                            <p><strong>Syntax Features:</strong></p>
-                            <ul class="list-disc pl-4 space-y-1">
-                                <li><code>>> DD-MM-YYYY</code> : Target a specific date.</li>
-                                <li><code>![Banner](url)</code> : Add a top banner image.</li>
-                                <li><code># Header</code> : Section titles.</li>
-                                <li><code>**Bold**</code>, <code>*Italic*</code> : Text styling.</li>
-                            </ul>
                         </div>
                     </div>
 
+                    <!-- 7. PANCHANG -->
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 5. Monthly Panchang</div>
-                        <div class="code-block">
+                        <div class="guide-title text-amber-400"><i class="fa-solid fa-cloud-sun"></i> 6. Monthly Panchang</div>
+                        <p class="text-gray-400 mb-2">Define astrological data displayed in the monthly card.</p>
+                        <div class="code-block p-3 bg-gray-900 rounded border border-gray-700 font-mono text-xs">
 ::: panchang
 @ Tithi : <span class="hl-string">Shukla Paksha</span>
 @ Nakshatra : <span class="hl-string">Rohini</span>
 @ Yoga : <span class="hl-string">Indra</span>
 @ Karana : <span class="hl-string">Bava</span>
-@ Sunrise : <span class="hl-string">06:20 AM</span>
+@ Month : <span class="hl-string">Pausha / Magha</span>
 :::
                         </div>
-                        <p class="code-annotation">Data appears in the "Month's Panchang" card. <br>Note: Tithi/Nakshatra are also auto-calculated if omitted!</p>
                     </div>
 
+                     <!-- 8. SEASONS -->
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 6. Seasons (Ritu)</div>
-                        <div class="code-block">
+                        <div class="guide-title text-amber-400"><i class="fa-solid fa-sun"></i> 7. Seasons (Ritu)</div>
+                        <p class="text-gray-400 mb-2">Customize the text displayed for each season.</p>
+                        <div class="code-block p-3 bg-gray-900 rounded border border-gray-700 font-mono text-xs">
 ::: seasons
 @ Spring : <span class="hl-string">Flowers blooming everywhere.</span>
 @ Summer : <span class="hl-string">Scorching sun, mango season.</span>
+@ Monsoon : <span class="hl-string">Rain brings life to earth.</span>
 :::
                         </div>
-                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).</p>
                     </div>
 
+                    <!-- 9. HOROSCOPE -->
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-star"></i> 7. Horoscope</div>
-                        <div class="code-block">
-<span class="hl-comment"># Simple (Sidebar List)</span>
+                        <div class="guide-title text-amber-400"><i class="fa-solid fa-star"></i> 8. Horoscope</div>
+                        <p class="text-gray-400 mb-2">Two types: Simple list and Detailed card.</p>
+                        <div class="code-block p-3 bg-gray-900 rounded border border-gray-700 font-mono text-xs">
+<span class="hl-comment"># 1. Simple List (Sidebar)</span>
 ::: horoscope
-~ Aries : <span class="hl-string">Good day for work.</span>
-~ Taurus : <span class="hl-string">Travel is likely.</span>
-:::
+~ Aries : <span class="hl-string">Focus on health today.</span>
+~ Taurus : <span class="hl-string">Financial gains expected.</span>
 
-<span class="hl-comment"># Detailed (Popup Card)</span>
+<span class="hl-comment"># 2. Detailed Card (Popup)</span>
 ::: horoscope_details
-<span class="hl-keyword">>> Taurus</span>
-@ Element : <span class="hl-string">Earth</span>
-@ Ruler : <span class="hl-string">Venus</span>
-@ Lucky Number : <span class="hl-string">6</span>
-@ Lucky Color : <span class="hl-string">Green</span>
-@ Compatible : <span class="hl-string">Virgo, Capricorn</span>
+<span class="hl-keyword">>> Aries</span>
+@ Element : <span class="hl-string">Fire</span>
+@ Ruler : <span class="hl-string">Mars</span>
+@ Lucky Number : <span class="hl-string">9</span>
+@ Lucky Color : <span class="hl-string">Red</span>
+@ Compatible : <span class="hl-string">Leo, Sagittarius</span>
 
 Detailed prediction text goes here...
 :::
                         </div>
                     </div>
+
                 </div>
             </div>
 
