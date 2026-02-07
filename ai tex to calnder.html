@@ -434,9 +434,16 @@
             border-bottom: 1px solid #374151;
         }
         #syntax-guide.open { 
-            max-height: 250px; /* Fixed height for mobile safety */
+            max-height: 400px; /* Increased height for mobile */
             opacity: 1; 
             overflow-y: auto; /* Scroll only when open */
+            padding-bottom: 2rem; /* Increase bottom padding */
+        }
+
+        @media (min-width: 768px) {
+            #syntax-guide.open {
+                max-height: 600px; /* Increased height for desktop */
+            }
         }
         
         .guide-section { margin-bottom: 1.5rem; border-bottom: 1px solid #374151; padding-bottom: 1rem; }
