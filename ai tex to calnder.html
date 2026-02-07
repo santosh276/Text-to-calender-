@@ -915,14 +915,25 @@
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 3. Detailed Day View</div>
-                        <p class="text-gray-400 mb-2">Add rich content, banners, and manual overrides for any date.</p>
+                        <div class="guide-title"><i class="fa-solid fa-calendar-check"></i> 3. Tithi Overrides (Hybrid Mode)</div>
+                        <p class="text-gray-400 mb-2">Manually force a Tithi for specific dates (overrides calculation).</p>
+                        <div class="code-block">
+::: tithi
+14-01-2026 : <span class="hl-string">Purnima</span>
+25-01-2026 : <span class="hl-string">10</span>
+29-01 : <span class="hl-string">Amavasya</span> <span class="hl-comment"># Applies every year</span>
+:::
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 4. Detailed Day View</div>
+                        <p class="text-gray-400 mb-2">Add rich content and banners for any date.</p>
                         <div class="code-block">
 ::: details
 <span class="hl-keyword">>> 14-01-2026</span>
 <span class="hl-tag">![Banner](https://image.url/banner.jpg)</span>
 <span class="hl-tag">@ Tag : Major Festival</span>
-<span class="hl-tag">@ Tithi : Purnima</span>
 
 # Significance
 **Makar Sankranti** is a major harvest festival.
@@ -937,7 +948,6 @@ It marks the sun's transit into *Makara* (Capricorn).
                             <p><strong>Syntax Features:</strong></p>
                             <ul class="list-disc pl-4 space-y-1">
                                 <li><code>>> DD-MM-YYYY</code> : Target a specific date.</li>
-                                <li><code>@ Tithi : [Value]</code> : Force Tithi (Purnima, Amavasya, Ekadashi, or 1-30).</li>
                                 <li><code>![Banner](url)</code> : Add a top banner image.</li>
                                 <li><code># Header</code> : Section titles.</li>
                                 <li><code>**Bold**</code>, <code>*Italic*</code> : Text styling.</li>
@@ -946,7 +956,7 @@ It marks the sun's transit into *Makara* (Capricorn).
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 4. Monthly Panchang</div>
+                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 5. Monthly Panchang</div>
                         <div class="code-block">
 ::: panchang
 @ Tithi : <span class="hl-string">Shukla Paksha</span>
@@ -960,7 +970,7 @@ It marks the sun's transit into *Makara* (Capricorn).
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 5. Seasons (Ritu)</div>
+                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 6. Seasons (Ritu)</div>
                         <div class="code-block">
 ::: seasons
 @ Spring : <span class="hl-string">Flowers blooming everywhere.</span>
@@ -971,7 +981,7 @@ It marks the sun's transit into *Makara* (Capricorn).
                     </div>
 
                     <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-star"></i> 6. Horoscope</div>
+                        <div class="guide-title"><i class="fa-solid fa-star"></i> 7. Horoscope</div>
                         <div class="code-block">
 <span class="hl-comment"># Simple (Sidebar List)</span>
 ::: horoscope
@@ -1948,6 +1958,7 @@ The word "Nua" means new and "Khai" means food.
             viewDate: { month: new Date().getMonth(), year: new Date().getFullYear() },
             todayIndex: -1,
             details: {}, 
+            manualTithis: {}, // New storage for dedicated Tithi overrides
             horoscopeDetails: {},
             customSeasonDescriptions: {},
             images: {}, 
@@ -2169,42 +2180,39 @@ The word "Nua" means new and "Khai" means food.
 };
 
         function calculateTithi(dateObj) {
-            const dateKey = `${dateObj.getFullYear()}-${dateObj.getMonth()}-${dateObj.getDate()}`;
-            const recKey = `rec-${dateObj.getMonth()}-${dateObj.getDate()}`;
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
             
-            // 1. Search for a Manual Override in Details
-            let manualIndex = null;
-            const detailList = appState.details[dateKey] || appState.recurringDetails[recKey];
+            const fullDateKey = `${day}-${month}-${year}`; // e.g., 14-01-2026
+            const recDateKey = `${day}-${month}`;        // e.g., 14-01
 
-            if (detailList) {
-                const details = Array.isArray(detailList) ? detailList : [detailList];
-                details.forEach(d => {
-                    if (d.manualTithiIndex !== undefined) manualIndex = d.manualTithiIndex;
-                });
+            // 1. Check for Manual Overrides first
+            let manualIndex = null;
+            if (appState.manualTithis && appState.manualTithis[fullDateKey] !== undefined) {
+                manualIndex = appState.manualTithis[fullDateKey];
+            } else if (appState.manualTithis && appState.manualTithis[recDateKey] !== undefined) {
+                manualIndex = appState.manualTithis[recDateKey];
             }
 
-            // 2. The Hybrid Bridge
             let astro;
             if (manualIndex !== null) {
-                // Use manual index, but fetch Nakshatra/Yoga from math (Hybrid)
-                const mathData = VedicAstro.getTithiAtSunrise(dateObj);
+                // Hybrid: Use manual Tithi but keep math-based Nakshatra/Yoga
+                const mathData = VedicAstro.calculate(dateObj);
                 astro = { ...mathData, tithiIndex: manualIndex };
             } else {
-                // No manual data? Use 100% math
+                // Default: Pure mathematical calculation
                 astro = VedicAstro.getTithiAtSunrise(dateObj);
             }
 
-            // 3. Localization
+            // 2. Localization & Rendering
             const currentLang = appState.config.language || 'en';
             const langObj = langData[currentLang] || langData['en'];
-            
             const safeIndex = astro.tithiIndex;
-            const tithiName = langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`;
-            const pakshaName = langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna");
 
             return {
-                tithi: tithiName,
-                paksha: pakshaName,
+                tithi: langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`,
+                paksha: langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna"),
                 index: safeIndex,
                 nakshatra: astro.nakshatra,
                 yoga: astro.yoga,
@@ -3230,6 +3238,7 @@ The word "Nua" means new and "Khai" means food.
             let currentMonthObj = null;
             let parsedDetails = {};
             let parsedRecurringDetails = {};
+            let parsedManualTithis = {};
             let parsedHoroDetails = {};
             let currentDetailKey = null;
             let currentHoroSign = null;
@@ -3311,6 +3320,26 @@ The word "Nua" means new and "Khai" means food.
                         if (nameMatch) { engPart = nameMatch[1]; locPart = nameMatch[2]; }
 
                         parsedRecurring.push({ day, month, symbol, engName: engPart.trim(), locName: locPart ? locPart.trim() : "" });
+                    }
+                }
+                else if (currentBlock === 'tithi') {
+                    // Matches format "DD-MM-YYYY : TithiName" or "DD-MM : TithiName"
+                    const tithiEntry = line.match(/^(\d{1,2}-\d{1,2}(?:-\d{4})?)\s*:\s*(.+)/);
+                    if (tithiEntry) {
+                        const dateKey = tithiEntry[1];
+                        const tValue = tithiEntry[2].trim().toLowerCase();
+                        let index = null;
+
+                        // Map common terms to their internal indices
+                        if (tValue.includes('purnima')) index = 14;
+                        else if (tValue.includes('amavasya')) index = 29;
+                        else if (tValue.includes('ekadashi')) index = 10;
+                        else index = parseInt(tValue);
+
+                        if (!isNaN(index) && index !== null) {
+                            // Save the override using the date string as the key
+                            parsedManualTithis[dateKey] = index;
+                        }
                     }
                 }
                 else if (currentBlock === 'details') {
@@ -3431,6 +3460,7 @@ The word "Nua" means new and "Khai" means food.
             appState.monthsData = parsedMonths;
             appState.recurringEvents = parsedRecurring;
             appState.recurringDetails = parsedRecurringDetails;
+            appState.manualTithis = parsedManualTithis;
             appState.details = parsedDetails;
             appState.horoscopeDetails = parsedHoroDetails;
             appState.customSeasonDescriptions = parsedSeasonDescs;
