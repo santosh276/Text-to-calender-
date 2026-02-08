@@ -779,25 +779,30 @@
 <body class="h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
-    <header class="bg-deep-red px-5 py-4 flex items-center justify-between shadow-md relative overflow-hidden shrink-0 z-50">
+    <header class="bg-gradient-to-r from-[#800000] to-[#B91C1C] px-4 py-3 flex items-center justify-between shadow-lg relative overflow-hidden shrink-0 z-50 border-b border-orange-500/30">
         <div class="flex items-center gap-3">
-          <div id="logo-container" class="flex-shrink-0">
+          <div id="logo-container" class="flex-shrink-0 scale-90">
              <!-- Content handled by JS -->
           </div>
           <div class="flex flex-col">
-            <h1 id="app-title" class="text-white font-sans text-[25px] font-extrabold leading-none tracking-tight whitespace-nowrap">
-              Vaidik Calendar
+            <h1 id="app-title" class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-amber-200 to-yellow-100 font-serif text-2xl md:text-3xl font-bold leading-none tracking-tight whitespace-nowrap drop-shadow-sm filter">
+              Digital Panchang
             </h1>
-            <p class="text-gold-light font-sans text-[10px] font-bold tracking-widest mt-0.5">
-              The Heart of Sanatan Dharma...
-            </p>
+            <div class="flex gap-2 mt-1">
+                <span class="bg-black/20 text-orange-100 text-[9px] px-1.5 py-0.5 rounded border border-white/10 uppercase tracking-widest font-semibold flex items-center gap-1"><i class="fa-solid fa-wifi"></i> Offline</span>
+                <span id="header-season-badge" class="bg-amber-900/30 text-amber-100 text-[9px] px-1.5 py-0.5 rounded border border-amber-500/20 uppercase tracking-widest font-semibold hidden sm:inline-block">Season</span>
+                <span id="header-samvat-badge" class="bg-indigo-900/30 text-indigo-100 text-[9px] px-1.5 py-0.5 rounded border border-indigo-500/20 uppercase tracking-widest font-semibold hidden md:inline-block">Samvat 2082</span>
+            </div>
           </div>
         </div>
 
-        <div class="flex gap-3">
-          <button onclick="openSettingsModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
-            <span class="material-icons text-[32px]">menu</span>
-          </button>
+        <div class="flex gap-2 items-center">
+             <div id="control-bar-placeholder" class="hidden md:flex gap-2">
+                <!-- Injected via JS -->
+             </div>
+             <button onclick="openSettingsModal()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 shadow-inner border border-white/10">
+                <i class="fa-solid fa-gear text-lg"></i>
+             </button>
         </div>
     </header>
 
@@ -1007,7 +1012,7 @@ Detailed prediction text goes here...
 
             <textarea id="editor" class="flex-grow w-full h-full bg-gray-900 text-gray-100 p-4 font-mono text-sm resize-none focus:outline-none leading-relaxed z-0" spellcheck="false">
 ::: config
-@ Title : Vaidik Calendar
+@ Title : Digital Panchang
 :::
 
 ::: calendar
@@ -1116,7 +1121,147 @@ The word "Nua" means new and "Khai" means food.
                 <div id="year-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6"></div>
             </div>
 
-            <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+            <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col gap-6">
+                <!-- DASHBOARD GRID -->
+                <div id="dashboard-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- 1. Main Tithi Card -->
+                    <div class="glass-card rounded-2xl p-5 col-span-1 md:col-span-2 relative overflow-hidden group bg-gradient-to-br from-white/60 to-orange-50/30">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 text-[5rem] group-hover:scale-110 transition-transform duration-700 pointer-events-none">
+                            <i class="fa-solid fa-moon"></i>
+                        </div>
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-2"><i class="fa-regular fa-clock"></i> Current Tithi</h3>
+                        <div class="flex items-center gap-4 mt-2">
+                            <div id="dash-tithi-icon" class="text-5xl drop-shadow-md">🌕</div>
+                            <div>
+                                <h2 id="dash-tithi-name" class="text-2xl md:text-3xl font-bold text-gray-800 leading-none tracking-tight">--</h2>
+                                <p id="dash-paksha" class="text-sm text-gray-500 font-medium mt-1">--</p>
+                            </div>
+                        </div>
+                        <div class="mt-5">
+                            <div class="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                                <span>Tithi Progress</span>
+                                <span id="dash-tithi-percent">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200/50 rounded-full h-1.5 overflow-hidden">
+                                <div id="dash-tithi-bar" class="bg-gradient-to-r from-orange-400 to-red-500 h-1.5 rounded-full transition-all duration-1000 relative" style="width: 0%">
+                                    <div class="absolute right-0 top-0 bottom-0 w-2 bg-white/50 blur-[2px]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Sun & Moon Times -->
+                    <div class="glass-card rounded-2xl p-5 col-span-1 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-orange-400/10 to-transparent rounded-bl-full pointer-events-none"></div>
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Ephemeris</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5 text-orange-700"><i class="fa-regular fa-sun text-lg"></i> <span class="text-xs font-bold">Sunrise</span></div>
+                                <span id="dash-sunrise" class="text-sm font-bold text-gray-800 bg-orange-50 px-2 py-0.5 rounded border border-orange-100">--:--</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5 text-indigo-800"><i class="fa-regular fa-moon text-lg"></i> <span class="text-xs font-bold">Sunset</span></div>
+                                <span id="dash-sunset" class="text-sm font-bold text-gray-800 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">--:--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Nakshatra & Yoga -->
+                    <div class="glass-card rounded-2xl p-5 col-span-1 flex flex-col justify-between">
+                         <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Panchang Elements</h3>
+                         <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between items-baseline mb-1">
+                                    <div class="text-[10px] text-gray-400 font-bold uppercase"><i class="fa-solid fa-star text-amber-400 mr-1"></i> Nakshatra</div>
+                                    <div class="text-[9px] text-amber-600 font-bold" id="dash-nak-percent">0%</div>
+                                </div>
+                                <div id="dash-nakshatra" class="text-base font-bold text-gray-800 truncate">--</div>
+                                <div class="w-full bg-gray-100 h-1 rounded-full mt-1 overflow-hidden"><div id="dash-nak-bar" class="bg-amber-400 h-1 rounded-full" style="width:0%"></div></div>
+                             </div>
+                             <div>
+                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-solid fa-dharmachakra text-blue-400 mr-1"></i> Yoga</div>
+                                <div id="dash-yoga" class="text-base font-bold text-gray-800 truncate">--</div>
+                             </div>
+                         </div>
+                    </div>
+
+                    <!-- 4. Astro Data (Technical) -->
+                    <div class="glass-card rounded-2xl p-4 col-span-1 text-[10px] md:text-xs space-y-2.5 font-mono text-gray-600 border border-gray-200/50">
+                        <h3 class="font-sans text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 border-b border-gray-100 pb-2">Astro Data</h3>
+                        <div class="flex justify-between items-center"><span>Julian Date:</span> <span id="dash-jd" class="font-bold text-gray-800 bg-gray-50 px-1 rounded">--</span></div>
+                        <div class="flex justify-between items-center"><span>Sun Long:</span> <span id="dash-sun-long" class="font-bold text-orange-700">--°</span></div>
+                        <div class="flex justify-between items-center"><span>Moon Long:</span> <span id="dash-moon-long" class="font-bold text-indigo-700">--°</span></div>
+                        <div class="flex justify-between items-center"><span>Elongation:</span> <span id="dash-elong" class="font-bold text-purple-600">--°</span></div>
+                        <div class="flex justify-between items-center"><span>Ayanamsa:</span> <span id="dash-ayanamsa" class="font-bold text-gray-500">24°</span></div>
+                    </div>
+
+                    <!-- 5. Muhurat -->
+                    <div class="glass-card rounded-2xl p-5 col-span-1 md:col-span-2">
+                         <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-hourglass-half"></i> Auspicious Timings</h3>
+                         <div class="grid grid-cols-3 gap-2 text-center h-full">
+                             <div class="bg-green-50/50 rounded-xl p-2 border border-green-100 flex flex-col justify-center items-center hover:bg-green-50 transition-colors">
+                                 <div class="text-[9px] font-bold text-green-800 uppercase tracking-wide mb-1">Abhijit</div>
+                                 <div id="dash-abhijit" class="text-xs font-extrabold text-green-700">--</div>
+                             </div>
+                             <div class="bg-red-50/50 rounded-xl p-2 border border-red-100 flex flex-col justify-center items-center hover:bg-red-50 transition-colors">
+                                 <div class="text-[9px] font-bold text-red-800 uppercase tracking-wide mb-1">Rahu Kaal</div>
+                                 <div id="dash-rahu" class="text-xs font-extrabold text-red-700">--</div>
+                             </div>
+                             <div class="bg-yellow-50/50 rounded-xl p-2 border border-yellow-100 flex flex-col justify-center items-center hover:bg-yellow-50 transition-colors">
+                                 <div class="text-[9px] font-bold text-yellow-800 uppercase tracking-wide mb-1">Yamaganda</div>
+                                 <div id="dash-yama" class="text-xs font-extrabold text-yellow-700">--</div>
+                             </div>
+                         </div>
+                    </div>
+
+                    <!-- 6. Daily Guide -->
+                    <div class="glass-card rounded-2xl p-5 col-span-1 md:col-span-2 bg-gradient-to-br from-white to-orange-50/30 border-l-4 border-l-orange-400">
+                         <div class="flex justify-between items-start">
+                             <div>
+                                 <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Daily Guide</h3>
+                                 <h2 id="dash-weekday" class="text-xl font-bold text-gray-800">--</h2>
+                             </div>
+                             <div id="dash-deity-icon" class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-lg border border-orange-200 shadow-sm">
+                                <i class="fa-solid fa-om"></i>
+                             </div>
+                         </div>
+                         <div class="mt-4 flex gap-4">
+                             <div class="flex items-center gap-2 bg-white/60 px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
+                                 <div id="dash-color-dot" class="w-3 h-3 rounded-full bg-gray-300 shadow-inner"></div>
+                                 <span id="dash-lucky-color" class="text-xs font-bold text-gray-700">--</span>
+                             </div>
+                             <div class="flex items-center gap-2 bg-white/60 px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
+                                 <i class="fa-solid fa-hands-praying text-orange-400 text-xs"></i>
+                                 <span id="dash-deity" class="text-xs font-bold text-gray-700">--</span>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- Educational Section -->
+                <div class="mb-2">
+                    <details class="group bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                        <summary class="flex items-center justify-between p-4 cursor-pointer bg-gray-50/50 hover:bg-gray-50 transition">
+                            <h3 class="font-bold text-gray-700 flex items-center gap-2 text-sm"><i class="fa-solid fa-graduation-cap text-orange-500"></i> Understanding Panchang: Learn the Science</h3>
+                            <span class="transform transition-transform group-open:rotate-180"><i class="fa-solid fa-chevron-down text-gray-400"></i></span>
+                        </summary>
+                        <div class="p-6 text-gray-600 text-sm leading-relaxed space-y-4 bg-white">
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <div class="bg-orange-50 p-4 rounded-xl border border-orange-100 flex-1">
+                                    <h4 class="font-bold text-orange-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-pizza-slice"></i> The Pizza Slice Analogy (Tithi)</h4>
+                                    <p class="text-xs md:text-sm">Imagine the Moon's path around the Earth as a giant 360-degree pizza. The Sun is the chef watching from the center. A "Tithi" is simply a <strong>12-degree slice</strong> of this pizza. Every time the Moon moves 12 degrees away from the Sun, one Tithi passes. Since the Moon moves faster than the Sun, it creates 30 such slices (Tithis) in a lunar month.</p>
+                                </div>
+
+                                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex-1">
+                                    <h4 class="font-bold text-blue-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-flag-checkered"></i> The Race in the Sky (Nakshatra)</h4>
+                                    <p class="text-xs md:text-sm">Think of the sky as a giant race track marked with 27 milestones (Nakshatras). The Moon is a sprinter running along this track. It takes about one day for the Moon to run past one milestone. The Nakshatra for the day is simply the milestone the Moon is currently passing.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-6 mobile-contents">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full mobile-contents">
                     
@@ -1646,10 +1791,47 @@ The word "Nua" means new and "Khai" means food.
                 return 23.85616 + 1.396042 * T + 0.000307 * T * T;
             }
 
+            function getFestivals(tithiIndex, month) {
+                // Approximate Gregorian Month Mapping (0=Jan)
+                const festivals = [];
+
+                // Logic based on Tithi Index (0-14 Shukla, 15-29 Krishna)
+                // Note: Month checks are approximate as Hindu months span two Gregorian months
+
+                // Jan/Feb (Magha)
+                if ((month <= 1) && tithiIndex === 4) festivals.push("Vasant Panchami"); // Shukla 5
+                if ((month <= 2) && tithiIndex === 28) festivals.push("Maha Shivratri"); // Krishna 14
+
+                // Feb/Mar (Phalguna)
+                if ((month === 2 || month === 3) && tithiIndex === 14) festivals.push("Holi"); // Purnima
+
+                // Mar/Apr (Chaitra)
+                if ((month === 2 || month === 3) && tithiIndex === 0) festivals.push("Ugadi / Gudi Padwa"); // Shukla 1
+                if ((month === 3) && tithiIndex === 8) festivals.push("Ram Navami"); // Shukla 9
+
+                // Apr/May (Vaisakha)
+                if ((month === 3 || month === 4) && tithiIndex === 2) festivals.push("Akshaya Tritiya"); // Shukla 3
+
+                // Aug/Sep (Bhadrapada)
+                if ((month === 7 || month === 8) && tithiIndex === 3) festivals.push("Ganesh Chaturthi"); // Shukla 4
+                if ((month === 7 || month === 8) && tithiIndex === 22) festivals.push("Janmashtami"); // Krishna 8
+
+                // Sep/Oct (Ashvina)
+                if ((month === 9) && tithiIndex === 0) festivals.push("Navratri Begins"); // Shukla 1
+                if ((month === 9) && tithiIndex === 9) festivals.push("Dussehra"); // Shukla 10
+
+                // Oct/Nov (Kartika)
+                if ((month === 9 || month === 10) && tithiIndex === 18) festivals.push("Karwa Chauth"); // Krishna 4
+                if ((month === 9 || month === 10) && tithiIndex === 27) festivals.push("Dhanteras"); // Krishna 13
+                if ((month === 10) && tithiIndex === 29) festivals.push("Diwali"); // Amavasya
+                if ((month === 10) && tithiIndex === 0) festivals.push("Govardhan Puja"); // Shukla 1
+                if ((month === 10) && tithiIndex === 1) festivals.push("Bhai Dooj"); // Shukla 2
+
+                return festivals;
+            }
+
             function calculate(dateObj, hour = 6) {
                 const d = new Date(dateObj);
-                // Reference: 6:00 AM IST is approx 00:30 UTC. 
-                // Support legacy hour argument but normalize minutes/seconds
                 const h = (hour === undefined || hour === null) ? 6 : hour;
                 const hours = Math.floor(h);
                 const minutes = Math.floor((h % 1) * 60);
@@ -1661,12 +1843,14 @@ The word "Nua" means new and "Khai" means food.
                 const sunSid = norm(getSunLong(jd) - aya);
                 const moonSid = norm(getMoonLong(jd) - aya);
 
-                // Tithi = (Moon - Sun) / 12. Add 0.001 buffer for precision.
+                // Tithi = (Moon - Sun) / 12
                 const diff = norm(moonSid - sunSid + 0.001);
                 const tithiIndex = Math.floor(diff / 12);
+                const tithiProgress = (diff % 12) / 12; // 0.0 to 1.0
 
                 // Nakshatra: Moon / 13.3333
                 const nakIndex = Math.floor(moonSid / (13 + 1/3));
+                const nakProgress = (moonSid % (13 + 1/3)) / (13 + 1/3);
 
                 // Yoga: (Sun + Moon) / 13.3333
                 const yogaIndex = Math.floor(norm(sunSid + moonSid) / (13 + 1/3));
@@ -1682,11 +1866,20 @@ The word "Nua" means new and "Khai" means food.
                     tithiIndex: tithiIndex % 30,
                     nakshatra: NAKSHATRAS[nakIndex % 27],
                     yoga: YOGAS[yogaIndex % 27],
-                    karana: KARANAS[karanaIndex]
+                    karana: KARANAS[karanaIndex],
+                    // Extended Data
+                    sunLongitude: sunSid,
+                    moonLongitude: moonSid,
+                    julianDate: jd,
+                    tithiProgress: tithiProgress,
+                    nakshatraProgress: nakProgress,
+                    moonPhase: (tithiIndex < 15) ? 'Waxing' : 'Waning',
+                    elongation: diff
                 };
             }
 
             return {
+                getFestivals: getFestivals,
                 calculate: calculate,
                 getTithiAtSunrise: function(dateObj) {
                     // Strict Sunrise Rule: Always check 6 AM
@@ -2216,8 +2409,142 @@ The word "Nua" means new and "Khai" means food.
                 index: safeIndex,
                 nakshatra: astro.nakshatra,
                 yoga: astro.yoga,
-                karana: astro.karana
+                karana: astro.karana,
+                // Extended Data
+                sunLongitude: astro.sunLongitude,
+                moonLongitude: astro.moonLongitude,
+                julianDate: astro.julianDate,
+                tithiProgress: astro.tithiProgress,
+                nakshatraProgress: astro.nakshatraProgress,
+                elongation: astro.elongation,
+                moonPhase: astro.moonPhase
             };
+        }
+
+        function renderDashboard(monthData) {
+            const container = document.getElementById('dashboard-grid');
+            if (!container) return;
+
+            // Determine Target Date for Dashboard
+            // Logic: If viewing current month, show Today. Else show 1st of month.
+            const today = new Date();
+            let targetDate = new Date(monthData.year, monthData.month, 1);
+            if (today.getMonth() === monthData.month && today.getFullYear() === monthData.year) {
+                targetDate = today;
+            }
+            // Logic to support "Selected Date" could be added here
+
+            const astro = calculateTithi(targetDate);
+            const times = (appState.config.location && SunCalc) ? SunCalc.getTimes(targetDate, appState.config.location.lat, appState.config.location.lng) : { sunrise: null, sunset: null };
+            const muhurat = getSpecialTimes(targetDate, times.sunrise, times.sunset);
+
+            // 1. Tithi Card
+            const tithiIcon = document.getElementById('dash-tithi-icon');
+            const tithiName = document.getElementById('dash-tithi-name');
+            const paksha = document.getElementById('dash-paksha');
+            const percent = document.getElementById('dash-tithi-percent');
+            const bar = document.getElementById('dash-tithi-bar');
+
+            if (tithiName) {
+                tithiIcon.innerHTML = getMoonPhaseIcon(astro.index); // Reuse existing icon logic? Or new Emoji?
+                // Use Emoji for "Lightweight":
+                const emojis = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"];
+                // Map 0-29 to 8 phases. 0=New, 14=Full.
+                // 0 (Amavasya end/Pratipada start) -> New Moon
+                // 14 (Purnima) -> Full Moon
+                let phaseIdx = 0;
+                if (astro.index === 14) phaseIdx = 4; // Full
+                else if (astro.index === 29) phaseIdx = 0; // New
+                else if (astro.index < 14) phaseIdx = Math.floor(astro.index / 3.5); // Waxing
+                else phaseIdx = 4 + Math.floor((astro.index - 15) / 3.5); // Waning
+                if(phaseIdx > 7) phaseIdx = 7;
+
+                tithiIcon.innerText = emojis[phaseIdx];
+                tithiName.innerText = astro.tithi;
+                paksha.innerText = `${astro.paksha} (${astro.moonPhase})`;
+
+                const pct = Math.round((astro.tithiProgress || 0) * 100);
+                percent.innerText = `${pct}%`;
+                bar.style.width = `${pct}%`;
+            }
+
+            // 2. Ephemeris
+            const fmtTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+            document.getElementById('dash-sunrise').innerText = fmtTime(times.sunrise);
+            document.getElementById('dash-sunset').innerText = fmtTime(times.sunset);
+
+            // 3. Nakshatra & Yoga
+            document.getElementById('dash-nakshatra').innerText = astro.nakshatra;
+            document.getElementById('dash-yoga').innerText = astro.yoga;
+            if(astro.nakshatraProgress) {
+                document.getElementById('dash-nak-bar').style.width = `${Math.round(astro.nakshatraProgress*100)}%`;
+                document.getElementById('dash-nak-percent').innerText = `${Math.round(astro.nakshatraProgress*100)}%`;
+            }
+
+            // 4. Astro Data
+            document.getElementById('dash-jd').innerText = astro.julianDate ? astro.julianDate.toFixed(2) : '--';
+            document.getElementById('dash-sun-long').innerText = astro.sunLongitude ? astro.sunLongitude.toFixed(2) + '°' : '--';
+            document.getElementById('dash-moon-long').innerText = astro.moonLongitude ? astro.moonLongitude.toFixed(2) + '°' : '--';
+            document.getElementById('dash-elong').innerText = astro.elongation ? astro.elongation.toFixed(2) + '°' : '--';
+
+            // 5. Muhurat
+            if (muhurat) {
+                document.getElementById('dash-abhijit').innerText = muhurat.abhijit;
+                document.getElementById('dash-rahu').innerText = muhurat.rahu;
+                document.getElementById('dash-yama').innerText = muhurat.yama;
+            }
+
+            // 6. Daily Guide (Lucky Color / Deity)
+            const dayIdx = targetDate.getDay();
+            const colors = ['Red', 'White', 'Red', 'Green', 'Yellow', 'Pink', 'Black'];
+            const deities = ['Surya', 'Shiva', 'Hanuman', 'Ganesha', 'Vishnu', 'Lakshmi', 'Shani'];
+            const colorCss = ['bg-red-500', 'bg-gray-100 border border-gray-300', 'bg-red-600', 'bg-green-500', 'bg-yellow-400', 'bg-pink-400', 'bg-gray-800'];
+
+            document.getElementById('dash-weekday').innerText = daysOfWeek[dayIdx];
+            document.getElementById('dash-lucky-color').innerText = colors[dayIdx];
+            document.getElementById('dash-deity').innerText = deities[dayIdx];
+
+            const dot = document.getElementById('dash-color-dot');
+            if(dot) dot.className = `w-3 h-3 rounded-full shadow-inner ${colorCss[dayIdx]}`;
+        }
+
+        function renderControlBar() {
+            const container = document.getElementById('control-bar-placeholder');
+            if (!container) return;
+
+            // Avoid re-rendering if input exists
+            if (container.querySelector('input')) return;
+
+            container.innerHTML = `
+                <input type="date" id="ctrl-date-picker" class="bg-black/20 text-white border border-white/20 rounded-lg px-2 py-1 text-xs outline-none focus:border-amber-400 font-sans backdrop-blur-sm shadow-inner" onchange="handleDateJump(this.value)">
+                <button onclick="jumpToToday()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-lg shadow-md transition active:scale-95">Today</button>
+                <select id="ctrl-location" onchange="handleLocationChange(this.value)" class="bg-black/20 text-white border border-white/20 rounded-lg px-2 py-1 text-xs outline-none focus:border-amber-400 font-sans backdrop-blur-sm max-w-[100px]">
+                    <option value="" disabled selected>Location</option>
+                    <option value="28.61,77.20,New Delhi">Delhi</option>
+                    <option value="19.07,72.87,Mumbai">Mumbai</option>
+                    <option value="22.57,88.36,Kolkata">Kolkata</option>
+                    <option value="13.08,80.27,Chennai">Chennai</option>
+                    <option value="12.97,77.59,Bangalore">Bangalore</option>
+                    <option value="17.38,78.48,Hyderabad">Hyderabad</option>
+                    <option value="23.02,72.57,Ahmedabad">Ahmedabad</option>
+                    <option value="20.29,85.82,Bhubaneswar">Bhubaneswar</option>
+                </select>
+            `;
+        }
+
+        function handleDateJump(dateStr) {
+            if (!dateStr) return;
+            const [y, m, d] = dateStr.split('-').map(Number);
+            appState.viewDate = { month: m - 1, year: y };
+            // Optional: Set selected day logic
+            render();
+        }
+
+        function handleLocationChange(val) {
+            const [lat, lng, name] = val.split(',');
+            appState.config.location = { lat: parseFloat(lat), lng: parseFloat(lng), name: name };
+            saveConfigToStorage();
+            render();
         }
 
         function toNativeNum(num, langCode) {
@@ -3670,6 +3997,8 @@ The word "Nua" means new and "Khai" means food.
             renderFestivals(currentData);
             renderHoroscope(currentData);
             renderMonthBanner(currentData);
+            renderDashboard(currentData);
+            renderControlBar();
 
             // --- NEW LOGIC: Hide/Show Sections based on Config ---
             const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
