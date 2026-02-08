@@ -479,20 +479,6 @@
         .hl-tag { color: #34d399; }
         .hl-comment { color: #6b7280; }
 
-        /* Horoscope Styles */
-        .horo-badge-gold { background-color: #fffbeb; color: #b45309; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px; }
-        .horo-badge-blue { background-color: #dbeafe; color: #1e40af; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px; }
-        .lucky-card { border-radius: 12px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; transition: transform 0.2s ease; }
-        .lucky-card:hover { transform: translateY(-2px); }
-        .lucky-card-yellow { background-color: #fffbeb; }
-        .lucky-card-green { background-color: #f0fdf4; }
-        .lucky-card-blue { background-color: #eff6ff; }
-        .lucky-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 6px; color: #4b5563; }
-        .lucky-value { font-size: 1.5rem; font-weight: 700; line-height: 1; }
-        .text-val-yellow { color: #d97706; }
-        .text-val-blue { color: #2563eb; }
-        .compat-pill { background-color: #f3f4f6; color: #374151; font-size: 0.8rem; font-weight: 500; padding: 6px 14px; border-radius: 9999px; display: inline-block; }
-        .custom-modal-border { border-top: 8px solid #FF9933; border-bottom: 1px solid #fed7aa; border-left: 1px solid #fed7aa; border-right: 1px solid #fed7aa; border-radius: 24px; }
         .premium-header-bg { background: linear-gradient(135deg, #800000 0%, #ed1c24 65%, #f15a24 100%); position: relative; overflow: hidden; }
         .premium-header-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 30%); pointer-events: none; }
         #app-logo-img { height: 40px; width: auto; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -969,28 +955,6 @@ It marks the sun's transit into *Makara* (Capricorn).
                         <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).</p>
                     </div>
 
-                    <div class="guide-section">
-                        <div class="guide-title"><i class="fa-solid fa-star"></i> 7. Horoscope</div>
-                        <div class="code-block">
-<span class="hl-comment"># Simple (Sidebar List)</span>
-::: horoscope
-~ Aries : <span class="hl-string">Good day for work.</span>
-~ Taurus : <span class="hl-string">Travel is likely.</span>
-:::
-
-<span class="hl-comment"># Detailed (Popup Card)</span>
-::: horoscope_details
-<span class="hl-keyword">>> Taurus</span>
-@ Element : <span class="hl-string">Earth</span>
-@ Ruler : <span class="hl-string">Venus</span>
-@ Lucky Number : <span class="hl-string">6</span>
-@ Lucky Color : <span class="hl-string">Green</span>
-@ Compatible : <span class="hl-string">Virgo, Capricorn</span>
-
-Detailed prediction text goes here...
-:::
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -1008,7 +972,6 @@ Detailed prediction text goes here...
 31 ! Monthly Closing [ମାସାନ୍ତ]
 :::
 
-::: horoscope_details
 >> Taurus
 @ Element : Earth Sign
 @ Ruler : Venus
@@ -1031,7 +994,6 @@ Financial matters improve today. Stay patient with loved ones and focus on long-
 @ Month : Pausha / Magha
 :::
 
-::: horoscope
 ~ Aries : New beginnings are favored.
 ~ Taurus : Financial stability looks good.
 :::
@@ -1071,7 +1033,6 @@ The word "Nua" means new and "Khai" means food.
 @ Month : Kartika / Margashirsha
 :::
 
-::: horoscope
 ~ Aries : Good health today.
 ~ Taurus : Focus on work.
 :::
@@ -1190,10 +1151,6 @@ The word "Nua" means new and "Khai" means food.
                         <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
                         <ul id="festival-list" class="space-y-2 text-sm"></ul>
                     </div>
-                    <div id="sec-horoscope" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300 order-4">
-                        <h3 class="font-bold text-amber-800 mb-3 border-b pb-1"><i class="fa-solid fa-hand-sparkles text-amber-500 mr-2"></i>Horoscope</h3>
-                        <div id="horoscope-grid" class="grid grid-cols-3 gap-2"></div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1262,13 +1219,6 @@ The word "Nua" means new and "Khai" means food.
                         </label>
                     </div>
 
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Show Horoscope</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-horoscope" class="sr-only peer" checked onchange="toggleSection('horoscope', this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
-                    </div>
                 </div>
 
                 <div class="border-t border-gray-200 pt-4 space-y-3">
@@ -1341,28 +1291,6 @@ The word "Nua" means new and "Khai" means food.
                                     <select id="banner-date-select" class="mt-2 w-full text-xs p-1.5 border rounded bg-white hidden" onclick="event.stopPropagation()"></select>
                                 </div>
                             </div>
-                            <div class="radio-option" onclick="updateCropRatio('horoscope')">
-                                <div class="radio-circle"><div class="radio-dot"></div></div>
-                                <div class="flex-1">
-                                    <span class="block font-bold text-gray-700 text-sm">Horoscope Icon</span>
-                                    <span class="block text-xs text-gray-500">Square (1:1)</span>
-                                    <select id="crop-horoscope-select" class="mt-2 w-full text-xs p-1.5 border rounded bg-white hidden" onclick="event.stopPropagation()">
-                                        <option value="" disabled selected>Select Sign</option>
-                                        <option value="Aries">Aries</option>
-                                        <option value="Taurus">Taurus</option>
-                                        <option value="Gemini">Gemini</option>
-                                        <option value="Cancer">Cancer</option>
-                                        <option value="Leo">Leo</option>
-                                        <option value="Virgo">Virgo</option>
-                                        <option value="Libra">Libra</option>
-                                        <option value="Scorpio">Scorpio</option>
-                                        <option value="Sagittarius">Sagittarius</option>
-                                        <option value="Capricorn">Capricorn</option>
-                                        <option value="Aquarius">Aquarius</option>
-                                        <option value="Pisces">Pisces</option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="mt-auto pt-4">
@@ -1409,34 +1337,11 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="block font-bold text-gray-700 text-sm">Day Banner</span>
                             </div>
                         </div>
-                        <div class="radio-option" onclick="updateLinkType('horoscope')">
-                            <div class="radio-circle"><div class="radio-dot"></div></div>
-                            <div class="flex-1">
-                                <span class="block font-bold text-gray-700 text-sm">Horoscope Icon</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div id="link-date-container" class="hidden">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
                     <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
-                </div>
-                <div id="link-horoscope-container" class="hidden">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Sign</label>
-                    <select id="link-horoscope-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
-                        <option value="Aries">Aries</option>
-                        <option value="Taurus">Taurus</option>
-                        <option value="Gemini">Gemini</option>
-                        <option value="Cancer">Cancer</option>
-                        <option value="Leo">Leo</option>
-                        <option value="Virgo">Virgo</option>
-                        <option value="Libra">Libra</option>
-                        <option value="Scorpio">Scorpio</option>
-                        <option value="Sagittarius">Sagittarius</option>
-                        <option value="Capricorn">Capricorn</option>
-                        <option value="Aquarius">Aquarius</option>
-                        <option value="Pisces">Pisces</option>
-                    </select>
                 </div>
                 <div class="mt-4">
                     <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
@@ -1473,33 +1378,6 @@ The word "Nua" means new and "Khai" means food.
         </div>
     </div>
 
-    <!-- HOROSCOPE MODAL -->
-    <div id="horoscope-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-hidden" style="display: none;">
-        <div class="modal-backdrop absolute inset-0 bg-slate-900/70 backdrop-blur-[2px]" onclick="closeHoroscopeModal()"></div>
-        <div class="modal-content bg-white rounded-3xl shadow-2xl w-full max-w-[400px] md:max-w-lg relative z-10 overflow-hidden custom-modal-border">
-            <div class="p-6 pb-2 relative">
-                <button onclick="closeHoroscopeModal()" class="absolute top-5 right-5 bg-[#D92D20] hover:bg-[#B91C1C] text-white rounded-full w-9 h-9 flex items-center justify-center shadow-lg transition-transform active:scale-95 z-20"><i class="fa-solid fa-xmark text-lg"></i></button>
-                <h2 id="horo-modal-title" class="text-3xl font-extrabold text-slate-800 mb-3 tracking-tight">Taurus</h2>
-                <div class="flex flex-wrap gap-2 mb-4" id="horo-badges"></div>
-                <p id="horo-date-range" class="text-sm font-medium text-slate-500 uppercase tracking-wide"></p>
-            </div>
-            <div class="px-6 py-2">
-                <h3 class="text-[13px] font-bold text-slate-800 uppercase mb-2 tracking-wide">Today's Prediction</h3>
-                <div id="horo-prediction" class="text-[15px] text-slate-600 leading-relaxed font-medium rich-content"></div>
-            </div>
-            <div class="px-6 py-6">
-                <div class="grid grid-cols-3 gap-3 h-28" id="horo-lucky-grid">
-                    <div class="lucky-card lucky-card-yellow"><span class="lucky-label">Lucky<br>Number</span><span class="lucky-value text-val-yellow" id="horo-lucky-num">6</span></div>
-                    <div class="lucky-card lucky-card-green"><span class="lucky-label">Lucky<br>Color</span><span class="lucky-value font-bold" id="horo-lucky-color">Green</span></div>
-                    <div class="lucky-card lucky-card-blue"><span class="lucky-label">Lucky<br>Time</span><span class="lucky-value text-val-blue text-base leading-tight pt-1" id="horo-lucky-time">2:00<br>PM</span></div>
-                </div>
-            </div>
-            <div class="px-6 pb-8">
-                <h3 class="text-[13px] font-bold text-slate-800 uppercase mb-3 tracking-wide">Compatible Signs</h3>
-                <div id="horo-compatible" class="flex flex-wrap gap-2"></div>
-            </div>
-        </div>
-    </div>
 
     <script>
         const DATA_VERSION = 2;
@@ -1823,7 +1701,7 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function toggleSection(section, isVisible) {
-            if (!appState.config.sections) appState.config.sections = { festivals: true, panchang: true, horoscope: true };
+            if (!appState.config.sections) appState.config.sections = { festivals: true, panchang: true };
             appState.config.sections[section] = isVisible;
             saveConfigToStorage();
             render();
@@ -1949,7 +1827,6 @@ The word "Nua" means new and "Khai" means food.
             todayIndex: -1,
             details: {}, 
             manualTithis: {}, // New storage for dedicated Tithi overrides
-            horoscopeDetails: {},
             customSeasonDescriptions: {},
             images: {}, 
             view: 'month',
@@ -1958,7 +1835,7 @@ The word "Nua" means new and "Khai" means food.
                 logoUrl: null, 
                 language: 'en', 
                 location: null,
-                sections: { festivals: true, panchang: true, horoscope: true }
+                sections: { festivals: true, panchang: true }
             }
         };
         
@@ -1973,7 +1850,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
         nums: ["0","1","2","3","4","5","6","7","8","9"], 
         filters: ["Festivals", "Auspicious", "Holidays", "Other festivals"], 
-        horoscopes: { aries: "Aries", taurus: "Taurus", gemini: "Gemini", cancer: "Cancer", leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio", sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces" },
         indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
         indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
         seasonDescriptions: [
@@ -1991,7 +1867,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], 
         nums: ["०","१","२","३","४","५","६","७","८","९"], 
         filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ", "अन्य त्यौहार"], 
-        horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
         indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
         indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
         seasonDescriptions: [
@@ -2009,7 +1884,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], 
         nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], 
         filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ", "ଅନ୍ୟାନ୍ୟ ପର୍ବ"], 
-        horoscopes: { aries: "ମେଷ", taurus: "ବୃଷ", gemini: "ମିଥୁନ", cancer: "କର୍କଟ", leo: "ସିଂହ", virgo: "କନ୍ୟା", libra: "ତୁଳା", scorpio: "ବିଛା", sagittarius: "ଧନୁ", capricorn: "ମକର", aquarius: "କୁମ୍ଭ", pisces: "ମୀନ" },
         indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ", "ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼", "ଆଷାଢ଼ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ରବ", "ଭାଦ୍ରବ / ଆଶ୍ୱିନ", "ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"],
         indianSeasons: ["ବସନ୍ତ", "ଗ୍ରୀଷ୍ମ", "ବର୍ଷା", "ଶରତ", "ହେମନ୍ତ", "ଶିଶିର"],
         seasonDescriptions: [
@@ -2027,7 +1901,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], 
         nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
         filters: ["উৎসব", "শুভ দিন", "ছুটি", "অন্যান্য উৎসব"], 
-        horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কর্কট", leo: "সিংহ", virgo: "কন্যা", libra: "তুলা", scorpio: "বৃশ্চিক", sagittarius: "ধনু", capricorn: "মकर", aquarius: "কুম্ভ", pisces: "মীন" },
         indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
         indianSeasons: ["বসন্ত", "গ্রীষ্ম", "বর্ষা", "শরৎ", "হেমন্ত", "শিশির"],
         seasonDescriptions: [
@@ -2045,7 +1918,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], 
         nums: ["०","१","२","३","४","५","६","७","८","९"], 
         filters: ["सण", "शुभ दिवस", "सुट्ट्या", "इतर सण"], 
-        horoscopes: { aries: "मेष", taurus: "वृषभ", gemini: "मिथुन", cancer: "कर्क", leo: "सिंह", virgo: "कन्या", libra: "तुला", scorpio: "वृश्चिक", sagittarius: "धनु", capricorn: "मकर", aquarius: "कुंभ", pisces: "मीन" },
         indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
         indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
         seasonDescriptions: [
@@ -2063,7 +1935,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], 
         nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], 
         filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ", "અન્ય તહેવારો"], 
-        horoscopes: { aries: "મેષ", taurus: "વૃષભ", gemini: "મિથુન", cancer: "કર્ક", leo: "સિંહ", virgo: "કન્યા", libra: "તુલા", scorpio: "વૃશ્ચિક", sagittarius: "ધનુ", capricorn: "મકર", aquarius: "કુંભ", pisces: "મીન" },
         indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"],
         indianSeasons: ["વસંત", "ગ્રીષ્મ", "વર્ષા", "શરદ", "હેમંત", "શિશિર"],
         seasonDescriptions: [
@@ -2081,7 +1952,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], 
         nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], 
         filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ", "ਹੋਰ ਤਿਉਹਾਰ"], 
-        horoscopes: { aries: "ਮੇਖ", taurus: "ਬ੍ਰਿਖ", gemini: "ਮਿਥੁਨ", cancer: "ਕਰਕ", leo: "ਸਿੰਘ", virgo: "ਕੰਨਿਆ", libra: "ਤੁਲਾ", scorpio: "ਬ੍ਰਿਸ਼ਚਕ", sagittarius: "ਧਨੁ", capricorn: "ਮਕਰ", aquarius: "ਕੁੰਭ", pisces: "ਮੀਨ" },
         indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
         indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"],
         seasonDescriptions: [
@@ -2099,7 +1969,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], 
         nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], 
         filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை", "மற்ற பண்டிகைகள்"], 
-        horoscopes: { aries: "மேஷம்", taurus: "ரிஷபம்", gemini: "மிதுனம்", cancer: "கடகம்", leo: "சிம்மம்", virgo: "கன்னி", libra: "துலாம்", scorpio: "விருச்சிகம்", sagittarius: "தனுசு", capricorn: "மகரம்", aquarius: "கும்பம்", pisces: "மீனம்" },
         indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"],
         indianSeasons: ["இளவேனில்", "முதுவேனில்", "கார்", "குளிர்", "முன்பனி", "பின்பனி"],
         seasonDescriptions: [
@@ -2117,7 +1986,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], 
         nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], 
         filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు", "ఇతర పండుగలు"], 
-        horoscopes: { aries: "మేషం", taurus: "వృషభం", gemini: "మిథునం", cancer: "కర్కాటకం", leo: "సింహం", virgo: "కన్య", libra: "తుల", scorpio: "వృశ్చికం", sagittarius: "ధనుస్సు", capricorn: "మకరం", aquarius: "కుంభం", pisces: "మీనం" },
         indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"],
         indianSeasons: ["వసంత", "గ్రీష్మ", "వర్ష", "శరత్", "హేమంత", "శిశిర"],
         seasonDescriptions: [
@@ -2135,7 +2003,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], 
         nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], 
         filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು", "ಇತರ ಹಬ್ಬಗಳು"], 
-        horoscopes: { aries: "ಮೇಷ", taurus: "ವೃಷಭ", gemini: "ಮಿಥುನ", cancer: "ಕರ್ಕಾಟಕ", leo: "ಸಿಂಹ", virgo: "ಕನ್ಯಾ", libra: "ತುಲಾ", scorpio: "ವೃಶ್ಚಿಕ", sagittarius: "ಧನು", capricorn: "ಮಕರ", aquarius: "ಕುಂಭ", pisces: "ಮೀನ" },
         indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"],
         indianSeasons: ["ವಸಂತ", "ಗ್ರೀಷ್ಮ", "ವರ್ಷ", "ಶರತ್", "ಹೇಮಂತ", "ಶಿಶಿರ"],
         seasonDescriptions: [
@@ -2153,7 +2020,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], 
         nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], 
         filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി", "മറ്റ് ഉത്സവങ്ങൾ"], 
-        horoscopes: { aries: "മേടം", taurus: "ഇടവം", gemini: "മിഥുനം", cancer: "കർക്കടകം", leo: "ചിങ്ങം", virgo: "കന്നി", libra: "തുലാം", scorpio: "വൃശ്ചികം", sagittarius: "ധനു", capricorn: "മകരം", aquarius: "കുംഭം", pisces: "മീനം" },
         indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"],
         indianSeasons: ["വസന്തം", "ഗ്രീഷ്മം", "വർഷം", "ശരത്", "ഹേമന്തം", "ശിശിരം"],
         seasonDescriptions: [
@@ -2171,7 +2037,6 @@ The word "Nua" means new and "Khai" means food.
         days: ["ৰবি", "সোম", "মঙল", "বুধ", "বৃহ", "শুক্ৰ", "শনি"], 
         nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
         filters: ["উৎসৱ", "শুভ দিন", "বন্ধ", "অন্যান্য উৎসৱ"], 
-        horoscopes: { aries: "মেষ", taurus: "বৃষ", gemini: "মিথুন", cancer: "কৰ্কট", leo: "সিংহ", virgo: "কন্যা", libra: "তুলা", scorpio: "বৃশ্চিক", sagittarius: "ধনু", capricorn: "মকৰ", aquarius: "কুম্ভ", pisces: "মীন" },
         indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফাগুন / চ'ত", "চ'ত / বহাগ", "বহাগ / জেঠ", "জেঠ / আহাৰ", "আহাৰ / শাওন", "শাওন / ভাদ", "ভাদ / আহিন", "আহিন / কাতি", "কাতি / আঘোণ", "আঘোণ / পুহ"],
         indianSeasons: ["বসন্ত", "গ্ৰীষ্ম", "বৰ্ষা", "শৰৎ", "হেমন্ত", "শীত"],
         seasonDescriptions: [
@@ -2247,10 +2112,9 @@ The word "Nua" means new and "Khai" means food.
             const toggle = document.getElementById('banner-toggle');
             if(toggle) toggle.checked = !isBannerDismissed;
 
-            const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
+            const secs = appState.config.sections || { festivals: true, panchang: true };
             if(document.getElementById('toggle-festivals')) document.getElementById('toggle-festivals').checked = secs.festivals;
             if(document.getElementById('toggle-panchang')) document.getElementById('toggle-panchang').checked = secs.panchang;
-            if(document.getElementById('toggle-horoscope')) document.getElementById('toggle-horoscope').checked = secs.horoscope;
 
             // Update Sync Toggles
             const liveUrl = appState.config.liveUrl || "";
@@ -2338,7 +2202,6 @@ The word "Nua" means new and "Khai" means food.
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const zodiacIcons = { 'aries': 'fa-regular fa-star', 'taurus': 'fa-solid fa-bullseye', 'gemini': 'fa-solid fa-user-group', 'cancer': 'fa-solid fa-moon', 'leo': 'fa-solid fa-crown', 'virgo': 'fa-solid fa-leaf', 'libra': 'fa-solid fa-scale-balanced', 'scorpio': 'fa-solid fa-spider', 'sagittarius': 'fa-solid fa-arrow-up', 'capricorn': 'fa-solid fa-mountain', 'aquarius': 'fa-solid fa-water', 'pisces': 'fa-solid fa-fish' };
 
         function toggleSyntaxGuide() {
             const guide = document.getElementById('syntax-guide');
@@ -2423,16 +2286,14 @@ The word "Nua" means new and "Khai" means food.
             if(selectedEl) selectedEl.classList.add('selected');
             document.getElementById('banner-date-select').classList.add('hidden');
             document.getElementById('gridbg-date-select').classList.add('hidden');
-            document.getElementById('crop-horoscope-select').classList.add('hidden');
             
             if(type === 'banner') document.getElementById('banner-date-select').classList.remove('hidden');
             if(type === 'gridbg') document.getElementById('gridbg-date-select').classList.remove('hidden');
-            if(type === 'horoscope') document.getElementById('crop-horoscope-select').classList.remove('hidden');
             
             const image = document.getElementById('cropper-img');
             if (tempImageState.cropper) tempImageState.cropper.destroy();
             let aspectRatio = NaN; 
-            if (type === 'logo' || type === 'gridbg' || type === 'horoscope') aspectRatio = 1;
+            if (type === 'logo' || type === 'gridbg') aspectRatio = 1;
             if (type === 'banner') aspectRatio = 16 / 9;
             tempImageState.cropper = new Cropper(image, { aspectRatio: aspectRatio, viewMode: 1, autoCropArea: 1 });
         }
@@ -2455,82 +2316,6 @@ The word "Nua" means new and "Khai" means food.
                     });
                 } else { newText = `::: config\n${logoLine}\n:::\n\n` + newText; }
                 appState.config.logoUrl = url;
-            } else if (type === 'horoscope') {
-                const sign = extraParam;
-                if (!sign) { alert("Please select a Zodiac Sign."); return; }
-                const iconLine = `@ Icon : ![Icon](${url})`;
-                
-                // Construct a regex to find the horoscope block for this sign
-                // Logic: Find "::: horoscope_details", then inside it find ">> Sign"
-                // Since JS regex doesn't support easy "find block X then inside find Y", we parse simply.
-                // We'll search for the Sign Header `>> Sign` and inject/replace Icon line after it.
-                
-                const signRegex = new RegExp(`^>>\\s+${sign}$`, 'im');
-                const signMatch = newText.match(signRegex);
-                
-                if (signMatch) {
-                    // Sign header exists.
-                    // Check if it's inside a horoscope_details block?
-                    // Assuming structure is correct, we find the header.
-                    // We need to insert @ Icon after it, or replace existing @ Icon
-                    
-                    const matchIndex = signMatch.index + signMatch[0].length;
-                    const afterHeader = newText.substring(matchIndex);
-                    
-                    // Look for existing Icon line in the subsequent lines until next block or header
-                    // We can split afterHeader by lines
-                    const lines = afterHeader.split('\n');
-                    let replaced = false;
-                    let insertionIndex = -1;
-                    
-                    // Count length to reconstruct string
-                    let currentOffset = matchIndex;
-                    
-                    // Check if next line is a newline
-                    if (lines.length > 0 && lines[0].trim() === '') {
-                        // Skip empty line?
-                    }
-
-                    // We just want to check if the NEXT property lines contain Icon
-                    // Only scan until next '>>', ':::', or end
-                    for (let i = 0; i < lines.length; i++) {
-                        const line = lines[i];
-                        if (line.trim().startsWith('>>') || line.trim().startsWith(':::')) {
-                            // End of section for this sign
-                            insertionIndex = i; // Insert before this line
-                            break;
-                        }
-                        if (line.match(/^@\s*Icon\s*:/i)) {
-                            // Found existing icon, replace it
-                            // We need to do a string replacement on the whole text to be safe or reconstruct
-                            // Let's use string replace with a specific localized regex
-                            const blockStart = newText.substring(0, matchIndex);
-                            const blockEnd = newText.substring(matchIndex);
-                            // Replace first occurrence of Icon line in blockEnd
-                            newText = blockStart + blockEnd.replace(/^@\s*Icon\s*:.*$/m, iconLine);
-                            replaced = true;
-                            break;
-                        }
-                    }
-                    
-                    if (!replaced) {
-                        // Insert immediately after header
-                        newText = newText.slice(0, matchIndex) + `\n${iconLine}` + newText.slice(matchIndex);
-                    }
-                } else {
-                    // Sign header doesn't exist.
-                    // Check if any horoscope_details block exists to append to
-                    if (newText.includes('::: horoscope_details')) {
-                        newText = newText.replace(/::: horoscope_details([\s\S]*?):::/, (match, content) => {
-                            // Append to the end of the first horoscope_details block found
-                            return `::: horoscope_details${content}\n\n>> ${sign}\n${iconLine}\n:::`;
-                        });
-                    } else {
-                        // Create new block
-                        newText += `\n\n::: horoscope_details\n>> ${sign}\n${iconLine}\n:::`;
-                    }
-                }
-
             } else if (type === 'banner' || type === 'gridbg') {
                 const date = extraParam;
                 if (!date) { alert("Please select a date."); return; }
@@ -2555,9 +2340,6 @@ The word "Nua" means new and "Khai" means food.
             if (selectedType === 'banner' || selectedType === 'gridbg') {
                 const dropdownId = selectedType === 'banner' ? 'banner-date-select' : 'gridbg-date-select';
                 extraParam = document.getElementById(dropdownId).value;
-            } else if (selectedType === 'horoscope') {
-                extraParam = document.getElementById('crop-horoscope-select').value;
-            }
             
             insertImageToEditor(key, selectedType, extraParam);
             closeCropModal();
@@ -2602,15 +2384,11 @@ The word "Nua" means new and "Khai" means food.
             if(selectedEl) selectedEl.classList.add('selected');
             
             const dateContainer = document.getElementById('link-date-container');
-            const horoContainer = document.getElementById('link-horoscope-container');
             
             dateContainer.classList.add('hidden');
-            horoContainer.classList.add('hidden');
             
             if(type === 'banner' || type === 'gridbg') {
                 dateContainer.classList.remove('hidden');
-            } else if (type === 'horoscope') {
-                horoContainer.classList.remove('hidden');
             }
         }
 
@@ -2645,9 +2423,6 @@ The word "Nua" means new and "Khai" means food.
             if (type === 'banner' || type === 'gridbg') {
                 extraParam = document.getElementById('link-date-select').value;
                 if (!extraParam) { alert("Please select a date."); return; }
-            } else if (type === 'horoscope') {
-                extraParam = document.getElementById('link-horoscope-select').value;
-                if (!extraParam) { alert("Please select a Zodiac Sign."); return; }
             }
             insertImageToEditor(url, type, extraParam);
             closeLinkModal();
@@ -3072,9 +2847,8 @@ The word "Nua" means new and "Khai" means food.
             const m = state.monthsData[0];
             const hasEvents = m.events && m.events.length > 0;
             const hasPanchang = m.panchang && Object.keys(m.panchang).length > 0;
-            const hasHoroscope = m.horoscope && m.horoscope.length > 0;
             
-            return hasEvents || hasPanchang || hasHoroscope;
+            return hasEvents || hasPanchang ;
         }
 
         function initApp() {
@@ -3247,9 +3021,7 @@ The word "Nua" means new and "Khai" means food.
             let parsedDetails = {};
             let parsedRecurringDetails = {};
             let parsedManualTithis = {};
-            let parsedHoroDetails = {};
             let currentDetailKey = null;
-            let currentHoroSign = null;
             let parsedSeasonDescs = {};
             let currentSeasonIdx = -1;
             
@@ -3258,7 +3030,7 @@ The word "Nua" means new and "Khai" means food.
 
             // Reset viewDate only if we don't have one, or maybe we want to keep current view?
             // For now, let's keep current view logic separate, but init default month just in case.
-            const createMonth = (mIndex, year) => ({ month: mIndex, year: year, events: [], panchang: {}, horoscope: [] });
+            const createMonth = (mIndex, year) => ({ month: mIndex, year: year, events: [], panchang: {} });
             
             // We don't push a default month immediately. We wait to see if 'calendar' block exists.
             // If parsedMonths ends up empty, we handle that later.
@@ -3270,7 +3042,7 @@ The word "Nua" means new and "Khai" means food.
                 if (line.startsWith(':::')) {
                     // Handle both "::: block" and "::: block :::" styles
                     const blockName = line.replace(/:::/g, '').trim().toLowerCase();
-                    if (blockName === '') { currentBlock = null; currentDetailKey = null; currentHoroSign = null; }
+                    if (blockName === '') { currentBlock = null; currentDetailKey = null; }
                     else currentBlock = blockName;
                     return;
                 }
@@ -3401,32 +3173,6 @@ The word "Nua" means new and "Khai" means food.
                         else currentDetail.bodyLines.push(line);
                     }
                 }
-                else if (currentBlock === 'horoscope_details') {
-                    const signHeader = line.match(/^>>\s+(.+)/);
-                    if (signHeader) {
-                        currentHoroSign = signHeader[1].trim().toLowerCase();
-                        parsedHoroDetails[currentHoroSign] = { element: '', ruler: '', dateRange: '', lucky: { number: '-', color: '-', time: '-' }, compatible: [], bodyLines: [] };
-                    } else if (currentHoroSign) {
-                        const attrMatch = line.match(/^@\s*(.+?)\s*:\s*(.+)/);
-                        if (attrMatch) {
-                            const key = attrMatch[1].toLowerCase();
-                            const val = attrMatch[2].trim();
-                            if (key.includes('element')) parsedHoroDetails[currentHoroSign].element = val;
-                            else if (key.includes('ruler')) parsedHoroDetails[currentHoroSign].ruler = val;
-                            else if (key.includes('daterange')) parsedHoroDetails[currentHoroSign].dateRange = val;
-                            else if (key.includes('lucky number')) parsedHoroDetails[currentHoroSign].lucky.number = val;
-                            else if (key.includes('lucky color')) parsedHoroDetails[currentHoroSign].lucky.color = val;
-                            else if (key.includes('lucky time')) parsedHoroDetails[currentHoroSign].lucky.time = val;
-                            else if (key.includes('compatible')) parsedHoroDetails[currentHoroSign].compatible = val.split(',').map(s => s.trim());
-                            else if (key.includes('icon')) {
-                                const iconMatch = val.match(/!\[(.*?)\]\((.*?)\)/);
-                                if (iconMatch) parsedHoroDetails[currentHoroSign].icon = iconMatch[2];
-                            }
-                        } else {
-                            parsedHoroDetails[currentHoroSign].bodyLines.push(line);
-                        }
-                    }
-                }
                 else if (currentBlock === 'seasons') {
                     const match = line.match(/^@\s*(.+?)\s*:\s*(.*)/);
                     if (match) {
@@ -3456,10 +3202,6 @@ The word "Nua" means new and "Khai" means food.
                     const panMatch = line.match(/^@\s+(.+?)\s*:\s*(.+)/);
                     if (panMatch && currentMonthObj) currentMonthObj.panchang[panMatch[1]] = panMatch[2];
                 } 
-                else if (currentBlock === 'horoscope') {
-                    const horoMatch = line.match(/^~\s+(.+?)\s*:\s*(.+)/);
-                    if (horoMatch && currentMonthObj) currentMonthObj.horoscope.push({ sign: horoMatch[1].trim(), text: horoMatch[2].trim() });
-                }
             });
 
             // If parsedMonths is empty (no explicit calendar block), verify if we need a default one?
@@ -3470,7 +3212,6 @@ The word "Nua" means new and "Khai" means food.
             appState.recurringDetails = parsedRecurringDetails;
             appState.manualTithis = parsedManualTithis;
             appState.details = parsedDetails;
-            appState.horoscopeDetails = parsedHoroDetails;
             appState.customSeasonDescriptions = parsedSeasonDescs;
             appState.config = tempConfig;
             
@@ -3515,7 +3256,6 @@ The word "Nua" means new and "Khai" means food.
                 year: year, 
                 events: [], 
                 panchang: {}, 
-                horoscope: [] 
             };
 
             // 3. Merge Recurring Events
@@ -3676,19 +3416,16 @@ The word "Nua" means new and "Khai" means food.
             renderCalendarGrid(currentData);
             renderPanchang(currentData);
             renderFestivals(currentData);
-            renderHoroscope(currentData);
             renderMonthBanner(currentData);
 
             // --- NEW LOGIC: Hide/Show Sections based on Config ---
-            const secs = appState.config.sections || { festivals: true, panchang: true, horoscope: true };
+            const secs = appState.config.sections || { festivals: true, panchang: true };
             
             const secFest = document.getElementById('sec-festivals');
             const secPan = document.getElementById('sec-panchang');
-            const secHoro = document.getElementById('sec-horoscope');
 
             if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
             if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
-            if (secHoro) secHoro.style.display = secs.horoscope ? 'block' : 'none';
             
             // Step 1: Cache the state
             saveStateToCache();
@@ -4868,57 +4605,6 @@ function renderCalendarGrid(data) {
             render(); 
         }
 
-        function renderHoroscope(data) {
-            const grid = document.getElementById('horoscope-grid');
-            grid.innerHTML = '';
-            // Update grid to 3 columns for circle layout (3D Circle Style)
-            grid.className = "grid grid-cols-3 gap-y-6 gap-x-2 p-1";
-            
-            const currentLang = appState.config.language || 'en';
-            const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
-            
-            const signKeys = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
-
-            signKeys.forEach(signKey => {
-                // Find prediction text if available in data.horoscope
-                const predictionItem = data.horoscope.find(h => h.sign.toLowerCase() === signKey);
-                const predictionText = predictionItem ? predictionItem.text : "No specific prediction available for today.";
-
-                const btn = document.createElement('button');
-                let iconHtml = '';
-                
-                // Check for custom icon
-                const details = appState.horoscopeDetails[signKey];
-                if (details && details.icon) {
-                    const iconUrl = resolveImageUrls(details.icon);
-                    // Image fits inside the circle
-                    iconHtml = `<img src="${iconUrl}" class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-300">`;
-                } else {
-                    let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
-                    // Colored icons to look better in white circle
-                    // Using purple-600 to match theme
-                    iconHtml = `<i class="${iconClass} text-2xl text-orange-600 group-hover:text-orange-700 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"></i>`;
-                }
-
-                const localizedName = localizedHoroscopes[signKey] || signKey.charAt(0).toUpperCase() + signKey.slice(1);
-                
-                // 3D Circle Style Layout
-                // Button container
-                btn.className = "flex flex-col items-center justify-center gap-1 group w-full outline-none focus:scale-105 transition-transform duration-200";
-                
-                // Circle Wrapper with Shadow (3D effect)
-                const circleClass = "w-16 h-16 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:border-orange-200 relative overflow-hidden ring-1 ring-black/5";
-                
-                const innerContent = `<div class="${circleClass}">${iconHtml}</div>`;
-                const labelHtml = `<span class="text-xs md:text-[13px] font-bold text-gray-700 uppercase group-hover:text-orange-700 transition-colors text-center leading-tight mt-1 whitespace-normal break-all w-full px-0.5">${localizedName}</span>`;
-                
-                btn.innerHTML = innerContent + labelHtml;
-                
-                const displaySign = signKey.charAt(0).toUpperCase() + signKey.slice(1);
-                btn.onclick = () => openHoroscopeModal(displaySign, predictionText);
-                grid.appendChild(btn);
-            });
-        }
 
         function formatSeasonDescription(desc) {
             if (!desc) return '';
@@ -5221,77 +4907,6 @@ function renderCalendarGrid(data) {
             setTimeout(() => { modal.style.display = 'none'; }, 300); 
         }
 
-        function openHoroscopeModal(sign, defaultText) {
-            const modal = document.getElementById('horoscope-modal');
-            const signKey = sign.toLowerCase();
-            const details = appState.horoscopeDetails[signKey];
-            const signTitle = sign.charAt(0).toUpperCase() + sign.slice(1);
-            const currentLang = appState.config.language || 'en';
-            const localizedHoroscopes = langData[currentLang] ? langData[currentLang].horoscopes : langData.en.horoscopes;
-            const localizedName = localizedHoroscopes[signKey] || signTitle;
-            const displayTitle = currentLang === 'en' ? signTitle : `${localizedName}`;
-            
-            // Inject Title and Icon
-            const titleContainer = document.getElementById('horo-modal-title');
-            let headerIconHtml = '';
-            if (details && details.icon) {
-                const iconUrl = resolveImageUrls(details.icon);
-                headerIconHtml = `<img src="${iconUrl}" class="w-16 h-16 object-contain rounded-full border-4 border-white shadow-md bg-white">`;
-            } else {
-                let iconClass = zodiacIcons[signKey] || 'fa-solid fa-star';
-                headerIconHtml = `<div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 border-4 border-white shadow-md"><i class="${iconClass} text-4xl"></i></div>`;
-            }
-            
-            // Reconstruct Header Content
-            titleContainer.innerHTML = `<div class="flex items-center gap-4">${headerIconHtml}<span>${displayTitle}</span></div>`;
-            
-            const predictionContainer = document.getElementById('horo-prediction');
-            predictionContainer.innerHTML = '';
-            if (details && details.bodyLines.length > 0) { renderRichBody(predictionContainer, details.bodyLines); } else { predictionContainer.innerText = defaultText; }
-            const badgesContainer = document.getElementById('horo-badges');
-            badgesContainer.innerHTML = '';
-            if (details) {
-                if (details.element) badgesContainer.innerHTML += `<span class="horo-badge-gold px-3 py-1 text-xs"><i class="fa-solid fa-fire mr-1"></i> ${details.element}</span>`;
-                if (details.ruler) badgesContainer.innerHTML += `<span class="horo-badge-blue px-3 py-1 text-xs"><i class="fa-solid fa-crown mr-1"></i> ${details.ruler}</span>`;
-                document.getElementById('horo-date-range').innerText = details.dateRange || "";
-                
-                // Enhanced Lucky Section
-                const luckyNumEl = document.getElementById('horo-lucky-num');
-                luckyNumEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-solid fa-hashtag text-amber-300 text-sm mb-1 opacity-80"></i><span class="text-3xl">${details.lucky.number}</span></div>`;
-                
-                const colorEl = document.getElementById('horo-lucky-color');
-                const colorVal = details.lucky.color;
-                const colorMap = { 'red': 'text-red-600', 'green': 'text-green-600', 'blue': 'text-blue-600', 'yellow': 'text-yellow-500', 'orange': 'text-orange-600', 'purple': 'text-amber-500', 'pink': 'text-pink-600', 'white': 'text-gray-400', 'black': 'text-gray-900' };
-                const textColorClass = colorMap[colorVal.toLowerCase()] || "text-gray-800";
-                colorEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-solid fa-palette text-green-300 text-sm mb-1 opacity-80"></i><span class="text-xl ${textColorClass}">${colorVal}</span></div>`;
-                
-                const timeEl = document.getElementById('horo-lucky-time');
-                const timeVal = details.lucky.time.replace(' ', '<br>');
-                timeEl.innerHTML = `<div class="flex flex-col items-center"><i class="fa-regular fa-clock text-blue-300 text-sm mb-1 opacity-80"></i><span class="text-lg leading-tight text-blue-600">${timeVal}</span></div>`;
-
-                const compatContainer = document.getElementById('horo-compatible');
-                compatContainer.innerHTML = '';
-                const bgColors = ["bg-pink-50 text-pink-700 border border-pink-100", "bg-indigo-50 text-indigo-700 border border-indigo-100", "bg-teal-50 text-teal-700 border border-teal-100", "bg-orange-50 text-orange-700 border border-orange-100"];
-                details.compatible.forEach((c, index) => {
-                    const colorClass = bgColors[index % bgColors.length];
-                    compatContainer.innerHTML += `<span class="compat-pill ${colorClass} px-4 py-1.5 text-sm font-bold shadow-sm">${c}</span>`;
-                });
-            } else {
-                document.getElementById('horo-date-range').innerText = "";
-                document.getElementById('horo-lucky-num').innerText = "-";
-                document.getElementById('horo-lucky-color').innerText = "-";
-                document.getElementById('horo-lucky-time').innerText = "-";
-                document.getElementById('horo-compatible').innerHTML = '<span class="text-gray-400 text-xs italic">No compatibility data</span>';
-            }
-            modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
-        }
-
-        function closeHoroscopeModal() {
-            const modal = document.getElementById('horoscope-modal');
-            modal.classList.add('modal-hidden');
-            setTimeout(() => { modal.style.display = 'none'; }, 300);
-        }
 
         function saveStateToCache() {
             try {
@@ -5374,7 +4989,6 @@ function renderCalendarGrid(data) {
                 monthsData: [],
                 todayIndex: -1,
                 details: {},
-                horoscopeDetails: {},
                 customSeasonDescriptions: {},
                 images: {},
                 config: appState.config // Keep config!
