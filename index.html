@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Panchang & Hindu Tithi Calendar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- Divine Glassmorphism Theme --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top left, #FFFBF0, #FDE68A, #FFFBF0); /* Cream to Soft Gold */
+            min-height: 100vh;
+            color: #4B5563;
+        }
+
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            border-radius: 1rem;
+        }
+
+        .glass-header {
+            background: linear-gradient(135deg, #B91C1C 0%, #991B1B 100%); /* Deep Saffron/Red */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(185, 28, 28, 0.4);
+        }
+
+        /* --- Animations --- */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 12s linear infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #F59E0B, 0 0 10px #F59E0B; }
+            50% { box-shadow: 0 0 20px #F59E0B, 0 0 30px #FCD34D; }
+        }
+        .today-glow {
+            animation: glow 2s infinite alternate;
+            border-color: #F59E0B !important;
+            z-index: 10;
+        }
+
+        /* --- Paksha Themes --- */
+        .shukla-paksha {
+            background: linear-gradient(to bottom right, #FFFBEB, #FEF3C7); /* Amber/Gold */
+            border-left: 4px solid #F59E0B;
+        }
+        .krishna-paksha {
+            background: linear-gradient(to bottom right, #EFF6FF, #DBEAFE); /* Indigo/Blue */
+            border-left: 4px solid #3B82F6;
+        }
+
+        /* --- Calendar Grid --- */
+        .calendar-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .calendar-cell:hover {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.6);
+            z-index: 5;
+        }
+
+        .tithi-purnima { border: 2px solid #F59E0B; background-color: #FEF3C7; }
+        .tithi-amavasya { background-color: #1F2937; color: white; border: 2px solid #374151; }
+        .tithi-ekadashi { border: 2px solid #8B5CF6; }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+    </style>
+</head>
+<body class="pb-12">
+
+    <!-- Header -->
+    <header class="glass-header sticky top-0 z-50 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg border-2 border-yellow-200 animate-spin-slow text-red-800 font-bold text-xl select-none">ॐ</div>
+            <div>
+                <h1 class="text-lg md:text-xl font-bold tracking-wide">Digital Panchang</h1>
+                <p class="text-[10px] opacity-90 uppercase tracking-widest">Vedic Timekeeper</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-semibold">
+            <span id="ritu-badge" class="bg-white/20 px-2 py-1 rounded backdrop-blur-sm border border-white/30 hidden md:block">Varsha Ritu</span>
+            <span id="samvat-badge" class="bg-yellow-500/20 px-2 py-1 rounded backdrop-blur-sm border border-yellow-400/30 text-yellow-100">Vikram 2081</span>
+            <div class="flex items-center gap-1 bg-black/20 px-2 py-1 rounded-full border border-white/10" title="100% Offline Mode">
+                <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                <span class="hidden sm:inline">Offline</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 mt-6 max-w-6xl space-y-6">
+
+        <!-- Tool 1: Control Deck -->
+        <section class="glass-card p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="flex items-center gap-2 w-full md:w-auto">
+                <div class="relative flex-grow md:flex-grow-0">
+                    <input type="date" id="date-picker" class="w-full md:w-48 bg-white/50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-700 font-semibold">
+                </div>
+                <button onclick="goToDate()" class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition transform active:scale-95">Go</button>
+                <button onclick="goToToday()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition transform active:scale-95">Today</button>
+            </div>
+
+            <div class="w-full md:w-64">
+                <label class="block text-xs font-bold text-gray-500 mb-1 ml-1 uppercase">Location (For Sunrise)</label>
+                <select id="location-select" onchange="updateLocation()" class="w-full bg-white/50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-700 font-semibold cursor-pointer">
+                    <!-- Cities populated by JS -->
+                </select>
+            </div>
+        </section>
+
+        <!-- Tool 2: Dashboard (Today's Data) -->
+        <section id="dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Main Tithi Card -->
+            <div class="glass-card p-6 md:col-span-1 flex flex-col justify-between relative overflow-hidden group">
+                <div id="tithi-bg-gradient" class="absolute inset-0 opacity-20 transition-colors duration-500"></div>
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold uppercase tracking-widest text-gray-500">Current Tithi</span>
+                        <span id="moon-emoji" class="text-4xl animate-bounce">🌕</span>
+                    </div>
+                    <h2 id="tithi-name" class="text-3xl font-bold text-gray-800 mb-1">Purnima</h2>
+                    <p id="paksha-name" class="text-sm font-semibold text-gray-500 mb-4">Shukla Paksha</p>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs font-semibold text-gray-500 mb-1">
+                        <span>Progress</span>
+                        <span id="tithi-end-time">Ends at 08:45 PM</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                        <div id="tithi-progress" class="bg-red-600 h-2.5 rounded-full" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panchang Elements & Astro Data -->
+            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                <!-- Panchang Details -->
+                <div class="glass-card p-5 space-y-3">
+                    <h3 class="text-sm font-bold uppercase text-red-700 border-b border-red-100 pb-1 mb-2">Panchang Elements</h3>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500"><i class="text-yellow-500 mr-2">✦</i> Nakshatra</span>
+                        <span id="nakshatra-val" class="font-semibold text-gray-800">Rohini</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500"><i class="text-blue-500 mr-2">∞</i> Yoga</span>
+                        <span id="yoga-val" class="font-semibold text-gray-800">Siddhi</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500"><i class="text-green-500 mr-2">❖</i> Karana</span>
+                        <span id="karana-val" class="font-semibold text-gray-800">Bava</span>
+                    </div>
+                </div>
+
+                <!-- Sun & Moon Times -->
+                <div class="glass-card p-5 space-y-3">
+                    <h3 class="text-sm font-bold uppercase text-orange-600 border-b border-orange-100 pb-1 mb-2">Sun & Moon</h3>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-orange-50 p-2 rounded-lg text-center">
+                            <div class="text-[10px] text-orange-400 font-bold uppercase">Sunrise</div>
+                            <div id="sunrise-time" class="text-sm font-bold text-gray-800">06:00 AM</div>
+                        </div>
+                        <div class="bg-gray-800 p-2 rounded-lg text-center">
+                            <div class="text-[10px] text-gray-400 font-bold uppercase">Sunset</div>
+                            <div id="sunset-time" class="text-sm font-bold text-white">06:00 PM</div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-center text-gray-400 mt-1">
+                        Coordinates: <span id="coords-display">28.61°N, 77.20°E</span>
+                    </div>
+                </div>
+
+                <!-- Astro Data Box -->
+                <div class="glass-card p-4 sm:col-span-2 bg-gray-50/50">
+                    <h3 class="text-xs font-bold uppercase text-gray-400 mb-2">Astronomical Data (Verification)</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono text-gray-600">
+                        <div>
+                            <span class="block text-gray-400">Julian Date</span>
+                            <span id="astro-jd" class="font-bold">2460345.5</span>
+                        </div>
+                        <div>
+                            <span class="block text-gray-400">Sun Longitude</span>
+                            <span id="astro-sun" class="font-bold">280.45°</span>
+                        </div>
+                        <div>
+                            <span class="block text-gray-400">Moon Longitude</span>
+                            <span id="astro-moon" class="font-bold">145.23°</span>
+                        </div>
+                        <div>
+                            <span class="block text-gray-400">Elongation</span>
+                            <span id="astro-elon" class="font-bold">12.5°</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Muhurat & Guide -->
+                <div class="glass-card p-4 sm:col-span-2 flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 space-y-2">
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            <span class="text-gray-500">Abhijit:</span>
+                            <span id="abhijit-time" class="font-bold text-gray-800">11:45 - 12:30</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            <span class="text-gray-500">Rahu Kaal:</span>
+                            <span id="rahu-time" class="font-bold text-gray-800">09:00 - 10:30</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 border-l border-gray-200 pl-0 md:pl-4 flex items-center justify-around">
+                        <div class="text-center">
+                            <div class="text-[10px] uppercase text-gray-400 font-bold">Deity</div>
+                            <div id="guide-deity" class="text-sm font-serif font-bold text-red-700">Surya Dev</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-[10px] uppercase text-gray-400 font-bold">Lucky Color</div>
+                            <div id="guide-color" class="text-sm font-bold" style="color: #F59E0B">Gold</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tool 3: Monthly Calendar Grid -->
+        <section class="glass-card p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="calendar-month-title" class="text-2xl font-serif font-bold text-gray-800">October 2023</h2>
+                <div class="flex gap-2">
+                    <button onclick="changeMonth(-1)" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition"><</button>
+                    <button onclick="changeMonth(1)" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">></button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-7 gap-2 md:gap-4 text-center">
+                <!-- Weekdays -->
+                <div class="text-xs font-bold text-red-500 uppercase">Sun</div>
+                <div class="text-xs font-bold text-gray-400 uppercase">Mon</div>
+                <div class="text-xs font-bold text-gray-400 uppercase">Tue</div>
+                <div class="text-xs font-bold text-gray-400 uppercase">Wed</div>
+                <div class="text-xs font-bold text-gray-400 uppercase">Thu</div>
+                <div class="text-xs font-bold text-gray-400 uppercase">Fri</div>
+                <div class="text-xs font-bold text-gray-400 uppercase">Sat</div>
+            </div>
+
+            <div id="calendar-grid" class="grid grid-cols-7 gap-2 md:gap-4 mt-2">
+                <!-- Cells generated by JS -->
+            </div>
+        </section>
+
+        <!-- Tool 4: Educational Accordions -->
+        <section class="space-y-4">
+            <h2 class="text-xl font-serif font-bold text-gray-800 ml-2">Understanding Panchang</h2>
+
+            <!-- Accordion 1 -->
+            <div class="glass-card overflow-hidden">
+                <button onclick="toggleAccordion('acc1')" class="w-full px-6 py-4 text-left font-bold text-gray-700 flex justify-between items-center hover:bg-white/30 transition">
+                    <span>What is a Tithi? (The Pizza Analogy)</span>
+                    <span id="icon-acc1" class="transform transition-transform">+</span>
+                </button>
+                <div id="acc1" class="hidden px-6 py-4 text-sm text-gray-600 bg-white/40 leading-relaxed border-t border-white/20">
+                    <p class="mb-2">Imagine the sky is a giant pizza divided into 360 degrees.</p>
+                    <p>Both the Sun and Moon move around this pizza. The Moon moves much faster (about 12° per day) than the Sun (about 1° per day).</p>
+                    <p class="mt-2 font-semibold text-red-700">A "Tithi" is the time it takes for the Moon to get exactly 12 degrees farther away from the Sun.</p>
+                    <p>So, every 12° slice of difference = 1 Tithi. There are 30 Tithis in a lunar month (30 slices x 12° = 360°).</p>
+                </div>
+            </div>
+
+            <!-- Accordion 2 -->
+            <div class="glass-card overflow-hidden">
+                <button onclick="toggleAccordion('acc2')" class="w-full px-6 py-4 text-left font-bold text-gray-700 flex justify-between items-center hover:bg-white/30 transition">
+                    <span>The Race in the Sky</span>
+                    <span id="icon-acc2" class="transform transition-transform">+</span>
+                </button>
+                <div id="acc2" class="hidden px-6 py-4 text-sm text-gray-600 bg-white/40 leading-relaxed border-t border-white/20">
+                    <p>Think of the Sun and Moon as runners on a circular track.</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>Amavasya (New Moon):</strong> Both are at the starting line together (0° difference).</li>
+                        <li><strong>Shukla Paksha (Waxing):</strong> The Moon races ahead. When it's 180° ahead (halfway around), it's Purnima.</li>
+                        <li><strong>Purnima (Full Moon):</strong> The Moon is directly opposite the Sun.</li>
+                        <li><strong>Krishna Paksha (Waning):</strong> The Moon continues the second half of the lap to catch up to the Sun again.</li>
+                    </ul>
+                </div>
+            </div>
+
+             <!-- Accordion 3: Five Elements -->
+             <div class="glass-card overflow-hidden">
+                <button onclick="toggleAccordion('acc3')" class="w-full px-6 py-4 text-left font-bold text-gray-700 flex justify-between items-center hover:bg-white/30 transition">
+                    <span>The Five Limbs (Panch-Ang)</span>
+                    <span id="icon-acc3" class="transform transition-transform">+</span>
+                </button>
+                <div id="acc3" class="hidden px-6 py-4 text-sm text-gray-600 bg-white/40 leading-relaxed border-t border-white/20 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold">1</div>
+                        <div><strong>Vara</strong> (Weekday)<br><span class="text-xs">Fire Element (Energy)</span></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">2</div>
+                        <div><strong>Tithi</strong> (Lunar Day)<br><span class="text-xs">Water Element (Prosperity)</span></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center font-bold">3</div>
+                        <div><strong>Nakshatra</strong> (Star)<br><span class="text-xs">Air Element (Strength)</span></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold">4</div>
+                        <div><strong>Yoga</strong> (Combination)<br><span class="text-xs">Ether Element (Health)</span></div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">5</div>
+                        <div><strong>Karana</strong> (Half-Tithi)<br><span class="text-xs">Earth Element (Success)</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="detail-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden transform transition-all scale-100">
+            <div class="bg-red-700 text-white p-4 flex justify-between items-center">
+                <h3 id="modal-date" class="font-serif font-bold text-lg">October 24, 2023</h3>
+                <button onclick="closeModal()" class="text-white/80 hover:text-white">&times;</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="text-center">
+                    <div id="modal-emoji" class="text-4xl mb-2">🌕</div>
+                    <h2 id="modal-tithi" class="text-2xl font-bold text-gray-800">Purnima</h2>
+                    <p id="modal-paksha" class="text-sm text-gray-500 font-semibold">Shukla Paksha</p>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 text-sm space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Sunrise</span>
+                        <span id="modal-sunrise" class="font-bold text-gray-800">06:00 AM</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Sunset</span>
+                        <span id="modal-sunset" class="font-bold text-gray-800">06:00 PM</span>
+                    </div>
+                     <div class="flex justify-between border-t border-gray-200 pt-2 mt-2">
+                        <span class="text-gray-500">Festival</span>
+                        <span id="modal-festival" class="font-bold text-red-600">-</span>
+                    </div>
+                </div>
+
+                <button onclick="closeModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Engine -->
+    <script>
+        // --- DATA: Cities ---
+        const CITIES = {
+            "Delhi": { lat: 28.6139, lng: 77.2090 },
+            "Mumbai": { lat: 19.0760, lng: 72.8777 },
+            "Kolkata": { lat: 22.5726, lng: 88.3639 },
+            "Chennai": { lat: 13.0827, lng: 80.2707 },
+            "Bangalore": { lat: 12.9716, lng: 77.5946 },
+            "Hyderabad": { lat: 17.3850, lng: 78.4867 },
+            "Ahmedabad": { lat: 23.0225, lng: 72.5714 },
+            "Pune": { lat: 18.5204, lng: 73.8567 },
+            "Jaipur": { lat: 26.9124, lng: 75.7873 },
+            "Varanasi": { lat: 25.3176, lng: 82.9739 }
+        };
+
+        const TITHI_NAMES = [
+            "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami",
+            "Shasthi", "Saptami", "Ashtami", "Navami", "Dashami",
+            "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima",
+            "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami",
+            "Shasthi", "Saptami", "Ashtami", "Navami", "Dashami",
+            "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"
+        ];
+
+        const NAKSHATRAS = [
+            "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra",
+            "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni",
+            "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha",
+            "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishtha",
+            "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+        ];
+
+        const YOGAS = [
+            "Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda",
+            "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva",
+            "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan",
+            "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla",
+            "Brahma", "Indra", "Vaidhriti"
+        ];
+
+        const KARANAS = [
+            "Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti",
+            "Shakuni", "Chatushpada", "Naga", "Kimstughna"
+        ];
+
+        // Map Tithi Index (0-29) to Festivals
+        // Note: Real festivals depend on Month + Tithi. Simplified for demo mapping.
+        const FESTIVALS = {
+            10: "Ekadashi Fast", // Both Ekadashis
+            25: "Ekadashi Fast",
+            14: "Purnima Puja",
+            29: "Amavasya",
+            // Examples assuming specific months handled by logic or generic
+        };
+
+        // --- ENGINE: VedicAstro ---
+        const VedicAstro = {
+            // Convert Date to Julian Date
+            toJulian: function(date) {
+                return (date.getTime() / 86400000) - (date.getTimezoneOffset() / 1440) + 2440587.5;
+            },
+
+            // Normalize angle to 0-360
+            normalize: function(deg) {
+                deg = deg % 360;
+                if (deg < 0) deg += 360;
+                return deg;
+            },
+
+            // Simplified Moshier Algorithms
+            getPositions: function(jd) {
+                const D = jd - 2451545.0; // Days since J2000
+
+                // Sun
+                const g = this.normalize(357.529 + 0.98560028 * D);
+                const q = this.normalize(280.459 + 0.98564736 * D);
+                const L = this.normalize(q + 1.915 * Math.sin(g * Math.PI/180) + 0.020 * Math.sin(2 * g * Math.PI/180));
+
+                // Moon
+                const l = this.normalize(218.316 + 13.176396 * D);
+                const m = this.normalize(134.963 + 13.064993 * D);
+                const F = this.normalize(93.272 + 13.229350 * D);
+                const moonL = this.normalize(l + 6.289 * Math.sin(m * Math.PI/180));
+                // Note: This is a very simplified Moon position (good for approx Tithi)
+
+                return { sun: L, moon: moonL, elongation: this.normalize(moonL - L) };
+            },
+
+            calculatePanchang: function(date) {
+                const jd = this.toJulian(date);
+                const pos = this.getPositions(jd);
+
+                // Tithi: (Moon - Sun) / 12
+                // 0-14: Shukla (Waxing), 15-29: Krishna (Waning)
+                const tithiVal = pos.elongation / 12;
+                const tithiIndex = Math.floor(tithiVal);
+                const tithiFraction = tithiVal - tithiIndex; // Progress (0.0 - 1.0)
+
+                // Nakshatra: Moon / 13.333
+                const nakVal = pos.moon / 13.333333;
+                const nakIndex = Math.floor(nakVal);
+
+                // Yoga: (Moon + Sun) / 13.333
+                const yogaVal = this.normalize(pos.moon + pos.sun) / 13.333333;
+                const yogaIndex = Math.floor(yogaVal);
+
+                // Karana: Half-Tithi
+                // 1 Tithi = 2 Karanas. 30 Tithis = 60 Half-Tithis.
+                // Formula is slightly complex due to movable/fixed karanas.
+                // Simplified:
+                const karanaVal = pos.elongation / 6;
+                const karanaIndexFull = Math.floor(karanaVal);
+                // Map to 11 Karanas list
+                // 0: Kinstughna
+                // 1-57: Repeat 1-7 (Bava..Vishti)
+                // 58: Shakuni, 59: Chatushpada, 60: Naga
+                let karanaIndex = 0;
+                if (karanaIndexFull === 0) karanaIndex = 10; // Kimstughna
+                else if (karanaIndexFull >= 57) karanaIndex = karanaIndexFull - 50; // 7,8,9 (Shakuni..)
+                else karanaIndex = (karanaIndexFull - 1) % 7; // Cycle 0-6
+
+                return {
+                    tithi: { index: tithiIndex, name: TITHI_NAMES[tithiIndex], progress: tithiFraction },
+                    nakshatra: { index: nakIndex, name: NAKSHATRAS[nakIndex] },
+                    yoga: { index: yogaIndex, name: YOGAS[yogaIndex] },
+                    karana: { index: karanaIndex, name: KARANAS[karanaIndex] },
+                    astro: { jd: jd, sun: pos.sun, moon: pos.moon, elongation: pos.elongation }
+                };
+            },
+
+            // Simplified Sunrise/Sunset
+            // Source: NOAA Solar Calculation (very simplified)
+            getSunTimes: function(date, lat, lng) {
+                // Day of year
+                const start = new Date(date.getFullYear(), 0, 0);
+                const diff = date - start;
+                const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+                // Declination of Sun approx
+                const declination = 23.45 * Math.sin((360/365 * (dayOfYear - 81)) * Math.PI/180);
+
+                // Hour angle (simplified)
+                // If value inside acos is out of range (-1 to 1), clamp it (polar regions edge case)
+                let cosHa = -Math.tan(lat * Math.PI/180) * Math.tan(declination * Math.PI/180);
+                if (cosHa < -1) cosHa = -1;
+                if (cosHa > 1) cosHa = 1;
+
+                const ha = Math.acos(cosHa) * 180/Math.PI;
+                const mins = ha * 4; // minutes offset from noon
+
+                // Noon approx (12:00 - (lng - 82.5)*4 mins for IST correction roughly)
+                // IST is UTC+5.5.
+                const noonMinutes = 720 - (lng * 4) + (5.5 * 60); // UTC noon corrected to local lng then timezone
+                const riseMinutes = noonMinutes - mins;
+                const setMinutes = noonMinutes + mins;
+
+                const toTime = (m) => {
+                    let h = Math.floor(m / 60);
+                    let min = Math.floor(m % 60);
+                    // Handle overflow/underflow of day
+                    if (h < 0) h += 24;
+                    if (h >= 24) h -= 24;
+
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    const h12 = h % 12 || 12;
+                    return `${h12.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ${ampm}`;
+                };
+
+                return {
+                    rise: toTime(riseMinutes),
+                    set: toTime(setMinutes),
+                    riseMin: riseMinutes,
+                    setMin: setMinutes
+                };
+            }
+        };
+
+        // --- APP STATE ---
+        let APP = {
+            date: new Date(),
+            location: CITIES["Delhi"]
+        };
+
+        // --- UI FUNCTIONS ---
+        function setDatePicker(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            document.getElementById('date-picker').value = `${year}-${month}-${day}`;
+        }
+
+        function init() {
+            // Populate Location Dropdown
+            const select = document.getElementById('location-select');
+            Object.keys(CITIES).forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.innerText = city;
+                select.appendChild(opt);
+            });
+            select.value = "Delhi";
+
+            // Set Date Picker
+            setDatePicker(APP.date);
+
+            renderAll();
+        }
+
+        function updateLocation() {
+            const city = document.getElementById('location-select').value;
+            APP.location = CITIES[city];
+            renderAll();
+        }
+
+        function goToDate() {
+            const input = document.getElementById('date-picker').value;
+            if (input) {
+                const parts = input.split('-');
+                // Construct date in local time
+                APP.date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                renderAll();
+            }
+        }
+
+        function goToToday() {
+            APP.date = new Date();
+            setDatePicker(APP.date);
+            renderAll();
+        }
+
+        function changeMonth(offset) {
+            // Set day to 1 before changing month to avoid rollover
+            APP.date.setDate(1);
+            APP.date.setMonth(APP.date.getMonth() + offset);
+            setDatePicker(APP.date);
+            renderAll();
+        }
+
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.innerText = "-";
+            } else {
+                el.classList.add('hidden');
+                icon.innerText = "+";
+            }
+        }
+
+        function renderAll() {
+            const data = VedicAstro.calculatePanchang(APP.date);
+            const times = VedicAstro.getSunTimes(APP.date, APP.location.lat, APP.location.lng);
+
+            // --- RENDER DASHBOARD ---
+
+            // Tithi Card
+            const isWaxing = data.tithi.index < 15;
+            const paksha = isWaxing ? "Shukla Paksha" : "Krishna Paksha";
+            const moonPhase = isWaxing ? "Waxing" : "Waning";
+            const emoji = data.tithi.index === 14 ? "🌕" : (data.tithi.index === 29 ? "🌑" : (isWaxing ? "🌔" : "🌖"));
+
+            document.getElementById('tithi-name').innerText = data.tithi.name;
+            document.getElementById('paksha-name').innerText = paksha;
+            document.getElementById('moon-emoji').innerText = emoji;
+
+            // Theme Update
+            const tithiCard = document.getElementById('dashboard').firstElementChild; // Tithi Card
+            if (isWaxing) {
+                tithiCard.classList.remove('krishna-paksha');
+                tithiCard.classList.add('shukla-paksha');
+            } else {
+                tithiCard.classList.remove('shukla-paksha');
+                tithiCard.classList.add('krishna-paksha');
+            }
+
+            // Progress Bar
+            const pct = Math.round(data.tithi.progress * 100);
+            document.getElementById('tithi-progress').style.width = pct + "%";
+            // Calc End time approx (Tithi avg duration 23.6 hrs)
+            const remainingHrs = (1 - data.tithi.progress) * 23.6;
+            const endTime = new Date(APP.date.getTime() + remainingHrs * 3600000);
+            document.getElementById('tithi-end-time').innerText = "Ends ~" + endTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + " (Approx)";
+
+            // Panchang Elements
+            document.getElementById('nakshatra-val').innerText = data.nakshatra.name;
+            document.getElementById('yoga-val').innerText = data.yoga.name;
+            document.getElementById('karana-val').innerText = data.karana.name;
+
+            // Sun/Moon Times & Coords
+            document.getElementById('sunrise-time').innerText = times.rise;
+            document.getElementById('sunset-time').innerText = times.set;
+            document.getElementById('coords-display').innerText = `${APP.location.lat.toFixed(2)}°N, ${APP.location.lng.toFixed(2)}°E`;
+
+            // Astro Data
+            document.getElementById('astro-jd').innerText = data.astro.jd.toFixed(2);
+            document.getElementById('astro-sun').innerText = data.astro.sun.toFixed(2) + "°";
+            document.getElementById('astro-moon').innerText = data.astro.moon.toFixed(2) + "°";
+            document.getElementById('astro-elon').innerText = data.astro.elongation.toFixed(2) + "°";
+
+            // Guide
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const dayIdx = APP.date.getDay();
+            const luckyColors = ["Red", "White", "Red", "Green", "Yellow", "White", "Blue"];
+            const deities = ["Surya", "Shiva", "Hanuman", "Ganesha", "Vishnu", "Durga", "Shani"];
+
+            document.getElementById('guide-deity').innerText = deities[dayIdx];
+            document.getElementById('guide-color').innerText = luckyColors[dayIdx];
+            document.getElementById('guide-color').style.color = luckyColors[dayIdx].toLowerCase();
+
+            // Muhurat Calculation
+            const toTimeStr = (m) => {
+                let h = Math.floor(m / 60);
+                let min = Math.floor(m % 60);
+                if (h < 0) h += 24;
+                if (h >= 24) h -= 24;
+                const ampm = h >= 12 ? 'PM' : 'AM';
+                const h12 = h % 12 || 12;
+                return `${h12.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')} ${ampm}`;
+            };
+
+            // Abhijit (Local Noon +/- 24 mins)
+            const noonMin = (times.riseMin + times.setMin) / 2;
+            const abhijitStr = `${toTimeStr(noonMin - 24)} - ${toTimeStr(noonMin + 24)}`;
+            document.getElementById('abhijit-time').innerText = abhijitStr;
+
+            // Rahu Kaal
+            // Segments 0-7 (8 parts of daylight)
+            // Sun: 8th (index 7), Mon: 2nd (index 1), Tue: 7th (index 6), Wed: 5th (index 4), Thu: 6th (index 5), Fri: 4th (index 3), Sat: 3rd (index 2)
+            const rahuIndices = [7, 1, 6, 4, 5, 3, 2]; // Sun, Mon, Tue, Wed, Thu, Fri, Sat
+            const segmentIdx = rahuIndices[dayIdx];
+            const daylightDuration = times.setMin - times.riseMin;
+            const segmentDuration = daylightDuration / 8;
+
+            const rahuStart = times.riseMin + (segmentIdx * segmentDuration);
+            const rahuEnd = rahuStart + segmentDuration;
+
+            document.getElementById('rahu-time').innerText = `${toTimeStr(rahuStart)} - ${toTimeStr(rahuEnd)}`;
+
+            // --- RENDER CALENDAR ---
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            const year = APP.date.getFullYear();
+            const month = APP.date.getMonth();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            document.getElementById('calendar-month-title').innerText = `${monthNames[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1);
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const startDay = firstDay.getDay(); // 0 = Sunday
+
+            // Padding
+            for(let i=0; i<startDay; i++) {
+                grid.innerHTML += `<div></div>`;
+            }
+
+            // Days
+            for(let d=1; d<=daysInMonth; d++) {
+                const currentDate = new Date(year, month, d);
+                const data = VedicAstro.calculatePanchang(currentDate);
+                const tithiIdx = data.tithi.index;
+
+                let extraClass = "bg-white/40";
+                let badge = "";
+
+                // Highlight Today
+                const today = new Date();
+                if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    extraClass = "today-glow bg-white";
+                }
+
+                // Tithi Styling
+                if (tithiIdx === 14) { extraClass += " tithi-purnima"; badge = "🌕"; }
+                else if (tithiIdx === 29) { extraClass += " tithi-amavasya"; badge = "🌑"; }
+                else if (tithiIdx === 10 || tithiIdx === 25) { extraClass += " tithi-ekadashi"; }
+
+                const cell = document.createElement('div');
+                cell.className = `calendar-cell rounded-lg ${extraClass}`;
+                cell.onclick = () => openModal(currentDate, data, times={rise:'--',set:'--'}); // We'll recalculate times in openModal
+
+                cell.innerHTML = `
+                    <span class="text-sm font-bold">${d}</span>
+                    <span class="text-[10px] mt-1 truncate w-full text-center px-1">${data.tithi.name}</span>
+                    <span class="absolute top-1 right-1 text-[10px]">${badge}</span>
+                `;
+
+                grid.appendChild(cell);
+            }
+        }
+
+        function openModal(date, data) {
+            // Recalculate specific details for the clicked date
+            const detailedData = VedicAstro.calculatePanchang(date);
+            const times = VedicAstro.getSunTimes(date, APP.location.lat, APP.location.lng);
+
+            const modal = document.getElementById('detail-modal');
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+            document.getElementById('modal-date').innerText = date.toLocaleDateString('en-US', options);
+            document.getElementById('modal-tithi').innerText = detailedData.tithi.name;
+            document.getElementById('modal-paksha').innerText = detailedData.tithi.index < 15 ? "Shukla Paksha" : "Krishna Paksha";
+            document.getElementById('modal-emoji').innerText = detailedData.tithi.index === 14 ? "🌕" : (detailedData.tithi.index === 29 ? "🌑" : "🌖");
+
+            document.getElementById('modal-sunrise').innerText = times.rise;
+            document.getElementById('modal-sunset').innerText = times.set;
+
+            // Festival
+            const fest = FESTIVALS[detailedData.tithi.index];
+            document.getElementById('modal-festival').innerText = fest || "None";
+            if (fest) document.getElementById('modal-festival').className = "font-bold text-red-600";
+            else document.getElementById('modal-festival').className = "font-bold text-gray-400";
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Initialize App
+        init();
+
+    </script>
+</body>
+</html>
