@@ -769,6 +769,9 @@
         </div>
 
         <div class="flex gap-3">
+          <button onclick="UtilitiesManager.openDashboard()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3 mr-2" title="Utilities">
+            <i class="fa-solid fa-layer-group text-xl"></i>
+          </button>
           <button onclick="openSettingsModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
             <span class="material-icons text-[32px]">menu</span>
           </button>
@@ -1171,6 +1174,14 @@ The word "Nua" means new and "Khai" means food.
 
                 <div class="border-t border-gray-200 pt-4 space-y-3">
                     <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Display Options</div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-gray-700">Dark Mode</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-darkmode" class="sr-only peer" onchange="toggleDarkMode(this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-800"></div>
+                        </label>
+                    </div>
                     
                     <div class="flex items-center justify-between">
                         <label class="text-sm font-bold text-gray-700">Show Festivals</label>
@@ -1622,6 +1633,17 @@ The word "Nua" means new and "Khai" means food.
             appState.config.sections[section] = isVisible;
             saveConfigToStorage();
             render();
+        }
+
+        function toggleDarkMode(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            if (!appState.config) appState.config = {};
+            appState.config.darkMode = isDark;
+            saveConfigToStorage();
         }
 
         function getUserLocation() {
@@ -2827,6 +2849,16 @@ The word "Nua" means new and "Khai" means food.
                 if (appState.config.location) {
                     // Slight delay to allow render to happen first
                     setTimeout(() => getUserLocation(), 2000);
+                }
+
+                // Apply Dark Mode
+                if (appState.config && appState.config.darkMode) {
+                    document.documentElement.classList.add('dark');
+                    // Update toggle if it exists in DOM (settings modal might be hidden but exists)
+                    setTimeout(() => {
+                        const toggle = document.getElementById('toggle-darkmode');
+                        if (toggle) toggle.checked = true;
+                    }, 100);
                 }
             }
         } catch (e) {
@@ -4863,6 +4895,793 @@ function renderCalendarGrid(data) {
                 const query = encodeURIComponent(`${title} festival significance`);
                 window.open(`https://www.google.com/search?q=${query}`, '_blank');
             }
+        }
+
+        // --- FINANCIAL CALCULATORS ENGINE ---
+        const FinancialCalculators = {
+            calculateEMI: function(principal, rate, tenureMonths) {
+                if (!principal || !rate || !tenureMonths) return null;
+                const r = rate / 12 / 100;
+                const emi = principal * r * Math.pow(1 + r, tenureMonths) / (Math.pow(1 + r, tenureMonths) - 1);
+                const totalPayment = emi * tenureMonths;
+                const totalInterest = totalPayment - principal;
+                return {
+                    emi: emi,
+                    totalPayment: totalPayment,
+                    totalInterest: totalInterest
+                };
+            },
+
+            calculateFD: function(principal, rate, months, inflationRate = 0) {
+                const r = rate / 100;
+                const t = months / 12;
+                // Quarterly compounding (Indian Standard)
+                const n = 4;
+                const maturityAmount = principal * Math.pow(1 + r/n, n * t);
+                const realValue = maturityAmount / Math.pow(1 + inflationRate/100, t);
+
+                return {
+                    invested: principal,
+                    maturity: maturityAmount,
+                    wealthGain: maturityAmount - principal,
+                    realValue: realValue
+                };
+            },
+
+            calculateRD: function(monthlyDeposit, rate, months, inflationRate = 0) {
+                const r = rate / 100;
+                const i = r / 12; // Monthly rate
+                // Monthly Compounding Formula for RD
+                const maturityAmount = monthlyDeposit * ((Math.pow(1 + i, months) - 1) / i) * (1 + i);
+                const invested = monthlyDeposit * months;
+                const t = months / 12;
+                const realValue = maturityAmount / Math.pow(1 + inflationRate/100, t);
+
+                return {
+                    invested: invested,
+                    maturity: maturityAmount,
+                    wealthGain: maturityAmount - invested,
+                    realValue: realValue
+                };
+            },
+
+            formatMoney: function(amount) {
+                if (isNaN(amount)) return "₹0";
+                return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+            },
+
+            generateEMIInflationChart: function(emi, years, inflationRate) {
+                // Returns array of { year, realValue }
+                const data = [];
+                for(let i=0; i<=years; i++) {
+                    const val = emi / Math.pow(1 + inflationRate/100, i);
+                    data.push({ year: i, value: val });
+                }
+                return data;
+            }
+        };
+
+        // --- HEALTH CALCULATOR ENGINE ---
+        const HealthCalculators = {
+            calculateBMI: function(weightKg, heightCm) {
+                const heightM = heightCm / 100;
+                const bmi = weightKg / (heightM * heightM);
+                let category = '';
+                let color = '';
+
+                if (bmi < 18.5) { category = 'Underweight'; color = 'text-blue-500'; }
+                else if (bmi < 24.9) { category = 'Normal Weight'; color = 'text-green-500'; }
+                else if (bmi < 29.9) { category = 'Overweight'; color = 'text-orange-500'; }
+                else { category = 'Obese'; color = 'text-red-500'; }
+
+                return { value: bmi.toFixed(1), category, color };
+            },
+
+            calculateBMR: function(weightKg, heightCm, age, gender) {
+                // Mifflin-St Jeor Equation
+                let bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
+                if (gender === 'male') bmr += 5;
+                else bmr -= 161;
+                return Math.round(bmr);
+            },
+
+            getCalorieNeeds: function(bmr, activityLevel) {
+                const multipliers = {
+                    sedentary: 1.2,
+                    light: 1.375,
+                    moderate: 1.55,
+                    active: 1.725,
+                    very_active: 1.9
+                };
+                return Math.round(bmr * (multipliers[activityLevel] || 1.2));
+            }
+        };
+
+        // --- UNIT CONVERTER ENGINE ---
+        const UnitConverterEngine = {
+            units: {
+                length: { 'm': 1, 'km': 1000, 'cm': 0.01, 'mm': 0.001, 'ft': 0.3048, 'in': 0.0254, 'mi': 1609.34 },
+                weight: { 'kg': 1, 'g': 0.001, 'mg': 0.000001, 'lb': 0.453592, 'oz': 0.0283495 },
+                temp: { 'c': 'c', 'f': 'f', 'k': 'k' }
+            },
+            labels: {
+                length: 'Length', weight: 'Weight', temp: 'Temperature',
+                m: 'Meters', km: 'Kilometers', cm: 'Centimeters', mm: 'Millimeters', ft: 'Feet', in: 'Inches', mi: 'Miles',
+                kg: 'Kilograms', g: 'Grams', mg: 'Milligrams', lb: 'Pounds', oz: 'Ounces',
+                c: 'Celsius', f: 'Fahrenheit', k: 'Kelvin'
+            },
+
+            convert: function(category, fromUnit, toUnit, value) {
+                if (category === 'temp') {
+                    if (fromUnit === toUnit) return value;
+                    let cel;
+                    if (fromUnit === 'c') cel = value;
+                    else if (fromUnit === 'f') cel = (value - 32) * 5/9;
+                    else if (fromUnit === 'k') cel = value - 273.15;
+
+                    if (toUnit === 'c') return cel;
+                    if (toUnit === 'f') return (cel * 9/5) + 32;
+                    if (toUnit === 'k') return cel + 273.15;
+                } else {
+                    const factors = this.units[category];
+                    const baseValue = value * factors[fromUnit];
+                    return baseValue / factors[toUnit];
+                }
+            },
+
+            getCommonUnits: function() {
+                try {
+                    return JSON.parse(localStorage.getItem('vaidik_common_units')) || [];
+                } catch { return []; }
+            },
+
+            saveCommonUnit: function(category, from, to) {
+                let common = this.getCommonUnits();
+                // Avoid duplicates
+                common = common.filter(u => !(u.category === category && u.from === from && u.to === to));
+                common.unshift({ category, from, to });
+                if (common.length > 5) common.pop();
+                localStorage.setItem('vaidik_common_units', JSON.stringify(common));
+            }
+        };
+
+        // --- UTILITIES DASHBOARD MANAGER ---
+        const UtilitiesManager = (function() {
+            let isInitialized = false;
+
+            function init() {
+                if (isInitialized) return;
+                isInitialized = true;
+            }
+
+            function openDashboard() {
+                let modal = document.getElementById('utilities-modal');
+                if (!modal) {
+                    injectModal();
+                    modal = document.getElementById('utilities-modal');
+                }
+                modal.classList.remove('modal-hidden');
+                modal.style.display = 'flex';
+                renderDashboardHome();
+                if(navigator.vibrate) navigator.vibrate(10);
+            }
+
+            function closeDashboard() {
+                const modal = document.getElementById('utilities-modal');
+                if (modal) {
+                    modal.classList.add('modal-hidden');
+                    setTimeout(() => { modal.style.display = 'none'; }, 300);
+                }
+            }
+
+            function injectModal() {
+                const modalHtml = `
+                <div id="utilities-modal" class="fixed inset-0 z-[85] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+                    <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="UtilitiesManager.closeDashboard()"></div>
+                    <div class="modal-content bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-4xl h-[80vh] relative z-10 overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 transition-colors duration-300">
+                        <!-- Header -->
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50 transition-colors duration-300">
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
+                                <i class="fa-solid fa-layer-group text-orange-500"></i> Vaidik Utilities
+                            </h2>
+                            <button onclick="UtilitiesManager.closeDashboard()" class="w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition text-gray-500 dark:text-gray-400">
+                                <i class="fa-solid fa-times text-lg"></i>
+                            </button>
+                        </div>
+
+                        <!-- Content Area -->
+                        <div id="utilities-content" class="flex-grow overflow-y-auto p-6 bg-white dark:bg-gray-900 custom-scroll relative transition-colors duration-300">
+                            <!-- Dynamic Content Injected Here -->
+                        </div>
+                    </div>
+                </div>`;
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+            }
+
+            function renderDashboardHome() {
+                const container = document.getElementById('utilities-content');
+                container.scrollTop = 0;
+                container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                    <!-- Financial Tools -->
+                    <div class="col-span-1 md:col-span-2 lg:col-span-3">
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Financial Intelligence</h3>
+                    </div>
+
+                    ${createToolCard('emi', 'EMI Calculator', 'fa-calculator', 'Calculate loan payments with inflation adjustment', 'blue')}
+                    ${createToolCard('investment', 'RD & FD Planner', 'fa-piggy-bank', 'Future value with inflation modeling', 'green')}
+
+                    <!-- Health & Life -->
+                    <div class="col-span-1 md:col-span-2 lg:col-span-3 mt-4">
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Health & Life</h3>
+                    </div>
+
+                    ${createToolCard('bmi', 'Health Intelligence', 'fa-heart-pulse', 'BMI, BMR & Calorie suggestions', 'red')}
+                    ${createToolCard('units', 'Smart Converter', 'fa-arrow-right-arrow-left', 'Unit conversion with pin support', 'purple')}
+                </div>`;
+            }
+
+            function createToolCard(id, title, icon, desc, color) {
+                const colors = {
+                    blue: 'bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40',
+                    green: 'bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/40',
+                    red: 'bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40',
+                    purple: 'bg-purple-50 text-purple-600 hover:bg-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:hover:bg-purple-900/40'
+                };
+
+                return `
+                <button onclick="UtilitiesManager.loadTool('${id}')" class="flex flex-col items-start text-left p-6 rounded-2xl transition-all hover:scale-[1.02] border border-transparent hover:border-gray-200 dark:hover:border-gray-700 shadow-sm hover:shadow-md ${colors[color]} group w-full">
+                    <div class="w-12 h-12 rounded-xl bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center mb-4 text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid ${icon}"></i>
+                    </div>
+                    <h4 class="text-lg font-bold mb-1 dark:text-white">${title}</h4>
+                    <p class="text-xs opacity-80 leading-relaxed dark:text-gray-300">${desc}</p>
+                </button>`;
+            }
+
+            function loadTool(toolId) {
+                const container = document.getElementById('utilities-content');
+                container.scrollTop = 0;
+                container.innerHTML = `<div class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-orange-500"></i><p class="mt-4 text-gray-500">Loading ${toolId}...</p></div>`;
+
+                setTimeout(() => {
+                    if (toolId === 'emi') UtilitiesManager.renderEMICalculator();
+                    else if (toolId === 'investment') UtilitiesManager.renderInvestmentCalculator();
+                    else if (toolId === 'bmi') UtilitiesManager.renderHealthCalculator();
+                    else if (toolId === 'units') UtilitiesManager.renderUnitConverter();
+                }, 50);
+            }
+
+            // --- EMI CALCULATOR UI ---
+            function renderEMICalculator() {
+                const container = document.getElementById('utilities-content');
+                container.innerHTML = `
+                <div class="max-w-2xl mx-auto animate-fade-in">
+                    <div class="flex items-center gap-4 mb-6 sticky top-0 bg-white dark:bg-gray-900 z-10 py-2">
+                        <button onclick="UtilitiesManager.renderDashboardHome()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition"><i class="fa-solid fa-arrow-left"></i></button>
+                        <h3 class="text-xl font-bold dark:text-white">EMI Calculator</h3>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Loan Amount (₹)</label>
+                                <input type="number" id="emi-amount" class="w-full p-3 text-lg font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition dark:text-white" placeholder="e.g. 500000">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Interest Rate (%)</label>
+                                    <input type="number" id="emi-rate" class="w-full p-3 font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition dark:text-white" placeholder="e.g. 8.5">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tenure (Months)</label>
+                                    <input type="number" id="emi-tenure" class="w-full p-3 font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition dark:text-white" placeholder="e.g. 60">
+                                </div>
+                            </div>
+
+                            <button onclick="UtilitiesManager.calculateEMIResult()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none transition transform active:scale-95">Calculate EMI</button>
+                        </div>
+
+                        <!-- Result Section (Hidden Initially) -->
+                        <div id="emi-result" class="hidden mt-8 pt-8 border-t border-gray-100 dark:border-gray-700">
+                            <div class="text-center mb-6">
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Monthly EMI</p>
+                                <h2 id="emi-value" class="text-4xl font-extrabold text-blue-600 dark:text-blue-400 mt-2">₹0</h2>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl text-center">
+                                    <p class="text-[10px] font-bold text-blue-400 uppercase">Total Interest</p>
+                                    <p id="emi-interest" class="text-lg font-bold text-blue-800 dark:text-blue-200">₹0</p>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-xl text-center">
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase">Total Payment</p>
+                                    <p id="emi-total" class="text-lg font-bold text-gray-800 dark:text-gray-200">₹0</p>
+                                </div>
+                            </div>
+
+                            <!-- Inflation Section -->
+                            <div class="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-5 border border-orange-100 dark:border-orange-800/30">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-sm font-bold text-orange-800 dark:text-orange-300 flex items-center gap-2"><i class="fa-solid fa-chart-line"></i> Inflation Impact</h4>
+                                    <div class="flex items-center gap-2">
+                                        <label class="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase">Rate:</label>
+                                        <input type="number" id="emi-inflation-rate" value="6" class="w-12 p-1 text-center text-xs font-bold rounded border border-orange-200 dark:border-orange-700 dark:bg-gray-800 dark:text-white" onchange="UtilitiesManager.updateEMIInflation()">
+                                        <span class="text-xs text-orange-600 dark:text-orange-400 font-bold">%</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-orange-700 dark:text-orange-200/70 leading-relaxed mb-3">
+                                    This chart shows how the <strong>real purchasing power</strong> of your fixed EMI amount decreases over time due to inflation.
+                                </p>
+                                <div id="emi-chart-container" class="h-32 flex items-end gap-1 justify-between pt-4 pb-1"></div>
+                                <div class="flex justify-between text-[9px] text-orange-400 font-bold uppercase mt-1">
+                                    <span>Year 1</span>
+                                    <span>End of Tenure</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            function calculateEMIResult() {
+                const P = parseFloat(document.getElementById('emi-amount').value);
+                const R = parseFloat(document.getElementById('emi-rate').value);
+                const N = parseFloat(document.getElementById('emi-tenure').value);
+
+                const result = FinancialCalculators.calculateEMI(P, R, N);
+
+                if (result) {
+                    document.getElementById('emi-result').classList.remove('hidden');
+                    document.getElementById('emi-value').innerText = FinancialCalculators.formatMoney(Math.round(result.emi));
+                    document.getElementById('emi-interest').innerText = FinancialCalculators.formatMoney(Math.round(result.totalInterest));
+                    document.getElementById('emi-total').innerText = FinancialCalculators.formatMoney(Math.round(result.totalPayment));
+
+                    updateEMIInflation(result.emi, N);
+                    if(navigator.vibrate) navigator.vibrate(20);
+                }
+            }
+
+            function updateEMIInflation(emiVal, months) {
+                if (!emiVal) {
+                    const P = parseFloat(document.getElementById('emi-amount').value);
+                    const R = parseFloat(document.getElementById('emi-rate').value);
+                    const N = parseFloat(document.getElementById('emi-tenure').value);
+                    const res = FinancialCalculators.calculateEMI(P, R, N);
+                    if(res) {
+                        emiVal = res.emi;
+                        months = N;
+                    } else return;
+                }
+
+                const inflationRate = parseFloat(document.getElementById('emi-inflation-rate').value) || 6;
+                const years = Math.ceil(months / 12);
+                const chartData = FinancialCalculators.generateEMIInflationChart(emiVal, years, inflationRate);
+
+                const container = document.getElementById('emi-chart-container');
+                container.innerHTML = '';
+
+                const maxVal = chartData[0].value;
+
+                chartData.forEach((d, i) => {
+                    if (years > 10 && i % Math.ceil(years/10) !== 0 && i !== years) return;
+
+                    const heightPct = (d.value / maxVal) * 100;
+                    const bar = document.createElement('div');
+                    bar.className = "w-full bg-orange-400 hover:bg-orange-500 transition-all rounded-t-sm relative group";
+                    bar.style.height = `${heightPct}%`;
+                    bar.innerHTML = `<div class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-black text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 pointer-events-none">Yr ${d.year}: ₹${Math.round(d.value).toLocaleString()}</div>`;
+                    container.appendChild(bar);
+                });
+            }
+
+            // --- INVESTMENT CALCULATOR UI ---
+            function renderInvestmentCalculator() {
+                const container = document.getElementById('utilities-content');
+                container.innerHTML = `
+                <div class="max-w-2xl mx-auto animate-fade-in">
+                    <div class="flex items-center gap-4 mb-6 sticky top-0 bg-white dark:bg-gray-900 z-10 py-2">
+                        <button onclick="UtilitiesManager.renderDashboardHome()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition"><i class="fa-solid fa-arrow-left"></i></button>
+                        <h3 class="text-xl font-bold dark:text-white">RD & FD Planner</h3>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <!-- Tabs -->
+                        <div class="flex p-1 bg-gray-100 dark:bg-gray-900 rounded-xl mb-6">
+                            <button onclick="UtilitiesManager.switchInvestTab('fd')" id="tab-fd" class="flex-1 py-2 rounded-lg text-sm font-bold shadow-sm bg-white dark:bg-gray-700 text-green-700 dark:text-green-400 transition">Fixed Deposit (FD)</button>
+                            <button onclick="UtilitiesManager.switchInvestTab('rd')" id="tab-rd" class="flex-1 py-2 rounded-lg text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 transition">Recurring Deposit (RD)</button>
+                        </div>
+
+                        <div class="space-y-5">
+                            <div>
+                                <label id="invest-amount-label" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Investment (₹)</label>
+                                <input type="number" id="inv-amount" class="w-full p-3 text-lg font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition dark:text-white" placeholder="e.g. 100000">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Interest Rate (%)</label>
+                                    <input type="number" id="inv-rate" class="w-full p-3 font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition dark:text-white" placeholder="e.g. 7.1">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Period (Months)</label>
+                                    <input type="number" id="inv-months" class="w-full p-3 font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition dark:text-white" placeholder="e.g. 12">
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 mt-2">
+                                <input type="checkbox" id="inv-inflation-toggle" class="w-4 h-4 text-green-600 rounded focus:ring-green-500 cursor-pointer">
+                                <label for="inv-inflation-toggle" class="text-sm text-gray-600 dark:text-gray-300 font-medium cursor-pointer">Adjust for Inflation</label>
+                                <input type="number" id="inv-inflation-rate" value="6" class="w-12 p-1 text-xs text-center border rounded ml-auto dark:bg-gray-900 dark:border-gray-700 dark:text-white" disabled>
+                                <span class="text-xs text-gray-500">%</span>
+                            </div>
+
+                            <button onclick="UtilitiesManager.calculateInvestResult()" class="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-200 dark:shadow-none transition transform active:scale-95">Calculate Maturity</button>
+                        </div>
+
+                        <!-- Result Section -->
+                        <div id="inv-result" class="hidden mt-8 pt-8 border-t border-gray-100 dark:border-gray-700">
+                            <div class="text-center mb-6">
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Maturity Value</p>
+                                <h2 id="inv-maturity" class="text-4xl font-extrabold text-green-600 dark:text-green-400 mt-2">₹0</h2>
+                                <p id="inv-real-val-label" class="hidden text-xs text-red-500 font-bold mt-1">Real Value: <span id="inv-real-val"></span></p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-xl text-center">
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase">Invested Amount</p>
+                                    <p id="inv-invested" class="text-lg font-bold text-gray-800 dark:text-gray-200">₹0</p>
+                                </div>
+                                <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl text-center">
+                                    <p class="text-[10px] font-bold text-green-400 uppercase">Wealth Gained</p>
+                                    <p id="inv-gain" class="text-lg font-bold text-green-800 dark:text-green-200">₹0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+                setTimeout(() => {
+                    const toggle = document.getElementById('inv-inflation-toggle');
+                    const rateInput = document.getElementById('inv-inflation-rate');
+                    if(toggle && rateInput) {
+                        toggle.addEventListener('change', (e) => {
+                            rateInput.disabled = !e.target.checked;
+                            if(document.getElementById('inv-result').classList.contains('hidden') === false) {
+                                calculateInvestResult();
+                            }
+                        });
+                    }
+                }, 100);
+            }
+
+            let currentInvestType = 'fd';
+
+            function switchInvestTab(type) {
+                currentInvestType = type;
+                const tabFd = document.getElementById('tab-fd');
+                const tabRd = document.getElementById('tab-rd');
+                const label = document.getElementById('invest-amount-label');
+
+                if (type === 'fd') {
+                    tabFd.className = "flex-1 py-2 rounded-lg text-sm font-bold shadow-sm bg-white dark:bg-gray-700 text-green-700 dark:text-green-400 transition";
+                    tabRd.className = "flex-1 py-2 rounded-lg text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 transition";
+                    label.innerText = "Total Investment (₹)";
+                } else {
+                    tabRd.className = "flex-1 py-2 rounded-lg text-sm font-bold shadow-sm bg-white dark:bg-gray-700 text-green-700 dark:text-green-400 transition";
+                    tabFd.className = "flex-1 py-2 rounded-lg text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-gray-700 transition";
+                    label.innerText = "Monthly Deposit (₹)";
+                }
+
+                document.getElementById('inv-result').classList.add('hidden');
+            }
+
+            function calculateInvestResult() {
+                const P = parseFloat(document.getElementById('inv-amount').value);
+                const R = parseFloat(document.getElementById('inv-rate').value);
+                const M = parseFloat(document.getElementById('inv-months').value);
+                const isInflation = document.getElementById('inv-inflation-toggle').checked;
+                const inflationRate = isInflation ? parseFloat(document.getElementById('inv-inflation-rate').value) : 0;
+
+                if (!P || !R || !M) return;
+
+                let res;
+                if (currentInvestType === 'fd') {
+                    res = FinancialCalculators.calculateFD(P, R, M, inflationRate);
+                } else {
+                    res = FinancialCalculators.calculateRD(P, R, M, inflationRate);
+                }
+
+                document.getElementById('inv-result').classList.remove('hidden');
+                document.getElementById('inv-maturity').innerText = FinancialCalculators.formatMoney(Math.round(res.maturity));
+                document.getElementById('inv-invested').innerText = FinancialCalculators.formatMoney(Math.round(res.invested));
+                document.getElementById('inv-gain').innerText = FinancialCalculators.formatMoney(Math.round(res.wealthGain));
+
+                const realLabel = document.getElementById('inv-real-val-label');
+                const realVal = document.getElementById('inv-real-val');
+
+                if (isInflation) {
+                    realLabel.classList.remove('hidden');
+                    realVal.innerText = FinancialCalculators.formatMoney(Math.round(res.realValue));
+                } else {
+                    realLabel.classList.add('hidden');
+                }
+                if(navigator.vibrate) navigator.vibrate(20);
+            }
+
+            // --- HEALTH CALCULATOR UI ---
+            let healthState = { step: 1, gender: 'male', age: 25, height: 170, weight: 70 };
+
+            function renderHealthCalculator() {
+                healthState.step = 1;
+                renderHealthStep();
+            }
+
+            function renderHealthStep() {
+                const container = document.getElementById('utilities-content');
+                let content = '';
+
+                if (healthState.step === 1) {
+                    content = `
+                    <div class="max-w-xl mx-auto animate-fade-in text-center">
+                        <h3 class="text-xl font-bold dark:text-white mb-6">Step 1: Basics</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <button onclick="UtilitiesManager.setHealthGender('male')" class="p-6 rounded-2xl border-2 ${healthState.gender === 'male' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-200 dark:border-gray-700'} transition hover:border-blue-300">
+                                <i class="fa-solid fa-person text-4xl mb-2 ${healthState.gender === 'male' ? 'text-blue-600' : 'text-gray-400'}"></i>
+                                <div class="font-bold dark:text-white">Male</div>
+                            </button>
+                            <button onclick="UtilitiesManager.setHealthGender('female')" class="p-6 rounded-2xl border-2 ${healthState.gender === 'female' ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/30' : 'border-gray-200 dark:border-gray-700'} transition hover:border-pink-300">
+                                <i class="fa-solid fa-person-dress text-4xl mb-2 ${healthState.gender === 'female' ? 'text-pink-600' : 'text-gray-400'}"></i>
+                                <div class="font-bold dark:text-white">Female</div>
+                            </button>
+                        </div>
+                        <div class="mb-8">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Age (Years)</label>
+                            <div class="flex items-center justify-center gap-4">
+                                <button onclick="document.getElementById('h-age').stepDown()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 font-bold text-xl">-</button>
+                                <input type="number" id="h-age" value="${healthState.age}" class="w-20 text-center text-2xl font-bold bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none dark:text-white">
+                                <button onclick="document.getElementById('h-age').stepUp()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 font-bold text-xl">+</button>
+                            </div>
+                        </div>
+                        <button onclick="UtilitiesManager.nextHealthStep()" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition transform active:scale-95">Next <i class="fa-solid fa-arrow-right ml-2"></i></button>
+                    </div>`;
+                } else if (healthState.step === 2) {
+                    content = `
+                    <div class="max-w-xl mx-auto animate-fade-in text-center">
+                        <button onclick="UtilitiesManager.prevHealthStep()" class="mb-4 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-gray-300"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                        <h3 class="text-xl font-bold dark:text-white mb-6">Step 2: Measurements</h3>
+
+                        <div class="space-y-6 mb-8">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Height (cm)</label>
+                                <input type="range" id="h-height-range" min="100" max="250" value="${healthState.height}" class="w-full accent-blue-600" oninput="document.getElementById('h-height').value = this.value">
+                                <input type="number" id="h-height" value="${healthState.height}" class="mt-2 w-24 text-center text-2xl font-bold bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none dark:text-white" oninput="document.getElementById('h-height-range').value = this.value">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Weight (kg)</label>
+                                <div class="flex items-center justify-center gap-4">
+                                    <button onclick="document.getElementById('h-weight').stepDown()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 font-bold text-xl">-</button>
+                                    <input type="number" id="h-weight" value="${healthState.weight}" class="w-24 text-center text-2xl font-bold bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none dark:text-white">
+                                    <button onclick="document.getElementById('h-weight').stepUp()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 font-bold text-xl">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="UtilitiesManager.calcHealthResult()" class="px-8 py-3 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition transform active:scale-95">Calculate</button>
+                    </div>`;
+                } else if (healthState.step === 3) {
+                    const bmi = HealthCalculators.calculateBMI(healthState.weight, healthState.height);
+                    const bmr = HealthCalculators.calculateBMR(healthState.weight, healthState.height, healthState.age, healthState.gender);
+
+                    content = `
+                    <div class="max-w-2xl mx-auto animate-fade-in">
+                        <div class="flex items-center justify-between mb-6">
+                            <button onclick="UtilitiesManager.renderHealthCalculator()" class="text-sm font-bold text-blue-500 hover:underline"><i class="fa-solid fa-rotate-right"></i> Recalculate</button>
+                            <button onclick="UtilitiesManager.renderDashboardHome()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><i class="fa-solid fa-times"></i></button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- BMI Card -->
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 text-center relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-green-400"></div>
+                                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Your BMI</h4>
+                                <div class="text-5xl font-extrabold ${bmi.color} mb-1">${bmi.value}</div>
+                                <div class="text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 inline-block px-3 py-1 rounded-full">${bmi.category}</div>
+                            </div>
+
+                            <!-- BMR Card -->
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 text-center relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 to-red-400"></div>
+                                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">BMR / Metabolism</h4>
+                                <div class="text-4xl font-extrabold text-gray-800 dark:text-white mb-1">${bmr} <span class="text-sm text-gray-400 font-medium">kcal/day</span></div>
+                                <p class="text-xs text-gray-500 mt-2">Base calories burned at rest</p>
+                            </div>
+                        </div>
+
+                        <!-- Calorie Suggestions -->
+                        <div class="mt-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-5">
+                            <h4 class="text-sm font-bold text-gray-600 dark:text-gray-300 mb-4 flex items-center gap-2"><i class="fa-solid fa-utensils"></i> Daily Calorie Needs</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Sedentary (Little exercise)</span>
+                                    <span class="font-bold text-gray-800 dark:text-white">${HealthCalculators.getCalorieNeeds(bmr, 'sedentary')} kcal</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Moderate (Exercise 3-5 days)</span>
+                                    <span class="font-bold text-green-600">${HealthCalculators.getCalorieNeeds(bmr, 'moderate')} kcal</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500">Very Active (Hard exercise)</span>
+                                    <span class="font-bold text-gray-800 dark:text-white">${HealthCalculators.getCalorieNeeds(bmr, 'very_active')} kcal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+
+                container.innerHTML = content;
+            }
+
+            function setHealthGender(g) { healthState.gender = g; renderHealthStep(); }
+            function nextHealthStep() {
+                healthState.age = parseInt(document.getElementById('h-age').value) || 25;
+                healthState.step++;
+                renderHealthStep();
+            }
+            function prevHealthStep() { healthState.step--; renderHealthStep(); }
+            function calcHealthResult() {
+                healthState.height = parseInt(document.getElementById('h-height').value) || 170;
+                healthState.weight = parseInt(document.getElementById('h-weight').value) || 70;
+                healthState.step++;
+                renderHealthStep();
+                if(navigator.vibrate) navigator.vibrate(20);
+            }
+
+            // --- UNIT CONVERTER UI ---
+            let unitState = { category: 'length', from: 'm', to: 'ft' };
+
+            function renderUnitConverter() {
+                const container = document.getElementById('utilities-content');
+                const common = UnitConverterEngine.getCommonUnits();
+                const labels = UnitConverterEngine.labels;
+                const units = Object.keys(UnitConverterEngine.units[unitState.category]);
+
+                let commonHtml = '';
+                if (common.length > 0) {
+                    commonHtml = `<div class="mb-6 flex gap-2 overflow-x-auto pb-2 custom-scroll">`;
+                    common.forEach(c => {
+                        commonHtml += `
+                        <button onclick="UtilitiesManager.loadCommonUnit('${c.category}', '${c.from}', '${c.to}')" class="flex-shrink-0 px-3 py-1.5 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-bold border border-purple-100 dark:border-purple-800 hover:bg-purple-100 transition whitespace-nowrap">
+                            ${labels[c.from]} <i class="fa-solid fa-arrow-right text-[10px] mx-1"></i> ${labels[c.to]}
+                        </button>`;
+                    });
+                    commonHtml += `</div>`;
+                }
+
+                container.innerHTML = `
+                <div class="max-w-xl mx-auto animate-fade-in">
+                    <div class="flex items-center gap-4 mb-4 sticky top-0 bg-white dark:bg-gray-900 z-10 py-2">
+                        <button onclick="UtilitiesManager.renderDashboardHome()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition"><i class="fa-solid fa-arrow-left"></i></button>
+                        <h3 class="text-xl font-bold dark:text-white">Smart Converter</h3>
+                    </div>
+
+                    ${commonHtml}
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <!-- Category Tabs -->
+                        <div class="flex justify-center gap-4 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
+                            ${['length', 'weight', 'temp'].map(cat => `
+                                <button onclick="UtilitiesManager.setUnitCategory('${cat}')" class="text-sm font-bold uppercase tracking-wider px-2 py-1 ${unitState.category === cat ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-400 hover:text-gray-600'} transition">
+                                    ${labels[cat]}
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Input Group -->
+                            <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-xs font-bold text-gray-500 uppercase">From</label>
+                                    <select id="unit-from" onchange="UtilitiesManager.updateUnitState('from', this.value)" class="bg-transparent text-xs font-bold text-purple-600 outline-none cursor-pointer">
+                                        ${units.map(u => `<option value="${u}" ${unitState.from === u ? 'selected' : ''}>${labels[u]}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <input type="number" id="unit-val-in" class="w-full bg-transparent text-3xl font-bold text-gray-800 dark:text-white outline-none placeholder-gray-300" placeholder="0" oninput="UtilitiesManager.calcConversion()">
+                            </div>
+
+                            <div class="flex justify-center -my-3 relative z-10">
+                                <button onclick="UtilitiesManager.swapUnits()" class="w-10 h-10 rounded-full bg-purple-600 text-white shadow-lg flex items-center justify-center hover:scale-110 transition"><i class="fa-solid fa-arrow-down"></i></button>
+                            </div>
+
+                            <!-- Output Group -->
+                            <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-xs font-bold text-purple-400 uppercase">To</label>
+                                    <select id="unit-to" onchange="UtilitiesManager.updateUnitState('to', this.value)" class="bg-transparent text-xs font-bold text-purple-600 outline-none cursor-pointer">
+                                        ${units.map(u => `<option value="${u}" ${unitState.to === u ? 'selected' : ''}>${labels[u]}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <input type="text" id="unit-val-out" class="w-full bg-transparent text-3xl font-bold text-purple-800 dark:text-purple-200 outline-none" readonly value="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            function setUnitCategory(cat) {
+                unitState.category = cat;
+                const keys = Object.keys(UnitConverterEngine.units[cat]);
+                unitState.from = keys[0];
+                unitState.to = keys[1] || keys[0];
+                renderUnitConverter();
+            }
+
+            function updateUnitState(key, val) {
+                unitState[key] = val;
+                calcConversion();
+                UnitConverterEngine.saveCommonUnit(unitState.category, unitState.from, unitState.to);
+            }
+
+            function swapUnits() {
+                const temp = unitState.from;
+                unitState.from = unitState.to;
+                unitState.to = temp;
+                renderUnitConverter();
+                const inputVal = document.getElementById('unit-val-in').value;
+                if(inputVal) {
+                    document.getElementById('unit-val-in').value = inputVal;
+                    calcConversion();
+                }
+            }
+
+            function calcConversion() {
+                const val = parseFloat(document.getElementById('unit-val-in').value);
+                if (isNaN(val)) {
+                    document.getElementById('unit-val-out').value = '0';
+                    return;
+                }
+                const result = UnitConverterEngine.convert(unitState.category, unitState.from, unitState.to, val);
+                document.getElementById('unit-val-out').value = parseFloat(result.toFixed(4));
+            }
+
+            function loadCommonUnit(cat, from, to) {
+                unitState = { category: cat, from, to };
+                renderUnitConverter();
+            }
+
+            return {
+                init,
+                openDashboard,
+                closeDashboard,
+                loadTool,
+                renderDashboardHome,
+                renderEMICalculator,
+                calculateEMIResult,
+                updateEMIInflation,
+                renderInvestmentCalculator,
+                switchInvestTab,
+                calculateInvestResult,
+                renderHealthCalculator,
+                setHealthGender,
+                nextHealthStep,
+                prevHealthStep,
+                calcHealthResult,
+                renderUnitConverter,
+                setUnitCategory,
+                updateUnitState,
+                swapUnits,
+                calcConversion,
+                loadCommonUnit
+            };
+        })();
+
+        // --- PWA REGISTRATION ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(err => console.log('SW failed', err));
+            });
         }
 
     </script>
