@@ -1166,7 +1166,7 @@ The word "Nua" means new and "Khai" means food.
                         <option value="ml">Malayalam (മലയാളം)</option>
                         <option value="as">Assamese (অসমীয়া)</option>
                     </select>
-                    <p class="text-[10px] text-gray-400 mt-1 italic">Note: Downloaded app will only include the selected language.</p>
+                    <p class="text-[10px] text-gray-400 mt-1 italic">Note: Downloaded app will include all languages.</p>
                 </div>
 
                 <div class="border-t border-gray-200 pt-4 space-y-3">
@@ -4902,24 +4902,16 @@ function renderCalendarGrid(data) {
             dataScript.textContent = `window.exportedData = ${JSON.stringify(skeletonState)};`;
             clone.querySelector('body').prepend(dataScript);
 
-            // Language Optimization
-            const currentLang = appState.config.language || 'en';
-            let optimizedLangData = {};
-            if (langData['en']) optimizedLangData['en'] = langData['en'];
-            if (currentLang !== 'en' && langData[currentLang]) {
-                optimizedLangData[currentLang] = langData[currentLang];
-            }
-
+            // Include ALL languages in download
             let htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
-            const langDataRegex = /const langData = \{[\s\S]*?\};/;
-            const newLangDataStr = `const langData = ${JSON.stringify(optimizedLangData)};`;
-            htmlContent = htmlContent.replace(langDataRegex, newLangDataStr);
+
+            // We do NOT replace langData anymore, ensuring full dictionary is preserved.
 
             const blob = new Blob([htmlContent], { type: "text/html" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Panchang_App_${currentLang.toUpperCase()}.html`;
+            a.download = `Panchang_App_Universal.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
