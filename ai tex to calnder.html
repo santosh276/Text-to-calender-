@@ -1762,6 +1762,12 @@ The word "Nua" means new and "Khai" means food.
         }
 
         const editor = document.getElementById('editor');
+
+        const DEFAULT_SYNC_LINKS = {
+            en: "", hi: "", or: "", bn: "", mr: "", gu: "",
+            pa: "", ta: "", te: "", kn: "", ml: "", as: ""
+        };
+
         let appState = {
             activeMonthIndex: 0,
             monthsData: [],
@@ -1780,7 +1786,7 @@ The word "Nua" means new and "Khai" means food.
                 language: 'en', 
                 location: null,
                 sections: { festivals: true, panchang: true },
-                syncLinks: {}
+                syncLinks: { ...DEFAULT_SYNC_LINKS }
             }
         };
         
@@ -2115,7 +2121,7 @@ The word "Nua" means new and "Khai" means food.
             const lang = document.getElementById('sync-lang-select').value;
             const url = document.getElementById('sync-link-input').value.trim();
 
-            if (!appState.config.syncLinks) appState.config.syncLinks = {};
+            if (!appState.config.syncLinks) appState.config.syncLinks = { ...DEFAULT_SYNC_LINKS };
 
             if (url) {
                 appState.config.syncLinks[lang] = url;
@@ -2890,9 +2896,9 @@ The word "Nua" means new and "Khai" means food.
             if (savedConfig) {
                 const parsed = JSON.parse(savedConfig);
                 // Merge saved config into defaults
-                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: {} };
+                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
                 appState.config = { ...appState.config, ...parsed };
-                if (!appState.config.syncLinks) appState.config.syncLinks = {};
+                if (!appState.config.syncLinks) appState.config.syncLinks = { ...DEFAULT_SYNC_LINKS };
                 
                 // If location exists, trigger a silent update to refresh it
                 if (appState.config.location) {
@@ -2920,8 +2926,8 @@ The word "Nua" means new and "Khai" means food.
             let currentSeasonIdx = -1;
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
-            let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: {} };
-            if (!tempConfig.syncLinks) tempConfig.syncLinks = {};
+            let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
+            if (!tempConfig.syncLinks) tempConfig.syncLinks = { ...DEFAULT_SYNC_LINKS };
 
             // Reset viewDate only if we don't have one, or maybe we want to keep current view?
             // For now, let's keep current view logic separate, but init default month just in case.
