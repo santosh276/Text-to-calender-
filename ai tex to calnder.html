@@ -1190,7 +1190,7 @@ The word "Nua" means new and "Khai" means food.
 
                 </div>
 
-                <div class="border-t border-gray-200 pt-4 space-y-3">
+                <div id="container-sync-settings" class="border-t border-gray-200 pt-4 space-y-3">
                     <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sync Settings</div>
                     
                     <div id="container-sync-docs" class="flex items-center justify-between">
@@ -1211,7 +1211,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
 
                 <!-- Language Specific Links -->
-                <div class="border-t border-gray-200 pt-4 mt-4 space-y-3">
+                <div id="container-lang-links" class="border-t border-gray-200 pt-4 mt-4 space-y-3">
                     <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Language Specific Links</div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Select Language to Configure</label>
@@ -2052,11 +2052,25 @@ The word "Nua" means new and "Khai" means food.
         function openSettingsModal() {
             document.getElementById('language-select').value = appState.config.language || 'en';
             
-            // Environment Check: Hide Docs Sync in App Mode
+            // Environment Check: Hide Sync Settings in App Mode (User View)
             const isEditor = !!document.getElementById('editor');
-            const docsContainer = document.getElementById('container-sync-docs');
-            if (docsContainer) {
-                docsContainer.style.display = isEditor ? 'flex' : 'none';
+
+            const syncSettingsContainer = document.getElementById('container-sync-settings');
+            const langLinksContainer = document.getElementById('container-lang-links');
+
+            if (!isEditor) {
+                 // App Mode: Hide everything
+                 if(syncSettingsContainer) syncSettingsContainer.style.display = 'none';
+                 if(langLinksContainer) langLinksContainer.style.display = 'none';
+            } else {
+                 // Editor Mode: Show everything (and handle Docs Sync logic)
+                 if(syncSettingsContainer) syncSettingsContainer.style.display = 'block';
+                 if(langLinksContainer) langLinksContainer.style.display = 'block';
+
+                 const docsContainer = document.getElementById('container-sync-docs');
+                 if (docsContainer) {
+                     docsContainer.style.display = 'flex'; // Docs sync is editor-only feature
+                 }
             }
 
             // Update toggle state
