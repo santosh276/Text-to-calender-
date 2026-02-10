@@ -1768,6 +1768,17 @@ The word "Nua" means new and "Khai" means food.
             pa: "", ta: "", te: "", kn: "", ml: "", as: ""
         };
 
+        const LinkSecurity = {
+            encrypt: (s) => {
+                if (!s) return "";
+                try { return btoa(s).split('').reverse().join(''); } catch(e) { return s; }
+            },
+            decrypt: (s) => {
+                if (!s) return "";
+                try { return atob(s.split('').reverse().join('')); } catch(e) { return s; }
+            }
+        };
+
         let appState = {
             activeMonthIndex: 0,
             monthsData: [],
@@ -2109,8 +2120,11 @@ The word "Nua" means new and "Khai" means food.
 
             // Auto-Switch Live Sync Link if configured
             if (appState.config.syncLinks && appState.config.syncLinks[langCode]) {
-                const link = appState.config.syncLinks[langCode];
+                let link = appState.config.syncLinks[langCode];
                 if (link) {
+                    if (appState.config.linksEncrypted) {
+                        link = LinkSecurity.decrypt(link);
+                    }
                     appState.config.liveUrl = link;
                     appState.config.syncGitHubUrl = link;
                     fetchGitHubData(link, true);
@@ -4883,6 +4897,13 @@ function renderCalendarGrid(data) {
             const navBtn = clone.querySelector('#download-btn'); 
             if(navBtn) navBtn.remove();
 
+            // SECURITY: Remove Settings Sections from Downloaded HTML
+            const syncSettings = clone.querySelector('#container-sync-settings');
+            if(syncSettings) syncSettings.remove();
+
+            const langLinks = clone.querySelector('#container-lang-links');
+            if(langLinks) langLinks.remove();
+
             // Inject Loading Screen
             const loaderHtml = `
             <div id="app-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm pointer-events-none transition-opacity duration-500">
@@ -4898,6 +4919,17 @@ function renderCalendarGrid(data) {
             loaderDiv.innerHTML = loaderHtml;
             body.prepend(loaderDiv.firstElementChild);
 
+            // Encrypt Configuration for Export
+            const exportConfig = JSON.parse(JSON.stringify(appState.config));
+            if (exportConfig.syncLinks) {
+                Object.keys(exportConfig.syncLinks).forEach(k => {
+                    if(exportConfig.syncLinks[k]) {
+                        exportConfig.syncLinks[k] = LinkSecurity.encrypt(exportConfig.syncLinks[k]);
+                    }
+                });
+                exportConfig.linksEncrypted = true;
+            }
+
             // Skeleton State (No Data)
             const skeletonState = {
                 activeMonthIndex: 0,
@@ -4906,7 +4938,7 @@ function renderCalendarGrid(data) {
                 details: {},
                 customSeasonDescriptions: {},
                 images: {},
-                config: appState.config // Keep config!
+                config: exportConfig // Use encrypted config
             };
 
             const title = clone.querySelector('title');
