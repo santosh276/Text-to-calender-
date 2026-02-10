@@ -2136,7 +2136,10 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function updateSyncLinkInput() {
-            const lang = document.getElementById('sync-lang-select').value;
+            const langEl = document.getElementById('sync-lang-select');
+            if (!langEl) return; // Exit if elements don't exist (e.g., in downloaded app)
+
+            const lang = langEl.value;
             const input = document.getElementById('sync-link-input');
             if (appState.config.syncLinks && appState.config.syncLinks[lang]) {
                 input.value = appState.config.syncLinks[lang];
@@ -2146,7 +2149,10 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function saveSyncLink() {
-            const lang = document.getElementById('sync-lang-select').value;
+            const langEl = document.getElementById('sync-lang-select');
+            if (!langEl) return;
+
+            const lang = langEl.value;
             const url = document.getElementById('sync-link-input').value.trim();
 
             if (!appState.config.syncLinks) appState.config.syncLinks = { ...DEFAULT_SYNC_LINKS };
