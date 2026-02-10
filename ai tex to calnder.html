@@ -370,6 +370,27 @@
             transition: opacity 0.2s ease-in, transform 0.2s ease-in;
         }
 
+        /* Default (Desktop) - Keep slide from right */
+        @media (min-width: 768px) {
+            #settings-modal .modal-content { transform: translateX(100%); }
+            #settings-modal.is-open .modal-content { transform: translateX(0); }
+        }
+
+        /* Mobile - Slide from Bottom */
+        @media (max-width: 767px) {
+            #settings-modal .modal-content {
+                transform: translateY(100%); /* Start below screen */
+                border-radius: 24px 24px 0 0 !important; /* Round top corners only */
+                height: 85vh !important; /* Don't cover full screen */
+                position: absolute;
+                bottom: 0;
+            }
+
+            #settings-modal.is-open .modal-content {
+                transform: translateY(0);
+            }
+        }
+
         /* Rich Content Styling */
         .rich-content h3 {
             font-weight: 800;
@@ -2320,13 +2341,17 @@ The word "Nua" means new and "Khai" means food.
 
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
-            setTimeout(() => modal.classList.remove('modal-hidden'), 10);
+            setTimeout(() => {
+                modal.classList.remove('modal-hidden');
+                modal.classList.add('is-open');
+            }, 10);
         }
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
+            modal.classList.remove('is-open');
             modal.classList.add('modal-hidden');
-            // Timeout matches the 0.2s CSS transition + slight buffer
-            setTimeout(() => modal.style.display = 'none', 220);
+            // Timeout matches the 0.3s CSS transition + slight buffer
+            setTimeout(() => modal.style.display = 'none', 300);
         }
         function changeLanguage(langCode) {
             appState.config.language = langCode;
