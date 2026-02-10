@@ -367,7 +367,14 @@
             transform: scale(0.98);
             pointer-events: none;
             /* Faster opacity fade, simpler transform to reduce repaints */
-            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+            transition: opacity 0.2s ease-in, transform 0.2s ease-in, border-color 0.15s ease-in;
+            border-color: transparent !important;
+        }
+
+        /* Ensure header border fades out quickly too */
+        .modal-hidden .glass-header {
+            border-color: transparent !important;
+            transition: border-color 0.15s ease-in;
         }
 
         /* Rich Content Styling */
