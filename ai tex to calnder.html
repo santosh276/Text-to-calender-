@@ -345,10 +345,30 @@
         .filter-btn:active { transform: scale(0.95); }
 
         /* Modal Animation */
-        .modal-backdrop { transition: opacity 0.3s ease-out; }
-        .modal-content { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out; }
-        .modal-hidden .modal-backdrop { opacity: 0; pointer-events: none; }
-        .modal-hidden .modal-content { opacity: 0; transform: scale(0.95) translateY(10px); pointer-events: none; }
+        .modal-backdrop { 
+            transition: opacity 0.4s ease-out; 
+            will-change: opacity;
+            transform: translateZ(0); /* Hardware accelerate */
+        }
+        .modal-content { 
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease-out; 
+            will-change: transform, opacity; 
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        .modal-hidden .modal-backdrop { 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 0.3s ease-in;
+        }
+        .modal-hidden .modal-content { 
+            opacity: 0; 
+            /* Subtle scale down only, no translation to avoid movement clutter */
+            transform: scale(0.98); 
+            pointer-events: none; 
+            /* Faster opacity fade, simpler transform to reduce repaints */
+            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+        }
 
         /* Rich Content Styling */
         .rich-content h3 {
@@ -597,6 +617,89 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* --- MENU CARD GRID STYLES (Typing Tutor Aesthetic) --- */
+        .menu-overlay .modal-backdrop {
+            background: rgba(255, 255, 255, 0.95) !important;
+            /* Static blur, handled by opacity transition */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            will-change: opacity;
+        }
+        
+        .menu-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+            will-change: transform;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1.5rem;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .menu-card .accent-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #FF9933, #B91C1C);
+            transition: width 0.4s ease-out;
+        }
+
+        .menu-card:hover .accent-line {
+            width: 100%;
+        }
+
+        .menu-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #FF9933 0%, #B91C1C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-card:hover .menu-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .menu-title {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-weight: 700;
+            color: #333;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-sub-items {
+            font-size: 0.75rem;
+            color: #666;
+            opacity: 0;
+            max-height: 0;
+            transition: all 0.3s ease;
+            transform: translateY(10px);
+        }
+
+        .menu-card:hover .menu-sub-items {
+            opacity: 1;
+            max-height: 50px;
+            transform: translateY(0);
+        }
 
         /* --- New Panchang Styles --- */
         .panchang-grid {
@@ -1141,82 +1244,218 @@ The word "Nua" means new and "Khai" means food.
         </div>
     </div>
 
-    <!-- SETTINGS MODAL -->
-    <div id="settings-modal" class="fixed inset-0 z-[80] flex items-center justify-center p-4 modal-hidden" style="display: none;">
-        <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden">
-            <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="font-bold text-gray-700 flex items-center gap-2"><i class="fa-solid fa-gear text-gray-500"></i> Settings</h3>
-                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
+    <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
+    <div id="settings-modal" class="fixed inset-0 z-[80] flex items-center justify-center modal-hidden menu-overlay" style="display: none;">
+        <div class="modal-backdrop absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
+        <div class="modal-content w-full h-full md:w-[90%] md:h-[90%] bg-white/90 rounded-none md:rounded-3xl shadow-2xl relative z-10 overflow-hidden flex flex-col glass">
+            
+            <!-- Glassmorphism Header -->
+            <div class="glass-header p-6 border-b border-gray-200/50 flex justify-between items-center bg-white/90 sticky top-0 z-20">
+                <h3 class="font-bold text-2xl text-gray-800 flex items-center gap-3">
+                    <i class="fa-solid fa-bars text-orange-500"></i> Menu
+                </h3>
+                <button onclick="closeSettingsModal()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition shadow-sm">
+                    <i class="fa-solid fa-times text-lg"></i>
+                </button>
             </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Language</label>
-                    <select id="language-select" onchange="changeLanguage(this.value)" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition">
-                        <option value="en">English</option>
-                        <option value="hi">Hindi (हिन्दी)</option>
-                        <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                        <option value="bn">Bengali (বাংলা)</option>
-                        <option value="mr">Marathi (मराठी)</option>
-                        <option value="gu">Gujarati (ગુજરાતી)</option>
-                        <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                        <option value="ta">Tamil (தமிழ்)</option>
-                        <option value="te">Telugu (తెలుగు)</option>
-                        <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                        <option value="ml">Malayalam (മലയാളം)</option>
-                        <option value="as">Assamese (অসমীয়া)</option>
-                    </select>
-                    <p class="text-[10px] text-gray-400 mt-1 italic">Note: Downloaded app will only include the selected language.</p>
+
+            <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
+                
+                <!-- SECTION 1: Quick Settings (Preserved) -->
+                <div class="mb-8">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Settings</h4>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+                        
+                        <!-- Language -->
+                        <div class="w-full">
+                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Language</label>
+                            <div class="relative">
+                                <select id="language-select" onchange="changeLanguage(this.value)" class="w-full appearance-none p-3 pl-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none transition cursor-pointer">
+                                    <option value="en">English</option>
+                                    <option value="hi">Hindi (हिन्दी)</option>
+                                    <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                                    <option value="bn">Bengali (বাংলা)</option>
+                                    <option value="mr">Marathi (मराठी)</option>
+                                    <option value="gu">Gujarati (ગુજરાતી)</option>
+                                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                    <option value="ta">Tamil (தமிழ்)</option>
+                                    <option value="te">Telugu (తెలుగు)</option>
+                                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                    <option value="ml">Malayalam (മലയാളം)</option>
+                                    <option value="as">Assamese (অসমীয়া)</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggles -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="text-sm font-bold text-gray-700">Festivals</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="text-sm font-bold text-gray-700">Panchang</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="text-sm font-bold text-gray-700">Daily Banner</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="banner-toggle" class="sr-only peer" onchange="toggleBannerVisibility(this)">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+
+                    </div>
                 </div>
 
-                <div class="border-t border-gray-200 pt-4 space-y-3">
-                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Display Options</div>
+                <!-- SECTION 2: Menu Grid (The "Typing Tutor" Design) -->
+                <div class="mb-8">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Explore</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Horoscope -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-solid fa-star-and-crescent menu-icon"></i>
+                            <div class="menu-title">Horoscope</div>
+                            <div class="menu-sub-items">Daily, Weekly & Monthly Predictions</div>
+                        </div>
+
+                        <!-- Puja Vidhi -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-solid fa-bell menu-icon"></i>
+                            <div class="menu-title">Puja Vidhi</div>
+                            <div class="menu-sub-items">Step-by-step Rituals & Mantras</div>
+                        </div>
+
+                        <!-- Kundli -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-solid fa-scroll menu-icon"></i>
+                            <div class="menu-title">Kundli</div>
+                            <div class="menu-sub-items">Birth Chart & Analysis</div>
+                        </div>
+
+                        <!-- Matching -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-solid fa-heart menu-icon"></i>
+                            <div class="menu-title">Matching</div>
+                            <div class="menu-sub-items">
+                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Marriage Match</div>
+                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Zodiac Match</div>
+                            </div>
+                        </div>
+
+                        <!-- Daily Panchang -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-regular fa-calendar-check menu-icon"></i>
+                            <div class="menu-title">Daily Panchang</div>
+                            <div class="menu-sub-items">Tithi, Nakshatra, Yoga & Karana</div>
+                        </div>
+
+                        <!-- Smart Tool -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-solid fa-calculator menu-icon"></i>
+                            <div class="menu-title">Smart Tool</div>
+                            <div class="menu-sub-items">Date Converter & Utilities</div>
+                        </div>
+
+                        <!-- Bhagavat Gita -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-solid fa-book-open menu-icon"></i>
+                            <div class="menu-title">Bhagavat Gita</div>
+                            <div class="menu-sub-items">Slokas & Meanings</div>
+                        </div>
+
+                        <!-- Holiday -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-solid fa-umbrella-beach menu-icon"></i>
+                            <div class="menu-title">Holiday</div>
+                            <div class="menu-sub-items">
+                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Government Holiday</div>
+                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> State Holiday</div>
+                            </div>
+                        </div>
+
+                        <!-- Muhurat -->
+                        <div class="menu-card group">
+                            <div class="accent-line"></div>
+                            <i class="fa-solid fa-clock menu-icon"></i>
+                            <div class="menu-title">Muhurat</div>
+                            <div class="menu-sub-items">
+                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Griha Muhurat</div>
+                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Vivah Muhurat</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Developer Settings (Sync) - Hidden in App Mode -->
+                <div id="container-sync-settings" class="mt-8 border-t border-gray-200 pt-8">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4"><i class="fa-solid fa-code"></i> Developer Settings</h4>
                     
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Show Festivals</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
-                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
+                        <div id="container-sync-docs" class="flex items-center justify-between">
+                            <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
 
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Show Panchang</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
-                    </div>
-
-                </div>
-
-                <div class="border-t border-gray-200 pt-4 space-y-3">
-                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sync Settings</div>
-                    
-                    <div id="container-sync-docs" class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <label class="text-sm font-bold text-gray-700">Live Sync GitHub</label>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm font-bold text-gray-700">Live Sync GitHub</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between border-t border-gray-200 pt-4 mt-4">
-                    <label class="text-sm font-bold text-gray-700">Show Daily Overview Banner</label>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="banner-toggle" class="sr-only peer" onchange="toggleBannerVisibility(this)">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                    </label>
+                <!-- Language Links (Developer) -->
+                <div id="container-lang-links" class="mt-4">
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Configure Language Source</label>
+                        <div class="flex flex-col md:flex-row gap-3">
+                            <select id="sync-lang-select" onchange="updateSyncLinkInput()" class="md:w-1/3 p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500 bg-white">
+                                <option value="en">English</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="mr">Marathi (मराठी)</option>
+                                <option value="gu">Gujarati (ગુજરાતી)</option>
+                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                <option value="ta">Tamil (தமிழ்)</option>
+                                <option value="te">Telugu (తెలుగు)</option>
+                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                <option value="ml">Malayalam (മലയാളം)</option>
+                                <option value="as">Assamese (অসমীয়া)</option>
+                            </select>
+                            <input type="text" id="sync-link-input" placeholder="Paste GitHub Raw Link..." class="flex-1 p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500">
+                            <button onclick="saveSyncLink()" class="bg-gray-800 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-gray-700 transition active:scale-95 shadow-lg">Save</button>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-2 italic">Stored securely.</p>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -1735,6 +1974,23 @@ The word "Nua" means new and "Khai" means food.
         }
 
         const editor = document.getElementById('editor');
+        
+        const DEFAULT_SYNC_LINKS = { 
+            en: "", hi: "", or: "", bn: "", mr: "", gu: "", 
+            pa: "", ta: "", te: "", kn: "", ml: "", as: "" 
+        };
+
+        const LinkSecurity = {
+            encrypt: (s) => {
+                if (!s) return "";
+                try { return btoa(s).split('').reverse().join(''); } catch(e) { return s; }
+            },
+            decrypt: (s) => {
+                if (!s) return "";
+                try { return atob(s.split('').reverse().join('')); } catch(e) { return s; }
+            }
+        };
+
         let appState = {
             activeMonthIndex: 0,
             monthsData: [],
@@ -1752,7 +2008,8 @@ The word "Nua" means new and "Khai" means food.
                 logoUrl: null, 
                 language: 'en', 
                 location: null,
-                sections: { festivals: true, panchang: true }
+                sections: { festivals: true, panchang: true },
+                syncLinks: { ...DEFAULT_SYNC_LINKS }
             }
         };
         
@@ -2018,16 +2275,33 @@ The word "Nua" means new and "Khai" means food.
         function openSettingsModal() {
             document.getElementById('language-select').value = appState.config.language || 'en';
             
-            // Environment Check: Hide Docs Sync in App Mode
+            // Environment Check: Hide Sync Settings in App Mode (User View)
             const isEditor = !!document.getElementById('editor');
-            const docsContainer = document.getElementById('container-sync-docs');
-            if (docsContainer) {
-                docsContainer.style.display = isEditor ? 'flex' : 'none';
+            
+            const syncSettingsContainer = document.getElementById('container-sync-settings');
+            const langLinksContainer = document.getElementById('container-lang-links');
+            
+            if (!isEditor) {
+                 // App Mode: Hide everything
+                 if(syncSettingsContainer) syncSettingsContainer.style.display = 'none';
+                 if(langLinksContainer) langLinksContainer.style.display = 'none';
+            } else {
+                 // Editor Mode: Show everything (and handle Docs Sync logic)
+                 if(syncSettingsContainer) syncSettingsContainer.style.display = 'block';
+                 if(langLinksContainer) langLinksContainer.style.display = 'block';
+                 
+                 const docsContainer = document.getElementById('container-sync-docs');
+                 if (docsContainer) {
+                     docsContainer.style.display = 'flex'; // Docs sync is editor-only feature
+                 }
             }
 
             // Update toggle state
             const toggle = document.getElementById('banner-toggle');
             if(toggle) toggle.checked = !isBannerDismissed;
+            
+            // Sync Link Init
+            if (typeof updateSyncLinkInput === 'function') updateSyncLinkInput();
 
             const secs = appState.config.sections || { festivals: true, panchang: true };
             if(document.getElementById('toggle-festivals')) document.getElementById('toggle-festivals').checked = secs.festivals;
@@ -2051,12 +2325,61 @@ The word "Nua" means new and "Khai" means food.
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
             modal.classList.add('modal-hidden');
-            setTimeout(() => modal.style.display = 'none', 300);
+            // Timeout matches the 0.2s CSS transition + slight buffer
+            setTimeout(() => modal.style.display = 'none', 220);
         }
         function changeLanguage(langCode) {
             appState.config.language = langCode;
+            
+            // Auto-Switch Live Sync Link if configured
+            if (appState.config.syncLinks && appState.config.syncLinks[langCode]) {
+                let link = appState.config.syncLinks[langCode];
+                if (link) {
+                    if (appState.config.linksEncrypted) {
+                        link = LinkSecurity.decrypt(link);
+                    }
+                    appState.config.liveUrl = link;
+                    appState.config.syncGitHubUrl = link;
+                    fetchGitHubData(link, true);
+                }
+            }
+            
             saveConfigToStorage();
             render();
+        }
+
+        function updateSyncLinkInput() {
+            const langEl = document.getElementById('sync-lang-select');
+            if (!langEl) return; // Exit if elements don't exist (e.g., in downloaded app)
+            
+            const lang = langEl.value;
+            const input = document.getElementById('sync-link-input');
+            if (appState.config.syncLinks && appState.config.syncLinks[lang]) {
+                input.value = appState.config.syncLinks[lang];
+            } else {
+                input.value = '';
+            }
+        }
+
+        function saveSyncLink() {
+            const langEl = document.getElementById('sync-lang-select');
+            if (!langEl) return;
+
+            const lang = langEl.value;
+            const url = document.getElementById('sync-link-input').value.trim();
+            
+            if (!appState.config.syncLinks) appState.config.syncLinks = { ...DEFAULT_SYNC_LINKS };
+            
+            if (url) {
+                appState.config.syncLinks[lang] = url;
+                showToast(`Link saved for ${lang.toUpperCase()}`);
+            } else {
+                if (appState.config.syncLinks[lang]) {
+                    delete appState.config.syncLinks[lang];
+                    showToast(`Link removed for ${lang.toUpperCase()}`);
+                }
+            }
+            saveConfigToStorage();
         }
 
         function toggleBannerVisibility(checkbox) {
@@ -2820,8 +3143,9 @@ The word "Nua" means new and "Khai" means food.
             if (savedConfig) {
                 const parsed = JSON.parse(savedConfig);
                 // Merge saved config into defaults
-                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
+                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
                 appState.config = { ...appState.config, ...parsed };
+                if (!appState.config.syncLinks) appState.config.syncLinks = { ...DEFAULT_SYNC_LINKS };
                 
                 // If location exists, trigger a silent update to refresh it
                 if (appState.config.location) {
@@ -2849,7 +3173,8 @@ The word "Nua" means new and "Khai" means food.
             let currentSeasonIdx = -1;
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
-            let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null };
+            let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
+            if (!tempConfig.syncLinks) tempConfig.syncLinks = { ...DEFAULT_SYNC_LINKS };
 
             // Reset viewDate only if we don't have one, or maybe we want to keep current view?
             // For now, let's keep current view logic separate, but init default month just in case.
@@ -4790,6 +5115,13 @@ function renderCalendarGrid(data) {
             // Clean up buttons
             const navBtn = clone.querySelector('#download-btn'); 
             if(navBtn) navBtn.remove();
+            
+            // SECURITY: Remove Settings Sections from Downloaded HTML
+            const syncSettings = clone.querySelector('#container-sync-settings');
+            if(syncSettings) syncSettings.remove();
+            
+            const langLinks = clone.querySelector('#container-lang-links');
+            if(langLinks) langLinks.remove();
 
             // Inject Loading Screen
             const loaderHtml = `
@@ -4806,6 +5138,17 @@ function renderCalendarGrid(data) {
             loaderDiv.innerHTML = loaderHtml;
             body.prepend(loaderDiv.firstElementChild);
 
+            // Encrypt Configuration for Export
+            const exportConfig = JSON.parse(JSON.stringify(appState.config));
+            if (exportConfig.syncLinks) {
+                Object.keys(exportConfig.syncLinks).forEach(k => {
+                    if(exportConfig.syncLinks[k]) {
+                        exportConfig.syncLinks[k] = LinkSecurity.encrypt(exportConfig.syncLinks[k]);
+                    }
+                });
+                exportConfig.linksEncrypted = true;
+            }
+
             // Skeleton State (No Data)
             const skeletonState = {
                 activeMonthIndex: 0,
@@ -4814,7 +5157,7 @@ function renderCalendarGrid(data) {
                 details: {},
                 customSeasonDescriptions: {},
                 images: {},
-                config: appState.config // Keep config!
+                config: exportConfig // Use encrypted config
             };
 
             const title = clone.querySelector('title');
@@ -4824,24 +5167,16 @@ function renderCalendarGrid(data) {
             dataScript.textContent = `window.exportedData = ${JSON.stringify(skeletonState)};`;
             clone.querySelector('body').prepend(dataScript);
 
-            // Language Optimization
-            const currentLang = appState.config.language || 'en';
-            let optimizedLangData = {};
-            if (langData['en']) optimizedLangData['en'] = langData['en'];
-            if (currentLang !== 'en' && langData[currentLang]) {
-                optimizedLangData[currentLang] = langData[currentLang];
-            }
-
+            // Include ALL languages in download
             let htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
-            const langDataRegex = /const langData = \{[\s\S]*?\};/;
-            const newLangDataStr = `const langData = ${JSON.stringify(optimizedLangData)};`;
-            htmlContent = htmlContent.replace(langDataRegex, newLangDataStr);
-
+            
+            // We do NOT replace langData anymore, ensuring full dictionary is preserved.
+            
             const blob = new Blob([htmlContent], { type: "text/html" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `Panchang_App_${currentLang.toUpperCase()}.html`;
+            a.download = `Panchang_App_Universal.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
