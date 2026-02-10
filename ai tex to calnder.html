@@ -619,25 +619,36 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
         /* --- MENU CARD GRID STYLES (Typing Tutor Aesthetic) --- */
-        .menu-overlay .modal-backdrop {
-            background: rgba(255, 255, 255, 0.95) !important;
-            /* Static blur, handled by opacity transition */
+
+        /* Buttery Smooth Animation - User Request */
+        #settings-modal {
+            visibility: hidden;
+            transition: visibility 0s linear 0.4s; /* delays visibility:hidden until after opacity transition */
+            display: flex; /* Always flex, visibility handles hiding */
+        }
+        #settings-modal.is-open {
+            visibility: visible;
+            transition-delay: 0s; /* immediate visibility on open */
+        }
+
+        #settings-modal .modal-backdrop {
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
-            will-change: opacity;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        #settings-modal.is-open .modal-backdrop {
+            opacity: 1;
         }
 
-        /* Custom Animation for Menu Overlay (Right-to-Left Slide) */
-        .menu-overlay .modal-content {
-            transform: translateX(0) translateZ(0) !important;
-            opacity: 1 !important;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        #settings-modal .modal-content {
+            transform: translateX(100vw); /* Start off-screen right */
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
         }
-
-        .menu-overlay.modal-hidden .modal-content {
-            transform: translateX(100vw) translateZ(0) !important;
-            opacity: 1 !important;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        #settings-modal.is-open .modal-content {
+            transform: translateX(0);
         }
         
         .menu-card {
@@ -2332,14 +2343,29 @@ The word "Nua" means new and "Khai" means food.
             if(githubToggle) githubToggle.checked = isGitHub;
 
             const modal = document.getElementById('settings-modal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.remove('modal-hidden'), 10);
+            if(modal) {
+                // Remove legacy class if present
+                modal.classList.remove('modal-hidden');
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+
+                // Force reflow
+                void modal.offsetWidth;
+
+                modal.classList.add('is-open');
+            }
         }
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
-            modal.classList.add('modal-hidden');
-            // Timeout matches the 0.4s CSS transition + slight buffer
-            setTimeout(() => modal.style.display = 'none', 450);
+            if(!modal) return;
+            modal.classList.remove('is-open');
+
+            // Wait for transition
+            setTimeout(() => {
+                modal.classList.add('modal-hidden'); // Restore legacy class for consistency
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }, 400);
         }
         function changeLanguage(langCode) {
             appState.config.language = langCode;
