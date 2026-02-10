@@ -356,8 +356,17 @@
             transform: translateZ(0);
             backface-visibility: hidden;
         }
-        .modal-hidden .modal-backdrop { opacity: 0; pointer-events: none; }
-        .modal-hidden .modal-content { opacity: 0; transform: scale(0.95) translateY(20px); pointer-events: none; }
+        .modal-hidden .modal-backdrop {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in;
+        }
+        .modal-hidden .modal-content {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            pointer-events: none;
+            transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+        }
 
         /* Rich Content Styling */
         .rich-content h3 {
@@ -2312,7 +2321,7 @@ The word "Nua" means new and "Khai" means food.
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
             modal.classList.add('modal-hidden');
-            setTimeout(() => modal.style.display = 'none', 300);
+            setTimeout(() => modal.style.display = 'none', 350);
         }
         function changeLanguage(langCode) {
             appState.config.language = langCode;
