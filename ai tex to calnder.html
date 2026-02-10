@@ -363,9 +363,11 @@
         }
         .modal-hidden .modal-content {
             opacity: 0;
-            transform: scale(0.95) translateY(10px);
+            /* Subtle scale down only, no translation to avoid movement clutter */
+            transform: scale(0.98);
             pointer-events: none;
-            transition: transform 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19), opacity 0.3s ease-in;
+            /* Faster opacity fade, simpler transform to reduce repaints */
+            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
         }
 
         /* Rich Content Styling */
@@ -619,8 +621,10 @@
         /* --- MENU CARD GRID STYLES (Typing Tutor Aesthetic) --- */
         .menu-overlay .modal-backdrop {
             background: rgba(255, 255, 255, 0.95) !important;
+            /* Static blur, handled by opacity transition */
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
+            will-change: opacity;
         }
 
         .menu-card {
@@ -2321,7 +2325,8 @@ The word "Nua" means new and "Khai" means food.
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
             modal.classList.add('modal-hidden');
-            setTimeout(() => modal.style.display = 'none', 350);
+            // Timeout matches the 0.2s CSS transition + slight buffer
+            setTimeout(() => modal.style.display = 'none', 220);
         }
         function changeLanguage(langCode) {
             appState.config.language = langCode;
