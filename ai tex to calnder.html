@@ -1283,9 +1283,14 @@ The word "Nua" means new and "Khai" means food.
                 <h3 class="font-bold text-2xl text-gray-800 flex items-center gap-3">
                     <i class="fa-solid fa-bars text-orange-500"></i> Menu
                 </h3>
-                <button onclick="closeSettingsModal()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition shadow-sm">
-                    <i class="fa-solid fa-times text-lg"></i>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="initiateDriveImageUpload()" class="px-3 py-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center gap-2 transition font-medium text-xs md:text-sm border border-blue-100 shadow-sm active:scale-95">
+                        <i class="fa-brands fa-google-drive text-base"></i> <span class="hidden md:block">Drive Image</span>
+                    </button>
+                    <button onclick="closeSettingsModal()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition shadow-sm">
+                        <i class="fa-solid fa-times text-lg"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
@@ -2614,6 +2619,40 @@ The word "Nua" means new and "Khai" means food.
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+
+        // --- NEW: Google Drive Image Upload ---
+        function initiateDriveImageUpload() {
+            const url = prompt("Paste your Google Drive Image Link:\n(Must be 'Anyone with the link can view')");
+            if (url) {
+                // Extract ID and convert
+                let fileId = "";
+                const idMatch = url.match(/[-\w]{25,}/);
+                if (idMatch) fileId = idMatch[0];
+
+                if (fileId) {
+                    const directLink = `https://drive.google.com/uc?export=view&id=${fileId}`;
+
+                    // Close settings modal to transition to Link Modal
+                    closeSettingsModal();
+
+                    // Small delay to allow transition
+                    setTimeout(() => {
+                        openLinkModal();
+                        const input = document.getElementById('link-url-input');
+                        if (input) {
+                            input.value = directLink;
+                            // Trigger focus and select
+                            input.focus();
+                            input.select();
+                        }
+                        showToast("Drive Link processed! Choose where to apply.");
+                    }, 350);
+
+                } else {
+                    alert("Could not detect a valid Google Drive File ID. Please check the link.");
+                }
+            }
         }
 
         // --- NEW FUNCTION: Fetch Text from Google Drive ---
