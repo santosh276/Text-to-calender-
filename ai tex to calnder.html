@@ -631,13 +631,13 @@
         .menu-overlay .modal-content {
             transform: translateX(0) translateZ(0) !important;
             opacity: 1 !important;
-            transition: transform 0.3s ease-in-out !important;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         .menu-overlay.modal-hidden .modal-content {
             transform: translateX(100vw) translateZ(0) !important;
             opacity: 1 !important;
-            transition: transform 0.3s ease-in-out !important;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
         
         .menu-card {
@@ -2338,8 +2338,8 @@ The word "Nua" means new and "Khai" means food.
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
             modal.classList.add('modal-hidden');
-            // Timeout matches the 0.2s CSS transition + slight buffer
-            setTimeout(() => modal.style.display = 'none', 220);
+            // Timeout matches the 0.4s CSS transition + slight buffer
+            setTimeout(() => modal.style.display = 'none', 450);
         }
         function changeLanguage(langCode) {
             appState.config.language = langCode;
