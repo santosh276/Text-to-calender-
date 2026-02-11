@@ -1692,22 +1692,36 @@ The word "Nua" means new and "Khai" means food.
             }
 
             function calculate(dateObj, hour = 6) {
+                // Ensure dateObj is a valid Date object
                 const d = new Date(dateObj);
-                // Reference: 6:00 AM IST is approx 00:30 UTC. 
-                // Support legacy hour argument but normalize minutes/seconds
+
+                // Standardize to IST (UTC+5:30)
+                // If hour is 6 (6 AM IST), we want 00:30 UTC of the same day
                 const h = (hour === undefined || hour === null) ? 6 : hour;
-                const hours = Math.floor(h);
-                const minutes = Math.floor((h % 1) * 60);
-                d.setHours(hours, minutes, 0, 0); 
                 
-                const jd = (d.getTime() / 86400000) + 2440587.5;
+                // UTC Hour = IST Hour - 5.5
+                const utcHour = h - 5.5;
+
+                // Extract Year/Month/Day from input date (which is usually local midnight or specific date)
+                const y = d.getFullYear();
+                const m = d.getMonth();
+                const dt = d.getDate();
+
+                // Construct UTC Timestamp
+                // We convert utcHour to minutes to handle fractional hours (e.g. 6.5 -> 6:30)
+                const totalMinutes = utcHour * 60;
+
+                // Date.UTC handles negative minutes or overflow correctly
+                const utcTimestamp = Date.UTC(y, m, dt, 0, totalMinutes, 0, 0);
+
+                const jd = (utcTimestamp / 86400000) + 2440587.5;
                 const aya = getAyanamsa(jd);
                 
                 const sunSid = norm(getSunLong(jd) - aya);
                 const moonSid = norm(getMoonLong(jd) - aya);
 
-                // Tithi = (Moon - Sun) / 12. Add 0.001 buffer for precision.
-                const diff = norm(moonSid - sunSid + 0.001);
+                // Tithi = (Moon - Sun) / 12. (Buffer removed to align with Drik Panchang)
+                const diff = norm(moonSid - sunSid);
                 const tithiIndex = Math.floor(diff / 12);
 
                 // Nakshatra: Moon / 13.3333
