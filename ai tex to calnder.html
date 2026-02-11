@@ -1681,6 +1681,8 @@ The word "Nua" means new and "Khai" means food.
                 sumLong -= 0.034720 * Math.sin(D * D2R);
                 sumLong -= 0.030383 * Math.sin((M + Mprime) * D2R);
                 sumLong += 0.015327 * Math.sin((2 * D - 2 * F) * D2R);
+                // 15th Term (Drift Correction for High Precision)
+                sumLong -= 0.012528 * Math.sin((2 * D - 2 * M) * D2R);
                 
                 return norm(Lprime + sumLong);
             }
@@ -1692,22 +1694,33 @@ The word "Nua" means new and "Khai" means food.
             }
 
             function calculate(dateObj, hour = 6) {
-                const d = new Date(dateObj);
-                // Reference: 6:00 AM IST is approx 00:30 UTC. 
-                // Support legacy hour argument but normalize minutes/seconds
-                const h = (hour === undefined || hour === null) ? 6 : hour;
-                const hours = Math.floor(h);
-                const minutes = Math.floor((h % 1) * 60);
-                d.setHours(hours, minutes, 0, 0); 
+                // 1. Standardize Time Zone to IST (UTC+5:30)
+                // This prevents drift caused by local browser timezones.
+                // Default: 6:00 AM IST corresponds to 00:30 UTC.
                 
-                const jd = (d.getTime() / 86400000) + 2440587.5;
+                const d = new Date(dateObj);
+                const year = d.getFullYear();
+                const month = d.getMonth();
+                const day = d.getDate();
+
+                const h = (hour === undefined || hour === null) ? 6 : hour;
+                
+                // Calculate UTC Offset from IST (IST is +5.5h ahead of UTC)
+                // UTC Time = IST Time - 5.5h
+                const utcOffsetMs = (h - 5.5) * 3600000;
+                
+                // Construct UTC Date explicitly
+                // Date.UTC returns ms from epoch for 00:00:00 UTC on that YMD
+                const utcDate = new Date(Date.UTC(year, month, day) + utcOffsetMs);
+                
+                const jd = (utcDate.getTime() / 86400000) + 2440587.5;
                 const aya = getAyanamsa(jd);
                 
                 const sunSid = norm(getSunLong(jd) - aya);
                 const moonSid = norm(getMoonLong(jd) - aya);
 
-                // Tithi = (Moon - Sun) / 12. Add 0.001 buffer for precision.
-                const diff = norm(moonSid - sunSid + 0.001);
+                // Tithi = (Moon - Sun) / 12. Use minimal epsilon for float safety.
+                const diff = norm(moonSid - sunSid + 0.000001);
                 const tithiIndex = Math.floor(diff / 12);
 
                 // Nakshatra: Moon / 13.3333
@@ -4072,13 +4085,34 @@ function renderCalendarGrid(data) {
         // Calculations
         const astro = calculateTithi(dateObj); 
         
-        // --- NEW CODE: DUPLICATE FIX ---
-        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
+        // --- DUPLICATE & KSHAYA FIXES ---
         let effectiveTithiIndex = astro.index;
+
+        // 1. Amavasya Duplicate Fix (Hide 2nd Amavasya)
         if (astro.index === 29 && lastTithiIndex === 29) {
-            effectiveTithiIndex = -1; // Set to -1 so no icon appears
+            effectiveTithiIndex = -1; 
         }
-        // Update tracker for the next iteration
+
+        // 2. Kshaya Ekadashi Fix (If skipped, force visual on Dwadashi)
+        // Checks: Jump from 9->11 (Shukla) or 24->26 (Krishna)
+        if ((astro.index === 11 && lastTithiIndex === 9) || (astro.index === 26 && lastTithiIndex === 24)) {
+            effectiveTithiIndex = astro.index - 1; // Force 10 or 25 (Ekadashi)
+        }
+
+        // 3. Double Ekadashi Fix (Hide First Day)
+        // Check if current is Ekadashi (10 or 25)
+        if (effectiveTithiIndex === 10 || effectiveTithiIndex === 25) {
+            // Look ahead to next day
+            if (d < daysInMonth) {
+                const nextDateObj = new Date(data.year, data.month, d + 1);
+                const nextAstro = calculateTithi(nextDateObj);
+                if (nextAstro.index === effectiveTithiIndex) {
+                    effectiveTithiIndex = -1; // Hide icon on first day
+                }
+            }
+        }
+
+        // Update tracker
         lastTithiIndex = astro.index;
         // -------------------------------
 
@@ -4875,7 +4909,29 @@ function renderCalendarGrid(data) {
             
             // --- INJECT TITHI/PAKSHA ---
             const tithiInfo = calculateTithi(dateObj);
-            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold"><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</div>`;
+            
+            // --- DETECT SPECIAL EKADASHI (Double / Kshaya) ---
+            let specialBadge = "";
+            const prevDate = new Date(dateObj); prevDate.setDate(dateObj.getDate() - 1);
+            const nextDate = new Date(dateObj); nextDate.setDate(dateObj.getDate() + 1);
+            
+            const prevAstro = calculateTithi(prevDate);
+            const nextAstro = calculateTithi(nextDate);
+            const currIndex = tithiInfo.index;
+
+            // 1. Kshaya Ekadashi (Skipped): Dashami (9/24) -> Dwadashi (11/26)
+            if ((currIndex === 11 && prevAstro.index === 9) || (currIndex === 26 && prevAstro.index === 24)) {
+                specialBadge = `<div class="w-full mt-3"><span class="bg-red-500/90 text-white px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider border border-white/20 shadow-sm">KSHAYA EKADASHI</span></div>`;
+            }
+            // 2. Double Ekadashi: Current is Ekadashi (10/25) AND (Prev was Ekadashi OR Next is Ekadashi)
+            else if ((currIndex === 10 || currIndex === 25) && (prevAstro.index === currIndex || nextAstro.index === currIndex)) {
+                specialBadge = `<div class="w-full mt-3"><span class="bg-purple-500/90 text-white px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider border border-white/20 shadow-sm">DOUBLE EKADASHI</span></div>`;
+            }
+
+            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold flex flex-wrap items-center">
+                <span><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</span>
+                ${specialBadge}
+            </div>`;
             // ---------------------------
 
             let detailsRaw = appState.details[dateKey];
