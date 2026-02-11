@@ -1719,8 +1719,8 @@ The word "Nua" means new and "Khai" means food.
                 const sunSid = norm(getSunLong(jd) - aya);
                 const moonSid = norm(getMoonLong(jd) - aya);
 
-                // Tithi = (Moon - Sun) / 12. Add 0.001 buffer for precision.
-                const diff = norm(moonSid - sunSid + 0.001);
+                // Tithi = (Moon - Sun) / 12. Use minimal epsilon for float safety.
+                const diff = norm(moonSid - sunSid + 0.000001);
                 const tithiIndex = Math.floor(diff / 12);
 
                 // Nakshatra: Moon / 13.3333
@@ -4085,13 +4085,21 @@ function renderCalendarGrid(data) {
         // Calculations
         const astro = calculateTithi(dateObj); 
         
-        // --- NEW CODE: DUPLICATE FIX ---
-        // If today is Amavasya (29) AND yesterday was also Amavasya (29), hide this one.
+        // --- DUPLICATE & KSHAYA FIXES ---
         let effectiveTithiIndex = astro.index;
+
+        // 1. Amavasya Duplicate Fix (Hide 2nd Amavasya)
         if (astro.index === 29 && lastTithiIndex === 29) {
-            effectiveTithiIndex = -1; // Set to -1 so no icon appears
+            effectiveTithiIndex = -1;
         }
-        // Update tracker for the next iteration
+
+        // 2. Kshaya Ekadashi Fix (If skipped, force visual on Dwadashi)
+        // Checks: Jump from 9->11 (Shukla) or 24->26 (Krishna)
+        if ((astro.index === 11 && lastTithiIndex === 9) || (astro.index === 26 && lastTithiIndex === 24)) {
+            effectiveTithiIndex = astro.index - 1; // Force 10 or 25 (Ekadashi)
+        }
+
+        // Update tracker
         lastTithiIndex = astro.index;
         // -------------------------------
 
