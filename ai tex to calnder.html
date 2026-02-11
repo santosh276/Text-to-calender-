@@ -4093,7 +4093,13 @@ function renderCalendarGrid(data) {
             effectiveTithiIndex = -1;
         }
 
-        // 2. Double Ekadashi Fix (Hide First Day)
+        // 2. Kshaya Ekadashi Fix (If skipped, force visual on Dwadashi)
+        // Checks: Jump from 9->11 (Shukla) or 24->26 (Krishna)
+        if ((astro.index === 11 && lastTithiIndex === 9) || (astro.index === 26 && lastTithiIndex === 24)) {
+            effectiveTithiIndex = astro.index - 1; // Force 10 or 25 (Ekadashi)
+        }
+
+        // 3. Double Ekadashi Fix (Hide First Day)
         // Check if current is Ekadashi (10 or 25)
         if (effectiveTithiIndex === 10 || effectiveTithiIndex === 25) {
             // Look ahead to next day
