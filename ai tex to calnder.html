@@ -4921,11 +4921,11 @@ function renderCalendarGrid(data) {
 
             // 1. Kshaya Ekadashi (Skipped): Dashami (9/24) -> Dwadashi (11/26)
             if ((currIndex === 11 && prevAstro.index === 9) || (currIndex === 26 && prevAstro.index === 24)) {
-                specialBadge = `<div class="w-full mt-[9px]"><span class="bg-white/20 backdrop-blur-md text-white px-6 py-1 rounded-lg text-[10px] font-bold tracking-widest border border-white/30 shadow-lg uppercase">KSHAYA EKADASHI</span></div>`;
+                specialBadge = `<div class="w-full mt-[11px]"><span class="bg-white/20 backdrop-blur-md text-white px-6 py-0.5 rounded-lg text-[10px] font-bold tracking-widest border border-white/30 shadow-lg uppercase">KSHAYA EKADASHI</span></div>`;
             }
             // 2. Double Ekadashi: Current is Ekadashi (10/25) AND (Prev was Ekadashi OR Next is Ekadashi)
             else if ((currIndex === 10 || currIndex === 25) && (prevAstro.index === currIndex || nextAstro.index === currIndex)) {
-                specialBadge = `<div class="w-full mt-[9px]"><span class="bg-white/20 backdrop-blur-md text-white px-6 py-1 rounded-lg text-[10px] font-bold tracking-widest border border-white/30 shadow-lg uppercase">DOUBLE EKADASHI</span></div>`;
+                specialBadge = `<div class="w-full mt-[11px]"><span class="bg-white/20 backdrop-blur-md text-white px-6 py-0.5 rounded-lg text-[10px] font-bold tracking-widest border border-white/30 shadow-lg uppercase">DOUBLE EKADASHI</span></div>`;
             }
 
             currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold flex flex-wrap items-center">
