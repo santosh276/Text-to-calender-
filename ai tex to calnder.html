@@ -1693,12 +1693,16 @@ The word "Nua" means new and "Khai" means food.
 
             function calculate(dateObj, hour = 6) {
                 const d = new Date(dateObj);
-                // Reference: 6:00 AM IST is approx 00:30 UTC. 
-                // Support legacy hour argument but normalize minutes/seconds
+                // Standardize to IST (UTC+5:30).
+                // 6:00 AM IST is 00:30 UTC.
+                // This ensures calculation is independent of user timezone.
                 const h = (hour === undefined || hour === null) ? 6 : hour;
-                const hours = Math.floor(h);
-                const minutes = Math.floor((h % 1) * 60);
-                d.setHours(hours, minutes, 0, 0); 
+
+                // Convert IST hour to UTC minutes offset
+                // (h * 60) - 330 minutes.
+                // E.g., 6 AM IST (360 mins) - 330 = 30 mins UTC (00:30)
+                const totalMinutes = Math.round(h * 60 - 330);
+                d.setUTCHours(0, totalMinutes, 0, 0);
                 
                 const jd = (d.getTime() / 86400000) + 2440587.5;
                 const aya = getAyanamsa(jd);
@@ -1706,8 +1710,8 @@ The word "Nua" means new and "Khai" means food.
                 const sunSid = norm(getSunLong(jd) - aya);
                 const moonSid = norm(getMoonLong(jd) - aya);
 
-                // Tithi = (Moon - Sun) / 12. Add 0.001 buffer for precision.
-                const diff = norm(moonSid - sunSid + 0.001);
+                // Tithi = (Moon - Sun) / 12.
+                const diff = norm(moonSid - sunSid);
                 const tithiIndex = Math.floor(diff / 12);
 
                 // Nakshatra: Moon / 13.3333
