@@ -1216,7 +1216,7 @@ The word "Nua" means new and "Khai" means food.
                             <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
                         </div>
 
-                        <div class="bg-white rounded-xl shadow-lg p-2 md:p-3">
+                        <div id="calendar-swipe-area" class="bg-white rounded-xl shadow-lg p-2 md:p-3">
                             <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
                             <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
                             
@@ -3180,6 +3180,7 @@ The word "Nua" means new and "Khai" means food.
         
         // Start Up
         initApp();
+        initCalendarSwipe();
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
@@ -3828,6 +3829,45 @@ The word "Nua" means new and "Khai" means food.
         function handleBannerSwipe(total, startX, endX) {
             if (endX < startX - 50) nextBannerSlide(total);
             if (endX > startX + 50) prevBannerSlide(total);
+        }
+
+        // --- CALENDAR SWIPE LOGIC ---
+        let calTouchStartX = 0;
+        let calTouchStartY = 0;
+
+        function initCalendarSwipe() {
+            const el = document.getElementById('calendar-swipe-area');
+            if(!el) return;
+
+            el.addEventListener('touchstart', (e) => {
+                calTouchStartX = e.changedTouches[0].screenX;
+                calTouchStartY = e.changedTouches[0].screenY;
+            }, {passive: true});
+
+            el.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].screenX;
+                const endY = e.changedTouches[0].screenY;
+                handleCalendarSwipe(calTouchStartX, calTouchStartY, endX, endY);
+            }, {passive: true});
+        }
+
+        function handleCalendarSwipe(startX, startY, endX, endY) {
+            const diffX = endX - startX;
+            const diffY = endY - startY;
+
+            // Thresholds
+            const minSwipeDistance = 50;
+            const maxVerticalVariance = 50; // Strict vertical limit to prevent scroll interference
+
+            if (Math.abs(diffX) > minSwipeDistance && Math.abs(diffY) < maxVerticalVariance) {
+                if (diffX < 0) {
+                    // Swipe Left -> Next Month
+                    changeMonth(1);
+                } else {
+                    // Swipe Right -> Prev Month
+                    changeMonth(-1);
+                }
+            }
         }
 
         function toggleSeasonDescription(btn, event) {
