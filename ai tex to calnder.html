@@ -3180,7 +3180,7 @@ The word "Nua" means new and "Khai" means food.
         
         // Start Up
         initApp();
-        initCalendarSwipe();
+        initSwipeGestures();
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
@@ -3831,43 +3831,114 @@ The word "Nua" means new and "Khai" means food.
             if (endX > startX + 50) prevBannerSlide(total);
         }
 
-        // --- CALENDAR SWIPE LOGIC ---
-        let calTouchStartX = 0;
-        let calTouchStartY = 0;
+        // --- ADVANCED CALENDAR SWIPE GESTURES ---
+        function initSwipeGestures() {
+            const container = document.getElementById('calendar-swipe-area');
+            if (!container) return;
 
-        function initCalendarSwipe() {
-            const el = document.getElementById('calendar-swipe-area');
-            if(!el) return;
+            let startX = 0;
+            let startY = 0;
+            let currentX = 0;
+            let isDragging = false;
+            let isHorizontalSwipe = null;
+            const threshold = 80;
+            const animDuration = 300;
 
-            el.addEventListener('touchstart', (e) => {
-                calTouchStartX = e.changedTouches[0].screenX;
-                calTouchStartY = e.changedTouches[0].screenY;
-            }, {passive: true});
+            // Helper to apply transform
+            const setTransform = (px) => {
+                container.style.transform = `translateX(${px}px)`;
+            };
 
-            el.addEventListener('touchend', (e) => {
-                const endX = e.changedTouches[0].screenX;
-                const endY = e.changedTouches[0].screenY;
-                handleCalendarSwipe(calTouchStartX, calTouchStartY, endX, endY);
-            }, {passive: true});
-        }
+            // Helper to set transition
+            const setTransition = (enable) => {
+                container.style.transition = enable ? `transform ${animDuration}ms cubic-bezier(0.25, 1, 0.5, 1)` : 'none';
+            };
 
-        function handleCalendarSwipe(startX, startY, endX, endY) {
-            const diffX = endX - startX;
-            const diffY = endY - startY;
+            container.addEventListener('touchstart', (e) => {
+                // Only track single touch
+                if (e.touches.length !== 1) return;
 
-            // Thresholds
-            const minSwipeDistance = 50;
-            const maxVerticalVariance = 50; // Strict vertical limit to prevent scroll interference
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isDragging = true;
+                isHorizontalSwipe = null; // Reset direction check
+                currentX = 0; // Reset delta
+                setTransition(false); // Remove lag for 1:1 tracking
+            }, { passive: true });
 
-            if (Math.abs(diffX) > minSwipeDistance && Math.abs(diffY) < maxVerticalVariance) {
-                if (diffX < 0) {
-                    // Swipe Left -> Next Month
-                    changeMonth(1);
-                } else {
-                    // Swipe Right -> Prev Month
-                    changeMonth(-1);
+            container.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+
+                const x = e.touches[0].clientX;
+                const y = e.touches[0].clientY;
+                const diffX = x - startX;
+                const diffY = y - startY;
+
+                // Directional Locking Logic
+                if (isHorizontalSwipe === null) {
+                    // We need a small movement to decide direction
+                    const absX = Math.abs(diffX);
+                    const absY = Math.abs(diffY);
+
+                    if (absX > 5 || absY > 5) {
+                        // If horizontal movement is dominant, lock it
+                        if (absX > absY) {
+                            isHorizontalSwipe = true;
+                        } else {
+                            // Vertical scroll detected, ignore this swipe
+                            isHorizontalSwipe = false;
+                            isDragging = false; // Stop tracking
+                            return;
+                        }
+                    }
                 }
-            }
+
+                if (isHorizontalSwipe) {
+                    // Prevent native scrolling if we are swiping horizontally
+                    if (e.cancelable) e.preventDefault();
+
+                    currentX = diffX;
+                    requestAnimationFrame(() => setTransform(currentX));
+                }
+            }, { passive: false }); // non-passive required to preventDefault
+
+            container.addEventListener('touchend', (e) => {
+                if (!isDragging || !isHorizontalSwipe) {
+                    isDragging = false;
+                    return;
+                }
+                isDragging = false;
+
+                setTransition(true); // Enable smoothing for the snap/exit
+
+                // Check Thresholds
+                if (currentX < -threshold) {
+                    // SWIPE LEFT -> NEXT MONTH
+                    // Animate completely off-screen to the left
+                    setTransform(-window.innerWidth);
+
+                    setTimeout(() => {
+                        changeMonth(1); // Update State
+                        setTransition(false); // Disable transition
+                        setTransform(0); // Instantly reset
+                    }, animDuration);
+
+                } else if (currentX > threshold) {
+                    // SWIPE RIGHT -> PREV MONTH
+                    // Animate completely off-screen to the right
+                    setTransform(window.innerWidth);
+
+                    setTimeout(() => {
+                        changeMonth(-1); // Update State
+                        setTransition(false); // Disable transition
+                        setTransform(0); // Instantly reset
+                    }, animDuration);
+
+                } else {
+                    // SNAP BACK (Did not meet threshold)
+                    setTransform(0);
+                }
+            });
         }
 
         function toggleSeasonDescription(btn, event) {
