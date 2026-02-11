@@ -4099,6 +4099,19 @@ function renderCalendarGrid(data) {
             effectiveTithiIndex = astro.index - 1; // Force 10 or 25 (Ekadashi)
         }
 
+        // 3. Double Ekadashi Fix (Hide First Day)
+        // Check if current is Ekadashi (10 or 25)
+        if (effectiveTithiIndex === 10 || effectiveTithiIndex === 25) {
+            // Look ahead to next day
+            if (d < daysInMonth) {
+                const nextDateObj = new Date(data.year, data.month, d + 1);
+                const nextAstro = calculateTithi(nextDateObj);
+                if (nextAstro.index === effectiveTithiIndex) {
+                    effectiveTithiIndex = -1; // Hide icon on first day
+                }
+            }
+        }
+
         // Update tracker
         lastTithiIndex = astro.index;
         // -------------------------------
