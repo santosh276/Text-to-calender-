@@ -1681,6 +1681,8 @@ The word "Nua" means new and "Khai" means food.
                 sumLong -= 0.034720 * Math.sin(D * D2R);
                 sumLong -= 0.030383 * Math.sin((M + Mprime) * D2R);
                 sumLong += 0.015327 * Math.sin((2 * D - 2 * F) * D2R);
+                // 15th Term (Drift Correction for High Precision)
+                sumLong -= 0.012528 * Math.sin((2 * D - 2 * M) * D2R);
                 
                 return norm(Lprime + sumLong);
             }
@@ -1692,15 +1694,26 @@ The word "Nua" means new and "Khai" means food.
             }
 
             function calculate(dateObj, hour = 6) {
+                // 1. Standardize Time Zone to IST (UTC+5:30)
+                // This prevents drift caused by local browser timezones.
+                // Default: 6:00 AM IST corresponds to 00:30 UTC.
+
                 const d = new Date(dateObj);
-                // Reference: 6:00 AM IST is approx 00:30 UTC. 
-                // Support legacy hour argument but normalize minutes/seconds
+                const year = d.getFullYear();
+                const month = d.getMonth();
+                const day = d.getDate();
+
                 const h = (hour === undefined || hour === null) ? 6 : hour;
-                const hours = Math.floor(h);
-                const minutes = Math.floor((h % 1) * 60);
-                d.setHours(hours, minutes, 0, 0); 
                 
-                const jd = (d.getTime() / 86400000) + 2440587.5;
+                // Calculate UTC Offset from IST (IST is +5.5h ahead of UTC)
+                // UTC Time = IST Time - 5.5h
+                const utcOffsetMs = (h - 5.5) * 3600000;
+
+                // Construct UTC Date explicitly
+                // Date.UTC returns ms from epoch for 00:00:00 UTC on that YMD
+                const utcDate = new Date(Date.UTC(year, month, day) + utcOffsetMs);
+
+                const jd = (utcDate.getTime() / 86400000) + 2440587.5;
                 const aya = getAyanamsa(jd);
                 
                 const sunSid = norm(getSunLong(jd) - aya);
