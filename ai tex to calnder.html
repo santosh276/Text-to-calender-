@@ -2341,6 +2341,9 @@ The word "Nua" means new and "Khai" means food.
 
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
+            // Stop background scrolling
+            document.body.classList.add('overflow-hidden');
+
             setTimeout(() => {
                 modal.classList.remove('modal-hidden');
                 modal.classList.add('is-open');
@@ -2350,6 +2353,10 @@ The word "Nua" means new and "Khai" means food.
             const modal = document.getElementById('settings-modal');
             modal.classList.remove('is-open');
             modal.classList.add('modal-hidden');
+
+            // Restore background scrolling
+            document.body.classList.remove('overflow-hidden');
+
             // Timeout matches the 0.3s CSS transition + slight buffer
             setTimeout(() => modal.style.display = 'none', 300);
         }
