@@ -1693,18 +1693,18 @@ The word "Nua" means new and "Khai" means food.
 
             function calculate(dateObj, hour = 6) {
                 const d = new Date(dateObj);
-                // Reference: 6:00 AM IST is approx 00:30 UTC. 
-                // Support legacy hour argument but normalize minutes/seconds
-                const h = (hour === undefined || hour === null) ? 6 : hour;
-                const hours = Math.floor(h);
-                const minutes = Math.floor((h % 1) * 60);
-                d.setHours(hours, minutes, 0, 0); 
+
+                // Standardize to 6:00 AM IST (00:30 UTC) to match Indian Almanac standards
+                // This removes timezone dependency (previously local 6 AM)
+                d.setUTCHours(0, 30, 0, 0);
                 
                 const jd = (d.getTime() / 86400000) + 2440587.5;
                 const aya = getAyanamsa(jd);
                 
                 const sunSid = norm(getSunLong(jd) - aya);
-                const moonSid = norm(getMoonLong(jd) - aya);
+
+                // Minor correction (-1.5 deg) for simplified formula drift
+                const moonSid = norm(getMoonLong(jd) - aya - 1.5);
 
                 // Tithi = (Moon - Sun) / 12. Add 0.001 buffer for precision.
                 const diff = norm(moonSid - sunSid + 0.001);
