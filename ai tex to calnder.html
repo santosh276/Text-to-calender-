@@ -2294,6 +2294,15 @@ The word "Nua" means new and "Khai" means food.
         }
 
         function openSettingsModal() {
+            // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
+
+            // Special handling for Downloaded App Mode (where body has overflow-y-auto)
+            if (document.body.classList.contains('overflow-y-auto')) {
+                document.body.classList.remove('overflow-y-auto');
+                document.body.dataset.restoreOverflowY = 'true';
+            }
+
             document.getElementById('language-select').value = appState.config.language || 'en';
             
             // Environment Check: Hide Sync Settings in App Mode (User View)
@@ -2350,6 +2359,15 @@ The word "Nua" means new and "Khai" means food.
             const modal = document.getElementById('settings-modal');
             modal.classList.remove('is-open');
             modal.classList.add('modal-hidden');
+            
+            // Restore background scrolling
+            document.body.style.overflow = '';
+
+            if (document.body.dataset.restoreOverflowY === 'true') {
+                document.body.classList.add('overflow-y-auto');
+                delete document.body.dataset.restoreOverflowY;
+            }
+
             // Timeout matches the 0.3s CSS transition + slight buffer
             setTimeout(() => modal.style.display = 'none', 300);
         }
