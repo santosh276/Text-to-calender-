@@ -4153,6 +4153,11 @@ function renderCalendarGrid(data) {
             }
         }
 
+        // 4. Double Purnima Fix (Hide Second Day)
+        if (astro.index === 14 && lastTithiIndex === 14) {
+            effectiveTithiIndex = -1;
+        }
+
         // Update tracker
         lastTithiIndex = astro.index;
         // -------------------------------
