@@ -4909,7 +4909,29 @@ function renderCalendarGrid(data) {
             
             // --- INJECT TITHI/PAKSHA ---
             const tithiInfo = calculateTithi(dateObj);
-            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold"><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</div>`;
+
+            // --- DETECT SPECIAL EKADASHI (Double / Kshaya) ---
+            let specialBadge = "";
+            const prevDate = new Date(dateObj); prevDate.setDate(dateObj.getDate() - 1);
+            const nextDate = new Date(dateObj); nextDate.setDate(dateObj.getDate() + 1);
+
+            const prevAstro = calculateTithi(prevDate);
+            const nextAstro = calculateTithi(nextDate);
+            const currIndex = tithiInfo.index;
+
+            // 1. Kshaya Ekadashi (Skipped): Dashami (9/24) -> Dwadashi (11/26)
+            if ((currIndex === 11 && prevAstro.index === 9) || (currIndex === 26 && prevAstro.index === 24)) {
+                specialBadge = `<span class="ml-2 bg-red-500/80 text-white px-2 py-0.5 rounded text-[10px] border border-white/20">Kshaya Ekadashi</span>`;
+            }
+            // 2. Double Ekadashi: Current is Ekadashi (10/25) AND (Prev was Ekadashi OR Next is Ekadashi)
+            else if ((currIndex === 10 || currIndex === 25) && (prevAstro.index === currIndex || nextAstro.index === currIndex)) {
+                specialBadge = `<span class="ml-2 bg-purple-500/80 text-white px-2 py-0.5 rounded text-[10px] border border-white/20">Double Ekadashi</span>`;
+            }
+
+            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold flex items-center flex-wrap gap-y-1">
+                <span><i class="fa-solid fa-moon mr-1"></i> ${tithiInfo.tithi}, ${tithiInfo.paksha}</span>
+                ${specialBadge}
+            </div>`;
             // ---------------------------
 
             let detailsRaw = appState.details[dateKey];
