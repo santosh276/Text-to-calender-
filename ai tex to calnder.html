@@ -87,6 +87,47 @@
 .backdrop-blur-xl{-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)}
 .backdrop-blur-\[10px\]{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .border-white\/50{border-color:rgba(255,255,255,0.5)}
+
+        /* Tithi Progress Ring Container */
+        .tithi-ring {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: conic-gradient(#ff6b00 var(--p, 0%), #ffe0b2 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            transition: background 0.3s ease;
+            flex-shrink: 0; /* Prevent squashing in flex containers */
+        }
+
+        /* The inner white circle (makes it a ring) */
+        .tithi-ring::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: #fff;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        /* The Text inside the ring */
+        .tithi-content {
+            position: relative;
+            z-index: 1;
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            line-height: 1;
+        }
+
+        /* Krishna Paksha (Waning) */
+        .tithi-ring.krishna {
+            background: conic-gradient(#5c6bc0 var(--p, 0%), #e8eaf6 0deg);
+        }
 </style>
 <style>
         /* Custom Header Styles */
@@ -1610,6 +1651,20 @@ The word "Nua" means new and "Khai" means food.
             }
             
             return `<svg viewBox="0 0 24 24" class="w-full h-full" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="${d}" /></svg>`;
+        }
+
+        function getTithiHTML(tithiName, percentage, isKrishnaPaksha) {
+            // Ensure percentage is between 0 and 100
+            const safePercent = Math.min(Math.max(percentage, 0), 100);
+
+            // Add 'krishna' class if needed for different colors
+            const themeClass = isKrishnaPaksha ? 'krishna' : 'shukla';
+
+            return `
+                <div class="tithi-ring ${themeClass}" style="--p: ${safePercent}%" title="${tithiName} (${safePercent.toFixed(0)}%)">
+                    <span class="tithi-content">${tithiName}</span>
+                </div>
+            `;
         }
 
         // Season UI Component Data
@@ -4289,15 +4344,28 @@ function renderCalendarGrid(data) {
 
         // --- 2. DESKTOP INNER HTML ---
         // Render Single Tithi (Primary)
-        const dotColor = getTithiDotColor(astro.index, astro.paksha);
-        const tithiRows = `
-            <div class="flex items-center gap-2 pl-0.5 mt-1">
-                 <div class="w-1.5 h-1.5 rounded-full ${dotColor} flex-shrink-0 shadow-sm"></div>
-                 <div class="text-sm font-extrabold text-gray-900 truncate leading-tight tracking-tight">
-                    ${astro.tithi}
-                 </div>
-            </div>
-        `;
+        let tithiRows = '';
+        if (effectiveTithiIndex !== -1) {
+            // Logic for Ring Visualization
+            const isKrishna = effectiveTithiIndex >= 15;
+            // Calculate 1-15 index in the Paksha
+            const pakshaIndex = (effectiveTithiIndex % 15) + 1; // 1 to 15
+            // Percentage: 1/15 = 6.66%, 15/15 = 100%
+            const percentage = (pakshaIndex / 15) * 100;
+
+            // Generate Ring HTML
+            // We pass the Tithi Number (pakshaIndex) as content, and full name as title/tooltip
+            const ringHtml = getTithiHTML(pakshaIndex, percentage, isKrishna);
+
+            tithiRows = `
+                <div class="flex items-center gap-2 mt-1">
+                     ${ringHtml}
+                     <div class="text-xs font-extrabold text-gray-900 truncate leading-tight tracking-tight flex-1" title="${astro.tithi}">
+                        ${astro.tithi}
+                     </div>
+                </div>
+            `;
+        }
 
         const desktopView = `
             <div class="hidden md:flex flex-col h-full justify-between w-full">
