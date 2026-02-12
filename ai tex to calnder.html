@@ -247,6 +247,7 @@
         /* Custom Dot Colors */
         .w-1\.5{width:.375rem}.h-1\.5{height:.375rem}
         .w-3{width:.75rem}.h-3{height:.75rem}
+        .w-3\.5{width:.875rem}.h-3\.5{height:.875rem}
         .w-4{width:1rem}.h-4{height:1rem}
         .bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247/var(--tw-bg-opacity,1))}
         .bg-rose-500{--tw-bg-opacity:1;background-color:rgb(244 63 94/var(--tw-bg-opacity,1))}
@@ -4331,7 +4332,7 @@ function renderCalendarGrid(data) {
                     <span class="text-2xl font-bold text-gray-800 ${isSunday ? 'text-red-600' : ''}">
                         ${toNativeNum(d, currentLang)}
                     </span>
-                     <span class="w-4 h-4 opacity-80 block mt-1 drop-shadow-sm">
+                     <span class="w-4 h-4 opacity-80 block mt-2 drop-shadow-sm">
                         ${getMoonPhaseIcon((astro.index + 1) / 30)}
                     </span>
                 </div>
@@ -5022,10 +5023,10 @@ function renderCalendarGrid(data) {
 
             // Wrap icon for sizing in modal text line
             // Use drop-shadow-sm for consistency
-            const iconWrapper = `<span class="w-3.5 h-3.5 inline-block mr-1.5 align-text-bottom drop-shadow-sm">${iconHtml}</span>`;
+            const iconWrapper = `<span class="inline-flex items-center justify-center drop-shadow-sm" style="width: 14px; height: 14px; margin-right: 6px; vertical-align: text-bottom;">${iconHtml}</span>`;
 
-            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold flex flex-wrap items-center">
-                <span>${iconWrapper} ${tithiInfo.tithi}, ${tithiInfo.paksha}</span>
+            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold">
+                ${iconWrapper} <span>${tithiInfo.tithi}, ${tithiInfo.paksha}</span>
                 ${specialBadge}
             </div>`;
             // ---------------------------
