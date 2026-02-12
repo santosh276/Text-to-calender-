@@ -1570,7 +1570,7 @@ The word "Nua" means new and "Khai" means food.
         const RETRY_ICON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>`;
 
         const TITHI_ICONS = {
-            purnima: `<svg viewBox="0 0 24 24" class="w-full h-full text-amber-500 drop-shadow-sm" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
+            purnima: `<svg viewBox="0 0 24 24" class="w-full h-full text-[#FDE047] drop-shadow-sm" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
             amavasya: `<svg viewBox="0 0 24 24" class="w-full h-full text-black drop-shadow-sm" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
             ekadashi: `<svg viewBox="0 0 512 512" class="w-full h-full text-indigo-500 drop-shadow-sm" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`,
             shukla_ekadashi: `<svg viewBox="0 0 512 512" class="w-full h-full text-amber-500 drop-shadow-sm" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`
@@ -1603,7 +1603,7 @@ The word "Nua" means new and "Khai" means food.
 
             // Handle exact Full and New moons to prevent tiny visual glitches
             if (Math.abs(phase - 0.5) < 0.01) {
-        return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#F59E0B" /></svg>`;
+                return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FDE047" /></svg>`;
             }
             if (phase < 0.01 || phase > 0.99) {
                 return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#0F172A" /></svg>`;
@@ -1615,7 +1615,7 @@ The word "Nua" means new and "Khai" means food.
             // Put the bright yellow ball and the dark shadow together
             return `
         <svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="50" fill="#F59E0B" />
+    <circle cx="50" cy="50" r="50" fill="#FDE047" />
             <path d="${path}" fill="#0F172A" />
         </svg>`.trim();
         }
