@@ -4218,12 +4218,12 @@ function renderCalendarGrid(data) {
         // ==========================================
         
         // Helper: Get Color for Tithi
-        const getTithiDotColor = (idx, pakshaName) => {
-            if (idx === 10 || idx === 25) return "bg-purple-500"; 
-            if (idx === 14) return "bg-orange-500"; 
-            if (idx === 29) return "bg-rose-500"; 
-            if (idx < 15) return "bg-green-400"; // Shukla Paksha
-            return "bg-blue-400"; // Krishna Paksha
+        const getTithiTextColor = (idx) => {
+            if (idx === 10 || idx === 25) return "text-purple-500";
+            if (idx === 14) return "text-orange-500";
+            if (idx === 29) return "text-rose-500";
+            if (idx < 15) return "text-green-500"; // Shukla Paksha
+            return "text-blue-500"; // Krishna Paksha
         };
 
         // --- NEW: Paksha Badge Logic ---
@@ -4289,10 +4289,13 @@ function renderCalendarGrid(data) {
 
         // --- 2. DESKTOP INNER HTML ---
         // Render Single Tithi (Primary)
-        const dotColor = getTithiDotColor(astro.index, astro.paksha);
+        const tithiIconColor = getTithiTextColor(astro.index);
+        const moonIcon = getMoonPhaseIcon(astro.index);
         const tithiRows = `
             <div class="flex items-center gap-2 pl-0.5 mt-1">
-                 <div class="w-1.5 h-1.5 rounded-full ${dotColor} flex-shrink-0 shadow-sm"></div>
+                 <div class="w-3.5 h-3.5 ${tithiIconColor} flex-shrink-0">
+                    ${moonIcon}
+                 </div>
                  <div class="text-sm font-extrabold text-gray-900 truncate leading-tight tracking-tight">
                     ${astro.tithi}
                  </div>
