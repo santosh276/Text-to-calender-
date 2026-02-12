@@ -4153,6 +4153,24 @@ function renderCalendarGrid(data) {
             }
         }
 
+        // 4. Double Purnima Fix (Hide Second Day)
+        if (astro.index === 14 && lastTithiIndex === 14) {
+            effectiveTithiIndex = -1;
+        }
+
+        // 5. Kshaya Purnima Fix (Skipped 14, Force on 13)
+        // Check if current is Chaturdashi (13)
+        if (effectiveTithiIndex === 13) {
+            // Look ahead to next day to see if it jumps to Pratipada (15)
+            if (d < daysInMonth) {
+                const nextDateObj = new Date(data.year, data.month, d + 1);
+                const nextAstro = calculateTithi(nextDateObj);
+                if (nextAstro.index === 15) {
+                    effectiveTithiIndex = 14; // Force Purnima
+                }
+            }
+        }
+
         // Update tracker
         lastTithiIndex = astro.index;
         // -------------------------------
