@@ -1811,8 +1811,50 @@ The word "Nua" means new and "Khai" means food.
                 };
             }
 
+            function getTithiTimes(jd, tithiIndex) {
+                // Helper: Get Angle (0-360)
+                const getAngle = (j) => {
+                    // Use Ayanamsa corrected longitudes if possible, but difference is same
+                    // (Moon - Aya) - (Sun - Aya) = Moon - Sun.
+                    // So raw longitudes are fine for difference.
+                    let diff = norm(getMoonLong(j) - getSunLong(j));
+                    return diff;
+                };
+
+                // Helper: Binary Search
+                // Finds time when angle == target.
+                // Constraint: Tithi increases angle.
+                const solve = (low, high, target) => {
+                    for (let i = 0; i < 20; i++) {
+                        let mid = (low + high) / 2;
+                        let val = getAngle(mid);
+                        let delta = val - target;
+                        if (delta > 180) delta -= 360;
+                        if (delta < -180) delta += 360;
+
+                        // If delta > 0, current angle > target. We need earlier time.
+                        if (delta > 0) high = mid; else low = mid;
+                    }
+                    return high;
+                };
+
+                // Normalize index to 0-29
+                let idx = tithiIndex % 30;
+
+                let startTarget = idx * 12;
+                let endTarget = ((idx + 1) % 30) * 12;
+
+                // Search Range: +/- 1.2 days from current JD
+                // This covers Tithi length variations (19h to 26h)
+                const startJD = solve(jd - 1.2, jd + 0.1, startTarget);
+                const endJD = solve(jd - 0.1, jd + 1.2, endTarget);
+
+                return { start: startJD, end: endJD };
+            }
+
             return {
                 calculate: calculate,
+                getTithiTimes: getTithiTimes,
                 getTithiAtSunrise: function(dateObj) {
                     // Strict Sunrise Rule: Always check 6 AM
                     return calculate(dateObj, 6);
@@ -5122,6 +5164,24 @@ function renderCalendarGrid(data) {
             const elongation = (moonLon - sunLon + 360) % 360;
             const tithiProgress = ((elongation % 12) / 12 * 100).toFixed(1);
 
+            // Tithi Timings
+            let tithiTimes = { start: 0, end: 0 };
+            try {
+                if (VedicAstro.getTithiTimes) {
+                    tithiTimes = VedicAstro.getTithiTimes(jd, tithiInfo.index);
+                }
+            } catch(e) { console.error("Tithi timing calc failed", e); }
+
+            const fmtTime = (j) => {
+                if(!j) return "--";
+                const d = new Date((j - 2440587.5) * 86400000);
+                // Check if date is different from current view date
+                const isSameDay = d.getDate() === day && d.getMonth() === monthData.month && d.getFullYear() === monthData.year;
+                const timeStr = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                if (isSameDay) return timeStr;
+                return `${d.toLocaleDateString([], {month:'short', day:'numeric'})}, ${timeStr}`;
+            };
+
             // Upcoming Special Tithis (Scan next 30 days)
             const upcoming = [];
             let scanDate = new Date(dateObj);
@@ -5205,6 +5265,17 @@ function renderCalendarGrid(data) {
                             </div>
                             <h3 class="text-3xl font-extrabold text-amber-400 mb-1 leading-none">${tithiInfo.tithi}</h3>
                             <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
+
+                            <div class="grid grid-cols-2 gap-4 pt-3 border-t border-white/10">
+                                <div>
+                                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Starts</div>
+                                    <div class="text-sm font-mono text-gray-300">${fmtTime(tithiTimes.start)}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Ends</div>
+                                    <div class="text-sm font-mono text-amber-300 font-bold">${fmtTime(tithiTimes.end)}</div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- 2. Astronomical Data -->
