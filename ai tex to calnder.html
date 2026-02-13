@@ -5254,32 +5254,13 @@ function renderCalendarGrid(data) {
                             </div>
                         </div>` : ''}
 
-                        <!-- 4. Banner Upload / Display -->
+                        <!-- 4. Banner Display (Only if URL exists) -->
+                        ${bannerUrl ? `
                         <div id="modal-banner-container" class="modal-card p-0 overflow-hidden relative group min-h-[200px] transition-all duration-500 ease-out flex items-center justify-center border border-white/10 bg-black/40">
-                            ${bannerUrl ? `
-                                <!-- View Mode -->
-                                <img src="${bannerUrl}" onload="adjustBannerHeight(this)" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
-
-                                <!-- Controls (Visible on Hover) -->
-                                <div class="relative z-10 flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
-                                    <button onclick="triggerBannerUpload('${dateKey}')" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white flex items-center justify-center border border-white/20 shadow-lg transition active:scale-95" title="Change Image">
-                                        <i class="fa-solid fa-camera"></i>
-                                    </button>
-                                    <button onclick="removeBanner('${dateKey}')" class="w-10 h-10 rounded-full bg-red-500/80 backdrop-blur-md hover:bg-red-600/90 text-white flex items-center justify-center border border-white/20 shadow-lg transition active:scale-95" title="Remove Image">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            ` : `
-                                <!-- Upload Mode -->
-                                <div class="flex flex-col items-center justify-center p-6 w-full h-full cursor-pointer hover:bg-white/5 transition" onclick="triggerBannerUpload('${dateKey}')">
-                                    <div class="w-12 h-12 rounded-full bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center text-white/50 mb-2 group-hover:border-white/40 group-hover:text-white transition">
-                                        <i class="fa-solid fa-camera text-xl"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider group-hover:text-gray-300">Add Day Banner</span>
-                                </div>
-                            `}
-                        </div>
+                            <!-- View Mode -->
+                            <img src="${bannerUrl}" onload="adjustBannerHeight(this)" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
+                        </div>` : ''}
 
                         <!-- 5. Rich Details (Notes/Events) -->
                         <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
