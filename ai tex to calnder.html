@@ -873,6 +873,39 @@
         top: 2px; 
         right: 2px;
     }
+
+    /* --- NEW: Day Modal Page Layout (Dark Theme) --- */
+    @media (max-width: 767px) {
+        #day-modal { padding: 0 !important; }
+        #day-modal .modal-content {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            border-radius: 0 !important;
+        }
+    }
+    
+    #day-modal .modal-content {
+        background-color: #121212; /* Deep Dark Background */
+        color: #e5e7eb;
+        background-image: radial-gradient(circle at 50% 0%, #2a1a4a 0%, #121212 60%);
+    }
+    
+    #day-modal .premium-header-bg {
+        background: transparent !important; /* Override default header bg */
+        box-shadow: none !important;
+        border-bottom: none !important;
+    }
+
+    .modal-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 1rem;
+        padding: 1rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -1556,6 +1589,8 @@ The word "Nua" means new and "Khai" means food.
         </div>
     </div>
 
+    <!-- Hidden Banner Upload Input -->
+    <input type="file" id="bannerInput" accept="image/*" style="display: none;" onchange="handleBannerUpload(event)">
 
     <script>
         const DATA_VERSION = 2;
@@ -1766,7 +1801,10 @@ The word "Nua" means new and "Khai" means food.
                     tithiIndex: tithiIndex % 30,
                     nakshatra: NAKSHATRAS[nakIndex % 27],
                     yoga: YOGAS[yogaIndex % 27],
-                    karana: KARANAS[karanaIndex]
+                    karana: KARANAS[karanaIndex],
+                    jd: jd,
+                    sunLon: sunSid,
+                    moonLon: moonSid
                 };
             }
 
@@ -2323,7 +2361,10 @@ The word "Nua" means new and "Khai" means food.
                 index: safeIndex,
                 nakshatra: astro.nakshatra,
                 yoga: astro.yoga,
-                karana: astro.karana
+                karana: astro.karana,
+                jd: astro.jd,
+                sunLon: astro.sunLon,
+                moonLon: astro.moonLon
             };
         }
 
@@ -4982,254 +5023,253 @@ function renderCalendarGrid(data) {
         let currentModalIndex = 0;
         let currentModalDayEvents = [];
         let currentModalTithiBlock = "";
+        let currentUploadDateKey = null;
+
+        function triggerBannerUpload(dateKey) {
+            currentUploadDateKey = dateKey;
+            document.getElementById('bannerInput').click();
+        }
+
+        function handleBannerUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                if (currentUploadDateKey) {
+                    if (!appState.details[currentUploadDateKey]) {
+                        appState.details[currentUploadDateKey] = [{ tags: [], bodyLines: [], bannerUrl: null }];
+                    }
+                    
+                    let detailList = appState.details[currentUploadDateKey];
+                    if (!Array.isArray(detailList)) {
+                        // Legacy support (though parseInput makes arrays)
+                        detailList = [detailList];
+                        appState.details[currentUploadDateKey] = detailList;
+                    }
+                    
+                    if (detailList.length === 0) {
+                        detailList.push({ tags: [], bodyLines: [], bannerUrl: null });
+                    }
+                    
+                    // Update the FIRST detail's banner for now (simplification)
+                    detailList[0].bannerUrl = base64;
+                    
+                    saveStateToCache();
+                    
+                    // Update global currentModalDetails if we are currently viewing this date
+                    if (currentModalDetails.length > 0) {
+                        currentModalDetails[0].bannerUrl = base64;
+                    } else {
+                        currentModalDetails = detailList;
+                    }
+                    
+                    updateModalContent();
+                    render();
+                }
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
 
         function openDayModal(day, monthData) {
             const modal = document.getElementById('day-modal');
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
             
-            document.getElementById('modal-month-short').innerText = shortMonths[monthData.month];
-            document.getElementById('modal-date-num').innerText = day;
-            document.getElementById('modal-full-date').innerText = `${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}`;
-            
-            // --- INJECT TITHI/PAKSHA ---
+            // --- 1. PREPARE DATA ---
             const tithiInfo = calculateTithi(dateObj);
             
-            // --- DETECT SPECIAL EKADASHI (Double / Kshaya) ---
-            let specialBadge = "";
-            const prevDate = new Date(dateObj); prevDate.setDate(dateObj.getDate() - 1);
-            const nextDate = new Date(dateObj); nextDate.setDate(dateObj.getDate() + 1);
+            // Astro Data
+            const jd = tithiInfo.jd || 0;
+            const sunLon = tithiInfo.sunLon || 0;
+            const moonLon = tithiInfo.moonLon || 0;
+            const elongation = (moonLon - sunLon + 360) % 360;
+            const tithiProgress = ((elongation % 12) / 12 * 100).toFixed(1);
             
-            const prevAstro = calculateTithi(prevDate);
-            const nextAstro = calculateTithi(nextDate);
-            const currIndex = tithiInfo.index;
-
-            // 1. Kshaya Ekadashi (Skipped): Dashami (9/24) -> Dwadashi (11/26)
-            if ((currIndex === 11 && prevAstro.index === 9) || (currIndex === 26 && prevAstro.index === 24)) {
-                specialBadge = `<div class="w-full mt-2.5"><span class="bg-red-500/90 text-white px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider border border-white/20 shadow-sm">KSHAYA EKADASHI</span></div>`;
+            // Upcoming Special Tithis (Scan next 30 days)
+            const upcoming = [];
+            let scanDate = new Date(dateObj);
+            scanDate.setDate(scanDate.getDate() + 1);
+            for(let i=0; i<30; i++) {
+                if (upcoming.length >= 3) break;
+                const astro = calculateTithi(scanDate);
+                if ([14, 29, 10, 25].includes(astro.index)) {
+                    upcoming.push({
+                        date: new Date(scanDate),
+                        tithi: astro.tithi,
+                        index: astro.index,
+                        paksha: astro.paksha
+                    });
+                }
+                scanDate.setDate(scanDate.getDate() + 1);
             }
-            // 2. Double Ekadashi: Current is Ekadashi (10/25) AND (Prev was Ekadashi OR Next is Ekadashi)
-            else if ((currIndex === 10 || currIndex === 25) && (prevAstro.index === currIndex || nextAstro.index === currIndex)) {
-                specialBadge = `<div class="w-full mt-2.5"><span class="bg-purple-500/90 text-white px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider border border-white/20 shadow-sm">DOUBLE EKADASHI</span></div>`;
-            }
 
-            // Determine Icon for Modal
-            let iconHtml = '';
-            if (currIndex === 14) iconHtml = TITHI_ICONS.purnima;
-            else if (currIndex === 29) iconHtml = TITHI_ICONS.amavasya;
-            else if (currIndex === 10) iconHtml = TITHI_ICONS.shukla_ekadashi;
-            else if (currIndex === 25) iconHtml = TITHI_ICONS.ekadashi;
-            else iconHtml = getMoonPhaseIcon((currIndex + 1) / 30);
+            // Build Upcoming HTML
+            let upcomingHtml = '';
+            upcoming.forEach(item => {
+                let bgColor = 'bg-purple-600';
+                let iconHtml = TITHI_ICONS.ekadashi;
+                let title = 'Ekadashi';
+                
+                if (item.index === 14) { bgColor = 'bg-amber-500 text-black'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
+                else if (item.index === 29) { bgColor = 'bg-slate-800 text-white border border-gray-600'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
+                
+                const dateStr = item.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                
+                upcomingHtml += `
+                    <div class="${bgColor} ${item.index===14?'text-black':'text-white'} rounded-xl p-3 flex flex-col items-center text-center shadow-lg transform hover:scale-105 transition">
+                        <div class="w-6 h-6 mb-1 drop-shadow-md">${iconHtml}</div>
+                        <div class="font-bold text-xs mb-0.5">${title}</div>
+                        <div class="text-[9px] opacity-80 uppercase font-bold leading-tight">${dateStr}</div>
+                    </div>
+                `;
+            });
 
-            // Wrap icon for sizing in modal text line
-            // Use drop-shadow-sm for consistency
-            const iconWrapper = `<span class="inline-flex items-center justify-center drop-shadow-sm" style="width: 14px; height: 14px; margin-right: 6px; vertical-align: text-bottom;">${iconHtml}</span>`;
+            // Main Icon
+            let mainIcon = getMoonPhaseIcon((tithiInfo.index + 1) / 30);
+            if (tithiInfo.index === 14) mainIcon = TITHI_ICONS.purnima;
+            if (tithiInfo.index === 29) mainIcon = TITHI_ICONS.amavasya;
 
-            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold">
-                ${iconWrapper} <span>${tithiInfo.tithi}, ${tithiInfo.paksha}</span>
-                ${specialBadge}
-            </div>`;
-            // ---------------------------
-
+            // Details/Events
             let detailsRaw = appState.details[dateKey];
-
-            // Fallback to recurring details
             if (!detailsRaw) {
                 const recKey = `rec-${monthData.month}-${day}`;
                 detailsRaw = appState.recurringDetails[recKey];
             }
+            let details = (detailsRaw && Array.isArray(detailsRaw)) ? detailsRaw : (detailsRaw ? [detailsRaw] : []);
+            
+            // Events for this day
+            const dayEvents = monthData.events.filter(e => e.date === day);
+            
+            // Banner
+            let bannerUrl = '';
+            if (details.length > 0 && details[0].bannerUrl) bannerUrl = resolveImageUrls(details[0].bannerUrl);
+            
+            // --- 2. BUILD HTML STRUCTURE (Dark Page Layout) ---
+            const contentHtml = `
+                <button onclick="closeDayModal()" class="fixed top-4 right-4 z-[100] bg-black/40 hover:bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition shadow-lg border border-white/10"><i class="fa-solid fa-times"></i></button>
 
-            currentModalDetails = (detailsRaw && Array.isArray(detailsRaw)) ? detailsRaw : (detailsRaw ? [detailsRaw] : []);
-            
-            const rawDayEvents = monthData.events.filter(e => e.date === day);
-            
-            // Expand slash-separated events for the modal view
-            currentModalDayEvents = [];
-            rawDayEvents.forEach(ev => {
-                const engList = ev.engName.split('/').map(s => s.trim()).filter(s => s);
-                const locList = ev.locName ? ev.locName.split('/').map(s => s.trim()) : [];
-                const count = Math.max(engList.length, locList.length);
-                
-                if (count > 1) {
-                    for(let i=0; i<count; i++) {
-                        currentModalDayEvents.push({
-                            ...ev,
-                            engName: engList[i] || engList[0] || ev.engName,
-                            locName: locList[i] || locList[locList.length-1] || (i === 0 ? ev.locName : '')
-                        });
-                    }
-                } else {
-                    currentModalDayEvents.push(ev);
-                }
-            });
+                <div class="h-full overflow-y-auto custom-scroll pb-20">
+                    
+                    <!-- Header -->
+                    <div class="text-center pt-10 pb-6 relative">
+                        <div class="w-20 h-20 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-90">${mainIcon}</div>
+                        <h2 class="text-2xl font-extrabold text-white mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
+                        <p class="text-amber-400 font-bold text-sm uppercase tracking-widest opacity-90">${tithiInfo.paksha} Paksha</p>
+                    </div>
 
-            if (currentModalDetails.length === 0 && currentModalDayEvents.length > 0) {
-                currentModalDetails = currentModalDayEvents.map(ev => ({ tags: ['Event'], bodyLines: [], bannerUrl: null }));
-            }
-            
-            currentModalIndex = 0;
+                    <!-- Content Padding -->
+                    <div class="px-4 space-y-4 max-w-lg mx-auto">
+                        
+                        <!-- 1. Current Tithi -->
+                        <div class="modal-card">
+                            <div class="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
+                                <div class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 text-xs"><i class="fa-solid fa-moon"></i></div>
+                                <span class="font-bold text-gray-300 text-xs uppercase tracking-wider">Current Tithi</span>
+                            </div>
+                            <h3 class="text-3xl font-extrabold text-amber-400 mb-1 leading-none">${tithiInfo.tithi}</h3>
+                            <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
+                        </div>
+
+                        <!-- 2. Astronomical Data -->
+                        <div class="modal-card">
+                            <div class="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
+                                <div class="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs"><i class="fa-solid fa-chart-simple"></i></div>
+                                <span class="font-bold text-gray-300 text-xs uppercase tracking-wider">Astronomical Data</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs mb-4">
+                                <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                                    <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase">Julian Date</div>
+                                    <div class="font-mono text-white font-bold">${jd.toFixed(2)}</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                                    <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase">Sun Long.</div>
+                                    <div class="font-mono text-white font-bold">${sunLon.toFixed(2)}°</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                                    <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase">Moon Long.</div>
+                                    <div class="font-mono text-white font-bold">${moonLon.toFixed(2)}°</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                                    <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase">Elongation</div>
+                                    <div class="font-mono text-white font-bold">${elongation.toFixed(2)}°</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-1.5 px-1">
+                                    <span class="text-gray-400 font-bold text-[10px] uppercase">Tithi Progress</span>
+                                    <span class="text-amber-400 font-bold font-mono">${tithiProgress}%</span>
+                                </div>
+                                <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden border border-white/5">
+                                    <div class="h-full bg-gradient-to-r from-amber-700 to-amber-500 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.3)] transition-all duration-1000" style="width: ${tithiProgress}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Upcoming Special Tithis -->
+                        ${upcoming.length > 0 ? `
+                        <div class="modal-card">
+                            <div class="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
+                                <div class="w-7 h-7 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 text-xs"><i class="fa-regular fa-calendar-check"></i></div>
+                                <span class="font-bold text-gray-300 text-xs uppercase tracking-wider">Upcoming Special Tithis</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                ${upcomingHtml}
+                            </div>
+                        </div>` : ''}
+
+                        <!-- 4. Banner Upload / Display -->
+                        <div class="modal-card relative overflow-hidden group min-h-[140px] flex flex-col justify-center items-center text-center p-0 border-dashed border-2 border-white/10 hover:border-white/30 transition-colors">
+                             <!-- Background Image -->
+                             <div class="absolute inset-0 bg-cover bg-center opacity-40 transition group-hover:opacity-50 duration-500" style="background-image: url('${bannerUrl}'); background-color: #050505;"></div>
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+                             
+                             <!-- Content -->
+                             <div class="relative z-10 p-6 w-full flex flex-col items-center">
+                                 <div class="w-12 h-12 mx-auto bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white mb-3 cursor-pointer hover:bg-white/20 hover:scale-110 transition-all duration-300 shadow-lg border border-white/20" onclick="triggerBannerUpload('${dateKey}')">
+                                    <i class="fa-solid fa-camera text-lg"></i>
+                                 </div>
+                                 <div class="text-xs font-bold text-white uppercase tracking-widest drop-shadow-md">Day Memory / Banner</div>
+                                 ${bannerUrl ? '<div class="text-[9px] text-green-400 mt-1 font-mono"><i class="fa-solid fa-check"></i> Image Set</div>' : '<div class="text-[9px] text-gray-400 mt-1">Tap camera to upload</div>'}
+                             </div>
+                        </div>
+
+                        <!-- 5. Rich Details (Notes/Events) -->
+                        <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
+                            ${dayEvents.map(ev => `
+                                <div class="bg-white/5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} rounded-r-xl p-4 backdrop-blur-sm">
+                                    <h4 class="font-bold text-white text-lg leading-tight mb-1">${ev.engName}</h4>
+                                    ${ev.locName ? `<p class="text-sm text-gray-400 font-oriya">${ev.locName}</p>` : ''}
+                                </div>
+                            `).join('')}
+                            
+                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-300 text-sm leading-relaxed rich-content">${details.map(d => {
+                                // Simple text rendering for body lines
+                                return d.bodyLines.map(line => {
+                                    if(line.startsWith('#')) return `<h4 class="text-amber-400 font-bold mt-3 mb-1 text-base">${line.replace(/#/g,'').trim()}</h4>`;
+                                    if(line.startsWith('-')) return `<li class="ml-4 text-gray-400">${line.replace('-','').trim()}</li>`;
+                                    return `<p class="mb-2">${line}</p>`;
+                                }).join('');
+                            }).join('<hr class="border-white/10 my-4">')}</div>` : ''}
+                        </div>
+
+                    </div>
+                </div>
+            `;
 
             const modalContent = modal.querySelector('.modal-content');
+            modalContent.innerHTML = contentHtml;
 
-            // --- NAVIGATION UI ---
-            let navContainer = document.getElementById('modal-nav-container');
-            if (!navContainer) {
-                navContainer = document.createElement('div');
-                navContainer.id = 'modal-nav-container';
-                navContainer.className = "absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2 pointer-events-none z-[100]";
-                
-                // We append it to the relative parent of header/body, which is .modal-content
-                // Ensure .modal-content is relative (it is in CSS)
-                modalContent.appendChild(navContainer);
-            }
+            // Remove legacy listeners (simplified view now)
             
-            // Render content for the initial slide
-            updateModalContent();
-
-            // Setup Touch Listeners for Swipe
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            const handleTouchStart = (e) => { touchStartX = e.changedTouches[0].screenX; };
-            const handleTouchEnd = (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                if (currentModalDetails.length > 1) {
-                    if (touchEndX < touchStartX - 50) nextModalSlide();
-                    if (touchEndX > touchStartX + 50) prevModalSlide();
-                }
-            };
-
-            modalContent.removeEventListener('touchstart', handleTouchStart); // Prevent duplicate listeners
-            modalContent.removeEventListener('touchend', handleTouchEnd);
-            
-            modalContent.addEventListener('touchstart', handleTouchStart, {passive: true});
-            modalContent.addEventListener('touchend', handleTouchEnd, {passive: true});
-
             modal.style.display = 'flex';
             setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
         }
 
-        function updateModalContent() {
-            const bodyContainer = document.getElementById('modal-rich-body');
-            const titleEl = document.getElementById('modal-main-title');
-            const tagPillContainer = document.getElementById('modal-tag-pill');
-            const headerEl = document.getElementById('modal-header-background');
-            const navContainer = document.getElementById('modal-nav-container');
-            
-            // Reset Header Style
-            if (headerEl) { 
-                headerEl.className = 'premium-header-bg p-6 relative shrink-0 transition-all duration-300'; 
-                headerEl.style.backgroundImage = ''; 
-            }
-            
-            tagPillContainer.innerHTML = '';
-            bodyContainer.innerHTML = '';
-            
-            // Animation class for transition effect
-            bodyContainer.classList.remove('opacity-0');
-            void bodyContainer.offsetWidth; // Trigger reflow
-
-            if (currentModalDetails.length > 0) {
-                // We have one or more details
-                const detail = currentModalDetails[currentModalIndex];
-                
-                // Show Navigation Buttons if multiple
-                if (currentModalDetails.length > 1) {
-                    navContainer.innerHTML = `
-                        <button onclick="prevModalSlide(event)" class="pointer-events-auto bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button onclick="nextModalSlide(event)" class="pointer-events-auto bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-right"></i></button>
-                    `;
-                    
-                    // Add dots indicator inside header
-                    let dotsHtml = `<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-20">`;
-                    currentModalDetails.forEach((_, idx) => {
-                        dotsHtml += `<div class="w-1.5 h-1.5 rounded-full ${idx === currentModalIndex ? 'bg-white' : 'bg-white/40'}"></div>`;
-                    });
-                    dotsHtml += `</div>`;
-                    // Check if dots container exists or append
-                    let dotsEl = document.getElementById('modal-dots');
-                    if(dotsEl) dotsEl.remove();
-                    
-                    const dotsWrapper = document.createElement('div');
-                    dotsWrapper.id = 'modal-dots';
-                    dotsWrapper.innerHTML = dotsHtml;
-                    headerEl.appendChild(dotsWrapper);
-                    
-                } else {
-                    navContainer.innerHTML = '';
-                    let dotsEl = document.getElementById('modal-dots');
-                    if(dotsEl) dotsEl.remove();
-                }
-
-                // Determine Title
-                // If detail has specific title in body? No, standard structure uses events or manually parsed headers.
-                // We fallback to checking events corresponding to this detail if we can match them, 
-                // OR we just show the main event name for the day, OR "Detail X".
-                
-                // Strategy: If currentModalIndex matches an event index, use that? 
-                // Currently events are separate from details. 
-                // Simple approach: Use the first event name for the first detail, etc? 
-                // Or just show "Daily Overview" if no match.
-                
-                let titleText = "Daily Overview";
-                if (currentModalDayEvents.length > 0) {
-                     // If we have multiple details and multiple events, try to map 1:1
-                     if (currentModalIndex < currentModalDayEvents.length) {
-                         titleText = `${currentModalDayEvents[currentModalIndex].locName || ''} ${currentModalDayEvents[currentModalIndex].engName}`;
-                     } else {
-                         titleText = `${currentModalDayEvents[0].locName || ''} ${currentModalDayEvents[0].engName}`;
-                     }
-                }
-                
-                titleEl.innerText = titleText;
-                
-                if (detail.tags.length > 0) {
-                    const tagText = detail.tags[0]; 
-                    tagPillContainer.innerHTML = `<span class="bg-white/20 backdrop-blur-md border border-white/20 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-sm mr-2">${tagText}</span>`;
-                }
-                
-                // Add "Page X of Y" if multiple
-                if (currentModalDetails.length > 1) {
-                     tagPillContainer.innerHTML += `<span class="bg-black/20 text-white text-[10px] font-bold px-2 py-0.5 rounded">${currentModalIndex + 1}/${currentModalDetails.length}</span>`;
-                }
-                
-                tagPillContainer.innerHTML += currentModalTithiBlock;
-
-                if (detail.bannerUrl && headerEl) { 
-                    const imgUrl = resolveImageUrls(detail.bannerUrl);
-                    headerEl.style.backgroundImage = `linear-gradient(90deg, rgba(66, 32, 6, 0.95) 0%, rgba(66, 32, 6, 0.6) 50%, rgba(66, 32, 6, 0.2) 100%), url('${imgUrl}')`;
-                    headerEl.style.backgroundSize = 'cover';
-                    headerEl.style.backgroundPosition = 'center';
-                    headerEl.classList.remove('premium-header-bg');
-                    headerEl.classList.add('bg-cover', 'bg-center');
-                }
-                
-                renderRichBody(bodyContainer, detail.bodyLines);
-                
-            } else {
-                // No Details Block -> Default Event List View
-                navContainer.innerHTML = '';
-                let dotsEl = document.getElementById('modal-dots');
-                if(dotsEl) dotsEl.remove();
-
-                if (currentModalDayEvents.length > 0) {
-                    titleEl.innerText = currentModalDayEvents[0].engName;
-                    tagPillContainer.innerHTML = `<span class="bg-white/20 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">Event</span>`;
-                    tagPillContainer.innerHTML += currentModalTithiBlock;
-
-                    currentModalDayEvents.forEach(ev => {
-                        const div = document.createElement('div');
-                        div.className = "p-4 bg-gray-50 rounded-xl border border-gray-200 mb-3 shadow-sm";
-                        div.innerHTML = `<div class="font-bold text-gray-800 text-lg">${ev.engName}</div><div class="text-sm text-gray-500 font-oriya">${ev.locName || ''}</div>`;
-                        bodyContainer.appendChild(div);
-                    });
-                } else {
-                    titleEl.innerText = "No Major Events";
-                    tagPillContainer.innerHTML += currentModalTithiBlock;
-                    bodyContainer.innerHTML = `<p class="text-gray-400 italic text-sm mt-4 text-center">No specific details or events found for this date.</p>`;
-                }
-            }
-        }
+        // Placeholder for legacy call (if any)
+        function updateModalContent() {}
         
         function nextModalSlide(e) {
             if(e) e.stopPropagation();
