@@ -5157,12 +5157,20 @@ function renderCalendarGrid(data) {
                     <div class="text-center pt-10 pb-6 relative">
                         <div class="w-20 h-20 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-90">${mainIcon}</div>
                         <h2 class="text-2xl font-extrabold text-white mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
-                        <p class="text-amber-400 font-bold text-sm uppercase tracking-widest opacity-90">${tithiInfo.paksha} Paksha</p>
+                        <p class="text-amber-400 font-bold text-sm uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
                     </div>
 
                     <!-- Content Padding -->
                     <div class="px-4 space-y-4 max-w-lg mx-auto">
                         
+                        <!-- Banner Display (Only if URL exists) -->
+                        ${bannerUrl ? `
+                        <div class="modal-card relative overflow-hidden group h-48 w-full flex flex-col justify-center items-center text-center p-0 border-2 border-white/10 hover:border-white/30 transition-colors">
+                             <!-- Background Image -->
+                             <div class="absolute inset-0 bg-cover bg-center opacity-100 transition duration-500" style="background-image: url('${bannerUrl}'); background-color: #050505;"></div>
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none"></div>
+                        </div>` : ''}
+
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
                             <div class="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
@@ -5218,14 +5226,6 @@ function renderCalendarGrid(data) {
                             <div class="grid grid-cols-3 gap-3">
                                 ${upcomingHtml}
                             </div>
-                        </div>` : ''}
-
-                        <!-- 4. Banner Display (Only if URL exists) -->
-                        ${bannerUrl ? `
-                        <div class="modal-card relative overflow-hidden group min-h-[140px] flex flex-col justify-center items-center text-center p-0 border-2 border-white/10 hover:border-white/30 transition-colors">
-                             <!-- Background Image -->
-                             <div class="absolute inset-0 bg-cover bg-center opacity-100 transition duration-500" style="background-image: url('${bannerUrl}'); background-color: #050505;"></div>
-                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none"></div>
                         </div>` : ''}
 
                         <!-- 5. Rich Details (Notes/Events) -->
