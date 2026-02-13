@@ -87,6 +87,74 @@
 .backdrop-blur-xl{-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)}
 .backdrop-blur-\[10px\]{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .border-white\/50{border-color:rgba(255,255,255,0.5)}
+
+        /* --- NEW MODAL STYLES (Dark Theme) --- */
+        .modal-dark-gradient {
+            background: linear-gradient(135deg, #221528 0%, #0F111A 100%); /* Deep purple/slate mix */
+            color: #e2e8f0;
+        }
+
+        .modal-card-dark {
+            background: rgba(40, 45, 65, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-progress-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .modal-progress-fill {
+            background: linear-gradient(90deg, #f97316 0%, #ea580c 100%);
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease-out;
+        }
+
+        .modal-upcoming-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 0; /* Flex fix */
+        }
+
+        .modal-upcoming-card h4 { font-size: 0.75rem; font-weight: 700; opacity: 0.8; margin-bottom: 2px; }
+        .modal-upcoming-card .date { font-size: 0.7rem; opacity: 0.6; }
+        .modal-upcoming-card .time { font-size: 0.65rem; opacity: 0.5; }
+
+        /* Specific Highlights */
+        .modal-card-purnima {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            color: black;
+            border: none;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+        }
+        .modal-card-purnima h4, .modal-card-purnima .date, .modal-card-purnima .time { color: #451a03; opacity: 1; }
+
+        .modal-card-amavasya {
+            background: linear-gradient(135deg, #1e293b 0%, #020617 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .modal-card-ekadashi {
+            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
 </style>
 <style>
         /* Custom Header Styles */
@@ -1532,26 +1600,103 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- DAY DETAIL MODAL -->
-    <div id="day-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-hidden" style="display: none;">
-        <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDayModal()"></div>
-        <div class="modal-content bg-white rounded-3xl shadow-2xl w-full max-w-[500px] relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
-            <div id="modal-header-background" class="premium-header-bg p-6 relative shrink-0">
-                <button onclick="closeDayModal()" class="absolute top-4 right-4 bg-white/20 backdrop-blur-md border border-white/20 hover:bg-white/30 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md z-20 transition active:scale-95"><i class="fa-solid fa-times text-sm"></i></button>
-                <div class="flex gap-5 items-center relative z-10">
-                    <div class="bg-white/20 backdrop-blur-md border border-white/20 rounded-xl w-20 h-20 flex flex-col items-center justify-center shrink-0 shadow-lg text-white">
-                        <span id="modal-month-short" class="text-[11px] font-bold uppercase tracking-widest opacity-80">NOV</span>
-                        <span id="modal-date-num" class="text-4xl font-bold leading-none mt-0.5">21</span>
+    <div id="day-modal" class="fixed inset-0 z-[60] flex items-end md:items-center justify-center modal-hidden" style="display: none;">
+        <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeDayModal()"></div>
+        <!-- FULL SCREEN ON MOBILE, CENTERED ON DESKTOP -->
+        <div class="modal-content modal-dark-gradient w-full h-full md:h-auto md:max-h-[90vh] md:w-[480px] md:rounded-3xl relative z-10 overflow-y-auto flex flex-col">
+
+            <!-- Sticky Close Button -->
+            <button onclick="closeDayModal()" class="absolute top-4 right-4 z-50 w-8 h-8 flex items-center justify-center bg-black/20 text-white rounded-full hover:bg-white/20 transition backdrop-blur-sm">
+                <i class="fa-solid fa-times"></i>
+            </button>
+
+            <!-- 1. HEADER SECTION (Moon & Date) -->
+            <div id="dm-header-bg" class="pt-10 pb-6 px-6 text-center shrink-0 bg-cover bg-center transition-all duration-500">
+                <div id="dm-moon-icon" class="w-16 h-16 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(253,224,71,0.3)]"></div>
+                <h2 id="dm-full-date" class="text-white font-bold text-lg mb-1 drop-shadow-md"></h2>
+                <div id="dm-paksha" class="text-amber-400 text-xs font-bold uppercase tracking-widest drop-shadow-sm"></div>
+            </div>
+
+            <div class="px-4 space-y-4 pb-8 flex-grow">
+                <!-- 2. CURRENT TITHI CARD -->
+                <div class="modal-card-dark p-5">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                            <i class="fa-regular fa-moon text-sm"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Current Tithi</span>
                     </div>
-                    <div class="text-white">
-                        <h2 id="modal-full-date" class="text-white/80 text-[10px] uppercase tracking-widest font-semibold mb-1">Friday, November 21, 2025</h2>
-                        <h1 id="modal-main-title" class="text-2xl font-bold leading-tight font-oriya drop-shadow-md">Nuakhai</h1>
-                        <div id="modal-tag-pill" class="mt-2 inline-block"></div>
+                    <h3 id="dm-tithi-name" class="text-2xl font-bold text-amber-400 mb-1"></h3>
+                    <div id="dm-tithi-details" class="text-sm text-gray-400 font-medium mb-4"></div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-500">Started:</span>
+                            <span id="dm-tithi-start" class="text-gray-300"></span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-500">Ends:</span>
+                            <span id="dm-tithi-end" class="text-gray-300"></span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div id="modal-rich-body" class="rich-content overflow-y-auto p-6 flex-grow"></div>
-            <div class="p-4 border-t border-gray-100 flex justify-end items-center bg-gray-50 shrink-0">
-                <button onclick="handleLearnMore()" class="bg-[#5D4037] hover:bg-[#4E342E] text-white px-5 py-2 rounded-full text-sm font-bold transition shadow-md active:scale-95">Learn More</button>
+
+                <!-- 3. ASTRONOMICAL DATA CARD -->
+                <div class="modal-card-dark p-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                            <i class="fa-solid fa-chart-simple text-sm"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Astronomical Data</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="bg-black/20 rounded-lg p-3">
+                            <div class="text-[10px] text-gray-500 uppercase font-bold mb-1">Julian Date</div>
+                            <div id="dm-julian" class="text-sm font-mono text-gray-300"></div>
+                        </div>
+                        <div class="bg-black/20 rounded-lg p-3">
+                            <div class="text-[10px] text-gray-500 uppercase font-bold mb-1">Sun Long.</div>
+                            <div id="dm-sun-long" class="text-sm font-mono text-gray-300"></div>
+                        </div>
+                        <div class="bg-black/20 rounded-lg p-3">
+                            <div class="text-[10px] text-gray-500 uppercase font-bold mb-1">Moon Long.</div>
+                            <div id="dm-moon-long" class="text-sm font-mono text-gray-300"></div>
+                        </div>
+                        <div class="bg-black/20 rounded-lg p-3">
+                            <div class="text-[10px] text-gray-500 uppercase font-bold mb-1">Elongation</div>
+                            <div id="dm-elongation" class="text-sm font-mono text-gray-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-1 flex justify-between items-end">
+                        <span class="text-xs text-gray-500 font-bold">Tithi Progress</span>
+                        <span id="dm-progress-text" class="text-xs text-amber-500 font-bold"></span>
+                    </div>
+                    <div class="modal-progress-track w-full">
+                        <div id="dm-progress-bar" class="modal-progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- 4. UPCOMING SPECIAL TITHIS -->
+                <div class="modal-card-dark p-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+                            <i class="fa-regular fa-calendar-check text-sm"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Upcoming Special Tithis</span>
+                    </div>
+
+                    <div id="dm-upcoming-grid" class="grid grid-cols-3 gap-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- 5. RICH CONTENT (If Available) -->
+                <div id="dm-rich-content" class="rich-content text-gray-300 pt-4"></div>
+
+                <!-- Spacer for scroll -->
+                <div class="h-8"></div>
             </div>
         </div>
     </div>
@@ -1748,6 +1893,7 @@ The word "Nua" means new and "Khai" means food.
                 // Tithi = (Moon - Sun) / 12. Use minimal epsilon for float safety.
                 const diff = norm(moonSid - sunSid + 0.000001);
                 const tithiIndex = Math.floor(diff / 12);
+                const tithiProgress = (diff % 12) / 12; // 0.0 to 1.0 within the tithi
 
                 // Nakshatra: Moon / 13.3333
                 const nakIndex = Math.floor(moonSid / (13 + 1/3));
@@ -1766,7 +1912,11 @@ The word "Nua" means new and "Khai" means food.
                     tithiIndex: tithiIndex % 30,
                     nakshatra: NAKSHATRAS[nakIndex % 27],
                     yoga: YOGAS[yogaIndex % 27],
-                    karana: KARANAS[karanaIndex]
+                    karana: KARANAS[karanaIndex],
+                    jd: jd,
+                    sunLong: sunSid,
+                    moonLong: moonSid,
+                    tithiProgress: tithiProgress
                 };
             }
 
@@ -2323,7 +2473,11 @@ The word "Nua" means new and "Khai" means food.
                 index: safeIndex,
                 nakshatra: astro.nakshatra,
                 yoga: astro.yoga,
-                karana: astro.karana
+                karana: astro.karana,
+                jd: astro.jd,
+                sunLong: astro.sunLong,
+                moonLong: astro.moonLong,
+                tithiProgress: astro.tithiProgress
             };
         }
 
@@ -4986,264 +5140,161 @@ function renderCalendarGrid(data) {
         function openDayModal(day, monthData) {
             const modal = document.getElementById('day-modal');
             const dateObj = new Date(monthData.year, monthData.month, day);
+            
+            // 1. Calculate Data
+            const astro = calculateTithi(dateObj); // Now returns jd, sunLong, etc.
+            const currentLang = appState.config.language || 'en';
+            
+            // 2. Populate Header
+            document.getElementById('dm-full-date').innerText = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('dm-paksha').innerText = astro.paksha;
+            
+            const moonIconContainer = document.getElementById('dm-moon-icon');
+            // Use high-res moon if available or standard SVG
+            let phase = (astro.index + 1) / 30;
+            moonIconContainer.innerHTML = getMoonPhaseIcon(phase); // This returns SVG string
+
+            // 3. Populate Current Tithi Card
+            document.getElementById('dm-tithi-name').innerText = astro.tithi;
+            document.getElementById('dm-tithi-details').innerText = `${astro.paksha} Paksha (Tithi ${astro.index + 1})`;
+            
+            // Approximate Timings (Based on Tithi Progress at 6 AM)
+            // Avg Tithi Duration ~ 23.62 hours = 1417 mins
+            const duration = 1417;
+            const minsPassed = astro.tithiProgress * duration;
+            const minsRemaining = (1 - astro.tithiProgress) * duration;
+            
+            // Base: 6:00 AM
+            const baseTime = new Date(dateObj);
+            baseTime.setHours(6, 0, 0, 0);
+            
+            const startTime = new Date(baseTime.getTime() - minsPassed * 60000);
+            const endTime = new Date(baseTime.getTime() + minsRemaining * 60000);
+            
+            const fmtTime = (d) => d.toLocaleTimeString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            
+            document.getElementById('dm-tithi-start').innerText = fmtTime(startTime) + " (Approx)";
+            document.getElementById('dm-tithi-end').innerText = fmtTime(endTime) + " (Approx)";
+
+            // 4. Populate Astronomical Data
+            document.getElementById('dm-julian').innerText = astro.jd.toFixed(2);
+            document.getElementById('dm-sun-long').innerText = astro.sunLong.toFixed(2) + "°";
+            document.getElementById('dm-moon-long').innerText = astro.moonLong.toFixed(2) + "°";
+            
+            // Elongation = abs(Moon - Sun)
+            let elong = astro.moonLong - astro.sunLong;
+            if (elong < 0) elong += 360;
+            document.getElementById('dm-elongation').innerText = elong.toFixed(2) + "°";
+
+            const pct = (astro.tithiProgress * 100).toFixed(1) + "%";
+            document.getElementById('dm-progress-text').innerText = pct;
+            document.getElementById('dm-progress-bar').style.width = pct;
+
+            // 5. Upcoming Special Tithis (Loop Next 45 Days)
+            const upcomingContainer = document.getElementById('dm-upcoming-grid');
+            upcomingContainer.innerHTML = '';
+            
+            const targets = [
+                { type: 'purnima', label: 'Purnima', index: 14, cls: 'modal-card-purnima', icon: TITHI_ICONS.purnima },
+                { type: 'amavasya', label: 'Amavasya', index: 29, cls: 'modal-card-amavasya', icon: TITHI_ICONS.amavasya },
+                { type: 'ekadashi', label: 'Ekadashi', indices: [10, 25], cls: 'modal-card-ekadashi', icon: TITHI_ICONS.ekadashi }
+            ];
+            
+            let foundCount = 0;
+            let checkDate = new Date(dateObj);
+            checkDate.setDate(checkDate.getDate() + 1); // Start checking from tomorrow
+            
+            // We want to find the next instance of EACH type
+            let foundTypes = {};
+
+            for (let i = 0; i < 45; i++) {
+                const cAstro = calculateTithi(checkDate);
+                const cIndex = cAstro.index;
+                
+                targets.forEach(t => {
+                    if (foundTypes[t.type]) return; // Already found this type
+                    
+                    let match = false;
+                    if (t.index !== undefined && cIndex === t.index) match = true;
+                    if (t.indices && t.indices.includes(cIndex)) match = true;
+                    
+                    if (match) {
+                        foundTypes[t.type] = true;
+
+                        const card = document.createElement('div');
+                        card.className = `modal-upcoming-card ${t.cls}`;
+                        // SVG Icon sizing fix
+                        const iconHtml = t.icon.replace('class="w-full h-full', 'class="w-6 h-6 mb-1');
+
+                        card.innerHTML = `
+                            ${iconHtml}
+                            <h4>${t.label}</h4>
+                            <div class="date">${checkDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                        `;
+                        upcomingContainer.appendChild(card);
+                    }
+                });
+                
+                if (Object.keys(foundTypes).length === targets.length) break;
+                checkDate.setDate(checkDate.getDate() + 1);
+            }
+
+            // 6. Handle Banner & Rich Content
+            const headerBg = document.getElementById('dm-header-bg');
+            const richContainer = document.getElementById('dm-rich-content');
+            richContainer.innerHTML = '';
+
+            // Reset Banner
+            headerBg.style.backgroundImage = '';
+            headerBg.classList.remove('pt-32'); // Remove expanded height if previously set
+
+            // Find Details
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
-            
-            document.getElementById('modal-month-short').innerText = shortMonths[monthData.month];
-            document.getElementById('modal-date-num').innerText = day;
-            document.getElementById('modal-full-date').innerText = `${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}`;
-            
-            // --- INJECT TITHI/PAKSHA ---
-            const tithiInfo = calculateTithi(dateObj);
-            
-            // --- DETECT SPECIAL EKADASHI (Double / Kshaya) ---
-            let specialBadge = "";
-            const prevDate = new Date(dateObj); prevDate.setDate(dateObj.getDate() - 1);
-            const nextDate = new Date(dateObj); nextDate.setDate(dateObj.getDate() + 1);
-            
-            const prevAstro = calculateTithi(prevDate);
-            const nextAstro = calculateTithi(nextDate);
-            const currIndex = tithiInfo.index;
-
-            // 1. Kshaya Ekadashi (Skipped): Dashami (9/24) -> Dwadashi (11/26)
-            if ((currIndex === 11 && prevAstro.index === 9) || (currIndex === 26 && prevAstro.index === 24)) {
-                specialBadge = `<div class="w-full mt-2.5"><span class="bg-red-500/90 text-white px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider border border-white/20 shadow-sm">KSHAYA EKADASHI</span></div>`;
-            }
-            // 2. Double Ekadashi: Current is Ekadashi (10/25) AND (Prev was Ekadashi OR Next is Ekadashi)
-            else if ((currIndex === 10 || currIndex === 25) && (prevAstro.index === currIndex || nextAstro.index === currIndex)) {
-                specialBadge = `<div class="w-full mt-2.5"><span class="bg-purple-500/90 text-white px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider border border-white/20 shadow-sm">DOUBLE EKADASHI</span></div>`;
-            }
-
-            // Determine Icon for Modal
-            let iconHtml = '';
-            if (currIndex === 14) iconHtml = TITHI_ICONS.purnima;
-            else if (currIndex === 29) iconHtml = TITHI_ICONS.amavasya;
-            else if (currIndex === 10) iconHtml = TITHI_ICONS.shukla_ekadashi;
-            else if (currIndex === 25) iconHtml = TITHI_ICONS.ekadashi;
-            else iconHtml = getMoonPhaseIcon((currIndex + 1) / 30);
-
-            // Wrap icon for sizing in modal text line
-            // Use drop-shadow-sm for consistency
-            const iconWrapper = `<span class="inline-flex items-center justify-center drop-shadow-sm" style="width: 14px; height: 14px; margin-right: 6px; vertical-align: text-bottom;">${iconHtml}</span>`;
-
-            currentModalTithiBlock = `<div class="mt-2 text-white/90 opacity-90 text-xs uppercase tracking-wide font-semibold">
-                ${iconWrapper} <span>${tithiInfo.tithi}, ${tithiInfo.paksha}</span>
-                ${specialBadge}
-            </div>`;
-            // ---------------------------
-
             let detailsRaw = appState.details[dateKey];
-
-            // Fallback to recurring details
             if (!detailsRaw) {
                 const recKey = `rec-${monthData.month}-${day}`;
                 detailsRaw = appState.recurringDetails[recKey];
             }
 
-            currentModalDetails = (detailsRaw && Array.isArray(detailsRaw)) ? detailsRaw : (detailsRaw ? [detailsRaw] : []);
-            
-            const rawDayEvents = monthData.events.filter(e => e.date === day);
-            
-            // Expand slash-separated events for the modal view
-            currentModalDayEvents = [];
-            rawDayEvents.forEach(ev => {
-                const engList = ev.engName.split('/').map(s => s.trim()).filter(s => s);
-                const locList = ev.locName ? ev.locName.split('/').map(s => s.trim()) : [];
-                const count = Math.max(engList.length, locList.length);
-                
-                if (count > 1) {
-                    for(let i=0; i<count; i++) {
-                        currentModalDayEvents.push({
-                            ...ev,
-                            engName: engList[i] || engList[0] || ev.engName,
-                            locName: locList[i] || locList[locList.length-1] || (i === 0 ? ev.locName : '')
-                        });
-                    }
-                } else {
-                    currentModalDayEvents.push(ev);
+            // Merge with Events
+            const dayEvents = monthData.events.filter(e => e.date === day);
+
+            // If details exist with banner
+            if (detailsRaw) {
+                const detailsArr = Array.isArray(detailsRaw) ? detailsRaw : [detailsRaw];
+                // Use first detail for banner
+                if (detailsArr[0].bannerUrl) {
+                    const imgUrl = resolveImageUrls(detailsArr[0].bannerUrl);
+                    headerBg.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url('${imgUrl}')`;
+                    headerBg.classList.add('pt-32'); // Taller header for banner
                 }
-            });
-
-            if (currentModalDetails.length === 0 && currentModalDayEvents.length > 0) {
-                currentModalDetails = currentModalDayEvents.map(ev => ({ tags: ['Event'], bodyLines: [], bannerUrl: null }));
-            }
-            
-            currentModalIndex = 0;
-
-            const modalContent = modal.querySelector('.modal-content');
-
-            // --- NAVIGATION UI ---
-            let navContainer = document.getElementById('modal-nav-container');
-            if (!navContainer) {
-                navContainer = document.createElement('div');
-                navContainer.id = 'modal-nav-container';
-                navContainer.className = "absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2 pointer-events-none z-[100]";
                 
-                // We append it to the relative parent of header/body, which is .modal-content
-                // Ensure .modal-content is relative (it is in CSS)
-                modalContent.appendChild(navContainer);
+                // Render Body
+                detailsArr.forEach(d => renderRichBody(richContainer, d.bodyLines));
             }
-            
-            // Render content for the initial slide
-            updateModalContent();
 
-            // Setup Touch Listeners for Swipe
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            const handleTouchStart = (e) => { touchStartX = e.changedTouches[0].screenX; };
-            const handleTouchEnd = (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                if (currentModalDetails.length > 1) {
-                    if (touchEndX < touchStartX - 50) nextModalSlide();
-                    if (touchEndX > touchStartX + 50) prevModalSlide();
-                }
-            };
+            // If no rich content but we have events, list them
+            if (richContainer.innerHTML === '' && dayEvents.length > 0) {
+                const eventList = document.createElement('div');
+                eventList.className = "space-y-2";
+                dayEvents.forEach(ev => {
+                    const el = document.createElement('div');
+                    el.className = "bg-white/10 p-3 rounded-lg border border-white/10";
+                    el.innerHTML = `<div class="font-bold text-white">${ev.engName}</div><div class="text-sm text-gray-400">${ev.locName || ''}</div>`;
+                    eventList.appendChild(el);
+                });
+                richContainer.appendChild(eventList);
+            }
 
-            modalContent.removeEventListener('touchstart', handleTouchStart); // Prevent duplicate listeners
-            modalContent.removeEventListener('touchend', handleTouchEnd);
-            
-            modalContent.addEventListener('touchstart', handleTouchStart, {passive: true});
-            modalContent.addEventListener('touchend', handleTouchEnd, {passive: true});
-
+            // Show Modal
             modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
+            // Force reflow for animation
+            void modal.offsetWidth;
+            modal.classList.remove('modal-hidden');
         }
 
-        function updateModalContent() {
-            const bodyContainer = document.getElementById('modal-rich-body');
-            const titleEl = document.getElementById('modal-main-title');
-            const tagPillContainer = document.getElementById('modal-tag-pill');
-            const headerEl = document.getElementById('modal-header-background');
-            const navContainer = document.getElementById('modal-nav-container');
-            
-            // Reset Header Style
-            if (headerEl) { 
-                headerEl.className = 'premium-header-bg p-6 relative shrink-0 transition-all duration-300'; 
-                headerEl.style.backgroundImage = ''; 
-            }
-            
-            tagPillContainer.innerHTML = '';
-            bodyContainer.innerHTML = '';
-            
-            // Animation class for transition effect
-            bodyContainer.classList.remove('opacity-0');
-            void bodyContainer.offsetWidth; // Trigger reflow
-
-            if (currentModalDetails.length > 0) {
-                // We have one or more details
-                const detail = currentModalDetails[currentModalIndex];
-                
-                // Show Navigation Buttons if multiple
-                if (currentModalDetails.length > 1) {
-                    navContainer.innerHTML = `
-                        <button onclick="prevModalSlide(event)" class="pointer-events-auto bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button onclick="nextModalSlide(event)" class="pointer-events-auto bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition active:scale-95"><i class="fa-solid fa-chevron-right"></i></button>
-                    `;
-                    
-                    // Add dots indicator inside header
-                    let dotsHtml = `<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-20">`;
-                    currentModalDetails.forEach((_, idx) => {
-                        dotsHtml += `<div class="w-1.5 h-1.5 rounded-full ${idx === currentModalIndex ? 'bg-white' : 'bg-white/40'}"></div>`;
-                    });
-                    dotsHtml += `</div>`;
-                    // Check if dots container exists or append
-                    let dotsEl = document.getElementById('modal-dots');
-                    if(dotsEl) dotsEl.remove();
-                    
-                    const dotsWrapper = document.createElement('div');
-                    dotsWrapper.id = 'modal-dots';
-                    dotsWrapper.innerHTML = dotsHtml;
-                    headerEl.appendChild(dotsWrapper);
-                    
-                } else {
-                    navContainer.innerHTML = '';
-                    let dotsEl = document.getElementById('modal-dots');
-                    if(dotsEl) dotsEl.remove();
-                }
-
-                // Determine Title
-                // If detail has specific title in body? No, standard structure uses events or manually parsed headers.
-                // We fallback to checking events corresponding to this detail if we can match them, 
-                // OR we just show the main event name for the day, OR "Detail X".
-                
-                // Strategy: If currentModalIndex matches an event index, use that? 
-                // Currently events are separate from details. 
-                // Simple approach: Use the first event name for the first detail, etc? 
-                // Or just show "Daily Overview" if no match.
-                
-                let titleText = "Daily Overview";
-                if (currentModalDayEvents.length > 0) {
-                     // If we have multiple details and multiple events, try to map 1:1
-                     if (currentModalIndex < currentModalDayEvents.length) {
-                         titleText = `${currentModalDayEvents[currentModalIndex].locName || ''} ${currentModalDayEvents[currentModalIndex].engName}`;
-                     } else {
-                         titleText = `${currentModalDayEvents[0].locName || ''} ${currentModalDayEvents[0].engName}`;
-                     }
-                }
-                
-                titleEl.innerText = titleText;
-                
-                if (detail.tags.length > 0) {
-                    const tagText = detail.tags[0]; 
-                    tagPillContainer.innerHTML = `<span class="bg-white/20 backdrop-blur-md border border-white/20 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-sm mr-2">${tagText}</span>`;
-                }
-                
-                // Add "Page X of Y" if multiple
-                if (currentModalDetails.length > 1) {
-                     tagPillContainer.innerHTML += `<span class="bg-black/20 text-white text-[10px] font-bold px-2 py-0.5 rounded">${currentModalIndex + 1}/${currentModalDetails.length}</span>`;
-                }
-                
-                tagPillContainer.innerHTML += currentModalTithiBlock;
-
-                if (detail.bannerUrl && headerEl) { 
-                    const imgUrl = resolveImageUrls(detail.bannerUrl);
-                    headerEl.style.backgroundImage = `linear-gradient(90deg, rgba(66, 32, 6, 0.95) 0%, rgba(66, 32, 6, 0.6) 50%, rgba(66, 32, 6, 0.2) 100%), url('${imgUrl}')`;
-                    headerEl.style.backgroundSize = 'cover';
-                    headerEl.style.backgroundPosition = 'center';
-                    headerEl.classList.remove('premium-header-bg');
-                    headerEl.classList.add('bg-cover', 'bg-center');
-                }
-                
-                renderRichBody(bodyContainer, detail.bodyLines);
-                
-            } else {
-                // No Details Block -> Default Event List View
-                navContainer.innerHTML = '';
-                let dotsEl = document.getElementById('modal-dots');
-                if(dotsEl) dotsEl.remove();
-
-                if (currentModalDayEvents.length > 0) {
-                    titleEl.innerText = currentModalDayEvents[0].engName;
-                    tagPillContainer.innerHTML = `<span class="bg-white/20 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">Event</span>`;
-                    tagPillContainer.innerHTML += currentModalTithiBlock;
-
-                    currentModalDayEvents.forEach(ev => {
-                        const div = document.createElement('div');
-                        div.className = "p-4 bg-gray-50 rounded-xl border border-gray-200 mb-3 shadow-sm";
-                        div.innerHTML = `<div class="font-bold text-gray-800 text-lg">${ev.engName}</div><div class="text-sm text-gray-500 font-oriya">${ev.locName || ''}</div>`;
-                        bodyContainer.appendChild(div);
-                    });
-                } else {
-                    titleEl.innerText = "No Major Events";
-                    tagPillContainer.innerHTML += currentModalTithiBlock;
-                    bodyContainer.innerHTML = `<p class="text-gray-400 italic text-sm mt-4 text-center">No specific details or events found for this date.</p>`;
-                }
-            }
-        }
-        
-        function nextModalSlide(e) {
-            if(e) e.stopPropagation();
-            if (currentModalDetails.length <= 1) return;
-            currentModalIndex = (currentModalIndex + 1) % currentModalDetails.length;
-            updateModalContent();
-        }
-
-        function prevModalSlide(e) {
-            if(e) e.stopPropagation();
-            if (currentModalDetails.length <= 1) return;
-            currentModalIndex = (currentModalIndex - 1 + currentModalDetails.length) % currentModalDetails.length;
-            updateModalContent();
-        }
+        // No-op for legacy compatibility (if called elsewhere)
+        function updateModalContent() {}
 
         function closeDayModal() {
             const modal = document.getElementById('day-modal');
