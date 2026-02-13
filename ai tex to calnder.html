@@ -88,6 +88,8 @@
 .backdrop-blur-\[10px\]{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .border-white\/50{border-color:rgba(255,255,255,0.5)}
 .min-h-\[250px\]{min-height:250px}
+.min-h-[200px]{min-height:200px}
+.max-h-[300px]{max-height:300px}
 </style>
 <style>
         /* Custom Header Styles */
@@ -868,8 +870,8 @@
     /* --- 3. MOBILE ONLY STYLES (Original Look) --- */
     /* Ensures the SVG icons are positioned exactly like the original app */
     .mobile-tithi-icon {
-        width: 14px; 
-        height: 14px; 
+        width: 12px;
+        height: 12px;
         position: absolute; 
         top: 2px; 
         right: 2px;
@@ -5186,8 +5188,8 @@ function renderCalendarGrid(data) {
                 <div class="h-full overflow-y-auto custom-scroll pb-20">
 
                     <!-- Header -->
-                    <div class="text-center pt-10 pb-6 relative">
-                        <div class="w-20 h-20 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-90">${mainIcon}</div>
+                    <div class="text-center pt-8 pb-5 relative">
+                        <div class="w-16 h-16 mx-auto mb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-90">${mainIcon}</div>
                         <h2 class="text-2xl font-extrabold text-white mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
                         <p class="text-amber-400 font-bold text-sm uppercase tracking-widest opacity-90">${tithiInfo.paksha} Paksha</p>
                     </div>
@@ -5253,10 +5255,10 @@ function renderCalendarGrid(data) {
                         </div>` : ''}
 
                         <!-- 4. Banner Upload / Display -->
-                        <div class="modal-card p-0 overflow-hidden relative group min-h-[250px] flex items-center justify-center border border-white/10 bg-black/40">
+                        <div id="modal-banner-container" class="modal-card p-0 overflow-hidden relative group min-h-[200px] transition-all duration-500 ease-out flex items-center justify-center border border-white/10 bg-black/40">
                             ${bannerUrl ? `
                                 <!-- View Mode -->
-                                <img src="${bannerUrl}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <img src="${bannerUrl}" onload="adjustBannerHeight(this)" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                                 <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
 
                                 <!-- Controls (Visible on Hover) -->
@@ -5477,6 +5479,31 @@ function renderCalendarGrid(data) {
                 const query = encodeURIComponent(`${title} festival significance`);
                 window.open(`https://www.google.com/search?q=${query}`, '_blank');
             }
+        }
+
+        function adjustBannerHeight(img) {
+            const container = document.getElementById('modal-banner-container');
+            if (!container || !img) return;
+
+            // Algorithm: Fit height based on aspect ratio, constrained to [200px, 300px]
+            // We use a timeout to ensure container has width (modal rendering)
+            setTimeout(() => {
+                const aspect = img.naturalHeight / img.naturalWidth;
+                const currentWidth = container.offsetWidth || container.getBoundingClientRect().width || 460;
+
+                let targetHeight = currentWidth * aspect;
+
+                // Constraints
+                const minHeight = 200;
+                const maxHeight = 300;
+
+                // Clamp
+                let finalHeight = Math.max(minHeight, Math.min(targetHeight, maxHeight));
+
+                // Apply
+                container.style.minHeight = `${finalHeight}px`;
+                container.style.height = `${finalHeight}px`;
+            }, 50);
         }
 
     </script>
