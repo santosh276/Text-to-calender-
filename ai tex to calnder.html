@@ -5065,12 +5065,43 @@ function renderCalendarGrid(data) {
                         currentModalDetails = detailList;
                     }
 
-                    updateModalContent();
+                    // Refresh Modal
+                    const [y, m, d] = currentUploadDateKey.split('-').map(Number);
+                    const monthData = getEffectiveMonthData(m, y);
+                    openDayModal(d, monthData);
+
                     render();
                 }
             };
             reader.readAsDataURL(file);
             event.target.value = '';
+        }
+
+        function removeBanner(dateKey) {
+            if (confirm("Remove this banner image?")) {
+                 if (appState.details[dateKey]) {
+                    const details = appState.details[dateKey];
+                    if (Array.isArray(details) && details.length > 0) {
+                        details[0].bannerUrl = null;
+                    } else if (details.bannerUrl) {
+                        details.bannerUrl = null;
+                    }
+
+                    saveStateToCache();
+
+                    // Update current view if open
+                    if (currentModalDetails.length > 0) {
+                        currentModalDetails[0].bannerUrl = null;
+                    }
+
+                    // Refresh Modal
+                    const [y, m, d] = dateKey.split('-').map(Number);
+                    const monthData = getEffectiveMonthData(m, y);
+                    openDayModal(d, monthData);
+
+                    render();
+                 }
+            }
         }
 
         function openDayModal(day, monthData) {
@@ -5221,18 +5252,30 @@ function renderCalendarGrid(data) {
                         </div>` : ''}
 
                         <!-- 4. Banner Upload / Display -->
-                        <div class="modal-card relative overflow-hidden group min-h-[140px] flex flex-col justify-center items-center text-center p-0 border-dashed border-2 border-white/10 hover:border-white/30 transition-colors">
-                             <!-- Background Image -->
-                             <div class="absolute inset-0 bg-cover bg-center opacity-40 transition group-hover:opacity-50 duration-500" style="background-image: url('${bannerUrl}'); background-color: #050505;"></div>
-                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+                        <div class="modal-card p-0 overflow-hidden relative group min-h-[160px] flex items-center justify-center border border-white/10 bg-black/40">
+                            ${bannerUrl ? `
+                                <!-- View Mode -->
+                                <img src="${bannerUrl}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
 
-                             <!-- Content -->
-                             <div class="relative z-10 p-6 w-full flex flex-col items-center">
-                                 <div class="w-12 h-12 mx-auto bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white mb-3 cursor-pointer hover:bg-white/20 hover:scale-110 transition-all duration-300 shadow-lg border border-white/20" onclick="triggerBannerUpload('${dateKey}')">
-                                    <i class="fa-solid fa-camera text-lg"></i>
-                                 </div>
-                                 ${bannerUrl ? '<div class="text-[9px] text-green-400 mt-1 font-mono"><i class="fa-solid fa-check"></i> Image Set</div>' : '<div class="text-[9px] text-gray-400 mt-1">Tap camera to upload</div>'}
-                             </div>
+                                <!-- Controls (Visible on Hover) -->
+                                <div class="relative z-10 flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                    <button onclick="triggerBannerUpload('${dateKey}')" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white flex items-center justify-center border border-white/20 shadow-lg transition active:scale-95" title="Change Image">
+                                        <i class="fa-solid fa-camera"></i>
+                                    </button>
+                                    <button onclick="removeBanner('${dateKey}')" class="w-10 h-10 rounded-full bg-red-500/80 backdrop-blur-md hover:bg-red-600/90 text-white flex items-center justify-center border border-white/20 shadow-lg transition active:scale-95" title="Remove Image">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            ` : `
+                                <!-- Upload Mode -->
+                                <div class="flex flex-col items-center justify-center p-6 w-full h-full cursor-pointer hover:bg-white/5 transition" onclick="triggerBannerUpload('${dateKey}')">
+                                    <div class="w-12 h-12 rounded-full bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center text-white/50 mb-2 group-hover:border-white/40 group-hover:text-white transition">
+                                        <i class="fa-solid fa-camera text-xl"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider group-hover:text-gray-300">Add Day Banner</span>
+                                </div>
+                            `}
                         </div>
 
                         <!-- 5. Rich Details (Notes/Events) -->
