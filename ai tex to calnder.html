@@ -4994,18 +4994,19 @@ function renderCalendarGrid(data) {
 
                 let colorClass = "";
                 // SOLID GLOW LOGIC (Both Active & Inactive are solid)
+                // Added dark: classes for proper glow and ring offset
                 if (f.color === 'red') {
-                    colorClass = "bg-red-600 text-white shadow-lg shadow-red-200 hover:bg-red-700";
-                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-red-600";
+                    colorClass = "bg-red-600 text-white shadow-lg shadow-red-200 dark:shadow-red-900/60 hover:bg-red-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-red-600";
                 } else if (f.color === 'green') {
-                    colorClass = "bg-green-600 text-white shadow-lg shadow-green-200 hover:bg-green-700";
-                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-green-600";
+                    colorClass = "bg-green-600 text-white shadow-lg shadow-green-200 dark:shadow-green-900/60 hover:bg-green-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-green-600";
                 } else if (f.color === 'blue') {
-                    colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700";
-                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-blue-600";
+                    colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/60 hover:bg-blue-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-blue-600";
                 } else if (f.color === 'gray') {
-                    colorClass = "bg-gray-600 text-white shadow-lg shadow-gray-200 hover:bg-gray-700";
-                    if (isSelected) colorClass += " ring-2 ring-offset-2 ring-gray-600";
+                    colorClass = "bg-gray-600 text-white shadow-lg shadow-gray-200 dark:shadow-gray-700/60 hover:bg-gray-700";
+                    if (isSelected) colorClass += " ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-gray-600";
                 }
                 
                 btn.className = `${className} ${colorClass}`;
@@ -5391,16 +5392,16 @@ function renderCalendarGrid(data) {
                             <h3 class="text-3xl font-extrabold text-amber-600 dark:text-amber-400 mb-1 leading-none">${tithiInfo.tithi}</h3>
                             <p class="text-xs text-gray-600 dark:text-gray-400 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
                             
-                            <div class="mt-5 p-4 bg-gray-50 dark:bg-black/30 rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg backdrop-blur-sm relative overflow-hidden">
+                            <div class="mt-5 p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg backdrop-blur-sm relative overflow-hidden">
                                 <div class="absolute inset-0 bg-amber-500/10 pointer-events-none"></div>
                                 <div class="flex justify-between items-center mb-2 relative z-10">
                                     <span class="text-gray-600 dark:text-gray-300 font-bold text-[11px] uppercase tracking-widest">Tithi Progress</span>
                                     <div class="flex items-baseline gap-1">
                                         <span class="text-2xl font-extrabold text-amber-600 dark:text-amber-400 drop-shadow-sm font-sans">${tithiProgress}</span>
-                                        <span class="text-xs text-amber-700 dark:text-amber-600 font-bold">%</span>
+                                        <span class="text-xs text-amber-700 dark:text-amber-500 font-bold">%</span>
                                     </div>
                                 </div>
-                                <div class="h-3 w-full bg-gray-200 dark:bg-gray-900/80 rounded-full overflow-hidden shadow-inner ring-1 ring-black/5 dark:ring-white/10 relative">
+                                <div class="h-3 w-full bg-gray-200 dark:bg-black/40 rounded-full overflow-hidden shadow-inner ring-1 ring-black/5 dark:ring-white/10 relative">
                                     <!-- Track Pattern -->
                                     <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 10px);"></div>
                                     
@@ -5413,7 +5414,7 @@ function renderCalendarGrid(data) {
                                 <div class="flex justify-between mt-3 px-0.5">
                                     <div class="flex flex-col items-start">
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-0.5">Start</span>
-                                        <span class="text-[10px] text-gray-800 dark:text-gray-300 font-bold font-mono leading-none">${fmtTime(tithiTimes.start)}</span>
+                                        <span class="text-[10px] text-gray-800 dark:text-gray-200 font-bold font-mono leading-none">${fmtTime(tithiTimes.start)}</span>
                                     </div>
                                     <div class="flex flex-col items-end">
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-0.5">End</span>
