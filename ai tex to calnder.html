@@ -5230,18 +5230,18 @@ function renderCalendarGrid(data) {
             // Build Upcoming HTML
             let upcomingHtml = '';
             upcoming.forEach(item => {
-                let bgColor = 'bg-purple-600';
+                let bgColor = 'bg-amber-100 text-amber-800 border border-amber-200';
                 let iconHtml = TITHI_ICONS.ekadashi;
                 let title = 'Ekadashi';
                 
-                if (item.index === 14) { bgColor = 'bg-amber-500 text-black'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
-                else if (item.index === 29) { bgColor = 'bg-slate-800 text-white border border-gray-600'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
+                if (item.index === 14) { bgColor = 'bg-amber-500 text-white'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
+                else if (item.index === 29) { bgColor = 'bg-gray-800 text-white border border-gray-600'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
                 
                 const dateStr = item.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
                 
                 upcomingHtml += `
-                    <div class="${bgColor} ${item.index===14?'text-black':'text-white'} rounded-xl p-3 flex flex-col items-center text-center shadow-lg transform hover:scale-105 transition">
-                        <div class="w-6 h-6 mb-1 drop-shadow-md">${iconHtml}</div>
+                    <div class="${bgColor} rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
+                        <div class="w-6 h-6 mb-1 drop-shadow-sm">${iconHtml}</div>
                         <div class="font-bold text-xs mb-0.5">${title}</div>
                         <div class="text-[9px] opacity-80 uppercase font-bold leading-tight">${dateStr}</div>
                     </div>
@@ -5277,8 +5277,8 @@ function renderCalendarGrid(data) {
                     <!-- Header -->
                     <div class="text-center pt-21 pb-5 relative">
                         <div class="w-20 h-20 mx-auto mb-3 moon-glow">${mainIcon}</div>
-                        <h2 class="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
-                        <p class="text-amber-600 font-bold text-sm uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
+                        <h2 class="text-2xl font-extrabold text-deepred mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
+                        <p class="text-amber-500 font-bold text-sm uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
                     </div>
 
                     <!-- Content Padding -->
@@ -5287,10 +5287,10 @@ function renderCalendarGrid(data) {
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
                             <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
-                                <div class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 text-xs"><i class="fa-solid fa-moon"></i></div>
-                                <span class="font-bold text-gray-500 text-xs uppercase tracking-wider">Current Tithi</span>
+                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-moon"></i></div>
+                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Current Tithi</span>
                             </div>
-                            <h3 class="text-3xl font-extrabold text-amber-600 mb-1 leading-none">${tithiInfo.tithi}</h3>
+                            <h3 class="text-3xl font-extrabold text-deepred mb-1 leading-none">${tithiInfo.tithi}</h3>
                             <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
                             
                             <div class="mt-5 p-4 bg-gray-50 rounded-2xl border border-gray-200 shadow-inner relative overflow-hidden">
@@ -5298,8 +5298,8 @@ function renderCalendarGrid(data) {
                                 <div class="flex justify-between items-center mb-2 relative z-10">
                                     <span class="text-gray-500 font-bold text-[11px] uppercase tracking-widest">Tithi Progress</span>
                                     <div class="flex items-baseline gap-1">
-                                        <span class="text-2xl font-extrabold text-amber-600 drop-shadow-sm font-sans">${tithiProgress}</span>
-                                        <span class="text-xs text-amber-700 font-bold">%</span>
+                                        <span class="text-2xl font-extrabold text-amber-500 drop-shadow-sm font-sans">${tithiProgress}</span>
+                                        <span class="text-xs text-amber-600 font-bold">%</span>
                                     </div>
                                 </div>
                                 <div class="h-3 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner ring-1 ring-gray-200 relative">
@@ -5319,7 +5319,7 @@ function renderCalendarGrid(data) {
                                     </div>
                                     <div class="flex flex-col items-end">
                                         <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">End</span>
-                                        <span class="text-[10px] text-amber-600 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
+                                        <span class="text-[10px] text-amber-500 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -5328,8 +5328,8 @@ function renderCalendarGrid(data) {
                         <!-- 2. Panchang Details -->
                         <div class="modal-card">
                             <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-                                <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-xs"><i class="fa-solid fa-calendar-week"></i></div>
-                                <span class="font-bold text-gray-500 text-xs uppercase tracking-wider">Panchang Details</span>
+                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-calendar-week"></i></div>
+                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Panchang Details</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs mb-2">
                                 <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
@@ -5360,8 +5360,8 @@ function renderCalendarGrid(data) {
                         ${upcoming.length > 0 ? `
                         <div class="modal-card">
                             <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-                                <div class="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xs"><i class="fa-regular fa-calendar-check"></i></div>
-                                <span class="font-bold text-gray-500 text-xs uppercase tracking-wider">Upcoming Special Tithis</span>
+                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-regular fa-calendar-check"></i></div>
+                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Upcoming Special Tithis</span>
                             </div>
                             <div class="grid grid-cols-3 gap-3">
                                 ${upcomingHtml}
@@ -5388,7 +5388,7 @@ function renderCalendarGrid(data) {
                             ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">${details.map(d => {
                                 // Simple text rendering for body lines
                                 return d.bodyLines.map(line => {
-                                    if(line.startsWith('#')) return `<h4 class="text-amber-600 font-bold mt-3 mb-1 text-base">${line.replace(/#/g,'').trim()}</h4>`;
+                                    if(line.startsWith('#')) return `<h4 class="text-deepred font-bold mt-3 mb-1 text-base">${line.replace(/#/g,'').trim()}</h4>`;
                                     if(line.startsWith('-')) return `<li class="ml-4 text-gray-600">${line.replace('-','').trim()}</li>`;
                                     return `<p class="mb-2 text-gray-700">${line}</p>`;
                                 }).join('');
