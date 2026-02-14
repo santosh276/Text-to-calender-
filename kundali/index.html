@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="or">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odia Kundali Tool</title>
+    <meta name="description" content="Offline Kundali Generation Tool in Odia">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <script src="astronomy.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>ଓଡ଼ିଆ କୁଣ୍ଡଳୀ</h1>
+    </header>
+
+    <main>
+        <section id="input-section">
+            <form id="kundali-form">
+                <div class="input-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" required placeholder="Enter Name">
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="time">Time</label>
+                        <input type="time" id="time" required step="1">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="lat">Latitude</label>
+                        <input type="number" id="lat" step="0.0001" required placeholder="e.g. 20.2961">
+                    </div>
+                    <div class="input-group">
+                        <label for="lon">Longitude</label>
+                        <input type="number" id="lon" step="0.0001" required placeholder="e.g. 85.8245">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="timezone">Timezone (Offset)</label>
+                    <input type="number" id="timezone" step="0.5" value="5.5" required>
+                </div>
+                <button type="submit" class="btn-primary">Generate Kundali</button>
+            </form>
+        </section>
+
+        <section id="output-section" class="hidden">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="basic">Basic Info</button>
+                <button class="tab-btn" data-tab="charts">Charts</button>
+                <button class="tab-btn" data-tab="planetary">Planetary Info</button>
+            </div>
+
+            <div id="basic" class="tab-content active">
+                <h2>Basic Details</h2>
+                <div id="basic-details-container">
+                    <!-- Basic details will be injected here -->
+                </div>
+            </div>
+
+            <div id="charts" class="tab-content">
+                <h2>Rashi Chart (D1)</h2>
+                <div class="chart-container" id="d1-chart">
+                    <!-- 12 boxes for East Indian Chart -->
+                    <!-- Pattern: 4x4 grid with center empty -->
+                    <!-- Top Row -->
+                    <div class="chart-box sign-12" data-pos="12"></div>
+                    <div class="chart-box sign-1" data-pos="1"></div>
+                    <div class="chart-box sign-2" data-pos="2"></div>
+                    <div class="chart-box sign-3" data-pos="3"></div>
+
+                    <!-- Middle Rows -->
+                    <div class="chart-box sign-11" data-pos="11"></div>
+                    <div class="chart-center" rowspan="2" colspan="2"></div> <!-- Center -->
+                    <div class="chart-box sign-4" data-pos="4"></div>
+
+                    <div class="chart-box sign-10" data-pos="10"></div>
+                    <div class="chart-box sign-5" data-pos="5"></div>
+
+                    <!-- Bottom Row -->
+                    <div class="chart-box sign-9" data-pos="9"></div>
+                    <div class="chart-box sign-8" data-pos="8"></div>
+                    <div class="chart-box sign-7" data-pos="7"></div>
+                    <div class="chart-box sign-6" data-pos="6"></div>
+                </div>
+
+                <h2>Navamsa Chart (D9)</h2>
+                <div class="chart-container" id="d9-chart">
+                    <!-- Same structure -->
+                </div>
+
+                <h2>Dashamsha Chart (D10)</h2>
+                <div class="chart-container" id="d10-chart">
+                    <!-- Same structure -->
+                </div>
+            </div>
+
+            <div id="planetary" class="tab-content">
+                <h2>Planetary Positions</h2>
+                <div class="table-responsive">
+                    <table id="planetary-table">
+                        <thead>
+                            <tr>
+                                <th>Planet</th>
+                                <th>Sign</th>
+                                <th>Degree</th>
+                                <th>Nakshatra</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker failed', err));
+        }
+    </script>
+</body>
+</html>

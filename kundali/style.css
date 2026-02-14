@@ -1,0 +1,260 @@
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --border: #334155;
+    --chart-bg: #1e293b;
+    --chart-line: #475569;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 1rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--accent);
+}
+
+h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+h2 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Form Styles */
+#input-section {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.input-row .input-group {
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+    ring: 2px solid var(--accent);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tab-btn.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Chart Styles */
+.chart-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--chart-line);
+    border: 2px solid var(--chart-line);
+    margin-bottom: 2rem;
+    aspect-ratio: 1;
+    max-width: 400px;
+    margin: 0 auto 2rem auto;
+}
+
+.chart-box {
+    background: var(--chart-bg);
+    padding: 2px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    position: relative;
+    min-height: 60px;
+    text-align: center;
+}
+
+.chart-center {
+    background: var(--chart-bg);
+    grid-column: 2 / span 2;
+    grid-row: 2 / span 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
+/* Signs Positioning (12, 1, 2, 3 ... Loop) */
+.sign-12 { grid-area: 1 / 1; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.sign-1  { grid-area: 1 / 2; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.sign-2  { grid-area: 1 / 3; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.sign-3  { grid-area: 1 / 4; border-bottom: 1px solid var(--border); }
+
+.sign-11 { grid-area: 2 / 1; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.sign-4  { grid-area: 2 / 4; border-bottom: 1px solid var(--border); }
+
+.sign-10 { grid-area: 3 / 1; border-right: 1px solid var(--border); }
+.sign-5  { grid-area: 3 / 4; }
+
+.sign-9  { grid-area: 4 / 1; border-right: 1px solid var(--border); border-top: 1px solid var(--border); }
+.sign-8  { grid-area: 4 / 2; border-right: 1px solid var(--border); border-top: 1px solid var(--border); }
+.sign-7  { grid-area: 4 / 3; border-right: 1px solid var(--border); border-top: 1px solid var(--border); }
+.sign-6  { grid-area: 4 / 4; border-top: 1px solid var(--border); }
+
+/* In Grid Layout, explicit placement overrides source order */
+/* Wait, I defined grid-areas for classes like .sign-12. */
+
+.planet-marker {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.ascendant-marker {
+    color: #eab308; /* Yellow */
+    font-weight: bold;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    font-size: 0.7rem;
+}
+
+.sign-number {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+/* Table */
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+@media (min-width: 768px) {
+    #input-section {
+        margin-top: 2rem;
+    }
+
+    .chart-container {
+        max-width: 500px;
+    }
+}
