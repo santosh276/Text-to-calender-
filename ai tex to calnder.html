@@ -1024,6 +1024,13 @@
     .dark .dark\:bg-blue-500\/30 { background-color: rgba(59, 130, 246, 0.3); }
     .dark .dark\:bg-gray-500\/30 { background-color: rgba(107, 114, 128, 0.3); }
     .dark .dark\:bg-red-600 { background-color: rgb(220 38 38); }
+
+    /* New Dark Mode Shadow & Ring Polyfills */
+    .dark .dark\:shadow-red-500\/50 { --tw-shadow-color: rgb(239 68 68 / 0.5); --tw-shadow: var(--tw-shadow-colored); }
+    .dark .dark\:shadow-green-500\/50 { --tw-shadow-color: rgb(34 197 94 / 0.5); --tw-shadow: var(--tw-shadow-colored); }
+    .dark .dark\:shadow-blue-500\/50 { --tw-shadow-color: rgb(59 130 246 / 0.5); --tw-shadow: var(--tw-shadow-colored); }
+    .dark .dark\:shadow-white\/20 { --tw-shadow-color: rgb(255 255 255 / 0.2); --tw-shadow: var(--tw-shadow-colored); }
+    .dark .dark\:ring-offset-slate-900 { --tw-ring-offset-color: #0f172a; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden dark:text-gray-200 transition-colors duration-500">
@@ -4996,16 +5003,16 @@ function renderCalendarGrid(data) {
                 // SOLID GLOW LOGIC (Both Active & Inactive are solid)
                 // Added dark: classes for proper glow and ring offset
                 if (f.color === 'red') {
-                    colorClass = "bg-red-600 text-white shadow-lg shadow-red-200 dark:shadow-red-900/60 hover:bg-red-700";
+                    colorClass = "bg-red-600 text-white shadow-lg shadow-red-200 dark:shadow-red-500/50 hover:bg-red-700";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-red-600";
                 } else if (f.color === 'green') {
-                    colorClass = "bg-green-600 text-white shadow-lg shadow-green-200 dark:shadow-green-900/60 hover:bg-green-700";
+                    colorClass = "bg-green-600 text-white shadow-lg shadow-green-200 dark:shadow-green-500/50 hover:bg-green-700";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-green-600";
                 } else if (f.color === 'blue') {
-                    colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/60 hover:bg-blue-700";
+                    colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-500/50 hover:bg-blue-700";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-blue-600";
                 } else if (f.color === 'gray') {
-                    colorClass = "bg-gray-600 text-white shadow-lg shadow-gray-200 dark:shadow-gray-700/60 hover:bg-gray-700";
+                    colorClass = "bg-gray-600 text-white shadow-lg shadow-gray-200 dark:shadow-white/20 hover:bg-gray-700";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-gray-600";
                 }
                 
