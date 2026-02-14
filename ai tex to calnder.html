@@ -5292,17 +5292,6 @@ function renderCalendarGrid(data) {
                             <h3 class="text-3xl font-extrabold text-amber-400 mb-1 leading-none">${tithiInfo.tithi}</h3>
                             <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
                             
-                            <div class="grid grid-cols-2 gap-4 pt-3 border-t border-white/10">
-                                <div>
-                                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Starts</div>
-                                    <div class="text-sm font-mono text-gray-300">${fmtTime(tithiTimes.start)}</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Ends</div>
-                                    <div class="text-sm font-mono text-amber-300 font-bold">${fmtTime(tithiTimes.end)}</div>
-                                </div>
-                            </div>
-                            
                             <div class="mt-5 p-4 bg-black/30 rounded-2xl border border-white/10 shadow-lg backdrop-blur-sm relative overflow-hidden">
                                 <div class="absolute inset-0 bg-amber-500/10 pointer-events-none"></div>
                                 <div class="flex justify-between items-center mb-2 relative z-10">
@@ -5322,10 +5311,15 @@ function renderCalendarGrid(data) {
                                         <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
                                     </div>
                                 </div>
-                                <div class="flex justify-between mt-1.5 px-0.5">
-                                    <span class="text-[9px] text-gray-500 font-bold uppercase">0%</span>
-                                    <span class="text-[9px] text-gray-500 font-bold uppercase">50%</span>
-                                    <span class="text-[9px] text-gray-500 font-bold uppercase">100%</span>
+                                <div class="flex justify-between mt-3 px-0.5">
+                                    <div class="flex flex-col items-start">
+                                        <span class="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Start</span>
+                                        <span class="text-[10px] text-gray-300 font-bold font-mono leading-none">${fmtTime(tithiTimes.start)}</span>
+                                    </div>
+                                    <div class="flex flex-col items-end">
+                                        <span class="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">End</span>
+                                        <span class="text-[10px] text-amber-400 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
