@@ -448,6 +448,14 @@
             margin-bottom: 1rem;
         }
 
+        /* Override Rich Content for Dark Modal */
+        #day-modal .rich-content p { color: #d1d5db; } /* text-gray-300 */
+        #day-modal .rich-content li { color: #9ca3af; } /* text-gray-400 */
+        #day-modal .rich-content h3,
+        #day-modal .rich-content h4 { color: #fbbf24; } /* text-amber-400 */
+        #day-modal .rich-content li::before { color: #9ca3af; }
+        #day-modal .rich-content img { border-color: rgba(255,255,255,0.1); }
+
         .nav-btn { 
             width: 2.75rem; 
             height: 2.75rem; 
@@ -5389,7 +5397,7 @@ function renderCalendarGrid(data) {
                                 return d.bodyLines.map(line => {
                                     if(line.startsWith('#')) return `<h4 class="text-amber-400 font-bold mt-3 mb-1 text-base">${line.replace(/#/g,'').trim()}</h4>`;
                                     if(line.startsWith('-')) return `<li class="ml-4 text-gray-400">${line.replace('-','').trim()}</li>`;
-                                    return `<p class="mb-2">${line}</p>`;
+                                    return `<p class="mb-2 text-gray-300">${line}</p>`;
                                 }).join('');
                             }).join('<hr class="border-white/10 my-4">')}</div>` : ''}
                         </div>
