@@ -99,6 +99,7 @@
         .pt-21 { padding-top: 5.25rem; }
         .text-\[25px\] { font-size: 25px; }
         .text-\[32px\] { font-size: 32px; }
+        .bg-amber-500\/10 { background-color: rgb(245 158 11 / 0.1); }
         .translate-x-3 { transform: translateX(0.75rem); }
 
         /* Moon Icon Glow */
@@ -5302,8 +5303,9 @@ function renderCalendarGrid(data) {
                                 </div>
                             </div>
                             
-                            <div class="mt-5 p-4 bg-black/30 rounded-2xl border border-white/10 shadow-lg backdrop-blur-sm">
-                                <div class="flex justify-between items-center mb-2">
+                            <div class="mt-5 p-4 bg-black/30 rounded-2xl border border-white/10 shadow-lg backdrop-blur-sm relative overflow-hidden">
+                                <div class="absolute inset-0 bg-amber-500/10 pointer-events-none"></div>
+                                <div class="flex justify-between items-center mb-2 relative z-10">
                                     <span class="text-gray-400 font-bold text-[11px] uppercase tracking-widest">Tithi Progress</span>
                                     <div class="flex items-baseline gap-1">
                                         <span class="text-2xl font-extrabold text-amber-400 drop-shadow-sm font-sans">${tithiProgress}</span>
