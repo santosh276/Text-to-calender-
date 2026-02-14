@@ -43,6 +43,11 @@
 .text-amber-900{--tw-text-opacity:1;color:rgb(120 53 15/var(--tw-text-opacity,1))}
 .border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138/var(--tw-border-opacity,1))}
 
+/* Missing Orange Utilities for Purnima Card */
+.bg-orange-200 { --tw-bg-opacity: 1; background-color: rgb(254 215 170 / var(--tw-bg-opacity, 1)); }
+.text-orange-900 { --tw-text-opacity: 1; color: rgb(124 45 18 / var(--tw-text-opacity, 1)); }
+.border-orange-300 { --tw-border-opacity: 1; border-color: rgb(253 186 116 / var(--tw-border-opacity, 1)); }
+
 .group:hover .group-hover\:text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12/var(--tw-text-opacity,1))}
 .group:hover .group-hover\:border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170/var(--tw-border-opacity,1))}
 @media (min-width:768px){.md\:text-\[13px\]{font-size:13px}}
@@ -5242,8 +5247,8 @@ function renderCalendarGrid(data) {
                 let iconHtml = TITHI_ICONS.ekadashi;
                 let title = 'Ekadashi';
                 
-                if (item.index === 14) { bgColor = 'bg-amber-500 text-amber-900'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
-                else if (item.index === 29) { bgColor = 'bg-gray-800 text-white border border-gray-600'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
+                if (item.index === 14) { bgColor = 'bg-orange-200 text-orange-900 border border-orange-300'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
+                else if (item.index === 29) { bgColor = 'bg-gray-200 text-gray-800 border border-gray-300'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
                 
                 const dateStr = item.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
                 
