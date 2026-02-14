@@ -104,7 +104,7 @@
         /* Moon Icon Glow */
         .moon-glow {
             /* The Gold Glow */
-            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+            filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.7));
 
             /* The Floating Animation */
             animation: float 3s ease-in-out infinite;
@@ -5274,7 +5274,7 @@ function renderCalendarGrid(data) {
                     
                     <!-- Header -->
                     <div class="text-center pt-21 pb-5 relative">
-                        <div class="w-16 h-16 mx-auto mb-3 moon-glow">${mainIcon}</div>
+                        <div class="w-20 h-20 mx-auto mb-3 moon-glow">${mainIcon}</div>
                         <h2 class="text-2xl font-extrabold text-white mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
                         <p class="text-amber-400 font-bold text-sm uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
                     </div>
