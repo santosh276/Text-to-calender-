@@ -2991,7 +2991,13 @@ The word "Nua" means new and "Khai" means food.
                 // Add timestamp to bypass caching
                 const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
                 
-                const response = await fetch(fetchUrl);
+                // Add Timeout (15 seconds)
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+                const response = await fetch(fetchUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
                 if (!response.ok) throw new Error(`GitHub Fetch Failed: ${response.status}`);
                 
                 const cleanText = await response.text();
@@ -3067,7 +3073,13 @@ The word "Nua" means new and "Khai" means food.
                 // Add timestamp to bypass browser caching
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}&t=${Date.now()}`;
                 
-                const response = await fetch(proxyUrl);
+                // Add Timeout (15 seconds)
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+                const response = await fetch(proxyUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
                 if (!response.ok) throw new Error("Proxy Connection failed");
 
                 const html = await response.text();
