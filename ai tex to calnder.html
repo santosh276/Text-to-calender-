@@ -4951,8 +4951,7 @@ function renderCalendarGrid(data) {
                 }
                 
                 btn.className = `${className} ${colorClass}`;
-                const checkIcon = isSelected ? '<i class="fa-solid fa-check text-[10px]"></i>' : '';
-                btn.innerHTML = `${checkIcon} ${f.icon} <span>${f.label}</span>`;
+                btn.innerHTML = `${f.icon} <span>${f.label}</span>`;
                 btn.onclick = () => toggleFilter(f.id);
                 filterContainer.appendChild(btn);
             });
