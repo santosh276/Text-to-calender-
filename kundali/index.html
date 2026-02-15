@@ -696,11 +696,23 @@ function initForm() {
     const form = document.getElementById('kundali-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        try {
-            generateKundali();
-        } catch(err) {
-            console.error("Generation failed", err);
-        }
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.innerText;
+        btn.innerText = "Generating...";
+        btn.disabled = true;
+
+        // Use timeout to allow UI update
+        setTimeout(() => {
+            try {
+                generateKundali();
+            } catch(err) {
+                console.error("Generation failed", err);
+                alert("Error generating Kundali: " + err.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }, 50);
     });
 
     // Populate City Search
@@ -988,8 +1000,9 @@ function calculateRetrograde(body, date) {
     const t1 = Astronomy.MakeTime(date);
     const t2 = t1.AddDays(1/24); // 1 hour later
 
-    const p1 = Astronomy.GeoVector(Astronomy.Body[body], t1);
-    const p2 = Astronomy.GeoVector(Astronomy.Body[body], t2);
+    // Pass 'true' for aberration to satisfy VerifyBoolean check
+    const p1 = Astronomy.GeoVector(Astronomy.Body[body], t1, true);
+    const p2 = Astronomy.GeoVector(Astronomy.Body[body], t2, true);
 
     const e1 = Astronomy.Ecliptic(p1);
     const e2 = Astronomy.Ecliptic(p2);
