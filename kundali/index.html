@@ -269,6 +269,8 @@ tr:nth-child(even) {
 }
     </style>
     <script>
+    // Fix for CommonJS library in browser
+    var exports = {};
 /*
  MIT
 
@@ -607,6 +609,9 @@ GravitySimulator.prototype.CalcBodyAccelerations=function(){for(var a=$jscomp.ma
 EARTH_GM+MOON_GM),GravitySimulator.AddAcceleration(b.a,b.r,this.curr.gravitators[Body.Mars].r,MARS_GM),GravitySimulator.AddAcceleration(b.a,b.r,this.curr.gravitators[Body.Jupiter].r,JUPITER_GM),GravitySimulator.AddAcceleration(b.a,b.r,this.curr.gravitators[Body.Saturn].r,SATURN_GM),GravitySimulator.AddAcceleration(b.a,b.r,this.curr.gravitators[Body.Uranus].r,URANUS_GM),GravitySimulator.AddAcceleration(b.a,b.r,this.curr.gravitators[Body.Neptune].r,NEPTUNE_GM)};
 GravitySimulator.AddAcceleration=function(a,b,c,d){var e=c.x-b.x,f=c.y-b.y;b=c.z-b.z;c=e*e+f*f+b*b;d/=c*Math.sqrt(c);a.x+=e*d;a.y+=f*d;a.z+=b*d};GravitySimulator.prototype.Duplicate=function(){var a={};for(b in this.curr.gravitators)a[b]=this.curr.gravitators[b].clone();var b=[];for(var c=$jscomp.makeIterator(this.curr.bodies),d=c.next();!d.done;d=c.next())b.push(d.value.clone());return new GravSimEndpoint(this.curr.time,a,b)};
 $jscomp.global.Object.defineProperties(GravitySimulator.prototype,{OriginBody:{configurable:!0,enumerable:!0,get:function(){return this.originBody}},Time:{configurable:!0,enumerable:!0,get:function(){return this.curr.time}}});exports.GravitySimulator=GravitySimulator;var GravSimEndpoint=function(a,b,c){this.time=a;this.gravitators=b;this.bodies=c};
+
+    // Assign exports to global Astronomy
+    window.Astronomy = exports;
     </script>
     <script>
 // Odia Localization
@@ -672,7 +677,11 @@ function initForm() {
     const form = document.getElementById('kundali-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        generateKundali();
+        try {
+            generateKundali();
+        } catch(err) {
+            console.error("Generation failed", err);
+        }
     });
 
     // Set default datetime
@@ -697,6 +706,11 @@ function loadFromStorage() {
         document.getElementById('lat').value = data.lat || '';
         document.getElementById('lon').value = data.lon || '';
         document.getElementById('timezone').value = data.timezone || 5.5;
+    } else {
+        // Load defaults
+        document.getElementById('lat').value = appState.lat;
+        document.getElementById('lon').value = appState.lon;
+        document.getElementById('timezone').value = appState.timezone;
     }
 }
 
@@ -843,16 +857,64 @@ function getDivisionalSign(lon, div) {
     return d1Sign;
 }
 
-function calculateShadbala(positions) {
-    // Placeholder Shadbala Calculation
+function calculateShadbala(positions, ascendant) {
     const strengths = {};
     const planets = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
 
+    // Definitions
+    const exaltation = { 'Sun': 0, 'Moon': 1, 'Mars': 9, 'Mercury': 5, 'Jupiter': 3, 'Venus': 11, 'Saturn': 6 };
+    const debilitation = { 'Sun': 6, 'Moon': 7, 'Mars': 3, 'Mercury': 11, 'Jupiter': 9, 'Venus': 5, 'Saturn': 0 };
+    const ownSigns = {
+        'Sun': [4], 'Moon': [3], 'Mars': [0, 7], 'Mercury': [2, 5],
+        'Jupiter': [8, 11], 'Venus': [1, 6], 'Saturn': [9, 10]
+    }; // 0-based indices (0=Aries)
+
+    // Directional Strength (Dig Bala) - House based
+    // Ascendant (House 1) angle approx = Ascendant longitude.
+    // East = Lagna (1st), South = 10th, West = 7th, North = 4th.
+    // Mercury/Jupiter strong in East (Asc).
+    // Sun/Mars strong in South (MC).
+    // Saturn strong in West (Desc).
+    // Moon/Venus strong in North (IC).
+
+    const ascSign = Math.floor(ascendant / 30);
+
     planets.forEach(p => {
         if (positions[p]) {
-            // Mock values for Sthana, Dig, Kaala, Chestha, Naisargika, Drik
+            let score = 300; // Base score
+            const lon = positions[p].lon;
+            const sign = Math.floor(lon / 30);
+
+            // Sthana Bala (Positional)
+            if (sign === exaltation[p]) score += 120; // Exalted
+            else if (sign === debilitation[p]) score -= 60; // Debilitated
+            else if (ownSigns[p] && ownSigns[p].includes(sign)) score += 60; // Own Sign
+
+            // Dig Bala (Directional)
+            // Calculate distance from strong point
+            // Angle from Ascendant
+            let angleFromAsc = normalize(lon - ascendant);
+
+            // East (0 deg): Mer, Jup
+            // South (270 deg / -90): Sun, Mar
+            // West (180 deg): Sat
+            // North (90 deg): Mon, Ven
+
+            let bestAngle = 0;
+            if (['Mercury', 'Jupiter'].includes(p)) bestAngle = 0;
+            else if (['Sun', 'Mars'].includes(p)) bestAngle = 270;
+            else if (['Saturn'].includes(p)) bestAngle = 180;
+            else if (['Moon', 'Venus'].includes(p)) bestAngle = 90;
+
+            let diff = Math.abs(normalize(angleFromAsc - bestAngle));
+            if (diff > 180) diff = 360 - diff;
+
+            // Closer is better. Max strength 60 shashtiamsas.
+            // Score = 60 * (1 - diff/180)
+            score += 60 * (1 - diff/180);
+
             strengths[p] = {
-                total: (Math.random() * 300 + 300).toFixed(1) // 300-600 range
+                total: score.toFixed(1)
             };
         }
     });
@@ -889,9 +951,11 @@ function generateKundali() {
 
     const { positions, ayanamsa, astroTime } = calculatePlanets(utcDate, lat, lon);
     const ascendant = calculateAscendant(astroTime, lat, lon);
-    const shadbala = calculateShadbala(positions);
 
     positions['Ascendant'] = { lon: ascendant };
+
+    // Shadbala needs ascendant
+    const shadbala = calculateShadbala(positions, ascendant);
 
     renderBasicDetails({ name, dateStr, timeStr, lat, lon, ayanamsa, ascendant });
 
