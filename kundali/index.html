@@ -614,6 +614,25 @@ $jscomp.global.Object.defineProperties(GravitySimulator.prototype,{OriginBody:{c
     window.Astronomy = exports;
     </script>
     <script>
+// City Data
+const ODIA_CITIES = [
+    { name: "Bhubaneswar", lat: 20.2961, lon: 85.8245 },
+    { name: "Cuttack", lat: 20.4625, lon: 85.8830 },
+    { name: "Rourkela", lat: 22.2604, lon: 84.8536 },
+    { name: "Berhampur", lat: 19.3150, lon: 84.7941 },
+    { name: "Sambalpur", lat: 21.4669, lon: 83.9813 },
+    { name: "Puri", lat: 19.8135, lon: 85.8312 },
+    { name: "Balasore", lat: 21.4934, lon: 86.9191 },
+    { name: "Bhadrak", lat: 21.0574, lon: 86.4962 },
+    { name: "Baripada", lat: 21.9322, lon: 86.7516 },
+    { name: "Jharsuguda", lat: 21.8551, lon: 84.0079 },
+    { name: "Jeypore", lat: 18.8650, lon: 82.5838 },
+    { name: "Rayagada", lat: 19.1712, lon: 83.4163 },
+    { name: "Bhawanipatna", lat: 19.9081, lon: 83.1638 },
+    { name: "Angul", lat: 20.8371, lon: 85.1511 },
+    { name: "Dhenkanal", lat: 20.6479, lon: 85.5992 }
+];
+
 // Odia Localization
 const ODIA = {
     PLANETS: {
@@ -681,6 +700,35 @@ function initForm() {
             generateKundali();
         } catch(err) {
             console.error("Generation failed", err);
+        }
+    });
+
+    // Populate City Search
+    const cityList = document.getElementById('city-list');
+    ODIA_CITIES.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city.name;
+        option.dataset.lat = city.lat;
+        option.dataset.lon = city.lon;
+        cityList.appendChild(option);
+    });
+
+    document.getElementById('city-search').addEventListener('input', (e) => {
+        const val = e.target.value;
+        const city = ODIA_CITIES.find(c => c.name === val);
+        if (city) {
+            document.getElementById('lat').value = city.lat;
+            document.getElementById('lon').value = city.lon;
+        }
+    });
+
+    // Also trigger on 'change' just in case
+    document.getElementById('city-search').addEventListener('change', (e) => {
+        const val = e.target.value;
+        const city = ODIA_CITIES.find(c => c.name === val);
+        if (city) {
+            document.getElementById('lat').value = city.lat;
+            document.getElementById('lon').value = city.lon;
         }
     });
 
@@ -775,11 +823,13 @@ function calculatePlanets(dateObj, lat, lon) {
         const tropicalLon = ecliptic.elon;
         const siderealLon = normalize(tropicalLon - ayanamsa);
 
+        const isRetro = calculateRetrograde(bodyName, date);
+
         positions[bodyName] = {
             lon: siderealLon,
             tropical: tropicalLon,
             lat: ecliptic.elat,
-            speed: 0 // Placeholder
+            isRetrograde: isRetro
         };
     });
 
@@ -857,6 +907,102 @@ function getDivisionalSign(lon, div) {
     return d1Sign;
 }
 
+function calculateDasha(moonLon, birthDate) {
+    // Vimsottari Dasha System
+    // Nakshatra Span = 13 deg 20 min = 13.3333 deg
+    const nakshatraSpan = 13.333333;
+    const moonDeg = normalize(moonLon);
+    const nakshatraIndex = Math.floor(moonDeg / nakshatraSpan); // 0-26
+    const nakshatraPassed = moonDeg % nakshatraSpan;
+    const nakshatraBalance = nakshatraSpan - nakshatraPassed;
+
+    // Lord Sequence starting from Ashwini (Ketu)
+    const lords = [
+        { name: "Ketu", years: 7 },
+        { name: "Venus", years: 20 },
+        { name: "Sun", years: 6 },
+        { name: "Moon", years: 10 },
+        { name: "Mars", years: 7 },
+        { name: "Rahu", years: 18 },
+        { name: "Jupiter", years: 16 },
+        { name: "Saturn", years: 19 },
+        { name: "Mercury", years: 17 }
+    ];
+
+    // Cycle starts at index 0 (Ketu) for Ashwini (0), Magha (9), Mula (18)
+    const lordIndex = nakshatraIndex % 9;
+    const lord = lords[lordIndex];
+
+    // Calculate Balance of Dasha at birth
+    const balanceFactor = nakshatraBalance / nakshatraSpan;
+    const balanceYears = lord.years * balanceFactor;
+
+    // Generate Dasha Table
+    let currentDate = new Date(birthDate);
+    // Add balance years to birth date for first dasha end
+    const dashaTable = [];
+
+    // 1. Current Running Dasha (Remaining)
+    const firstEndDate = addYearsToDate(currentDate, balanceYears);
+    dashaTable.push({
+        planet: lord.name,
+        end: firstEndDate.toISOString().split('T')[0],
+        duration: balanceYears.toFixed(2) + "y (bal)"
+    });
+
+    let currentDashaDate = firstEndDate;
+
+    // 2. Next Dashas
+    for (let i = 1; i <= 9; i++) {
+        const nextIndex = (lordIndex + i) % 9;
+        const nextLord = lords[nextIndex];
+        const endDate = addYearsToDate(currentDashaDate, nextLord.years);
+        dashaTable.push({
+            planet: nextLord.name,
+            end: endDate.toISOString().split('T')[0],
+            duration: nextLord.years + "y"
+        });
+        currentDashaDate = endDate;
+    }
+
+    return dashaTable;
+}
+
+function addYearsToDate(date, years) {
+    const d = new Date(date);
+    const fullYears = Math.floor(years);
+    const remainingDays = (years - fullYears) * 365.25;
+
+    d.setFullYear(d.getFullYear() + fullYears);
+    d.setDate(d.getDate() + Math.round(remainingDays));
+    return d;
+}
+
+function calculateRetrograde(body, date) {
+    if (body === 'Sun' || body === 'Moon' || body === 'Rahu' || body === 'Ketu') return false;
+
+    // Calculate position now and slightly later to get heliocentric or geocentric speed
+    // Astronomy.GeoVector gives geocentric rect coords.
+    // Retrograde happens when geocentric longitude decreases.
+
+    const t1 = Astronomy.MakeTime(date);
+    const t2 = t1.AddDays(1/24); // 1 hour later
+
+    const p1 = Astronomy.GeoVector(Astronomy.Body[body], t1);
+    const p2 = Astronomy.GeoVector(Astronomy.Body[body], t2);
+
+    const e1 = Astronomy.Ecliptic(p1);
+    const e2 = Astronomy.Ecliptic(p2);
+
+    // If longitude decreases, it is retrograde
+    let diff = e2.elon - e1.elon;
+    // Handle 360 wrap
+    if (diff < -300) diff += 360;
+    if (diff > 300) diff -= 360;
+
+    return diff < 0;
+}
+
 function calculateShadbala(positions, ascendant) {
     const strengths = {};
     const planets = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
@@ -889,6 +1035,9 @@ function calculateShadbala(positions, ascendant) {
             if (sign === exaltation[p]) score += 120; // Exalted
             else if (sign === debilitation[p]) score -= 60; // Debilitated
             else if (ownSigns[p] && ownSigns[p].includes(sign)) score += 60; // Own Sign
+
+            // Chestha Bala (Motion) - Bonus for Retrograde
+            if (positions[p].isRetrograde) score += 60;
 
             // Dig Bala (Directional)
             // Calculate distance from strong point
@@ -957,12 +1106,16 @@ function generateKundali() {
     // Shadbala needs ascendant
     const shadbala = calculateShadbala(positions, ascendant);
 
+    // Dasha needs Moon longitude and birth date
+    const dasha = calculateDasha(positions['Moon'].lon, utcDate);
+
     renderBasicDetails({ name, dateStr, timeStr, lat, lon, ayanamsa, ascendant });
 
     renderEastIndianChart('d1-chart', positions, ascendant, 1);
     renderEastIndianChart('d9-chart', positions, ascendant, 9);
     renderEastIndianChart('d10-chart', positions, ascendant, 10);
     renderPlanetaryTable(positions, shadbala);
+    renderDashaTable(dasha);
 }
 
 function renderBasicDetails(details) {
@@ -1035,9 +1188,12 @@ function renderPlanetaryTable(positions, shadbala) {
     // Add header for Shadbala if not present
     const theadRow = document.querySelector('#planetary-table thead tr');
     if (theadRow.children.length === 4) {
-        const th = document.createElement('th');
-        th.innerText = 'Shadbala';
-        theadRow.appendChild(th);
+        const th1 = document.createElement('th');
+        th1.innerText = 'Retro';
+        theadRow.appendChild(th1);
+        const th2 = document.createElement('th');
+        th2.innerText = 'Shadbala';
+        theadRow.appendChild(th2);
     }
 
     tbody.innerHTML = '';
@@ -1055,6 +1211,7 @@ function renderPlanetaryTable(positions, shadbala) {
         const nakIndex = getNakshatra(planet.lon);
         const nakName = ODIA.NAKSHATRAS[nakIndex];
         const strength = (shadbala && shadbala[key]) ? shadbala[key].total : '-';
+        const retroStatus = planet.isRetrograde ? 'R' : '';
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -1062,10 +1219,37 @@ function renderPlanetaryTable(positions, shadbala) {
             <td>${signName}</td>
             <td>${formatDeg(degree)}</td>
             <td>${nakName}</td>
+            <td style="color: #ef4444; font-weight: bold;">${retroStatus}</td>
             <td>${strength}</td>
         `;
         tbody.appendChild(row);
     });
+}
+
+function renderDashaTable(dasha) {
+    const container = document.getElementById('dasha-container');
+    container.innerHTML = '';
+
+    const table = document.createElement('table');
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Mahadasha</th>
+                <th>End Date</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${dasha.map(d => `
+                <tr>
+                    <td>${ODIA.PLANETS[d.planet] || d.planet}</td>
+                    <td>${d.end}</td>
+                    <td>${d.duration}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    `;
+    container.appendChild(table);
 }
     </script>
 </head>
@@ -1091,6 +1275,11 @@ function renderPlanetaryTable(positions, shadbala) {
                         <input type="time" id="time" required step="1">
                     </div>
                 </div>
+                <div class="input-group">
+                    <label for="city-search">City (Auto-fill)</label>
+                    <input type="text" id="city-search" list="city-list" placeholder="Search City (Odisha)">
+                    <datalist id="city-list"></datalist>
+                </div>
                 <div class="input-row">
                     <div class="input-group">
                         <label for="lat">Latitude</label>
@@ -1114,6 +1303,7 @@ function renderPlanetaryTable(positions, shadbala) {
                 <button class="tab-btn active" data-tab="basic">Basic Info</button>
                 <button class="tab-btn" data-tab="charts">Charts</button>
                 <button class="tab-btn" data-tab="planetary">Planetary Info</button>
+                <button class="tab-btn" data-tab="dasha">Dasha</button>
             </div>
 
             <div id="basic" class="tab-content active">
@@ -1176,6 +1366,13 @@ function renderPlanetaryTable(positions, shadbala) {
                             <!-- Rows injected by JS -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <div id="dasha" class="tab-content">
+                <h2>Vimsottari Dasha</h2>
+                <div id="dasha-container" class="table-responsive">
+                    <!-- Dasha Table injected by JS -->
                 </div>
             </div>
         </section>
