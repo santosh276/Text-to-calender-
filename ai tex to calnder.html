@@ -3141,38 +3141,43 @@ The word "Nua" means new and "Khai" means food.
 
         // Shared Logic for updating app state from fetched text
         function updateAppWithFetchedData(cleanText) {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 // 1. Save to Local Storage (Auto-Save)
                 localStorage.setItem('panchang_autosave_text', cleanText);
 
                 // 2. Non-Blocking Render
                 requestAnimationFrame(() => {
-                    const editor = document.getElementById('editor');
-                    
-                    if (editor) {
-                        if (editor.value !== cleanText) {
-                            editor.value = cleanText;
+                    try {
+                        const editor = document.getElementById('editor');
+
+                        if (editor) {
+                            if (editor.value !== cleanText) {
+                                editor.value = cleanText;
+                            }
                         }
+
+                        // Heavy lifting
+                        parseInput(cleanText);
+                        render();
+                        saveStateToCache(); // Update JSON Cache
+
+                        // Reset Retry Counter on Success
+                        sessionStorage.removeItem('panchang_retry_count');
+
+                        // Optional: Update title if changed in config
+                        if (appState.config && appState.config.title) {
+                             const titleEl = document.getElementById('app-title');
+                             if(titleEl) titleEl.innerText = appState.config.title;
+                        }
+
+                        if (editor) showToast("Calendar updated from Cloud!");
+                        else console.log("App updated seamlessly from background cloud fetch.");
+
+                        resolve();
+                    } catch (e) {
+                        console.error("Critical Parse/Render Error:", e);
+                        reject(e);
                     }
-                    
-                    // Heavy lifting
-                    parseInput(cleanText);
-                    render();
-                    saveStateToCache(); // Update JSON Cache
-                    
-                    // Reset Retry Counter on Success
-                    sessionStorage.removeItem('panchang_retry_count');
-                    
-                    // Optional: Update title if changed in config
-                    if (appState.config && appState.config.title) {
-                         const titleEl = document.getElementById('app-title');
-                         if(titleEl) titleEl.innerText = appState.config.title;
-                    }
-                    
-                    if (editor) showToast("Calendar updated from Cloud!");
-                    else console.log("App updated seamlessly from background cloud fetch.");
-                    
-                    resolve();
                 });
             });
         }
