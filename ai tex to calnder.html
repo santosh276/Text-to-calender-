@@ -3318,6 +3318,10 @@ The word "Nua" means new and "Khai" means food.
                 if (!dataFound) {
                     // Use skeleton but mark as not found so we force sync
                     appState = window.exportedData;
+
+                    // Safety Patch: Ensure recurringDetails exists (Fix for older exports)
+                    if (!appState.recurringDetails) appState.recurringDetails = {};
+                    if (!appState.details) appState.details = {};
                 }
             } else if (isEditor) {
                 // Editor Mode
@@ -5620,6 +5624,7 @@ function renderCalendarGrid(data) {
                 monthsData: [],
                 todayIndex: -1,
                 details: {},
+                recurringDetails: {}, // Fix: Ensure this exists
                 customSeasonDescriptions: {},
                 images: {},
                 config: exportConfig // Use encrypted config
