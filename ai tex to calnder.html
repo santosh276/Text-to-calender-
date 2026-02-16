@@ -1,12 +1,14 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vaidik Calendar</title>
+    <title>Vaidik Calendar - Auto Generator</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&amp;family=Noto+Sans+Oriya:wght@400;700&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Sans+Oriya:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -973,28 +975,18 @@
     }
     </style>
 </head>
-<body class="flex flex-col min-h-screen overflow-y-auto bg-[#fdfbf7]"><script>window.exportedData = {"activeMonthIndex":-1,"monthsData":[],"todayIndex":-1,"details":{},"recurringDetails":{},"manualTithis":{},"customSeasonDescriptions":{},"images":{},"config":{"title":"Vaidik Calendar","logoUrl":null,"language":"en","location":null,"sections":{"festivals":true,"panchang":true},"syncLinks":{"en":"","hi":"","or":"","bn":"","mr":"","gu":"","pa":"","ta":"","te":"","kn":"","ml":"","as":""},"linksEncrypted":true}};</script><div id="app-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm pointer-events-none transition-opacity duration-500">
-                <div class="mb-6 animate-pulse">
-                    <svg viewBox="0 0 512 512" width="60" height="60" fill="#ea580c" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M379.3 4.7c-6.2-6.2-16.4-6.2-22.6 0l-16 16c-6.2 6.2-6.2 16.4 0 22.6l16 16c6.2 6.2 16.4 6.2 22.6 0l16-16c6.2-6.2 6.2-16.4 0-22.6l-16-16zM281 66.7c-2.2-1.5-4.9-2.5-7.7-2.7c-.6 0-1.3-.1-1.9 0c-3.9 .2-7.4 1.7-10.1 4.2c-.9 .8-1.6 1.7-2.3 2.6c-1.7 2.4-2.7 5.3-2.9 8.5c0 .7 0 1.4 0 2.1c.2 2.2 .9 4.3 1.9 6.2l.3 .6c.3 .6 .8 1.4 1.4 2.4c1.2 2 2.9 4.8 5.1 8.2c4.4 6.7 11.1 15.5 20 24.4C302.4 141.1 330.3 160 368 160c31.2 0 56.6-10.4 73.9-20.2c8.7-5 15.6-9.9 20.4-13.8c2.4-1.9 4.3-3.6 5.7-4.9c.7-.6 1.3-1.2 1.7-1.6l.6-.5 .1-.1 .1-.1s0 0 0 0s0 0 0 0c5.9-5.8 9.5-13.9 9.5-22.8c0-17.7-14.3-32-32-32c-8.7 0-16.7 3.5-22.4 9.2c-.1 .1-.2 .2-.5 .4c-.5 .5-1.5 1.3-2.8 2.4c-2.7 2.2-6.8 5.2-12.1 8.2C399.4 90.4 384.8 96 368 96c-20.8 0-42.4-7-59.5-14.6c-8.4-3.7-15.4-7.5-20.3-10.3c-2.4-1.4-4.3-2.5-5.6-3.3c-.6-.4-1.1-.7-1.4-.9l-.3-.2zM115.2 169.6c8-6 17.9-9.6 28.8-9.6c26.5 0 48 21.5 48 48s-21.5 48-48 48l-34.2 0c-7.6 0-13.8 6.2-13.8 13.8c0 1.5 .2 2.9 .7 4.4l8 24c4.4 13.1 16.6 21.9 30.4 21.9l8.9 0 16 0c35.3 0 64 28.7 64 64s-28.7 64-64 64c-50.8 0-82.7-21.5-102.2-42.8c-9.9-10.8-16.6-21.6-20.9-29.7c-2.1-4-3.6-7.3-4.5-9.6c-.5-1.1-.8-2-1-2.5l-.2-.5c-.3-.9-.7-1.8-1.1-2.6c-1.2-2.2-2.8-4-4.7-5.4c-1.9-1.4-4.1-2.3-6.5-2.8c-1.4-.3-2.9-.3-4.4-.2c-2.5 .2-4.8 1-6.8 2.3c-1.1 .7-2.2 1.5-3.1 2.5c-2.4 2.5-4.1 5.8-4.5 9.5c-.1 .6-.1 1.1-.1 1.7c0 0 0 0 0 0c0 .8 .1 1.7 .2 2.5l0 .1c0 .3 .1 .8 .2 1.3c.2 1.1 .4 2.7 .8 4.6c.8 3.9 2 9.4 3.9 15.9c3.8 13 10.3 30.4 21.3 48C48.7 476.2 89.4 512 160 512c70.7 0 128-57.3 128-128c0-23.3-6.2-45.2-17.1-64l22.6 0c25.5 0 49.9-10.1 67.9-28.1l26.5-26.5c6-6 14.1-9.4 22.6-9.4l5.5 0c17.7 0 32 14.3 32 32l0 96c0 17.7-14.3 32-32 32c-25.7 0-41.4-12.5-51.2-25.6c-5-6.7-8.4-13.4-10.5-18.6c-1.1-2.5-1.8-4.6-2.2-6c-.2-.7-.4-1.2-.5-1.5l-.1-.2c-.3-1.3-.8-2.6-1.5-3.8c-1.1-2-2.6-3.8-4.4-5.1c-2.7-2-6-3.2-9.6-3.2l-.2 0c-8 .1-14.6 6.1-15.6 13.9c0 0 0 0 0 0c0 .3-.1 .6-.2 1.1c-.1 .9-.3 2.1-.4 3.6c-.3 3-.6 7.3-.6 12.4c0 10.1 1.1 23.9 5.8 38.1c4.8 14.3 13.4 29.3 28.6 40.7C368.7 473.3 389.3 480 416 480c53 0 96-43 96-96l0-96c0-53-43-96-96-96l-5.5 0c-25.5 0-49.9 10.1-67.9 28.1l-26.5 26.5c-6 6-14.1 9.4-22.6 9.4l-48.3 0c6.9-14.5 10.8-30.8 10.8-48c0-61.9-50.1-112-112-112c-25.2 0-48.5 8.3-67.2 22.4c-14.1 10.6-17 30.7-6.4 44.8s30.7 17 44.8 6.4z"></path>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800">Initializing...</h2>
-            </div>
+<body class="h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
     <header class="bg-deep-red px-5 py-4 flex items-center justify-between shadow-md relative overflow-hidden shrink-0 z-50">
         <div class="flex items-center gap-3">
           <div id="logo-container" class="flex-shrink-0">
-    <!-- COMPONENT START -->
-    <div class="coin-wrapper ripple-effect">
-        <div class="coin">
-            <span class="om-symbol">ॐ</span>
-        </div>
-    </div>
-    <!-- COMPONENT END --></div>
+             <!-- Content handled by JS -->
+          </div>
           <div class="flex flex-col">
-            <h1 id="app-title" class="text-white font-sans text-[25px] font-extrabold leading-none tracking-tight whitespace-nowrap">Vaidik Calendar</h1>
+            <h1 id="app-title" class="text-white font-sans text-[25px] font-extrabold leading-none tracking-tight whitespace-nowrap">
+              Vaidik Calendar
+            </h1>
             <p class="text-gold-light font-sans text-[10px] font-bold tracking-widest mt-0.5">
               The Heart of Sanatan Dharma...
             </p>
@@ -1012,13 +1004,240 @@
     </header>
 
     <!-- Main Content Area -->
-    <div class="flex flex-col md:flex-row flex-1">
+    <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
         
         <!-- LEFT PANEL: Editor -->
-        
+        <div id="editor-panel" class="w-full md:w-[35%] h-[62%] md:h-full bg-gray-900 text-gray-100 flex flex-col border-b-4 md:border-b-0 md:border-r-4 border-saffron z-10 transition-all duration-300 relative overflow-hidden">
+            
+            <!-- Editor Header -->
+            <div class="bg-black border-b border-gray-800 p-4 shrink-0 flex flex-col gap-3 z-50 relative shadow-lg">
+                <div class="flex gap-3">
+                    <button onclick="document.getElementById('fileInput').click()" class="header-btn flex-1"><i class="fa-solid fa-file-arrow-up"></i> Open File</button>
+                    <button onclick="fetchDriveData()" class="header-btn flex-1 bg-blue-900 text-blue-100 border-blue-800 hover:bg-blue-800"><i class="fa-brands fa-google-drive"></i> Import Drive</button>
+                    <button onclick="configureLiveSync()" class="header-btn flex-1 bg-green-700 text-green-100 border-green-600 hover:bg-green-600"><i class="fa-solid fa-file-word"></i> Live Sync Docs</button>
+                    <button onclick="configureGitHubSync()" class="header-btn flex-1 bg-black text-white border-gray-800 hover:bg-gray-900 hover:border-gray-700"><i class="fa-brands fa-github"></i> Live Sync GitHub</button>
+                    <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
+                    <button onclick="openLinkModal()" class="header-btn flex-1"><i class="fa-solid fa-link"></i> Insert Link</button>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="downloadCalendar()" class="header-btn flex-1"><i class="fa-solid fa-download"></i> Download HTML</button>
+                    <button onclick="downloadTxtFile()" class="header-btn flex-1"><i class="fa-solid fa-file-lines"></i> Download TXT</button>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="openSettingsModal()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
+                    <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
+                </div>
+                <div class="mt-2 border-t border-gray-800 pt-3">
+                    <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
+                        <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i> Formatting Guide</span>
+                        <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhanced Syntax Guide -->
+            <div id="syntax-guide" class="text-gray-100 relative z-40">
+                <div class="p-6 pb-12 text-sm">
+                    <!-- NEW: Quick Start Tutorial -->
+                    <div class="guide-section">
+                        <div class="guide-title text-green-400"><i class="fa-solid fa-play"></i> Quick Start Tutorial</div>
+                        <ol class="list-decimal pl-5 space-y-2 text-gray-300">
+                            <li><strong>Set Title:</strong> Start with a <code>::: config</code> block to set your App Title.</li>
+                            <li><strong>Define Month:</strong> Use <code>::: calendar</code> and <code>++ Month Year ++</code> to start a month.</li>
+                            <li><strong>Add Events:</strong> List dates like <code>01 * New Year</code>. Use symbols for colors!</li>
+                            <li><strong>Add Details:</strong> Use <code>::: details</code> and <code>>> Date</code> to add stories, images, and rituals.</li>
+                            <li><strong>Customize:</strong> Add Panchang and Seasons to make it professional.</li>
+                        </ol>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-gear"></i> 1. App Configuration</div>
+                        <div class="code-block">
+::: config
+@ Title : My Calendar 2026
+@ Logo : <span class="hl-string">![Logo](https://example.com/logo.png)</span>
+@ Live Sync GitHub trigger in every : <span class="hl-string">24 hours</span>
+:::
+                        </div>
+                        <p class="code-annotation">
+                            - <strong>Title:</strong> Appears in the top header.<br>
+                            - <strong>Logo:</strong> URL or uploaded image path.<br>
+                            - <strong>Live Sync:</strong> Auto-update interval (minutes/hours/days).
+                        </p>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-regular fa-calendar"></i> 2. Calendar Grid Events</div>
+                        <div class="code-block">
+::: calendar
+<span class="hl-keyword">++ January 2026 ++</span>
+01 <span class="hl-tag">*</span> New Year's Day [ନୂତନ ବର୍ଷ]
+14 <span class="hl-tag">!</span> Makar Sankranti
+23 <span class="hl-tag">!</span> Saraswati Puja / Netaji Jayanti
+26 <span class="hl-tag">^</span> Republic Day
+05 <span class="hl-tag">></span> Office Meeting
+:::
+                        </div>
+                        <div class="mt-2 text-xs space-y-2 text-gray-400">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><span class="font-mono text-white bg-red-600 px-1.5 rounded">!</span> Festival (Red)</div>
+                                <div><span class="font-mono text-white bg-blue-600 px-1.5 rounded">*</span> Holiday (Blue)</div>
+                                <div><span class="font-mono text-white bg-green-600 px-1.5 rounded">^</span> Auspicious (Green)</div>
+                                <div><span class="font-mono text-white bg-gray-600 px-1.5 rounded">></span> Event (Gray)</div>
+                            </div>
+                            <p class="pt-1 border-t border-gray-700">
+                                <strong>Bilingual Support:</strong> Use <code>[Local Text]</code> brackets to show regional text below the English name.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-rotate"></i> 2a. Recurring Events</div>
+                        <div class="code-block">
+::: recurring
+01-01 <span class="hl-tag">*</span> New Year
+26-01 <span class="hl-tag">^</span> Republic Day
+15-08 <span class="hl-tag">!</span> Independence Day
+:::
+                        </div>
+                        <p class="code-annotation">Events that repeat every year on the same Gregorian date. Format: <span class="font-mono bg-gray-800 px-1">DD-MM</span>.</p>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-calendar-check"></i> 3. Tithi Overrides (Hybrid Mode)</div>
+                        <p class="text-gray-400 mb-2">Manually force a Tithi for specific dates (overrides calculation).</p>
+                        <div class="code-block">
+::: tithi
+14-01-2026 : <span class="hl-string">Purnima</span>
+25-01-2026 : <span class="hl-string">10</span>
+29-01 : <span class="hl-string">Amavasya</span> <span class="hl-comment"># Applies every year</span>
+:::
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-circle-info"></i> 4. Detailed Day View</div>
+                        <p class="text-gray-400 mb-2">Add rich content and banners for any date.</p>
+                        <div class="code-block">
+::: details
+<span class="hl-keyword">>> 14-01-2026</span>
+<span class="hl-tag">![Banner](https://image.url/banner.jpg)</span>
+<span class="hl-tag">@ Tag : Major Festival</span>
+
+# Significance
+**Makar Sankranti** is a major harvest festival.
+It marks the sun's transit into *Makara* (Capricorn).
+
+# Rituals
+- Holy dip in river
+- Flying kites
+:::
+                        </div>
+                        <div class="mt-2 text-xs space-y-1 text-gray-400">
+                            <p><strong>Syntax Features:</strong></p>
+                            <ul class="list-disc pl-4 space-y-1">
+                                <li><code>>> DD-MM-YYYY</code> : Target a specific date.</li>
+                                <li><code>![Banner](url)</code> : Add a top banner image.</li>
+                                <li><code># Header</code> : Section titles.</li>
+                                <li><code>**Bold**</code>, <code>*Italic*</code> : Text styling.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-cloud-sun"></i> 5. Monthly Panchang</div>
+                        <div class="code-block">
+::: panchang
+@ Tithi : <span class="hl-string">Shukla Paksha</span>
+@ Nakshatra : <span class="hl-string">Rohini</span>
+@ Yoga : <span class="hl-string">Indra</span>
+@ Karana : <span class="hl-string">Bava</span>
+@ Sunrise : <span class="hl-string">06:20 AM</span>
+:::
+                        </div>
+                        <p class="code-annotation">Data appears in the "Month's Panchang" card. <br>Note: Tithi/Nakshatra are also auto-calculated if omitted!</p>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-sun"></i> 6. Seasons (Ritu)</div>
+                        <div class="code-block">
+::: seasons
+@ Spring : <span class="hl-string">Flowers blooming everywhere.</span>
+@ Summer : <span class="hl-string">Scorching sun, mango season.</span>
+:::
+                        </div>
+                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).</p>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <textarea id="editor" class="flex-grow w-full h-full bg-gray-900 text-gray-100 p-4 font-mono text-sm resize-none focus:outline-none leading-relaxed z-0" spellcheck="false">
+::: config
+@ Title : Vaidik Calendar
+:::
+
+::: calendar
+++ January 2026 ++
+01 * New Year's Day [ନୂତନ ବର୍ଷ]
+14 ! Makar Sankranti [ମକର ସଂକ୍ରାନ୍ତି]
+23 ! Saraswati Puja / Netaji Jayanti [ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ]
+26 * Republic Day [ଗଣତନ୍ତ୍ର ଦିବସ]
+31 ! Monthly Closing [ମାସାନ୍ତ]
+:::
+
+
+::: panchang
+@ Tithi : Shukla Paksha
+@ Nakshatra : Rohini
+3 Yoga: Indral
+@ Karana : Bava
+@ Sunrise : 06:20 AM
+@ Sunset : 05:30 PM
+@ Month : Pausha / Magha
+:::
+
+-----------------------------------
+
+::: calendar
+++ November 2026 ++
+02 > Daily Meeting [ଦୈନିକ ବୈଠକ]
+20 ^ Special Community Setup
+21 ! Nuakhai [ନୂଆଖାଇ]
+25 * Office Closed
+:::
+
+::: details
+>> 21-11-2026
+@ Tag : Major Agricultural Festival
+
+Nuakhai is the most important social festival of Western Odisha and Sambalpur region.
+
+# Significance
+The word "Nua" means new and "Khai" means food.
+
+# Rituals
+- People offer new rice to the presiding deity
+- Family members gather for a feast
+- Traditional songs and dances are performed
+:::
+
+::: panchang
+@ Tithi : Krishna Paksha
+@ Nakshatra : Uttara Phalguni
+@ Yoga : Brahma
+@ Karana : Kaulava
+@ Sunrise : 06:00 AM
+@ Sunset : 05:15 PM
+@ Month : Kartika / Margashirsha
+:::
+
+            </textarea>
+        </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full h-auto pb-4 p-2 md:p-8 relative z-0" style="overflow: visible;">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -1064,13 +1283,13 @@
                                 <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
                                     <!-- Adaptive Month/Year Container -->
                                     <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
-                                        <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md">February</span>
-                                        <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600">2026</span>
+                                        <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md"></span>
+                                        <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
                                     </div>
 
-                                    <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight">Magha / Phalguna</p>
+                                    <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
                                     
-                                    <button onclick="jumpToToday()" id="btn-today" class="mt-3 bg-orange-50 text-orange-600 px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100 hidden">
+                                    <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 bg-orange-50 text-orange-600 px-5 py-2 rounded-full text-xs font-bold hover:bg-orange-100 transition items-center gap-2 border border-orange-100">
                                         <i class="fa-solid fa-calendar-day"></i> Today
                                     </button>
                                 </div>
@@ -1102,28 +1321,7 @@
                         </div>
 
                         <div id="calendar-swipe-area" class="bg-white rounded-xl shadow-lg p-2 md:p-3">
-                            <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center">
-            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider text-red-500">SUN</span>
-            
-        </div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center">
-            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ">MON</span>
-            
-        </div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center">
-            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ">TUE</span>
-            
-        </div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center">
-            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ">WED</span>
-            
-        </div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center">
-            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ">THU</span>
-            
-        </div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center">
-            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ">FRI</span>
-            
-        </div><div class="w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center">
-            <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ">SAT</span>
-            
-        </div></div>
+                            <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
                             <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
                             
                             <!-- Year View Link -->
@@ -1136,7 +1334,7 @@
                         </div>
                     </div>
                     
-                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-3" style="display: block;">
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-3">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i>Month's Panchang</h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul><div id="location-btn-container" class="mt-3 pt-2 border-t border-red-100 flex justify-center"></div>
@@ -1145,45 +1343,11 @@
 
                 <!-- Sidebar Section -->
                 <div class="lg:w-1/4 space-y-6 mobile-contents">
-                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden order-2" style="display: block;"><div class="absolute top-0 right-0 -mr-4 -mt-4 pointer-events-none" style="width: 6rem; height: 6rem; background: linear-gradient(to right bottom, rgba(239, 68, 68, 0.1), transparent); border-bottom-left-radius: 100%;"></div><h3 class="font-bold text-gray-900 mb-4 text-base flex items-center gap-2"><i class="fa-solid fa-bell text-red-600 text-lg"></i> Festivals</h3><div class="mb-4 relative overflow-hidden rounded-xl shadow-lg" style="background: linear-gradient(135deg, rgb(241, 90, 36) 0%, rgb(237, 28, 36) 50%, rgb(128, 0, 0) 100%); box-shadow: rgba(249, 115, 22, 0.4) 0px 10px 15px -3px, rgba(249, 115, 22, 0.4) 0px 4px 6px -4px;">
-                <div class="p-3 relative z-10 text-white text-center flex flex-col items-center justify-center h-full">
-                     <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">09:53:32 PM</div>
-                     <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
-                </div>
-                <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
-            </div><div class="relative mb-3 group">
-                <div class="absolute inset-y-0 left-0 pl-4 z-10 flex items-center pointer-events-none">
-                    <svg class="text-gray-400 group-focus-within:text-orange-500 transition-colors" viewBox="0 0 512 512" width="16" height="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
-                </div>
-                <input type="text" id="festival-search" class="block w-full pl-10 pr-10 py-2.5 text-sm text-gray-700 bg-white/50 backdrop-blur-sm border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-200 focus:border-orange-400 placeholder-gray-400 outline-none transition-all duration-300 shadow-sm hover:shadow-md" placeholder="Search..." autocomplete="off">
-                <button id="search-clear" class="absolute inset-y-0 right-2 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer hidden">
-                    <i class="fa-solid fa-circle-xmark"></i>
-                </button>
-            </div><div id="festival-filters" class="flex flex-wrap gap-2 mb-4 justify-center"><button class="
-                    filter-btn relative px-4 py-2 rounded-full 
-                    text-xs font-bold whitespace-nowrap outline-none
-                    flex items-center justify-center gap-2
-                    flex-1 sm:flex-none min-w-[fit-content]
-                    transition-all duration-200
-                 bg-red-600 text-white shadow-lg shadow-red-200 hover:bg-red-700"><svg viewBox="0 0 512 512" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M120 0c13.3 0 24 10.7 24 24l0 8 40 0 0-8c0-13.3 10.7-24 24-24s24 10.7 24 24l0 8 48 0 0-8c0-13.3 10.7-24 24-24s24 10.7 24 24l0 8 40 0 0-8c0-13.3 10.7-24 24-24s24 10.7 24 24l0 8 0 32 0 64c17.7 0 32 14.3 32 32l0 64c17.7 0 32 14.3 32 32l0 96c17.7 0 32 14.3 32 32l0 96c0 17.7-14.3 32-32 32l-64 0 0-160-32 0 0-128-32 0 0-96-32 0 0 96 32 0 0 128 32 0 0 160-80 0 0-48c0-26.5-21.5-48-48-48s-48 21.5-48 48l0 48-80 0 0-160 32 0 0-128 32 0 0-96-32 0 0 96-32 0 0 128-32 0 0 160-64 0c-17.7 0-32-14.3-32-32l0-96c0-17.7 14.3-32 32-32l0-96c0-17.7 14.3-32 32-32l0-64 0-17.7 14.3-32 32-32l0-64 0-32 0-8c0-13.3 10.7-24 24-24zM256 272c-17.7 0-32 14.3-32 32l0 48 64 0 0-48c0-17.7-14.3-32-32-32zm-32-80l0 32 64 0 0-32c0-17.7-14.3-32-32-32s-32 14.3-32 32z"></path></svg> <span>Festivals</span></button><button class="
-                    filter-btn relative px-4 py-2 rounded-full 
-                    text-xs font-bold whitespace-nowrap outline-none
-                    flex items-center justify-center gap-2
-                    flex-1 sm:flex-none min-w-[fit-content]
-                    transition-all duration-200
-                 bg-green-600 text-white shadow-lg shadow-green-200 hover:bg-green-700"><svg viewBox="0 0 512 512" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M379.3 4.7c-6.2-6.2-16.4-6.2-22.6 0l-16 16c-6.2 6.2-6.2 16.4 0 22.6l16 16c6.2 6.2 16.4 6.2 22.6 0l16-16c6.2-6.2 6.2-16.4 0-22.6l-16-16zM281 66.7c-2.2-1.5-4.9-2.5-7.7-2.7c-.6 0-1.3-.1-1.9 0c-3.9 .2-7.4 1.7-10.1 4.2c-.9 .8-1.6 1.7-2.3 2.6c-1.7 2.4-2.7 5.3-2.9 8.5c0 .7 0 1.4 0 2.1c.2 2.2 .9 4.3 1.9 6.2l.3 .6c.3 .6 .8 1.4 1.4 2.4c1.2 2 2.9 4.8 5.1 8.2c4.4 6.7 11.1 15.5 20 24.4C302.4 141.1 330.3 160 368 160c31.2 0 56.6-10.4 73.9-20.2c8.7-5 15.6-9.9 20.4-13.8c2.4-1.9 4.3-3.6 5.7-4.9c.7-.6 1.3-1.2 1.7-1.6l.6-.5 .1-.1 .1-.1s0 0 0 0s0 0 0 0c5.9-5.8 9.5-13.9 9.5-22.8c0-17.7-14.3-32-32-32c-8.7 0-16.7 3.5-22.4 9.2c-.1 .1-.2 .2-.5 .4c-.5 .5-1.5 1.3-2.8 2.4c-2.7 2.2-6.8 5.2-12.1 8.2C399.4 90.4 384.8 96 368 96c-20.8 0-42.4-7-59.5-14.6c-8.4-3.7-15.4-7.5-20.3-10.3c-2.4-1.4-4.3-2.5-5.6-3.3c-.6-.4-1.1-.7-1.4-.9l-.3-.2zM115.2 169.6c8-6 17.9-9.6 28.8-9.6c26.5 0 48 21.5 48 48s-21.5 48-48 48l-34.2 0c-7.6 0-13.8 6.2-13.8 13.8c0 1.5 .2 2.9 .7 4.4l8 24c4.4 13.1 16.6 21.9 30.4 21.9l8.9 0 16 0c35.3 0 64 28.7 64 64s-28.7 64-64 64c-50.8 0-82.7-21.5-102.2-42.8c-9.9-10.8-16.6-21.6-20.9-29.7c-2.1-4-3.6-7.3-4.5-9.6c-.5-1.1-.8-2-1-2.5l-.2-.5c-.3-.9-.7-1.8-1.1-2.6c-1.2-2.2-2.8-4-4.7-5.4c-1.9-1.4-4.1-2.3-6.5-2.8c-1.4-.3-2.9-.3-4.4-.2c-2.5 .2-4.8 1-6.8 2.3c-1.1 .7-2.2 1.5-3.1 2.5c-2.4 2.5-4.1 5.8-4.5 9.5c-.1 .6-.1 1.1-.1 1.7c0 0 0 0 0 0c0 .8 .1 1.7 .2 2.5l0 .1c0 .3 .1 .8 .2 1.3c.2 1.1 .4 2.7 .8 4.6c.8 3.9 2 9.4 3.9 15.9c3.8 13 10.3 30.4 21.3 48C48.7 476.2 89.4 512 160 512c70.7 0 128-57.3 128-128c0-23.3-6.2-45.2-17.1-64l22.6 0c25.5 0 49.9-10.1 67.9-28.1l26.5-26.5c6-6 14.1-9.4 22.6-9.4l-48.3 0c6.9-14.5 10.8-30.8 10.8-48c0-61.9-50.1-112-112-112c-25.2 0-48.5 8.3-67.2 22.4c-14.1 10.6-17 30.7-6.4 44.8s30.7 17 44.8 6.4z"></path></svg> <span>Auspicious</span></button><button class="
-                    filter-btn relative px-4 py-2 rounded-full 
-                    text-xs font-bold whitespace-nowrap outline-none
-                    flex items-center justify-center gap-2
-                    flex-1 sm:flex-none min-w-[fit-content]
-                    transition-all duration-200
-                 bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700"><svg viewBox="0 0 576 512" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M346.3 271.8l-60.1-21.9L214 448 32 448c-17.7 0-32 14.3-32 32s14.3 32 32 32l512 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-261.9 0 64.1-176.2zm121.1-.2l-3.3 9.1 67.7 24.6c18.1 6.6 38-4.2 39.6-23.4c6.5-78.5-23.9-155.5-80.8-208.5c2 8 3.2 16.3 3.4 24.8l.2 6c1.8 57-7.3 113.8-26.8 167.4zM462 99.1c-1.1-34.4-22.5-64.8-54.4-77.4c-.9-.4-1.9-.7-2.8-1.1c-33-11.7-69.8-2.4-93.1 23.8l-4 4.5C272.4 88.3 245 134.2 226.8 184l-3.3 9.1L434 269.7l3.3-9.1c18.1-49.8 26.6-102.5 24.9-155.5l-.2-6zM107.2 112.9c-11.1 15.7-2.8 36.8 15.3 43.4l71 25.8 3.3-9.1c19.5-53.6 49.1-103 87.1-145.5l4-4.5c6.2-6.9 13.1-13 20.5-18.2c-79.6 2.5-154.7 42.2-201.2 108z"></path></svg> <span>Holidays</span></button><button class="
-                    filter-btn relative px-4 py-2 rounded-full 
-                    text-xs font-bold whitespace-nowrap outline-none
-                    flex items-center justify-center gap-2
-                    flex-1 sm:flex-none min-w-[fit-content]
-                    transition-all duration-200
-                 bg-gray-600 text-white shadow-lg shadow-gray-200 hover:bg-gray-700"><svg viewBox="0 0 448 512" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M128 0c17.7 0 32 14.3 32 32l0 32 128 0 0-32c0-17.7 14.3-32 32-32s32 14.3 32 32l0 32 48 0c26.5 0 48 21.5 48 48l0 48L0 160l0-48C0 85.5 21.5 64 48 64l48 0 0-32c0-17.7 14.3-32 32-32zM0 192l448 0 0 272c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 192zm64 80l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm128 0l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM64 400l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm112 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16z"></path></svg> <span>Other festivals</span></button></div><ul id="festival-list" class="space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll"></ul></div>
+                    <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden order-2">
+                        <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
+                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
+                        <ul id="festival-list" class="space-y-2 text-sm"></ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1255,7 +1419,7 @@
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
                             <span class="text-sm font-bold text-gray-700">Festivals</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked="" onchange="toggleSection('festivals', this.checked)">
+                                <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
                                 <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
@@ -1263,7 +1427,7 @@
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
                             <span class="text-sm font-bold text-gray-700">Panchang</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked="" onchange="toggleSection('panchang', this.checked)">
+                                <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
                                 <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
@@ -1289,7 +1453,7 @@
                             <div class="accent-line"></div>
                             <i class="fa-solid fa-star-and-crescent menu-icon"></i>
                             <div class="menu-title">Horoscope</div>
-                            <div class="menu-sub-items">Daily, Weekly &amp; Monthly Predictions</div>
+                            <div class="menu-sub-items">Daily, Weekly & Monthly Predictions</div>
                         </div>
 
                         <!-- Puja Vidhi -->
@@ -1297,7 +1461,7 @@
                             <div class="accent-line"></div>
                             <i class="fa-solid fa-bell menu-icon"></i>
                             <div class="menu-title">Puja Vidhi</div>
-                            <div class="menu-sub-items">Step-by-step Rituals &amp; Mantras</div>
+                            <div class="menu-sub-items">Step-by-step Rituals & Mantras</div>
                         </div>
 
                         <!-- Kundli -->
@@ -1305,7 +1469,7 @@
                             <div class="accent-line"></div>
                             <i class="fa-solid fa-scroll menu-icon"></i>
                             <div class="menu-title">Kundli</div>
-                            <div class="menu-sub-items">Birth Chart &amp; Analysis</div>
+                            <div class="menu-sub-items">Birth Chart & Analysis</div>
                         </div>
 
                         <!-- Matching -->
@@ -1324,7 +1488,7 @@
                             <div class="accent-line"></div>
                             <i class="fa-regular fa-calendar-check menu-icon"></i>
                             <div class="menu-title">Daily Panchang</div>
-                            <div class="menu-sub-items">Tithi, Nakshatra, Yoga &amp; Karana</div>
+                            <div class="menu-sub-items">Tithi, Nakshatra, Yoga & Karana</div>
                         </div>
 
                         <!-- Smart Tool -->
@@ -1332,7 +1496,7 @@
                             <div class="accent-line"></div>
                             <i class="fa-solid fa-calculator menu-icon"></i>
                             <div class="menu-title">Smart Tool</div>
-                            <div class="menu-sub-items">Date Converter &amp; Utilities</div>
+                            <div class="menu-sub-items">Date Converter & Utilities</div>
                         </div>
 
                         <!-- Bhagavat Gita -->
@@ -1340,7 +1504,7 @@
                             <div class="accent-line"></div>
                             <i class="fa-solid fa-book-open menu-icon"></i>
                             <div class="menu-title">Bhagavat Gita</div>
-                            <div class="menu-sub-items">Slokas &amp; Meanings</div>
+                            <div class="menu-sub-items">Slokas & Meanings</div>
                         </div>
 
                         <!-- Holiday -->
@@ -1369,10 +1533,53 @@
                 </div>
 
                 <!-- SECTION 3: Developer Settings (Sync) - Hidden in App Mode -->
-                
+                <div id="container-sync-settings" class="mt-8 border-t border-gray-200 pt-8">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4"><i class="fa-solid fa-code"></i> Developer Settings</h4>
+                    
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
+                        <div id="container-sync-docs" class="flex items-center justify-between">
+                            <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
+                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm font-bold text-gray-700">Live Sync GitHub</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
+                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Language Links (Developer) -->
-                
+                <div id="container-lang-links" class="mt-4">
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Configure Language Source</label>
+                        <div class="flex flex-col md:flex-row gap-3">
+                            <select id="sync-lang-select" onchange="updateSyncLinkInput()" class="md:w-1/3 p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500 bg-white">
+                                <option value="en">English</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="mr">Marathi (मराठी)</option>
+                                <option value="gu">Gujarati (ગુજરાતી)</option>
+                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                <option value="ta">Tamil (தமிழ்)</option>
+                                <option value="te">Telugu (తెలుగు)</option>
+                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                <option value="ml">Malayalam (മലയാളം)</option>
+                                <option value="as">Assamese (অসমীয়া)</option>
+                            </select>
+                            <input type="text" id="sync-link-input" placeholder="Paste GitHub Raw Link..." class="flex-1 p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500">
+                            <button onclick="saveSyncLink()" class="bg-gray-800 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-gray-700 transition active:scale-95 shadow-lg">Save</button>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-2 italic">Stored securely.</p>
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -5446,6 +5653,5 @@ function renderCalendarGrid(data) {
         }
 
     </script>
-
-    
-</body></html>
+</body>
+    </html>
