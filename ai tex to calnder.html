@@ -172,27 +172,20 @@
 
         /* --- 2. THE SYMBOL (OM) --- */
         .om-symbol {
-            color: #B91C1C;
+            /* SVG Sizing */
+            width: 2rem;
+            height: 2rem;
             
-            /* SIZE: 2rem (Maintained) */
-            font-size: 2rem; 
-            
-            font-weight: bold;
-            line-height: 1;
-            
-            /* POSITIONING: 0.3rem (Maintained) */
-            padding-top: 0.3rem; 
-            
-            user-select: none;
-            
-            /* Offline Font Stack */
-            font-family: "Georgia", "Times New Roman", Times, serif;
+            /* Flex center */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             
             /* Animation: Improved Breathing with Glow */
             animation: om-breathe-glow 3s ease-in-out infinite;
             
             /* Ensure smooth rendering */
-            will-change: transform, text-shadow, filter;
+            will-change: transform, filter;
         }
 
         /* --- 3. ANIMATIONS (Keyframes) --- */
@@ -3725,11 +3718,17 @@ The word "Nua" means new and "Khai" means food.
                 const src = resolveImageUrls(appState.config.logoUrl);
                 logoContainer.innerHTML = `<img id="app-logo-img" src="${src}" alt="Logo" class="w-12 h-12 rounded-full object-cover border border-white/10 shadow-lg">`;
             } else {
+                // Use SVG for consistent rendering. Replace gold fill with Deep Red (#B91C1C) to match design.
+                const omSvg = OM_ICON_SVG
+                    .replace('fill="#d4af37"', 'fill="#B91C1C"')
+                    .replace('width="24"', 'width="100%"')
+                    .replace('height="24"', 'height="100%"');
+
                 logoContainer.innerHTML = `
     <!-- COMPONENT START -->
     <div class="coin-wrapper ripple-effect">
         <div class="coin">
-            <span class="om-symbol">ॐ</span>
+            <div class="om-symbol">${omSvg}</div>
         </div>
     </div>
     <!-- COMPONENT END -->`;
