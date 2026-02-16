@@ -3718,17 +3718,18 @@ The word "Nua" means new and "Khai" means food.
                 const src = resolveImageUrls(appState.config.logoUrl);
                 logoContainer.innerHTML = `<img id="app-logo-img" src="${src}" alt="Logo" class="w-12 h-12 rounded-full object-cover border border-white/10 shadow-lg">`;
             } else {
-                // Use SVG for consistent rendering. Replace gold fill with Deep Red (#B91C1C) to match design.
-                const omSvg = OM_ICON_SVG
-                    .replace('fill="#d4af37"', 'fill="#B91C1C"')
-                    .replace('width="24"', 'width="100%"')
-                    .replace('height="24"', 'height="100%"');
+                // Use Text-in-SVG to render the Original 'Om' (ॐ) glyph cleanly
+                // This preserves the original look (font-based) but fixes alignment/clipping via SVG coordinates.
+                const omOriginalSvg = `
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <text x="50" y="70" font-size="70" text-anchor="middle" dominant-baseline="central" fill="#B91C1C" font-family="serif" font-weight="bold">ॐ</text>
+                </svg>`;
 
                 logoContainer.innerHTML = `
     <!-- COMPONENT START -->
     <div class="coin-wrapper ripple-effect">
         <div class="coin">
-            <div class="om-symbol">${omSvg}</div>
+            <div class="om-symbol">${omOriginalSvg}</div>
         </div>
     </div>
     <!-- COMPONENT END -->`;
