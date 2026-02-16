@@ -3120,8 +3120,8 @@ The word "Nua" means new and "Khai" means food.
                              if(titleEl) titleEl.innerText = appState.config.title;
                         }
                         
-                        if (editor) showToast("Calendar updated from Cloud!");
-                        else console.log("App updated seamlessly from background cloud fetch.");
+                        showToast("Calendar updated from Cloud!");
+                        console.log("App updated seamlessly from background cloud fetch.");
                         
                         resolve();
                     } catch (e) {
