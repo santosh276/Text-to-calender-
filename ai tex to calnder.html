@@ -972,8 +972,9 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.85); /* Increased contrast */
             margin-top: 0.25rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .astro-time {
@@ -981,7 +982,31 @@
             font-weight: 800;
             color: white;
             line-height: 1;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 767px) {
+            .astro-timeline-modern {
+                padding: 0.75rem; /* Even more compact padding */
+                gap: 0.25rem;
+            }
+            .astro-time {
+                font-size: 0.85rem; /* Smaller font for mobile to prevent wrapping */
+                white-space: nowrap;
+            }
+            .astro-label {
+                font-size: 0.55rem;
+                color: rgba(255, 255, 255, 0.95); /* Even higher contrast on small screens */
+                letter-spacing: 0.05em;
+            }
+            .astro-time-item i {
+                font-size: 1.1rem; /* Smaller icons */
+                margin-bottom: 0.1rem;
+            }
+            .astro-divider {
+                height: 2.5rem;
+            }
         }
 
         .icon-glow-orange { filter: drop-shadow(0 0 8px rgba(251, 146, 60, 0.6)); }
