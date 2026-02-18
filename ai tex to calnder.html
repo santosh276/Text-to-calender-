@@ -1775,27 +1775,92 @@ The word "Nua" means new and "Khai" means food.
         // Season UI Component Data
         
         // Minimal SunCalc Implementation
+        // Expanded SunCalc Implementation to support Moon Times
         const SunCalc = (function() {
-            var J1970 = 2440588, dayMs = 1000 * 60 * 60 * 24, J2000 = 2451545, rad = Math.PI / 180, e = rad, J0 = 0.0009;
+            var PI = Math.PI, sin = Math.sin, cos = Math.cos, tan = Math.tan, asin = Math.asin, atan = Math.atan2, acos = Math.acos, rad = PI / 180;
+            var dayMs = 1000 * 60 * 60 * 24, J1970 = 2440588, J2000 = 2451545;
+
             function toJulian(date) { return date.valueOf() / dayMs - 0.5 + J1970; }
             function fromJulian(j) { return new Date((j + 0.5 - J1970) * dayMs); }
             function toDays(date) { return toJulian(date) - J2000; }
-            function getSolarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
-            function getEquationOfCenter(M) { return rad * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M)); }
-            function getEclipticLongitude(M) { var C = getEquationOfCenter(M), P = rad * 102.9372; return M + C + P + Math.PI; }
-            function getSunCoords(d) { 
-                var M = getSolarMeanAnomaly(d), L = getEclipticLongitude(M); 
-                return { dec: Math.asin(Math.sin(L) * Math.sin(rad * 23.4397)), ra: Math.atan2(Math.cos(rad * 23.4397) * Math.sin(L), Math.cos(L)) }; 
+
+            var e = rad * 23.4397; // obliquity of the Earth
+            function rightAscension(l, b) { return atan(sin(l) * cos(e) - tan(b) * sin(e), cos(l)); }
+            function declination(l, b)    { return asin(sin(b) * cos(e) + cos(b) * sin(e) * sin(l)); }
+            function azimuth(H, phi, dec)  { return atan(sin(H), cos(H) * sin(phi) - tan(dec) * cos(phi)); }
+            function altitude(H, phi, dec) { return asin(sin(phi) * sin(dec) + cos(phi) * cos(dec) * cos(H)); }
+            function siderealTime(d, lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
+            function astroRefraction(h) {
+                if (h < 0) h = 0;
+                return 0.0002967 / Math.tan(h + 0.00312536 / (h + 0.08901179));
             }
+
+            function solarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
+            function eclipticLongitude(M) { var C = rad * (1.9148 * sin(M) + 0.02 * sin(2 * M) + 0.0003 * sin(3 * M)), P = rad * 102.9372; return M + C + P + PI; }
+
             function getTimes(date, lat, lng) {
-                var lw = rad * -lng, phi = rad * lat, d = toDays(date), n = Math.round(d - J0 - lw / (2 * Math.PI)), ds = J0 + lw / (2 * Math.PI) + n, M = getSolarMeanAnomaly(ds), L = getEclipticLongitude(M), dec = Math.asin(Math.sin(L) * Math.sin(rad * 23.4397)), Jnoon = 2451545 + ds + 0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * L);
-                function getRiseSetJ(h) { var w = Math.acos((Math.sin(h) - Math.sin(phi) * Math.sin(dec)) / (Math.cos(phi) * Math.cos(dec))); return w; }
+                var lw = rad * -lng, phi = rad * lat, d = toDays(date), J0 = 0.0009;
+                var n = Math.round(d - J0 - lw / (2 * PI)), ds = J0 + lw / (2 * PI) + n;
+                var M = solarMeanAnomaly(ds), L = eclipticLongitude(M);
+                var dec = asin(sin(L) * sin(e));
+                var Jnoon = 2451545 + ds + 0.0053 * sin(M) - 0.0069 * sin(2 * L);
+                var w = acos((sin(-0.833 * rad) - sin(phi) * sin(dec)) / (cos(phi) * cos(dec)));
+
                 try {
-                    var w = getRiseSetJ(-0.833 * rad);
-                    return { sunrise: fromJulian(Jnoon - w / (2 * Math.PI)), sunset: fromJulian(Jnoon + w / (2 * Math.PI)) };
-                } catch(e) { return { sunrise: null, sunset: null }; } // Polar night/day
+                    return {
+                        sunrise: fromJulian(Jnoon - w / (2 * PI)),
+                        sunset: fromJulian(Jnoon + w / (2 * PI))
+                    };
+                } catch(e) { return { sunrise: null, sunset: null }; }
             }
-            return { getTimes: getTimes };
+
+            function moonCoords(d) {
+                var L = rad * (218.316 + 13.176396 * d), M = rad * (134.963 + 13.064993 * d), F = rad * (93.272 + 13.229350 * d);
+                var l  = L + rad * 6.289 * sin(M), b  = rad * 5.128 * sin(F), dt = 385001 - 20905 * cos(M);
+                return { ra: rightAscension(l, b), dec: declination(l, b), dist: dt };
+            }
+
+            function getMoonPosition(date, lat, lng) {
+                var lw = rad * -lng, phi = rad * lat, d = toDays(date);
+                var c = moonCoords(d), H = siderealTime(d, lw) - c.ra, h = altitude(H, phi, c.dec);
+                return { altitude: h + astroRefraction(h), azimuth: azimuth(H, phi, c.dec) };
+            }
+
+            function getMoonTimes(date, lat, lng, inUTC) {
+                var t = new Date(date);
+                if (inUTC) t.setUTCHours(0, 0, 0, 0); else t.setHours(0, 0, 0, 0);
+                var hc = 0.133 * rad, h0 = getMoonPosition(t, lat, lng).altitude - hc;
+                var rise, set, ye, roots, x1, x2, dx;
+
+                for (var i = 1; i <= 24; i += 2) {
+                    var h1 = getMoonPosition(new Date(t.getTime() + i * dayMs / 24), lat, lng).altitude - hc;
+                    var h2 = getMoonPosition(new Date(t.getTime() + (i + 1) * dayMs / 24), lat, lng).altitude - hc;
+                    var a = (h0 + h2) / 2 - h1, b = (h2 - h0) / 2, xe = -b / (2 * a), d = b * b - 4 * a * h1;
+                    roots = 0;
+                    ye = (a * xe + b) * xe + h1;
+                    if (d >= 0) {
+                        dx = Math.sqrt(d) / (Math.abs(a) * 2);
+                        x1 = xe - dx; x2 = xe + dx;
+                        if (Math.abs(x1) <= 1) roots++;
+                        if (Math.abs(x2) <= 1) roots++;
+                        if (x1 < -1) x1 = x2;
+                    }
+                    if (roots === 1) {
+                        if (h0 < 0) rise = i + x1; else set = i + x1;
+                    } else if (roots === 2) {
+                        rise = i + (ye < 0 ? x2 : x1); set = i + (ye < 0 ? x1 : x2);
+                    }
+                    if (rise && set) break;
+                    h0 = h2;
+                }
+                var result = {};
+                if (rise) result.rise = new Date(t.getTime() + rise * dayMs / 24);
+                if (set) result.set = new Date(t.getTime() + set * dayMs / 24);
+                if (!rise && !set) result[ye > 0 ? 'alwaysUp' : 'alwaysDown'] = true;
+                return result;
+            }
+
+            return { getTimes: getTimes, getMoonTimes: getMoonTimes };
         })();
 
         /* --- VEDIC ASTRONOMY ALGORITHMS --- */
@@ -4600,18 +4665,40 @@ function renderCalendarGrid(data) {
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
                 const timelineDiv = document.createElement('div');
-                timelineDiv.className = "astro-timeline";
+                // Added flex-col and gap to stack rows, items-stretch to align them
+                timelineDiv.className = "astro-timeline flex flex-col !items-stretch gap-3";
                 timelineDiv.innerHTML = `
-                    <div class="astro-time-point text-orange-600">
-                        <i class="fa-solid fa-sun text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Sunrise</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunrise)}</span>
+                    <!-- Sun Row -->
+                    <div class="flex justify-between items-center">
+                        <div class="astro-time-point text-orange-600">
+                            <i class="fa-solid fa-sun text-xl mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase opacity-70">Sunrise</span>
+                            <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunrise)}</span>
+                        </div>
+                        <div class="h-8 w-px bg-orange-200"></div>
+                        <div class="astro-time-point text-orange-700">
+                            <i class="fa-solid fa-cloud-sun text-xl mb-1 opacity-70"></i>
+                            <span class="text-[10px] font-bold uppercase opacity-70">Sunset</span>
+                            <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunset)}</span>
+                        </div>
                     </div>
-                    <div class="h-8 w-px bg-orange-200"></div>
-                    <div class="astro-time-point text-indigo-900">
-                        <i class="fa-solid fa-moon text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Sunset</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunset)}</span>
+
+                    <!-- Divider -->
+                    <div class="h-px w-full bg-orange-200/50"></div>
+
+                    <!-- Moon Row -->
+                    <div class="flex justify-between items-center">
+                        <div class="astro-time-point text-indigo-500">
+                            <i class="fa-solid fa-cloud-moon text-xl mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase opacity-70">Moonrise</span>
+                            <span class="text-xs font-bold whitespace-nowrap">${moonTimes.rise ? fmt(moonTimes.rise) : '--:--'}</span>
+                        </div>
+                        <div class="h-8 w-px bg-indigo-200"></div>
+                        <div class="astro-time-point text-indigo-800">
+                            <i class="fa-solid fa-moon text-xl mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase opacity-70">Moonset</span>
+                            <span class="text-xs font-bold whitespace-nowrap">${moonTimes.set ? fmt(moonTimes.set) : '--:--'}</span>
+                        </div>
                     </div>
                 `;
                 list.appendChild(timelineDiv);
