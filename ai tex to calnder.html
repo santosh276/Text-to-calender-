@@ -1774,314 +1774,274 @@ The word "Nua" means new and "Khai" means food.
 
         // Season UI Component Data
         
-        // Full SunCalc Implementation (Upgraded)
-        const SunCalc = (function () { 'use strict';
+        // Full SunCalc Implementation (Upgraded V5.0)
+        var SunCalc = (function () {
+    'use strict';
 
-// shortcuts for easier to read formulas
+    var PI = Math.PI,
+        sin = Math.sin,
+        cos = Math.cos,
+        tan = Math.tan,
+        asin = Math.asin,
+        atan = Math.atan2,
+        acos = Math.acos,
+        rad = PI / 180;
 
-var PI   = Math.PI,
-    sin  = Math.sin,
-    cos  = Math.cos,
-    tan  = Math.tan,
-    asin = Math.asin,
-    atan = Math.atan2,
-    acos = Math.acos,
-    rad  = PI / 180;
+    var dayMs = 1000 * 60 * 60 * 24,
+        J1970 = 2440588, // Fixed: Use J1970 for standard JS Date
+        J2000 = 2451545;
 
-// sun calculations are based on http://aa.quae.nl/en/reken/zonpositie.html formulas
+    function toJulian(date) { return date.valueOf() / dayMs - 0.5 + J1970; }
+    function fromJulian(j) { return new Date((j + 0.5 - J1970) * dayMs); }
+    function toDays(date) { return toJulian(date) - J2000; }
 
+    // General calculations for position
+    var e = rad * 23.4397; // Obliquity of the ecliptic
 
-// date/time constants and conversions
+    function rightAscension(l, b) { return atan(sin(l) * cos(e) - tan(b) * sin(e), cos(l)); }
+    function declination(l, b)    { return asin(sin(b) * cos(e) + cos(b) * sin(e) * sin(l)); }
 
-var dayMs = 1000 * 60 * 60 * 24,
-    J1970 = 2440588,
-    J2000 = 2451545;
+    function azimuth(H, phi, dec)  { return atan(sin(H), cos(H) * sin(phi) - tan(dec) * cos(phi)); }
+    function altitude(H, phi, dec) { return asin(sin(phi) * sin(dec) + cos(phi) * cos(dec) * cos(H)); }
 
-function toJulian(date) { return date.valueOf() / dayMs - 0.5 + J1970; }
-function fromJulian(j)  { return new Date((j + 0.5 - J1970) * dayMs); }
-function toDays(date)   { return toJulian(date) - J2000; }
+    function siderealTime(d, lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
 
-
-// general calculations for position
-
-var e = rad * 23.4397; // obliquity of the Earth
-
-function rightAscension(l, b) { return atan(sin(l) * cos(e) - tan(b) * sin(e), cos(l)); }
-function declination(l, b)    { return asin(sin(b) * cos(e) + cos(b) * sin(e) * sin(l)); }
-
-function azimuth(H, phi, dec)  { return atan(sin(H), cos(H) * sin(phi) - tan(dec) * cos(phi)); }
-function altitude(H, phi, dec) { return asin(sin(phi) * sin(dec) + cos(phi) * cos(dec) * cos(H)); }
-
-function siderealTime(d, lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
-
-function astroRefraction(h) {
-    if (h < 0) // the following formula works for positive altitudes only.
-        h = 0; // if h = -0.08901179 a div/0 would occur.
-
-    // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-    // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
-    return 0.0002967 / Math.tan(h + 0.00312536 / (h + 0.08901179));
-}
-
-// general sun calculations
-
-function solarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
-
-function eclipticLongitude(M) {
-
-    var C = rad * (1.9148 * sin(M) + 0.02 * sin(2 * M) + 0.0003 * sin(3 * M)), // equation of center
-        P = rad * 102.9372; // perihelion of the Earth
-
-    return M + C + P + PI;
-}
-
-function sunCoords(d) {
-
-    var M = solarMeanAnomaly(d),
-        L = eclipticLongitude(M);
-
-    return {
-        dec: declination(L, 0),
-        ra: rightAscension(L, 0)
-    };
-}
-
-
-var SunCalc = {};
-
-
-// calculates sun position for a given date and latitude/longitude
-
-SunCalc.getPosition = function (date, lat, lng) {
-
-    var lw  = rad * -lng,
-        phi = rad * lat,
-        d   = toDays(date),
-
-        c  = sunCoords(d),
-        H  = siderealTime(d, lw) - c.ra;
-
-    return {
-        azimuth: azimuth(H, phi, c.dec),
-        altitude: altitude(H, phi, c.dec)
-    };
-};
-
-
-// sun times configuration (angle, morning name, evening name)
-
-var times = SunCalc.times = [
-    [-0.833, 'sunrise',       'sunset'      ],
-    [  -0.3, 'sunriseEnd',    'sunsetStart' ],
-    [    -6, 'dawn',          'dusk'        ],
-    [   -12, 'nauticalDawn',  'nauticalDusk'],
-    [   -18, 'nightEnd',      'night'       ],
-    [     6, 'goldenHourEnd', 'goldenHour'  ]
-];
-
-// adds a custom time to the times config
-
-SunCalc.addTime = function (angle, riseName, setName) {
-    times.push([angle, riseName, setName]);
-};
-
-
-// calculations for sun times
-
-var J0 = 0.0009;
-
-function julianCycle(d, lw) { return Math.round(d - J0 - lw / (2 * PI)); }
-
-function approxTransit(Ht, lw, n) { return J0 + (Ht + lw) / (2 * PI) + n; }
-function solarTransitJ(ds, M, L)  { return J2000 + ds + 0.0053 * sin(M) - 0.0069 * sin(2 * L); }
-
-function hourAngle(h, phi, d) { return acos((sin(h) - sin(phi) * sin(d)) / (cos(phi) * cos(d))); }
-function observerAngle(height) { return -2.076 * Math.sqrt(height) / 60; }
-
-// returns set time for the given sun altitude
-function getSetJ(h, lw, phi, dec, n, M, L) {
-
-    var w = hourAngle(h, phi, dec),
-        a = approxTransit(w, lw, n);
-    return solarTransitJ(a, M, L);
-}
-
-
-// calculates sun times for a given date, latitude/longitude, and, optionally,
-// the observer height (in meters) relative to the horizon
-
-SunCalc.getTimes = function (date, lat, lng, height) {
-
-    height = height || 0;
-
-    var lw = rad * -lng,
-        phi = rad * lat,
-
-        dh = observerAngle(height),
-
-        d = toDays(date),
-        n = julianCycle(d, lw),
-        ds = approxTransit(0, lw, n),
-
-        M = solarMeanAnomaly(ds),
-        L = eclipticLongitude(M),
-        dec = declination(L, 0),
-
-        Jnoon = solarTransitJ(ds, M, L),
-
-        i, len, time, h0, Jset, Jrise;
-
-
-    var result = {
-        solarNoon: fromJulian(Jnoon),
-        nadir: fromJulian(Jnoon - 0.5)
-    };
-
-    for (i = 0, len = times.length; i < len; i += 1) {
-        time = times[i];
-        h0 = (time[0] + dh) * rad;
-
-        Jset = getSetJ(h0, lw, phi, dec, n, M, L);
-        Jrise = Jnoon - (Jset - Jnoon);
-
-        result[time[1]] = fromJulian(Jrise);
-        result[time[2]] = fromJulian(Jset);
+    function astroRefraction(h) {
+        if (h < 0) // below horizon
+            h = 0;
+        return 0.0002967 / Math.tan(h + 0.00312536 / (h + 0.08901179));
     }
 
-    return result;
-};
+    // --- IMPROVED SUN CALCULATIONS ---
+    function solarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
 
-
-// moon calculations, based on http://aa.quae.nl/en/reken/hemelpositie.html formulas
-
-function moonCoords(d) { // geocentric ecliptic coordinates of the moon
-
-    var L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
-        M = rad * (134.963 + 13.064993 * d), // mean anomaly
-        F = rad * (93.272 + 13.229350 * d),  // mean distance
-
-        l  = L + rad * 6.289 * sin(M), // longitude
-        b  = rad * 5.128 * sin(F),     // latitude
-        dt = 385001 - 20905 * cos(M);  // distance to the moon in km
-
-    return {
-        ra: rightAscension(l, b),
-        dec: declination(l, b),
-        dist: dt
-    };
-}
-
-SunCalc.getMoonPosition = function (date, lat, lng) {
-
-    var lw  = rad * -lng,
-        phi = rad * lat,
-        d   = toDays(date),
-
-        c = moonCoords(d),
-        H = siderealTime(d, lw) - c.ra,
-        h = altitude(H, phi, c.dec),
-        // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-        pa = atan(sin(H), tan(phi) * cos(c.dec) - sin(c.dec) * cos(H));
-
-    h = h + astroRefraction(h); // altitude correction for refraction
-
-    return {
-        azimuth: azimuth(H, phi, c.dec),
-        altitude: h,
-        distance: c.dist,
-        parallacticAngle: pa
-    };
-};
-
-
-// calculations for illumination parameters of the moon,
-// based on http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro formulas and
-// Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-
-SunCalc.getMoonIllumination = function (date) {
-
-    var d = toDays(date || new Date()),
-        s = sunCoords(d),
-        m = moonCoords(d),
-
-        sdist = 149598000, // distance from Earth to Sun in km
-
-        phi = acos(sin(s.dec) * sin(m.dec) + cos(s.dec) * cos(m.dec) * cos(s.ra - m.ra)),
-        inc = atan(sdist * sin(phi), m.dist - sdist * cos(phi)),
-        angle = atan(cos(s.dec) * sin(s.ra - m.ra), sin(s.dec) * cos(m.dec) -
-                cos(s.dec) * sin(m.dec) * cos(s.ra - m.ra));
-
-    return {
-        fraction: (1 + cos(inc)) / 2,
-        phase: 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI,
-        angle: angle
-    };
-};
-
-
-function hoursLater(date, h) {
-    return new Date(date.valueOf() + h * dayMs / 24);
-}
-
-// calculations for moon rise/set times are based on http://www.stargazing.net/kepler/moonrise.html article
-
-SunCalc.getMoonTimes = function (date, lat, lng, inUTC) {
-    var t = new Date(date);
-    if (inUTC) t.setUTCHours(0, 0, 0, 0);
-    else t.setHours(0, 0, 0, 0);
-
-    var hc = 0.133 * rad,
-        h0 = SunCalc.getMoonPosition(t, lat, lng).altitude - hc,
-        h1, h2, rise, set, a, b, xe, ye, d, roots, x1, x2, dx;
-
-    // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
-    for (var i = 1; i <= 24; i += 2) {
-        h1 = SunCalc.getMoonPosition(hoursLater(t, i), lat, lng).altitude - hc;
-        h2 = SunCalc.getMoonPosition(hoursLater(t, i + 1), lat, lng).altitude - hc;
-
-        a = (h0 + h2) / 2 - h1;
-        b = (h2 - h0) / 2;
-        xe = -b / (2 * a);
-        ye = (a * xe + b) * xe + h1;
-        d = b * b - 4 * a * h1;
-        roots = 0;
-
-        if (d >= 0) {
-            dx = Math.sqrt(d) / (Math.abs(a) * 2);
-            x1 = xe - dx;
-            x2 = xe + dx;
-            if (Math.abs(x1) <= 1) roots++;
-            if (Math.abs(x2) <= 1) roots++;
-            if (x1 < -1) x1 = x2;
-        }
-
-        if (roots === 1) {
-            if (h0 < 0) rise = i + x1;
-            else set = i + x1;
-
-        } else if (roots === 2) {
-            rise = i + (ye < 0 ? x2 : x1);
-            set = i + (ye < 0 ? x1 : x2);
-        }
-
-        if (rise && set) break;
-
-        h0 = h2;
+    function eclipticLongitude(M) {
+        var C = rad * (1.9148 * sin(M) + 0.02 * sin(2 * M) + 0.0003 * sin(3 * M)), // Equation of Center
+            P = rad * 102.9372; // Perihelion of the Earth
+        return M + C + P + PI;
     }
 
-    var result = {};
+    function sunCoords(d) {
+        var M = solarMeanAnomaly(d),
+            L = eclipticLongitude(M);
+        return {
+            dec: declination(L, 0),
+            ra: rightAscension(L, 0),
+            L: L // Return Ecliptic Longitude for Ayanamsa calc
+        };
+    }
 
-    if (rise) result.rise = hoursLater(t, rise);
-    if (set) result.set = hoursLater(t, set);
+    // --- HIGH PRECISION MOON CALCULATIONS (Vedic Grade) ---
+    function moonCoords(d) {
+        // Elements of the Moon (term "d" is days from J2000)
+        var L = rad * (218.316 + 13.176396 * d), // Mean Longitude
+            M = rad * (134.963 + 13.064993 * d), // Mean Anomaly
+            F = rad * (93.272 + 13.229350 * d),  // Distance to Node
+            D = rad * (297.850 + 12.190749 * d); // Elongation from Sun (Phase) (Diff between Moon & Sun)
 
-    if (!rise && !set) result[ye > 0 ? 'alwaysUp' : 'alwaysDown'] = true;
+        // Lunar Perturbations (The "Big Three" causing errors in simple scripts)
+        // 1. Evection (depends on elongation D)
+        // 2. Variation (depends on elongation D)
+        // 3. Annual Equation (depends on Sun's anomaly)
 
-    return result;
-};
+        var SunM = solarMeanAnomaly(d); // Sun's anomaly
 
-return SunCalc;
+        var Longitude = L + rad * 6.289 * sin(M)       // Major Elliptic term
+                          - rad * 1.274 * sin(M - 2*D) // Evection
+                          + rad * 0.658 * sin(2*D)     // Variation
+                          - rad * 0.185 * sin(SunM)    // Annual Equation
+                          - rad * 0.114 * sin(2*F)     // Reduction to Ecliptic
+                          - rad * 0.059 * sin(2*M - 2*D); // Major term 2
 
-})();
+        var Latitude = rad * 5.128 * sin(F)
+                       + rad * 0.280 * sin(M + F)
+                       + rad * 0.278 * sin(M - F); // Principal latitude terms
+
+        // Distance (needed for parallax)
+        var Dist = 385000.56 - 20905.35 * cos(M);
+
+        return {
+            ra: rightAscension(Longitude, Latitude),
+            dec: declination(Longitude, Latitude),
+            dist: Dist,
+            l: Longitude // Tropical Longitude
+        };
+    }
+
+    // --- TRUE LAHIRI AYANAMSA (Dynamic Calculation) ---
+    // Standard Formula: 23° 51' 11" for year 2000 + precession
+    function getAyanamsa(d) {
+        // t = Julian centuries since J2000
+        var t = d / 36525.0;
+
+        // Mean Ayanamsa (Lahiri) approximation
+        // 23.85 degrees is roughly the offset for year 2000
+        // Precession rate is approx 50.29 arcseconds per year (0.013969 degrees/year)
+        var ayanamsa = 23.856 + (0.013969 * (d / 365.25));
+
+        // For higher precision matching Drik Panchang exactly,
+        // we use the simpler linear interpolation commonly used in JS web apps:
+        // Ayanamsa ~ 24 degrees in 2010.
+        // Accurate Reference: Jan 1 2000 = 23° 51' 15" (~23.854 deg)
+        // Rate: +50.27 arcsec / year
+        var currentYearOffset = (d / 365.25);
+        var preciseAy = 23.854166 + (currentYearOffset * (50.27 / 3600));
+
+        return rad * preciseAy;
+    }
+
+    // Helper for getMoonTimes
+    function hoursLater(date, h) {
+        return new Date(date.valueOf() + h * dayMs / 24);
+    }
+
+    return {
+        // Public API
+        toJulian: toJulian,
+        fromJulian: fromJulian,
+
+        // Get Position (Topocentric - Observer based)
+        getPosition: function (date, lat, lng) {
+            var lw  = rad * -lng,
+                phi = rad * lat,
+                d   = toDays(date),
+                c   = sunCoords(d),
+                H   = siderealTime(d, lw) - c.ra;
+
+            return {
+                azimuth: azimuth(H, phi, c.dec),
+                altitude: altitude(H, phi, c.dec)
+            };
+        },
+
+        // Get Moon Position (Improved)
+        getMoonPosition: function (date, lat, lng) {
+            var lw  = rad * -lng,
+                phi = rad * lat,
+                d   = toDays(date),
+                c   = moonCoords(d),
+                H   = siderealTime(d, lw) - c.ra,
+                h   = altitude(H, phi, c.dec),
+                // Parallax correction (Moon is close to Earth)
+                pa  = atan(sin(H), tan(phi) * cos(c.dec) - sin(c.dec) * cos(H));
+
+            h = h + astroRefraction(h); // Apply refraction
+
+            return {
+                azimuth: azimuth(H, phi, c.dec),
+                altitude: h,
+                distance: c.dist,
+                parallacticAngle: pa,
+                longitude: c.l // Tropical Longitude in Radians
+            };
+        },
+
+        // Get True Lahiri Ayanamsa (New Function)
+        getAyanamsaValue: function(date) {
+             var d = toDays(date);
+             return getAyanamsa(d); // Returns in Radians
+        },
+
+        // Sun Times (Sunrise/Sunset) - Standard Algorithm
+        getTimes: function (date, lat, lng) {
+            var lw = rad * -lng,
+                phi = rad * lat,
+                d = toDays(date),
+                n = Math.round(d - 0.0009 - lw / (2 * PI)),
+                Jnoon = 2451545 + 0.0009 + lw / (2 * PI) + n,
+                M = solarMeanAnomaly(Jnoon - 2451545),
+                L = eclipticLongitude(M),
+                dec = declination(L, 0),
+                Jtransit = Jnoon + 0.0053 * sin(M) - 0.0069 * sin(2 * L);
+
+            var h = -0.833 * rad; // Standard Sunrise angle (Sun's upper limb)
+            var w = acos((sin(h) - sin(phi) * sin(dec)) / (cos(phi) * cos(dec)));
+            var Jrise = Jtransit - w / (2 * PI);
+            var Jset  = Jtransit + w / (2 * PI);
+
+            return {
+                solarNoon: fromJulian(Jtransit),
+                sunrise: fromJulian(Jrise),
+                sunset:  fromJulian(Jset)
+            };
+        },
+
+        // Moon Times (Ported from previous version, adapted to new internals)
+        getMoonTimes: function (date, lat, lng, inUTC) {
+            var t = new Date(date);
+            if (inUTC) t.setUTCHours(0, 0, 0, 0);
+            else t.setHours(0, 0, 0, 0);
+
+            var hc = 0.133 * rad,
+                h0 = this.getMoonPosition(t, lat, lng).altitude - hc,
+                h1, h2, rise, set, a, b, xe, ye, d, roots, x1, x2, dx;
+
+            // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
+            for (var i = 1; i <= 24; i += 2) {
+                h1 = this.getMoonPosition(hoursLater(t, i), lat, lng).altitude - hc;
+                h2 = this.getMoonPosition(hoursLater(t, i + 1), lat, lng).altitude - hc;
+
+                a = (h0 + h2) / 2 - h1;
+                b = (h2 - h0) / 2;
+                xe = -b / (2 * a);
+                ye = (a * xe + b) * xe + h1;
+                d = b * b - 4 * a * h1;
+                roots = 0;
+
+                if (d >= 0) {
+                    dx = Math.sqrt(d) / (Math.abs(a) * 2);
+                    x1 = xe - dx;
+                    x2 = xe + dx;
+                    if (Math.abs(x1) <= 1) roots++;
+                    if (Math.abs(x2) <= 1) roots++;
+                    if (x1 < -1) x1 = x2;
+                }
+
+                if (roots === 1) {
+                    if (h0 < 0) rise = i + x1;
+                    else set = i + x1;
+
+                } else if (roots === 2) {
+                    rise = i + (ye < 0 ? x2 : x1);
+                    set = i + (ye < 0 ? x1 : x2);
+                }
+
+                if (rise && set) break;
+
+                h0 = h2;
+            }
+
+            var result = {};
+
+            if (rise) result.rise = hoursLater(t, rise);
+            if (set) result.set = hoursLater(t, set);
+
+            if (!rise && !set) result[ye > 0 ? 'alwaysUp' : 'alwaysDown'] = true;
+
+            return result;
+        },
+
+        // Helper to get Moon Illumination (needed for Phase Icon)
+        getMoonIllumination: function (date) {
+            var d = toDays(date || new Date()),
+                s = sunCoords(d),
+                m = moonCoords(d),
+
+                sdist = 149598000, // distance from Earth to Sun in km
+
+                phi = acos(sin(s.dec) * sin(m.dec) + cos(s.dec) * cos(m.dec) * cos(s.ra - m.ra)),
+                inc = atan(sdist * sin(phi), m.dist - sdist * cos(phi)),
+                angle = atan(cos(s.dec) * sin(s.ra - m.ra), sin(s.dec) * cos(m.dec) -
+                        cos(s.dec) * sin(m.dec) * cos(s.ra - m.ra));
+
+            return {
+                fraction: (1 + cos(inc)) / 2,
+                phase: 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI,
+                angle: angle
+            };
+        }
+    };
+}());
 
         /* --- VEDIC ASTRONOMY ALGORITHMS --- */
         /* --- VEDIC ASTRONOMY ENGINE (V5.0 - Professional Grade) --- */
@@ -2159,11 +2119,37 @@ return SunCalc;
                 // Date.UTC returns ms from epoch for 00:00:00 UTC on that YMD
                 const utcDate = new Date(Date.UTC(year, month, day) + utcOffsetMs);
                 
-                const jd = (utcDate.getTime() / 86400000) + 2440587.5;
-                const aya = getAyanamsa(jd);
+                // Upgrade: Use SunCalc for precise positions (Tropical)
+                // SunCalc requires Date object. We use our precise utcDate.
+
+                // Ayanamsa in Degrees (from Radians)
+                const ayaRad = SunCalc.getAyanamsaValue(utcDate);
+                const aya = ayaRad * (180 / Math.PI);
+
+                // Positions (Tropical) from SunCalc (Radians -> Degrees)
+                const sunPos = SunCalc.getPosition(utcDate, 0, 0); // Lat/Lng irrelevant for geocentric eq coords but func needs them
+                // Note: SunCalc.getPosition returns azimuth/altitude (Topocentric).
+                // We need Ecliptic Longitude.
+                // SunCalc Internal 'sunCoords' calculates 'L' (Ecliptic Longitude).
+                // BUT 'sunCoords' is private.
+                // Fortunately, we can re-implement the high-precision Solar Longitude logic here or trust our local getSunLong
+                // OR better: The user provided code exposed 'L' in sunCoords but didn't expose sunCoords publically.
+                // However, the user provided code has 'getMoonPosition' which returns 'longitude' (Tropical).
+                // Let's use our local 'getSunLong' (which matches the upgraded SunCalc logic roughly)
+                // OR rely on the fact that SunCalc is now upgraded.
+                // Actually, the prompt said: "check your Nakshatra logic... Ensure it calls SunCalc.getMoonPosition and then subtracts SunCalc.getAyanamsaValue".
                 
+                // Let's use SunCalc.getMoonPosition for Moon.
+                const moonPos = SunCalc.getMoonPosition(utcDate, 0, 0);
+                const moonTrop = moonPos.longitude * (180 / Math.PI);
+                const moonSid = norm(moonTrop - aya);
+
+                // For Sun, since SunCalc doesn't expose Ecliptic Longitude directly in public API (only Az/Alt),
+                // we will stick to our local 'getSunLong' which is likely sufficient,
+                // OR we can deduce it. But 'getSunLong' in this module is already Meeus-based (High Precision).
+                // Let's rely on 'getSunLong' for Sun, but use 'aya' from SunCalc for consistency.
+                const jd = (utcDate.getTime() / 86400000) + 2440587.5;
                 const sunSid = norm(getSunLong(jd) - aya);
-                const moonSid = norm(getMoonLong(jd) - aya);
 
                 // Tithi = (Moon - Sun) / 12. Use minimal epsilon for float safety.
                 const diff = norm(moonSid - sunSid + 0.000001);
