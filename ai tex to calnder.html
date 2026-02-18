@@ -922,6 +922,73 @@
         right: 2px;
     }
 
+        /* Astro Timeline Modern */
+        .astro-timeline-modern {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.8) 0%, rgba(88, 28, 135, 0.8) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .astro-timeline-modern::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .astro-divider {
+            width: 1px;
+            height: 3rem;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .astro-time-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .astro-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.25rem;
+        }
+
+        .astro-time {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .icon-glow-orange { filter: drop-shadow(0 0 8px rgba(251, 146, 60, 0.6)); }
+        .icon-glow-purple { filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6)); }
+        .icon-glow-blue { filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6)); }
+        .icon-glow-gray { filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3)); }
+
     /* --- Day Modal Page Layout (Light Theme) --- */
     @media (max-width: 767px) {
         #day-modal { padding: 0 !important; }
@@ -4885,30 +4952,30 @@ function renderCalendarGrid(data) {
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
                 const timelineDiv = document.createElement('div');
-                timelineDiv.className = "astro-timeline";
+                timelineDiv.className = "astro-timeline-modern";
                 timelineDiv.innerHTML = `
-                    <div class="astro-time-point text-orange-600">
-                        <i class="fa-solid fa-sun text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Sunrise</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunrise)}</span>
+                    <div class="astro-time-item">
+                        <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
+                        <span class="astro-label">Sunrise</span>
+                        <span class="astro-time">${fmt(sunTimes.sunrise)}</span>
                     </div>
-                    <div class="h-8 w-px bg-orange-200"></div>
-                    <div class="astro-time-point text-indigo-900">
-                        <i class="fa-solid fa-moon text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Sunset</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunset)}</span>
+                    <div class="astro-divider"></div>
+                    <div class="astro-time-item">
+                        <i class="fa-solid fa-cloud-sun text-2xl text-purple-400 icon-glow-purple"></i>
+                        <span class="astro-label">Sunset</span>
+                        <span class="astro-time">${fmt(sunTimes.sunset)}</span>
                     </div>
-                    <div class="h-8 w-px bg-orange-200"></div>
-                    <div class="astro-time-point text-gray-600">
-                        <i class="fa-solid fa-cloud-moon text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Moonrise</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(moonTimes ? moonTimes.rise : null)}</span>
+                    <div class="astro-divider"></div>
+                    <div class="astro-time-item">
+                        <i class="fa-solid fa-cloud-moon text-2xl text-blue-400 icon-glow-blue"></i>
+                        <span class="astro-label">Moonrise</span>
+                        <span class="astro-time">${fmt(moonTimes ? moonTimes.rise : null)}</span>
                     </div>
-                    <div class="h-8 w-px bg-orange-200"></div>
-                    <div class="astro-time-point text-gray-800">
-                        <i class="fa-solid fa-moon text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Moonset</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(moonTimes ? moonTimes.set : null)}</span>
+                    <div class="astro-divider"></div>
+                    <div class="astro-time-item">
+                        <i class="fa-solid fa-moon text-2xl text-gray-300 icon-glow-gray"></i>
+                        <span class="astro-label">Moonset</span>
+                        <span class="astro-time">${fmt(moonTimes ? moonTimes.set : null)}</span>
                     </div>
                 `;
                 list.appendChild(timelineDiv);
