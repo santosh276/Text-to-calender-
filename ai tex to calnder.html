@@ -2047,14 +2047,52 @@ SunCalc.getTimes = function (date, lat, lng, height) {
 // moon calculations, based on http://aa.quae.nl/en/reken/hemelpositie.html formulas
 
 function moonCoords(d) { // geocentric ecliptic coordinates of the moon
+    // High Precision Lunar Position (Meeus/VedicAstro Implementation)
+    var T = d / 36525;
+    var L0 = 218.316447 + 481267.881234 * T;
+    var D = 297.850192 + 445267.111403 * T;
+    var M = 357.529109 + 35999.050291 * T;
+    var Mprime = 134.963396 + 477198.867505 * T;
+    var F = 93.272095 + 483202.017523 * T;
 
-    var L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
-        M = rad * (134.963 + 13.064993 * d), // mean anomaly
-        F = rad * (93.272 + 13.229350 * d),  // mean distance
+    var D2R = Math.PI / 180;
 
-        l  = L + rad * 6.289 * sin(M), // longitude
-        b  = rad * 5.128 * sin(F),     // latitude
-        dt = 385001 - 20905 * cos(M);  // distance to the moon in km
+    // Longitude Terms (Sine series)
+    var sumL = 6.288774 * Math.sin(Mprime * D2R);
+    sumL += 1.274027 * Math.sin((2 * D - Mprime) * D2R);
+    sumL += 0.658309 * Math.sin(2 * D * D2R);
+    sumL += 0.213618 * Math.sin(2 * Mprime * D2R);
+    sumL -= 0.185116 * Math.sin(M * D2R);
+    sumL -= 0.114332 * Math.sin(2 * F * D2R);
+    sumL += 0.058793 * Math.sin((2 * D - 2 * Mprime) * D2R);
+    sumL += 0.057066 * Math.sin((2 * D - M - Mprime) * D2R);
+    sumL += 0.053322 * Math.sin((2 * D + Mprime) * D2R);
+    sumL += 0.045758 * Math.sin((2 * D - M) * D2R);
+    sumL -= 0.040923 * Math.sin((M - Mprime) * D2R);
+    sumL -= 0.034720 * Math.sin(D * D2R);
+    sumL -= 0.030383 * Math.sin((M + Mprime) * D2R);
+    sumL += 0.015327 * Math.sin((2 * D - 2 * F) * D2R);
+    sumL -= 0.012528 * Math.sin((2 * D - 2 * M) * D2R);
+
+    var l = (L0 + sumL) * D2R; // Longitude in radians
+
+    // Latitude Terms (Sine series)
+    var sumB = 5.128122 * Math.sin(F * D2R)
+             + 0.280602 * Math.sin((Mprime + F) * D2R)
+             + 0.277693 * Math.sin((Mprime - F) * D2R)
+             + 0.173237 * Math.sin((2 * D - F) * D2R)
+             + 0.055413 * Math.sin((2 * D + F - Mprime) * D2R)
+             + 0.046271 * Math.sin((2 * D - F - Mprime) * D2R)
+             + 0.032573 * Math.sin((2 * D + F) * D2R)
+             + 0.017198 * Math.sin((2 * Mprime + F) * D2R);
+
+    var b = sumB * D2R; // Latitude in radians
+
+    // Distance (km)
+    var dt = 385000.56 - 20905.355 * Math.cos(Mprime * D2R)
+             - 3699.111 * Math.cos((2 * D - Mprime) * D2R)
+             - 2955.968 * Math.cos(2 * D * D2R)
+             - 569.925 * Math.cos(2 * Mprime * D2R);
 
     return {
         ra: rightAscension(l, b),
