@@ -2666,6 +2666,8 @@ return SunCalc;
             }
         };
 
+        let currentOpenDayKey = null; // Track active modal to prevent race conditions
+
         let appState = {
             activeMonthIndex: 0,
             monthsData: [],
@@ -5649,6 +5651,9 @@ function renderCalendarGrid(data) {
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
             
+            // Track this open request
+            currentOpenDayKey = dateKey;
+
             // --- 1. PREPARE DATA ---
             const tithiInfo = calculateTithi(dateObj);
 
@@ -5877,7 +5882,11 @@ function renderCalendarGrid(data) {
             setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
 
             // Defer Upcoming Tithis Calculation (Performance Optimization)
+            // Increased delay to 320ms to allow CSS transition (300ms) to finish, preventing stutter
             setTimeout(() => {
+                // Race Condition Check: Ensure we are still looking at the same day
+                if (currentOpenDayKey !== dateKey) return;
+
                 const upcoming = [];
                 let scanDate = new Date(dateObj);
                 scanDate.setDate(scanDate.getDate() + 1);
@@ -5898,6 +5907,9 @@ function renderCalendarGrid(data) {
                 }
 
                 if (upcoming.length > 0) {
+                    // Double Check before DOM manip
+                    if (currentOpenDayKey !== dateKey) return;
+
                     let upcomingHtml = '';
                     upcoming.forEach(item => {
                         let bgColor = 'bg-amber-100 text-amber-800 border border-amber-200';
@@ -5932,7 +5944,7 @@ function renderCalendarGrid(data) {
                         </div>`;
                     }
                 }
-            }, 50); // Small delay to let modal render first
+            }, 320); // Wait for transition to end
         }
 
         // Placeholder for legacy call (if any)
