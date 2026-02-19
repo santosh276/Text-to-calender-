@@ -2578,6 +2578,23 @@ return SunCalc;
              return Math.floor((month + 10) % 12 / 2);
         }
 
+        // --- NEW: Vedic Day Logic (Sunrise Rule) ---
+        function getVedicDate(dateObj) {
+            // Safety: If no location, return original date (standard midnight logic)
+            if (!appState.config.location || !SunCalc) return dateObj;
+
+            // Get Sunrise for the given date at the user's location
+            const times = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+
+            // If current time is before Sunrise, it is astrologically "Yesterday"
+            if (dateObj < times.sunrise) {
+                const prevDate = new Date(dateObj);
+                prevDate.setDate(prevDate.getDate() - 1);
+                return prevDate;
+            }
+            return dateObj;
+        }
+
         function cycleSeasonCard() {
             if (!appState.monthsData || appState.monthsData.length === 0) return;
             
@@ -4991,10 +5008,16 @@ function renderCalendarGrid(data) {
 
             // 2. Astronomical Calculations (Sun/Moon/Times)
             const today = new Date();
-            // Use Today if active month matches current, else 1st of active month
-            const calcDate = (data.month === today.getMonth() && data.year === today.getFullYear()) 
-                           ? new Date() 
-                           : new Date(data.year, data.month, 1);
+            // Use Today (adjusted for Vedic Sunrise rule) if active month matches current
+            // If strictly viewing another month, use 1st of that month
+            let calcDate;
+            if (data.month === today.getMonth() && data.year === today.getFullYear()) {
+                // If the user manually navigated away from today in the view but we are still in current month?
+                // Logic: Default to 'Today' (System Clock), then apply Vedic Shift.
+                calcDate = getVedicDate(new Date());
+            } else {
+                calcDate = new Date(data.year, data.month, 1);
+            }
             
             const autoData = calculateTithi(calcDate);
             
