@@ -2519,12 +2519,14 @@ return SunCalc;
         }
 
         function getUserLocation() {
-            if (!navigator.geolocation) {
-                showToast("Geolocation is not supported by your browser.");
-                return;
-            }
             const btn = document.getElementById('btn-location');
             const originalContent = btn ? btn.innerHTML : '';
+
+            if (!navigator.geolocation) {
+                fallbackToSavedLocation(btn, originalContent);
+                return;
+            }
+            
             if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Locating...';
             
             navigator.geolocation.getCurrentPosition(async (position) => {
@@ -2563,9 +2565,27 @@ return SunCalc;
                 showToast("Location updated: " + locName);
             }, (error) => {
                 console.error(error);
-                showToast("Unable to retrieve your location.");
-                if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
+                fallbackToSavedLocation(btn, originalContent);
             });
+        }
+
+        function fallbackToSavedLocation(btn, originalContent) {
+            try {
+                const savedConfig = localStorage.getItem('panchangConfig');
+                if (savedConfig) {
+                    const parsed = JSON.parse(savedConfig);
+                    if (parsed.location) {
+                        appState.config.location = parsed.location;
+                        render();
+                        showToast(`Using saved location: ${parsed.location.name || 'Coordinates'}`);
+                        if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
+                        return;
+                    }
+                }
+            } catch(e) { console.error("Backup location load failed", e); }
+            
+            showToast("Location unavailable. Please enable GPS.");
+            if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
         }
 
         function getSeasonIndex(month) {
@@ -5616,6 +5636,17 @@ function renderCalendarGrid(data) {
             
             // --- 1. PREPARE DATA ---
             const tithiInfo = calculateTithi(dateObj);
+
+            // Calculate Sun/Moon Times
+            let sunTimes = { sunrise: null, sunset: null };
+            let moonTimes = { rise: null, set: null };
+            if (appState.config.location && SunCalc) {
+                sunTimes = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+                if (SunCalc.getMoonTimes) {
+                    moonTimes = SunCalc.getMoonTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+                }
+            }
+            const fmtAstroTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
             
             // Astro Data
             const jd = tithiInfo.jd || 0;
@@ -5794,6 +5825,37 @@ function renderCalendarGrid(data) {
                                 <div class="font-mono text-gray-900 font-bold">${seasonName}</div>
                             </div>
                         </div>
+
+                        <!-- 2a. Astro Details -->
+                        ${sunTimes.sunrise ? `
+                        <div class="modal-card">
+                            <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
+                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-cloud-sun"></i></div>
+                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Astro Details</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 text-center">
+                                 <div class="bg-orange-50 rounded-xl p-2 border border-orange-100 flex flex-col items-center">
+                                     <i class="fa-solid fa-sun text-orange-400 mb-1"></i>
+                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Sunrise</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunrise)}</span>
+                                 </div>
+                                 <div class="bg-purple-50 rounded-xl p-2 border border-purple-100 flex flex-col items-center">
+                                     <i class="fa-solid fa-cloud-sun text-purple-400 mb-1"></i>
+                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Sunset</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunset)}</span>
+                                 </div>
+                                 <div class="bg-blue-50 rounded-xl p-2 border border-blue-100 flex flex-col items-center">
+                                     <i class="fa-solid fa-cloud-moon text-blue-400 mb-1"></i>
+                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Moonrise</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
+                                 </div>
+                                 <div class="bg-gray-50 rounded-xl p-2 border border-gray-200 flex flex-col items-center">
+                                     <i class="fa-solid fa-moon text-gray-400 mb-1"></i>
+                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Moonset</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
+                                 </div>
+                            </div>
+                        </div>` : ''}
 
 
                         <!-- 3. Upcoming Special Tithis -->
