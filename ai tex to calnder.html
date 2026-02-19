@@ -2160,6 +2160,12 @@ SunCalc.getMoonTimes = function (date, lat, lng, inUTC) {
     if (inUTC) t.setUTCHours(0, 0, 0, 0);
     else t.setHours(0, 0, 0, 0);
 
+    // FIX: Shift search window to align with Local Mean Time of the target longitude
+    // This ensures we capture early morning events (e.g., 6:41 AM) even if the user's browser
+    // is in a timezone far west (like PST/EST) where the "day" starts much later relative to the event.
+    var offsetHours = lng / 15;
+    t.setHours(t.getHours() - offsetHours);
+
     var hc = 0.133 * rad,
         h0 = SunCalc.getMoonPosition(t, lat, lng).altitude - hc,
         h1, h2, rise, set, a, b, xe, ye, d, roots, x1, x2, dx;
