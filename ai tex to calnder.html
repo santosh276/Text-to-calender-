@@ -2666,6 +2666,7 @@ return SunCalc;
             }
         };
 
+        let currentOpenDayKey = null;
         let appState = {
             activeMonthIndex: 0,
             monthsData: [],
@@ -5648,91 +5649,10 @@ function renderCalendarGrid(data) {
             const modal = document.getElementById('day-modal');
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
+            currentOpenDayKey = dateKey; // Track Request
             
-            // --- 1. PREPARE DATA ---
+            // --- 1. LIGHTWEIGHT DATA (Sync) ---
             const tithiInfo = calculateTithi(dateObj);
-
-            // Calculate Sun/Moon Times
-            let sunTimes = { sunrise: null, sunset: null };
-            let moonTimes = { rise: null, set: null };
-            if (appState.config.location && SunCalc) {
-                sunTimes = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
-                if (SunCalc.getMoonTimes) {
-                    moonTimes = SunCalc.getMoonTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
-                }
-            }
-            const fmtAstroTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
-            
-            // Astro Data
-            const jd = tithiInfo.jd || 0;
-            const sunLon = tithiInfo.sunLon || 0;
-            const moonLon = tithiInfo.moonLon || 0;
-            const elongation = (moonLon - sunLon + 360) % 360;
-            const tithiProgress = ((elongation % 12) / 12 * 100).toFixed(1);
-            
-            // Tithi Timings
-            let tithiTimes = { start: 0, end: 0 };
-            try {
-                if (VedicAstro.getTithiTimes) {
-                    tithiTimes = VedicAstro.getTithiTimes(jd, tithiInfo.index);
-                }
-            } catch(e) { console.error("Tithi timing calc failed", e); }
-
-            const fmtTime = (j) => {
-                if(!j) return "--";
-                const d = new Date((j - 2440587.5) * 86400000);
-                // Check if date is different from current view date
-                const isSameDay = d.getDate() === day && d.getMonth() === monthData.month && d.getFullYear() === monthData.year;
-                const timeStr = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                if (isSameDay) return timeStr;
-                return `${d.toLocaleDateString([], {month:'short', day:'numeric'})}, ${timeStr}`;
-            };
-
-            // Panchang Extra Data
-            const currentLang = appState.config.language || 'en';
-            const langObj = langData[currentLang] || langData['en'];
-            const seasonIndex = getSeasonIndex(monthData.month);
-            const seasonName = langObj.indianSeasons[seasonIndex];
-            const hinduMonthName = langObj.indianMonths[monthData.month];
-
-            // Upcoming Special Tithis (Scan next 30 days)
-            const upcoming = [];
-            let scanDate = new Date(dateObj);
-            scanDate.setDate(scanDate.getDate() + 1);
-            for(let i=0; i<30; i++) {
-                if (upcoming.length >= 3) break;
-                const astro = calculateTithi(scanDate);
-                if ([14, 29, 10, 25].includes(astro.index)) {
-                    upcoming.push({
-                        date: new Date(scanDate),
-                        tithi: astro.tithi,
-                        index: astro.index,
-                        paksha: astro.paksha
-                    });
-                }
-                scanDate.setDate(scanDate.getDate() + 1);
-            }
-
-            // Build Upcoming HTML
-            let upcomingHtml = '';
-            upcoming.forEach(item => {
-                let bgColor = 'bg-amber-100 text-amber-800 border border-amber-200';
-                let iconHtml = TITHI_ICONS.ekadashi;
-                let title = 'Ekadashi';
-                
-                if (item.index === 14) { bgColor = 'bg-orange-200 text-orange-900 border border-orange-300'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
-                else if (item.index === 29) { bgColor = 'bg-gray-200 text-gray-800 border border-gray-300'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
-                
-                const dateStr = item.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                
-                upcomingHtml += `
-                    <div class="${bgColor} rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
-                        <div class="w-6 h-6 mb-1 drop-shadow-sm">${iconHtml}</div>
-                        <div class="font-bold text-xs mb-0.5">${title}</div>
-                        <div class="text-[9px] opacity-80 uppercase font-bold leading-tight">${dateStr}</div>
-                    </div>
-                `;
-            });
 
             // Main Icon
             let mainIcon = getMoonPhaseIcon((tithiInfo.index + 1) / 30);
@@ -5747,14 +5667,17 @@ function renderCalendarGrid(data) {
             }
             let details = (detailsRaw && Array.isArray(detailsRaw)) ? detailsRaw : (detailsRaw ? [detailsRaw] : []);
             
-            // Events for this day
             const dayEvents = monthData.events.filter(e => e.date === day);
-            
-            // Banner
             let bannerUrl = '';
             if (details.length > 0 && details[0].bannerUrl) bannerUrl = resolveImageUrls(details[0].bannerUrl);
-            
-            // --- 2. BUILD HTML STRUCTURE (Light Page Layout) ---
+
+            const currentLang = appState.config.language || 'en';
+            const langObj = langData[currentLang] || langData['en'];
+            const seasonIndex = getSeasonIndex(monthData.month);
+            const seasonName = langObj.indianSeasons[seasonIndex];
+            const hinduMonthName = langObj.indianMonths[monthData.month];
+
+            // --- 2. BUILD SKELETON HTML ---
             const contentHtml = `
                 <button onclick="closeDayModal()" class="fixed top-4 right-4 z-[100] bg-gray-100 hover:bg-gray-200 text-gray-600 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition shadow-lg border border-gray-200"><i class="fa-solid fa-times"></i></button>
 
@@ -5779,34 +5702,13 @@ function renderCalendarGrid(data) {
                             <h3 class="text-3xl font-extrabold text-deepred mb-1 leading-none">${tithiInfo.tithi}</h3>
                             <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
                             
-                            <div class="mt-5 p-4 bg-gray-50 rounded-2xl border border-gray-200 shadow-inner relative overflow-hidden">
-                                <div class="absolute inset-0 bg-amber-500/5 pointer-events-none"></div>
-                                <div class="flex justify-between items-center mb-2 relative z-10">
-                                    <span class="text-gray-500 font-bold text-[11px] uppercase tracking-widest">Tithi Progress</span>
-                                    <div class="flex items-baseline gap-1">
-                                        <span class="text-2xl font-extrabold text-amber-500 drop-shadow-sm font-sans">${tithiProgress}</span>
-                                        <span class="text-xs text-amber-600 font-bold">%</span>
-                                    </div>
-                                </div>
-                                <div class="h-3 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner ring-1 ring-gray-200 relative">
-                                    <!-- Track Pattern -->
-                                    <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 10px);"></div>
-                                    
-                                    <!-- Bar -->
-                                    <div class="h-full rounded-full relative transition-all duration-1000 ease-out group" style="width: ${tithiProgress}%; background: linear-gradient(90deg, #f59e0b, #ef4444);">
-                                        <!-- Gloss -->
-                                        <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
-                                    </div>
-                                </div>
-                                <div class="flex justify-between mt-3 px-0.5">
-                                    <div class="flex flex-col items-start">
-                                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Start</span>
-                                        <span class="text-[10px] text-gray-600 font-bold font-mono leading-none">${fmtTime(tithiTimes.start)}</span>
-                                    </div>
-                                    <div class="flex flex-col items-end">
-                                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">End</span>
-                                        <span class="text-[10px] text-amber-500 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
-                                    </div>
+                            <!-- ASYNC PLACEHOLDER: PROGRESS BAR -->
+                            <div id="async-tithi-progress" class="mt-5 p-4 bg-gray-50 rounded-2xl border border-gray-200 shadow-inner min-h-[100px] animate-pulse">
+                                <div class="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
+                                <div class="h-3 bg-gray-200 rounded-full w-full"></div>
+                                <div class="flex justify-between mt-3">
+                                    <div class="h-3 bg-gray-200 rounded w-10"></div>
+                                    <div class="h-3 bg-gray-200 rounded w-10"></div>
                                 </div>
                             </div>
                         </div>
@@ -5841,49 +5743,11 @@ function renderCalendarGrid(data) {
                             </div>
                         </div>
 
-                        <!-- 2a. Astro Details -->
-                        ${sunTimes.sunrise ? `
-                        <div class="modal-card">
-                            <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-cloud-sun"></i></div>
-                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Astro Details</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3 text-center">
-                                 <div class="bg-orange-50 rounded-xl p-2 border border-orange-100 flex flex-col items-center">
-                                     <i class="fa-solid fa-sun text-orange-400 mb-1"></i>
-                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Sunrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunrise)}</span>
-                                 </div>
-                                 <div class="bg-purple-50 rounded-xl p-2 border border-purple-100 flex flex-col items-center">
-                                     <i class="fa-solid fa-cloud-sun text-purple-400 mb-1"></i>
-                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Sunset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunset)}</span>
-                                 </div>
-                                 <div class="bg-blue-50 rounded-xl p-2 border border-blue-100 flex flex-col items-center">
-                                     <i class="fa-solid fa-cloud-moon text-blue-400 mb-1"></i>
-                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Moonrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
-                                 </div>
-                                 <div class="bg-gray-50 rounded-xl p-2 border border-gray-200 flex flex-col items-center">
-                                     <i class="fa-solid fa-moon text-gray-400 mb-1"></i>
-                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Moonset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
-                                 </div>
-                            </div>
-                        </div>` : ''}
+                        <!-- 2a. Astro Details (ASYNC) -->
+                        <div id="async-astro-details" class="hidden"></div>
 
-
-                        <!-- 3. Upcoming Special Tithis -->
-                        ${upcoming.length > 0 ? `
-                        <div class="modal-card">
-                            <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-regular fa-calendar-check"></i></div>
-                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Upcoming Special Tithis</span>
-                            </div>
-                            <div class="grid grid-cols-3 gap-3">
-                                ${upcomingHtml}
-                            </div>
-                        </div>` : ''}
+                        <!-- 3. Upcoming Special Tithis (ASYNC) -->
+                        <div id="async-upcoming-tithis" class="hidden"></div>
 
                         <!-- 4. Banner Display (Only if URL exists) -->
                         ${bannerUrl ? `
@@ -5903,7 +5767,6 @@ function renderCalendarGrid(data) {
                             `).join('')}
                             
                             ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">${details.map(d => {
-                                // Simple text rendering for body lines
                                 return d.bodyLines.map(line => {
                                     if(line.startsWith('#')) return `<h4 class="text-deepred font-bold mt-3 mb-1 text-base">${line.replace(/#/g,'').trim()}</h4>`;
                                     if(line.startsWith('-')) return `<li class="ml-4 text-gray-600">${line.replace('-','').trim()}</li>`;
@@ -5919,10 +5782,176 @@ function renderCalendarGrid(data) {
             const modalContent = modal.querySelector('.modal-content');
             modalContent.innerHTML = contentHtml;
 
-            // Remove legacy listeners (simplified view now)
-            
             modal.style.display = 'flex';
             setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
+
+            // --- 3. TRIGGER HEAVY LOAD (After Animation) ---
+            setTimeout(() => loadHeavyDayDetails(day, monthData, dateKey), 320);
+        }
+
+        function loadHeavyDayDetails(day, monthData, key) {
+            // Guard Clause: If user switched date, abort
+            if (key !== currentOpenDayKey) return;
+
+            const dateObj = new Date(monthData.year, monthData.month, day);
+            const tithiInfo = calculateTithi(dateObj);
+
+            // --- A. Tithi Progress (Heavy: Binary Search) ---
+            let tithiTimes = { start: 0, end: 0 };
+            try {
+                if (VedicAstro.getTithiTimes) {
+                    tithiTimes = VedicAstro.getTithiTimes(tithiInfo.jd, tithiInfo.index);
+                }
+            } catch(e) { console.error("Tithi timing calc failed", e); }
+
+            const fmtTime = (j) => {
+                if(!j) return "--";
+                const d = new Date((j - 2440587.5) * 86400000);
+                const isSameDay = d.getDate() === day && d.getMonth() === monthData.month && d.getFullYear() === monthData.year;
+                const timeStr = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                if (isSameDay) return timeStr;
+                return `${d.toLocaleDateString([], {month:'short', day:'numeric'})}, ${timeStr}`;
+            };
+
+            const sunLon = tithiInfo.sunLon || 0;
+            const moonLon = tithiInfo.moonLon || 0;
+            const elongation = (moonLon - sunLon + 360) % 360;
+            const tithiProgress = ((elongation % 12) / 12 * 100).toFixed(1);
+
+            const progressHtml = `
+                <div class="absolute inset-0 bg-amber-500/5 pointer-events-none"></div>
+                <div class="flex justify-between items-center mb-2 relative z-10">
+                    <span class="text-gray-500 font-bold text-[11px] uppercase tracking-widest">Tithi Progress</span>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-2xl font-extrabold text-amber-500 drop-shadow-sm font-sans">${tithiProgress}</span>
+                        <span class="text-xs text-amber-600 font-bold">%</span>
+                    </div>
+                </div>
+                <div class="h-3 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner ring-1 ring-gray-200 relative">
+                    <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 10px);"></div>
+                    <div class="h-full rounded-full relative transition-all duration-1000 ease-out group" style="width: ${tithiProgress}%; background: linear-gradient(90deg, #f59e0b, #ef4444);">
+                        <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-3 px-0.5">
+                    <div class="flex flex-col items-start">
+                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Start</span>
+                        <span class="text-[10px] text-gray-600 font-bold font-mono leading-none">${fmtTime(tithiTimes.start)}</span>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">End</span>
+                        <span class="text-[10px] text-amber-500 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
+                    </div>
+                </div>
+            `;
+            const progressContainer = document.getElementById('async-tithi-progress');
+            if(progressContainer) {
+                progressContainer.className = "mt-5 p-4 bg-gray-50 rounded-2xl border border-gray-200 shadow-inner relative overflow-hidden"; // Remove pulse
+                progressContainer.innerHTML = progressHtml;
+            }
+
+            // --- B. Astro Details (Heavy: Iterative SunCalc) ---
+            let sunTimes = { sunrise: null, sunset: null };
+            let moonTimes = { rise: null, set: null };
+            if (appState.config.location && SunCalc) {
+                sunTimes = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+                if (SunCalc.getMoonTimes) {
+                    moonTimes = SunCalc.getMoonTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+                }
+            }
+            const fmtAstroTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+
+            if (sunTimes.sunrise) {
+                const astroHtml = `
+                    <div class="modal-card">
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
+                            <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-cloud-sun"></i></div>
+                            <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Astro Details</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-center">
+                             <div class="bg-orange-50 rounded-xl p-2 border border-orange-100 flex flex-col items-center">
+                                 <i class="fa-solid fa-sun text-orange-400 mb-1"></i>
+                                 <span class="text-[10px] text-gray-500 font-bold uppercase">Sunrise</span>
+                                 <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunrise)}</span>
+                             </div>
+                             <div class="bg-purple-50 rounded-xl p-2 border border-purple-100 flex flex-col items-center">
+                                 <i class="fa-solid fa-cloud-sun text-purple-400 mb-1"></i>
+                                 <span class="text-[10px] text-gray-500 font-bold uppercase">Sunset</span>
+                                 <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunset)}</span>
+                             </div>
+                             <div class="bg-blue-50 rounded-xl p-2 border border-blue-100 flex flex-col items-center">
+                                 <i class="fa-solid fa-cloud-moon text-blue-400 mb-1"></i>
+                                 <span class="text-[10px] text-gray-500 font-bold uppercase">Moonrise</span>
+                                 <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
+                             </div>
+                             <div class="bg-gray-50 rounded-xl p-2 border border-gray-200 flex flex-col items-center">
+                                 <i class="fa-solid fa-moon text-gray-400 mb-1"></i>
+                                 <span class="text-[10px] text-gray-500 font-bold uppercase">Moonset</span>
+                                 <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
+                             </div>
+                        </div>
+                    </div>`;
+                const astroContainer = document.getElementById('async-astro-details');
+                if(astroContainer) {
+                    astroContainer.innerHTML = astroHtml;
+                    astroContainer.classList.remove('hidden');
+                }
+            }
+
+            // --- C. Upcoming Tithis (Heavy: 30-day Loop) ---
+            const upcoming = [];
+            let scanDate = new Date(dateObj);
+            scanDate.setDate(scanDate.getDate() + 1);
+            for(let i=0; i<30; i++) {
+                if (upcoming.length >= 3) break;
+                const astro = calculateTithi(scanDate);
+                if ([14, 29, 10, 25].includes(astro.index)) {
+                    upcoming.push({
+                        date: new Date(scanDate),
+                        tithi: astro.tithi,
+                        index: astro.index,
+                        paksha: astro.paksha
+                    });
+                }
+                scanDate.setDate(scanDate.getDate() + 1);
+            }
+
+            if (upcoming.length > 0) {
+                let upcomingHtml = '';
+                upcoming.forEach(item => {
+                    let bgColor = 'bg-amber-100 text-amber-800 border border-amber-200';
+                    let iconHtml = TITHI_ICONS.ekadashi;
+                    let title = 'Ekadashi';
+
+                    if (item.index === 14) { bgColor = 'bg-orange-200 text-orange-900 border border-orange-300'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
+                    else if (item.index === 29) { bgColor = 'bg-gray-200 text-gray-800 border border-gray-300'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
+
+                    const dateStr = item.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+                    upcomingHtml += `
+                        <div class="${bgColor} rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
+                            <div class="w-6 h-6 mb-1 drop-shadow-sm">${iconHtml}</div>
+                            <div class="font-bold text-xs mb-0.5">${title}</div>
+                            <div class="text-[9px] opacity-80 uppercase font-bold leading-tight">${dateStr}</div>
+                        </div>
+                    `;
+                });
+
+                const upcomingContainer = document.getElementById('async-upcoming-tithis');
+                if(upcomingContainer) {
+                    upcomingContainer.innerHTML = `
+                        <div class="modal-card">
+                            <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
+                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-regular fa-calendar-check"></i></div>
+                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Upcoming Special Tithis</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                ${upcomingHtml}
+                            </div>
+                        </div>`;
+                    upcomingContainer.classList.remove('hidden');
+                }
+            }
         }
 
         // Placeholder for legacy call (if any)
