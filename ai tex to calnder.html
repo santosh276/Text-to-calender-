@@ -5630,6 +5630,15 @@ function renderCalendarGrid(data) {
         }
 
         function openDayModal(day, monthData) {
+            // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
+
+            // Special handling for Downloaded App Mode (where body has overflow-y-auto)
+            if (document.body.classList.contains('overflow-y-auto')) {
+                document.body.classList.remove('overflow-y-auto');
+                document.body.dataset.restoreOverflowY = 'true';
+            }
+
             const modal = document.getElementById('day-modal');
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
@@ -5930,6 +5939,15 @@ function renderCalendarGrid(data) {
         function closeDayModal() {
             const modal = document.getElementById('day-modal');
             modal.classList.add('modal-hidden');
+
+            // Restore background scrolling
+            document.body.style.overflow = '';
+
+            if (document.body.dataset.restoreOverflowY === 'true') {
+                document.body.classList.add('overflow-y-auto');
+                delete document.body.dataset.restoreOverflowY;
+            }
+
             setTimeout(() => { modal.style.display = 'none'; }, 300); 
         }
 
