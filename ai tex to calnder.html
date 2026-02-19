@@ -5695,45 +5695,6 @@ function renderCalendarGrid(data) {
             const seasonName = langObj.indianSeasons[seasonIndex];
             const hinduMonthName = langObj.indianMonths[monthData.month];
 
-            // Upcoming Special Tithis (Scan next 30 days)
-            const upcoming = [];
-            let scanDate = new Date(dateObj);
-            scanDate.setDate(scanDate.getDate() + 1);
-            for(let i=0; i<30; i++) {
-                if (upcoming.length >= 3) break;
-                const astro = calculateTithi(scanDate);
-                if ([14, 29, 10, 25].includes(astro.index)) {
-                    upcoming.push({
-                        date: new Date(scanDate),
-                        tithi: astro.tithi,
-                        index: astro.index,
-                        paksha: astro.paksha
-                    });
-                }
-                scanDate.setDate(scanDate.getDate() + 1);
-            }
-
-            // Build Upcoming HTML
-            let upcomingHtml = '';
-            upcoming.forEach(item => {
-                let bgColor = 'bg-amber-100 text-amber-800 border border-amber-200';
-                let iconHtml = TITHI_ICONS.ekadashi;
-                let title = 'Ekadashi';
-                
-                if (item.index === 14) { bgColor = 'bg-orange-200 text-orange-900 border border-orange-300'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
-                else if (item.index === 29) { bgColor = 'bg-gray-200 text-gray-800 border border-gray-300'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
-                
-                const dateStr = item.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                
-                upcomingHtml += `
-                    <div class="${bgColor} rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
-                        <div class="w-6 h-6 mb-1 drop-shadow-sm">${iconHtml}</div>
-                        <div class="font-bold text-xs mb-0.5">${title}</div>
-                        <div class="text-[9px] opacity-80 uppercase font-bold leading-tight">${dateStr}</div>
-                    </div>
-                `;
-            });
-
             // Main Icon
             let mainIcon = getMoonPhaseIcon((tithiInfo.index + 1) / 30);
             if (tithiInfo.index === 14) mainIcon = TITHI_ICONS.purnima;
@@ -5874,16 +5835,7 @@ function renderCalendarGrid(data) {
 
 
                         <!-- 3. Upcoming Special Tithis -->
-                        ${upcoming.length > 0 ? `
-                        <div class="modal-card">
-                            <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-regular fa-calendar-check"></i></div>
-                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Upcoming Special Tithis</span>
-                            </div>
-                            <div class="grid grid-cols-3 gap-3">
-                                ${upcomingHtml}
-                            </div>
-                        </div>` : ''}
+                        <div id="modal-upcoming-container"></div>
 
                         <!-- 4. Banner Display (Only if URL exists) -->
                         ${bannerUrl ? `
@@ -5923,6 +5875,64 @@ function renderCalendarGrid(data) {
             
             modal.style.display = 'flex';
             setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
+
+            // Defer Upcoming Tithis Calculation (Performance Optimization)
+            setTimeout(() => {
+                const upcoming = [];
+                let scanDate = new Date(dateObj);
+                scanDate.setDate(scanDate.getDate() + 1);
+
+                // Scan next 30 days
+                for(let i=0; i<30; i++) {
+                    if (upcoming.length >= 3) break;
+                    const astro = calculateTithi(scanDate);
+                    if ([14, 29, 10, 25].includes(astro.index)) {
+                        upcoming.push({
+                            date: new Date(scanDate),
+                            tithi: astro.tithi,
+                            index: astro.index,
+                            paksha: astro.paksha
+                        });
+                    }
+                    scanDate.setDate(scanDate.getDate() + 1);
+                }
+
+                if (upcoming.length > 0) {
+                    let upcomingHtml = '';
+                    upcoming.forEach(item => {
+                        let bgColor = 'bg-amber-100 text-amber-800 border border-amber-200';
+                        let iconHtml = TITHI_ICONS.ekadashi;
+                        let title = 'Ekadashi';
+
+                        if (item.index === 14) { bgColor = 'bg-orange-200 text-orange-900 border border-orange-300'; iconHtml = TITHI_ICONS.purnima; title = 'Purnima'; }
+                        else if (item.index === 29) { bgColor = 'bg-gray-200 text-gray-800 border border-gray-300'; iconHtml = TITHI_ICONS.amavasya; title = 'Amavasya'; }
+
+                        const dateStr = item.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+                        upcomingHtml += `
+                            <div class="${bgColor} rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
+                                <div class="w-6 h-6 mb-1 drop-shadow-sm">${iconHtml}</div>
+                                <div class="font-bold text-xs mb-0.5">${title}</div>
+                                <div class="text-[9px] opacity-80 uppercase font-bold leading-tight">${dateStr}</div>
+                            </div>
+                        `;
+                    });
+
+                    const container = document.getElementById('modal-upcoming-container');
+                    if (container) {
+                        container.innerHTML = `
+                        <div class="modal-card fade-enter-active">
+                            <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
+                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-regular fa-calendar-check"></i></div>
+                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Upcoming Special Tithis</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                ${upcomingHtml}
+                            </div>
+                        </div>`;
+                    }
+                }
+            }, 50); // Small delay to let modal render first
         }
 
         // Placeholder for legacy call (if any)
