@@ -2519,12 +2519,14 @@ return SunCalc;
         }
 
         function getUserLocation() {
-            if (!navigator.geolocation) {
-                showToast("Geolocation is not supported by your browser.");
-                return;
-            }
             const btn = document.getElementById('btn-location');
             const originalContent = btn ? btn.innerHTML : '';
+
+            if (!navigator.geolocation) {
+                fallbackToSavedLocation(btn, originalContent);
+                return;
+            }
+
             if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Locating...';
             
             navigator.geolocation.getCurrentPosition(async (position) => {
@@ -2563,9 +2565,27 @@ return SunCalc;
                 showToast("Location updated: " + locName);
             }, (error) => {
                 console.error(error);
-                showToast("Unable to retrieve your location.");
-                if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
+                fallbackToSavedLocation(btn, originalContent);
             });
+        }
+
+        function fallbackToSavedLocation(btn, originalContent) {
+            try {
+                const savedConfig = localStorage.getItem('panchangConfig');
+                if (savedConfig) {
+                    const parsed = JSON.parse(savedConfig);
+                    if (parsed.location) {
+                        appState.config.location = parsed.location;
+                        render();
+                        showToast(`Using saved location: ${parsed.location.name || 'Coordinates'}`);
+                        if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
+                        return;
+                    }
+                }
+            } catch(e) { console.error("Backup location load failed", e); }
+
+            showToast("Location unavailable. Please enable GPS.");
+            if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
         }
 
         function getSeasonIndex(month) {
