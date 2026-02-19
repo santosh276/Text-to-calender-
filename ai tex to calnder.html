@@ -2866,7 +2866,7 @@ return SunCalc;
             return num.toString().split('').map(d => langData[langCode].nums[parseInt(d)]).join('');
         }
 
-        function openSettingsModal() {
+        function lockScroll() {
             // Prevent background scrolling
             document.body.style.overflow = 'hidden';
 
@@ -2875,7 +2875,20 @@ return SunCalc;
                 document.body.classList.remove('overflow-y-auto');
                 document.body.dataset.restoreOverflowY = 'true';
             }
+        }
 
+        function unlockScroll() {
+            // Restore background scrolling
+            document.body.style.overflow = '';
+
+            if (document.body.dataset.restoreOverflowY === 'true') {
+                document.body.classList.add('overflow-y-auto');
+                delete document.body.dataset.restoreOverflowY;
+            }
+        }
+
+        function openSettingsModal() {
+            lockScroll();
             document.getElementById('language-select').value = appState.config.language || 'en';
             
             // Environment Check: Hide Sync Settings in App Mode (User View)
@@ -2933,16 +2946,11 @@ return SunCalc;
             modal.classList.remove('is-open');
             modal.classList.add('modal-hidden');
             
-            // Restore background scrolling
-            document.body.style.overflow = '';
-
-            if (document.body.dataset.restoreOverflowY === 'true') {
-                document.body.classList.add('overflow-y-auto');
-                delete document.body.dataset.restoreOverflowY;
-            }
-
             // Timeout matches the 0.3s CSS transition + slight buffer
-            setTimeout(() => modal.style.display = 'none', 300);
+            setTimeout(() => {
+                modal.style.display = 'none';
+                unlockScroll();
+            }, 300);
         }
         function changeLanguage(langCode) {
             appState.config.language = langCode;
@@ -3064,6 +3072,7 @@ return SunCalc;
         }
 
         function openClearModal() {
+            lockScroll();
             const modal = document.getElementById('clear-confirmation-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
@@ -3071,7 +3080,10 @@ return SunCalc;
         function closeClearModal() {
             const modal = document.getElementById('clear-confirmation-modal');
             modal.classList.add('modal-hidden');
-            setTimeout(() => modal.style.display = 'none', 300);
+            setTimeout(() => {
+                modal.style.display = 'none';
+                unlockScroll();
+            }, 300);
         }
         function performClear() {
             const ed = document.getElementById('editor');
@@ -3109,6 +3121,7 @@ return SunCalc;
         }
 
         function openLinkModal() {
+            lockScroll();
             const modal = document.getElementById('link-modal');
             let year = new Date().getFullYear();
             let month = new Date().getMonth();
@@ -3137,7 +3150,10 @@ return SunCalc;
         function closeLinkModal() {
             const modal = document.getElementById('link-modal');
             modal.classList.add('modal-hidden');
-            setTimeout(() => modal.style.display = 'none', 300);
+            setTimeout(() => {
+                modal.style.display = 'none';
+                unlockScroll();
+            }, 300);
         }
 
         function updateLinkType(type) {
@@ -5630,6 +5646,7 @@ function renderCalendarGrid(data) {
         }
 
         function openDayModal(day, monthData) {
+            lockScroll();
             const modal = document.getElementById('day-modal');
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
@@ -5930,7 +5947,10 @@ function renderCalendarGrid(data) {
         function closeDayModal() {
             const modal = document.getElementById('day-modal');
             modal.classList.add('modal-hidden');
-            setTimeout(() => { modal.style.display = 'none'; }, 300); 
+            setTimeout(() => {
+                modal.style.display = 'none';
+                unlockScroll();
+            }, 300);
         }
 
 
