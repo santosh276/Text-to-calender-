@@ -922,6 +922,98 @@
         right: 2px;
     }
 
+        /* Astro Timeline Modern */
+        .astro-timeline-modern {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.8) 0%, rgba(88, 28, 135, 0.8) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .astro-timeline-modern::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .astro-divider {
+            width: 1px;
+            height: 3rem;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .astro-time-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .astro-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.85); /* Increased contrast */
+            margin-top: 0.25rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .astro-time {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 767px) {
+            .astro-timeline-modern {
+                padding: 0.75rem; /* Even more compact padding */
+                gap: 0.25rem;
+            }
+            .astro-time {
+                font-size: 0.85rem; /* Smaller font for mobile to prevent wrapping */
+                white-space: nowrap;
+            }
+            .astro-label {
+                font-size: 0.55rem;
+                color: rgba(255, 255, 255, 0.95); /* Even higher contrast on small screens */
+                letter-spacing: 0.05em;
+            }
+            .astro-time-item i {
+                font-size: 1.1rem; /* Smaller icons */
+                margin-bottom: 0.1rem;
+            }
+            .astro-divider {
+                height: 2.5rem;
+            }
+        }
+
+        .icon-glow-orange { filter: drop-shadow(0 0 8px rgba(251, 146, 60, 0.6)); }
+        .icon-glow-purple { filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6)); }
+        .icon-glow-blue { filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6)); }
+        .icon-glow-gray { filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3)); }
+
     /* --- Day Modal Page Layout (Light Theme) --- */
     @media (max-width: 767px) {
         #day-modal { padding: 0 !important; }
@@ -1955,14 +2047,52 @@ SunCalc.getTimes = function (date, lat, lng, height) {
 // moon calculations, based on http://aa.quae.nl/en/reken/hemelpositie.html formulas
 
 function moonCoords(d) { // geocentric ecliptic coordinates of the moon
-
-    var L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
-        M = rad * (134.963 + 13.064993 * d), // mean anomaly
-        F = rad * (93.272 + 13.229350 * d),  // mean distance
-
-        l  = L + rad * 6.289 * sin(M), // longitude
-        b  = rad * 5.128 * sin(F),     // latitude
-        dt = 385001 - 20905 * cos(M);  // distance to the moon in km
+    // High Precision Lunar Position (Meeus/VedicAstro Implementation)
+    var T = d / 36525;
+    var L0 = 218.316447 + 481267.881234 * T;
+    var D = 297.850192 + 445267.111403 * T;
+    var M = 357.529109 + 35999.050291 * T;
+    var Mprime = 134.963396 + 477198.867505 * T;
+    var F = 93.272095 + 483202.017523 * T;
+    
+    var D2R = Math.PI / 180;
+    
+    // Longitude Terms (Sine series)
+    var sumL = 6.288774 * Math.sin(Mprime * D2R);
+    sumL += 1.274027 * Math.sin((2 * D - Mprime) * D2R);
+    sumL += 0.658309 * Math.sin(2 * D * D2R);
+    sumL += 0.213618 * Math.sin(2 * Mprime * D2R);
+    sumL -= 0.185116 * Math.sin(M * D2R);
+    sumL -= 0.114332 * Math.sin(2 * F * D2R);
+    sumL += 0.058793 * Math.sin((2 * D - 2 * Mprime) * D2R);
+    sumL += 0.057066 * Math.sin((2 * D - M - Mprime) * D2R);
+    sumL += 0.053322 * Math.sin((2 * D + Mprime) * D2R);
+    sumL += 0.045758 * Math.sin((2 * D - M) * D2R);
+    sumL -= 0.040923 * Math.sin((M - Mprime) * D2R);
+    sumL -= 0.034720 * Math.sin(D * D2R);
+    sumL -= 0.030383 * Math.sin((M + Mprime) * D2R);
+    sumL += 0.015327 * Math.sin((2 * D - 2 * F) * D2R);
+    sumL -= 0.012528 * Math.sin((2 * D - 2 * M) * D2R);
+    
+    var l = (L0 + sumL) * D2R; // Longitude in radians
+    
+    // Latitude Terms (Sine series)
+    var sumB = 5.128122 * Math.sin(F * D2R)
+             + 0.280602 * Math.sin((Mprime + F) * D2R)
+             + 0.277693 * Math.sin((Mprime - F) * D2R)
+             + 0.173237 * Math.sin((2 * D - F) * D2R)
+             + 0.055413 * Math.sin((2 * D + F - Mprime) * D2R)
+             + 0.046271 * Math.sin((2 * D - F - Mprime) * D2R)
+             + 0.032573 * Math.sin((2 * D + F) * D2R)
+             + 0.017198 * Math.sin((2 * Mprime + F) * D2R);
+             
+    var b = sumB * D2R; // Latitude in radians
+    
+    // Distance (km)
+    var dt = 385000.56 - 20905.355 * Math.cos(Mprime * D2R)
+             - 3699.111 * Math.cos((2 * D - Mprime) * D2R)
+             - 2955.968 * Math.cos(2 * D * D2R)
+             - 569.925 * Math.cos(2 * Mprime * D2R);
 
     return {
         ra: rightAscension(l, b),
@@ -4885,30 +5015,30 @@ function renderCalendarGrid(data) {
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
                 const timelineDiv = document.createElement('div');
-                timelineDiv.className = "astro-timeline";
+                timelineDiv.className = "astro-timeline-modern";
                 timelineDiv.innerHTML = `
-                    <div class="astro-time-point text-orange-600">
-                        <i class="fa-solid fa-sun text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Sunrise</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunrise)}</span>
+                    <div class="astro-time-item">
+                        <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
+                        <span class="astro-label">Sunrise</span>
+                        <span class="astro-time">${fmt(sunTimes.sunrise)}</span>
                     </div>
-                    <div class="h-8 w-px bg-orange-200"></div>
-                    <div class="astro-time-point text-indigo-900">
-                        <i class="fa-solid fa-moon text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Sunset</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(sunTimes.sunset)}</span>
+                    <div class="astro-divider"></div>
+                    <div class="astro-time-item">
+                        <i class="fa-solid fa-cloud-sun text-2xl text-purple-400 icon-glow-purple"></i>
+                        <span class="astro-label">Sunset</span>
+                        <span class="astro-time">${fmt(sunTimes.sunset)}</span>
                     </div>
-                    <div class="h-8 w-px bg-orange-200"></div>
-                    <div class="astro-time-point text-gray-600">
-                        <i class="fa-solid fa-cloud-moon text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Moonrise</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(moonTimes ? moonTimes.rise : null)}</span>
+                    <div class="astro-divider"></div>
+                    <div class="astro-time-item">
+                        <i class="fa-solid fa-cloud-moon text-2xl text-blue-400 icon-glow-blue"></i>
+                        <span class="astro-label">Moonrise</span>
+                        <span class="astro-time">${fmt(moonTimes ? moonTimes.rise : null)}</span>
                     </div>
-                    <div class="h-8 w-px bg-orange-200"></div>
-                    <div class="astro-time-point text-gray-800">
-                        <i class="fa-solid fa-moon text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase opacity-70">Moonset</span>
-                        <span class="text-xs font-bold whitespace-nowrap">${fmt(moonTimes ? moonTimes.set : null)}</span>
+                    <div class="astro-divider"></div>
+                    <div class="astro-time-item">
+                        <i class="fa-solid fa-moon text-2xl text-gray-300 icon-glow-gray"></i>
+                        <span class="astro-label">Moonset</span>
+                        <span class="astro-time">${fmt(moonTimes ? moonTimes.set : null)}</span>
                     </div>
                 `;
                 list.appendChild(timelineDiv);
