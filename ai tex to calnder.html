@@ -471,7 +471,14 @@
         #day-modal .rich-content li { color: #4b5563; }
         #day-modal .rich-content h3, 
         #day-modal .rich-content h4 { color: #d97706; }
-        #day-modal .rich-content li::before { color: #9ca3af; }
+        #day-modal .rich-content li::before {
+            content: '\2022';
+            color: #9ca3af;
+            font-family: sans-serif;
+            font-size: 1.2rem;
+            line-height: 1rem;
+            top: -0.1rem;
+        }
         #day-modal .rich-content img { border-color: rgba(0,0,0,0.1); }
 
         .nav-btn { 
