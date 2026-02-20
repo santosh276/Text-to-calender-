@@ -118,6 +118,7 @@
         .text-\[32px\] { font-size: 32px; }
         .bg-amber-500\/10 { background-color: rgb(245 158 11 / 0.1); }
         .translate-x-3 { transform: translateX(0.75rem); }
+        .translate-x-5 { transform: translateX(1.25rem); }
 
         /* Moon Icon Glow */
         .moon-glow {
@@ -1082,7 +1083,7 @@
         </div>
 
         <div class="flex gap-3">
-          <button onclick="retryAppInitialization()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
+          <button onclick="retryAppInitialization()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-5">
             <i class="fa-solid fa-rotate-right text-[24px]"></i>
           </button>
           <button onclick="openSettingsModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
@@ -1175,6 +1176,9 @@
                             </div>
                             <p class="pt-1 border-t border-gray-700">
                                 <strong>Bilingual Support:</strong> Use <code>[Local Text]</code> brackets to show regional text below the English name.
+                            </p>
+                            <p class="pt-1 border-t border-gray-700">
+                                <strong>Multiple Events:</strong> Use <code>/</code> to separate multiple events on the same line (e.g. <code>Event 1 / Event 2</code>).
                             </p>
                         </div>
                     </div>
@@ -5452,30 +5456,69 @@ function renderCalendarGrid(data) {
                 return;
             }
 
+            // Group events by date (YYYY-MM-DD) to prevent double badges
+            const groups = [];
+            const seenKeys = new Set();
+            
             filtered.forEach(ev => {
+                 const mData = monthData || ev._monthData;
+                 const mIndex = (monthData) ? monthData.month : ev.monthIndex;
+                 const year = (monthData) ? monthData.year : ev.year;
+                 const key = `${year}-${mIndex}-${ev.date}`;
+                 
+                 if (!seenKeys.has(key)) {
+                     seenKeys.add(key);
+                     groups.push({
+                        date: ev.date,
+                        monthIndex: mIndex,
+                        year: year,
+                        mData: mData,
+                        events: [ev]
+                     });
+                 } else {
+                     const g = groups.find(g => g.year === year && g.monthIndex === mIndex && g.date === ev.date);
+                     if (g) g.events.push(ev);
+                 }
+            });
+
+            groups.forEach(group => {
                 const li = document.createElement('li');
                 li.className = "flex gap-3 items-center p-2 rounded-lg hover:bg-gray-50 border border-transparent transition-all cursor-pointer group";
                 
-                // Determine context (Global vs Local)
-                const mData = monthData || ev._monthData;
-                const mIndex = (monthData) ? monthData.month : ev.monthIndex;
-
-                li.onclick = () => openDayModal(ev.date, mData);
+                li.onclick = () => openDayModal(group.date, group.mData);
+                
+                // Determine Badge Color (Priority: ! > ^ > * > >)
+                const symbols = group.events.map(e => e.symbol);
+                let symbol = '>';
+                if (symbols.includes('!')) symbol = '!';
+                else if (symbols.includes('^')) symbol = '^';
+                else if (symbols.includes('*')) symbol = '*';
                 
                 let badgeClass = "bg-gray-600";
-                if (ev.symbol === '!') badgeClass = "bg-red-600"; 
-                else if (ev.symbol === '^') badgeClass = "bg-green-600"; 
-                else if (ev.symbol === '*') badgeClass = "bg-blue-600";
+                if (symbol === '!') badgeClass = "bg-red-600"; 
+                else if (symbol === '^') badgeClass = "bg-green-600"; 
+                else if (symbol === '*') badgeClass = "bg-blue-600";
                 
-                const monthName = shortMonths[mIndex];
+                const monthName = shortMonths[group.monthIndex];
+                
+                // Render Multiple Events Stacked
+                const eventsHtml = group.events.map((ev, idx) => {
+                    const mt = idx > 0 ? 'mt-1 pt-1 border-t border-gray-100' : '';
+                    return `
+                    <div class="${mt}">
+                        <div class="font-bold text-gray-900 text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
+                        <div class="text-[11px] text-gray-500 font-oriya truncate">${ev.locName || ''}</div>
+                    </div>
+                    `;
+                }).join('');
+
                 li.innerHTML = `
                     <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
                         <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
-                        <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${ev.date}</span>
+                        <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${group.date}</span>
                     </div>
                     <div class="flex-grow min-w-0 flex flex-col justify-center">
-                        <div class="font-bold text-gray-900 text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
-                        <div class="text-[11px] text-gray-500 font-oriya truncate">${ev.locName || ''}</div>
+                        ${eventsHtml}
                     </div>
                 `;
                 container.appendChild(li);
