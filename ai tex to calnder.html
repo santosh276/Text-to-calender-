@@ -310,6 +310,12 @@
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
+        /* Aurora Scrollbar (Day Detail Modal) */
+        .scrollbar-aurora::-webkit-scrollbar { width: 6px; }
+        .scrollbar-aurora::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-aurora::-webkit-scrollbar-thumb { background: rgba(185, 28, 28, 0.2); border-radius: 10px; }
+        .scrollbar-aurora::-webkit-scrollbar-thumb:hover { background: rgba(185, 28, 28, 0.4); }
+
         /* Glassmorphism Utilities */
         .glass {
             background: rgba(255, 255, 255, 0.85);
@@ -5822,19 +5828,19 @@ function renderCalendarGrid(data) {
             
             // --- 2. BUILD HTML STRUCTURE (Light Page Layout) ---
             const contentHtml = `
-                <button onclick="closeDayModal()" class="fixed top-4 right-4 z-[100] bg-gray-100 hover:bg-gray-200 text-gray-600 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition shadow-lg border border-gray-200"><i class="fa-solid fa-times"></i></button>
-
-                <div class="h-full overflow-y-auto custom-scroll pb-20">
+                <div class="flex flex-col h-full relative overflow-hidden">
                     
-                    <!-- Header -->
-                    <div class="text-center pt-21 pb-5 relative -mt-8">
-                        <div class="w-20 h-20 mx-auto mb-3 moon-glow">${mainIcon}</div>
-                        <h2 class="text-2xl font-extrabold text-deepred mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
-                        <p class="text-amber-500 font-bold text-base uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
+                    <!-- Persistent Header -->
+                    <div class="shrink-0 z-10 relative backdrop-blur-md bg-white/30 text-center pt-10 pb-4 border-b border-white/20 shadow-sm">
+                        <button onclick="closeDayModal()" class="absolute top-4 right-4 z-[100] bg-gray-100 hover:bg-gray-200 text-gray-600 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition shadow-lg border border-gray-200"><i class="fa-solid fa-times"></i></button>
+                        
+                        <div class="w-16 h-16 mx-auto mb-2 moon-glow transform scale-90 origin-bottom">${mainIcon}</div>
+                        <h2 class="text-xl font-extrabold text-deepred mb-0.5 tracking-tight leading-none">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
+                        <p class="text-amber-600 font-bold text-xs uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
                     </div>
 
-                    <!-- Content Padding -->
-                    <div class="px-4 space-y-4 max-w-lg mx-auto">
+                    <!-- Scrollable Body -->
+                    <div class="flex-grow overflow-y-auto scrollbar-aurora pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full">
                         
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
