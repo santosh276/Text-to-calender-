@@ -118,6 +118,7 @@
         .text-\[32px\] { font-size: 32px; }
         .bg-amber-500\/10 { background-color: rgb(245 158 11 / 0.1); }
         .translate-x-3 { transform: translateX(0.75rem); }
+        .translate-x-5 { transform: translateX(1.25rem); }
 
         /* Moon Icon Glow */
         .moon-glow {
@@ -1082,7 +1083,7 @@
         </div>
 
         <div class="flex gap-3">
-          <button onclick="retryAppInitialization()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
+          <button onclick="retryAppInitialization()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-5">
             <i class="fa-solid fa-rotate-right text-[24px]"></i>
           </button>
           <button onclick="openSettingsModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
@@ -1175,6 +1176,9 @@
                             </div>
                             <p class="pt-1 border-t border-gray-700">
                                 <strong>Bilingual Support:</strong> Use <code>[Local Text]</code> brackets to show regional text below the English name.
+                            </p>
+                            <p class="pt-1 border-t border-gray-700">
+                                <strong>Multiple Events:</strong> Use <code>/</code> to separate multiple events on the same line (e.g. <code>Event 1 / Event 2</code>).
                             </p>
                         </div>
                     </div>
