@@ -5824,17 +5824,22 @@ function renderCalendarGrid(data) {
             const contentHtml = `
                 <button onclick="closeDayModal()" class="fixed top-4 right-4 z-[100] bg-gray-100 hover:bg-gray-200 text-gray-600 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition shadow-lg border border-gray-200"><i class="fa-solid fa-times"></i></button>
 
-                <div class="h-full overflow-y-auto custom-scroll pb-20">
-                    
-                    <!-- Header -->
-                    <div class="text-center pt-21 pb-5 relative -mt-8">
-                        <div class="w-20 h-20 mx-auto mb-3 moon-glow">${mainIcon}</div>
-                        <h2 class="text-2xl font-extrabold text-deepred mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
-                        <p class="text-amber-500 font-bold text-base uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
-                    </div>
+                <!-- Flex Wrapper -->
+                <div class="flex flex-col h-full relative overflow-hidden">
+                <!-- Persistent Header (Fixed/Sticky) -->
+                <div class="shrink-0 relative z-10 text-center pt-14 pb-4 px-6 border-b border-white/10">
+                    <!-- Glassmorphism Overlay for Header -->
+                    <div class="absolute inset-0 bg-white/30 backdrop-blur-md -z-10"></div>
+
+                    <div class="w-20 h-20 mx-auto mb-3 moon-glow">${mainIcon}</div>
+                    <h2 class="text-2xl font-extrabold text-deepred mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
+                    <p class="text-amber-500 font-bold text-base uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
+                </div>
+
+                <div class="flex-grow overflow-y-auto custom-scroll pb-20 px-4">
 
                     <!-- Content Padding -->
-                    <div class="px-4 space-y-4 max-w-lg mx-auto">
+                    <div class="space-y-4 max-w-lg mx-auto pt-4">
                         
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
@@ -5973,6 +5978,7 @@ function renderCalendarGrid(data) {
 
                     </div>
                 </div>
+                </div> <!-- Closing Flex Wrapper -->
             `;
 
             const modalContent = modal.querySelector('.modal-content');
