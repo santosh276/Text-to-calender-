@@ -442,12 +442,9 @@
             display: flex; align-items: center; gap: 0.5rem;
         }
         
-        .rich-content ul { list-style-type: none; padding-left: 0; margin-bottom: 1rem; color: #4b5563; }
-        .rich-content li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
-        .rich-content li::before {
-            content: '\f058'; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            position: absolute; left: 0; color: #8D6E63; font-size: 0.9rem; top: 0.2rem;
-        }
+        .rich-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #4b5563; }
+        .rich-content li { margin-bottom: 0.5rem; }
+        .rich-content li::marker { color: #9ca3af; }
 
         .rich-content p { margin-bottom: 0.75rem; color: #374151; line-height: 1.6; font-size: 1.05rem; }
         .rich-content img {
@@ -471,7 +468,6 @@
         #day-modal .rich-content li { color: #4b5563; }
         #day-modal .rich-content h3, 
         #day-modal .rich-content h4 { color: #d97706; }
-        #day-modal .rich-content li::before { color: #9ca3af; }
         #day-modal .rich-content img { border-color: rgba(0,0,0,0.1); }
 
         .nav-btn { 
@@ -5643,6 +5639,33 @@ function renderCalendarGrid(data) {
             }
         }
 
+        function formatBodyLines(lines) {
+            let html = '';
+            let inList = false;
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('-')) {
+                    if (!inList) {
+                        html += '<ul class="list-disc pl-6 mb-2">';
+                        inList = true;
+                    }
+                    html += `<li class="mb-1 text-gray-600">${trimmed.replace('-','').trim()}</li>`;
+                } else {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (trimmed.startsWith('#')) {
+                        html += `<h4 class="text-deepred font-bold mt-3 mb-1 text-base">${trimmed.replace(/#/g,'').trim()}</h4>`;
+                    } else if (trimmed !== "") {
+                        html += `<p class="mb-2 text-gray-700">${trimmed}</p>`;
+                    }
+                }
+            });
+            if (inList) html += '</ul>';
+            return html;
+        }
+
         function openDayModal(day, monthData) {
             lockScroll();
             const modal = document.getElementById('day-modal');
@@ -5902,14 +5925,7 @@ function renderCalendarGrid(data) {
                                 </div>
                             `).join('')}
                             
-                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">${details.map(d => {
-                                // Simple text rendering for body lines
-                                return d.bodyLines.map(line => {
-                                    if(line.startsWith('#')) return `<h4 class="text-deepred font-bold mt-3 mb-1 text-base">${line.replace(/#/g,'').trim()}</h4>`;
-                                    if(line.startsWith('-')) return `<li class="ml-4 text-gray-600">${line.replace('-','').trim()}</li>`;
-                                    return `<p class="mb-2 text-gray-700">${line}</p>`;
-                                }).join('');
-                            }).join('<hr class="border-gray-200 my-4">')}</div>` : ''}
+                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">${details.map(d => formatBodyLines(d.bodyLines)).join('<hr class="border-gray-200 my-4">')}</div>` : ''}
                         </div>
 
                     </div>
