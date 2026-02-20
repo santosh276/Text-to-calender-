@@ -111,6 +111,7 @@
 <style>
         /* Custom Header Styles */
         .pt-21 { padding-top: 5.25rem; }
+        .pt-16 { padding-top: 4rem; }
         .pb-5 { padding-bottom: 1.25rem; }
         .-mt-8 { margin-top: -2rem; }
         .mt-2 { margin-top: 0.5rem; }
@@ -5832,7 +5833,7 @@ function renderCalendarGrid(data) {
                 <div class="flex flex-col h-full w-full relative">
                     
                     <!-- Header (Fixed) -->
-                    <div class="text-center pt-14 pb-5 px-4 relative shrink-0 z-10">
+                    <div class="text-center pt-16 pb-5 px-4 relative shrink-0 z-10">
                         <div class="w-20 h-20 mx-auto mb-3 moon-glow">${mainIcon}</div>
                         <h2 class="text-2xl font-extrabold text-deepred mb-1 tracking-tight">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
                         <p class="text-amber-500 font-bold text-base uppercase tracking-widest opacity-90">${tithiInfo.paksha}</p>
