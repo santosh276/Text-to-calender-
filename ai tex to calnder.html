@@ -5364,8 +5364,8 @@ function renderCalendarGrid(data) {
                     </div>
                     <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
                     <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-black/5 blur-xl pointer-events-none"></div>
-                    <div class="absolute bottom-0 right-0 opacity-10 pointer-events-none">
-                        ${OM_ICON_SVG.replace('width="24" height="24"', 'width="128" height="128"').replace('fill="#d4af37"', 'fill="#ffffff"')}
+                    <div class="absolute bottom-0 right-0 opacity-10 pointer-events-none pr-2 pb-2">
+                        <span class="text-[8rem] leading-none font-serif select-none text-white" style="font-family: Georgia, serif;">ॐ</span>
                     </div>
                 `;
                 section.appendChild(eventCard);
@@ -5416,7 +5416,7 @@ function renderCalendarGrid(data) {
             
             const filters = [ 
                 { id: '!', label: localizedFilters[0], icon: TEMPLE_ICON_SVG.replace('width="24" height="24"', 'width="14" height="14"').replace('fill="currentColor"', 'fill="currentColor"'), color: 'red' }, 
-                { id: '^', label: localizedFilters[1], icon: OM_ICON_SVG.replace('width="24" height="24"', 'width="14" height="14"').replace('fill="#d4af37"', 'fill="currentColor"'), color: 'green' }, 
+                { id: '^', label: localizedFilters[1], icon: '<span class="font-serif text-sm leading-none" style="font-family: Georgia, serif; transform: translateY(-1px);">ॐ</span>', color: 'green' },
                 { id: '*', label: localizedFilters[2], icon: HOLIDAY_ICON_SVG.replace('width="24" height="24"', 'width="14" height="14"').replace('fill="currentColor"', 'fill="currentColor"'), color: 'blue' },
                 { id: '>', label: localizedFilters[3] || "Other Events", icon: CALENDAR_ICON_SVG.replace('width="24" height="24"', 'width="14" height="14"').replace('fill="currentColor"', 'fill="currentColor"'), color: 'gray' }
             ];
