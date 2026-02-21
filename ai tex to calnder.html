@@ -5950,14 +5950,21 @@ function renderCalendarGrid(data) {
                                         <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
                                     </div>
                                 </div>
-                                <div class="flex justify-between mt-3 px-0.5">
+                                <div class="flex justify-between items-center mt-4 px-1">
                                     <div class="flex flex-col items-start">
-                                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Start</span>
-                                        <span class="text-[10px] text-gray-600 font-bold font-mono leading-none">${fmtTime(tithiTimes.start)}</span>
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Start</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-regular fa-clock text-gray-400 text-sm"></i>
+                                            <span class="text-lg text-gray-700 font-bold leading-none">${fmtTime(tithiTimes.start)}</span>
+                                        </div>
                                     </div>
+                                    <div class="h-8 w-px bg-gray-200 mx-4"></div>
                                     <div class="flex flex-col items-end">
-                                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">End</span>
-                                        <span class="text-[10px] text-amber-500 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">End</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-regular fa-clock text-orange-400 text-sm"></i>
+                                            <span class="text-lg text-orange-600 font-bold leading-none">${fmtTime(tithiTimes.end)}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
