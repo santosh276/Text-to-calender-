@@ -3040,6 +3040,7 @@ return SunCalc;
             render();
         }
 
+        // --- EDITOR LOGIC START ---
         function updateSyncLinkInput() {
             const langEl = document.getElementById('sync-lang-select');
             if (!langEl) return; // Exit if elements don't exist (e.g., in downloaded app)
@@ -3052,7 +3053,9 @@ return SunCalc;
                 input.value = '';
             }
         }
+        // --- EDITOR LOGIC END ---
 
+        // --- EDITOR LOGIC START ---
         function saveSyncLink() {
             const langEl = document.getElementById('sync-lang-select');
             if (!langEl) return;
@@ -3073,6 +3076,7 @@ return SunCalc;
             }
             saveConfigToStorage();
         }
+        // --- EDITOR LOGIC END ---
 
         function toggleBannerVisibility(checkbox) {
             isBannerDismissed = !checkbox.checked;
@@ -3082,6 +3086,7 @@ return SunCalc;
             render();
         }
 
+        // --- EDITOR LOGIC START ---
         function toggleLiveSyncDocs(checked) {
             const toggleGitHub = document.getElementById('toggle-sync-github');
             if (checked) {
@@ -3127,6 +3132,7 @@ return SunCalc;
                 }
             }
         }
+        // --- EDITOR LOGIC END ---
 
         let tempLinkState = { selectedType: 'logo' };
         let currentIsolationFilter = null; // null = Show All
@@ -3134,6 +3140,7 @@ return SunCalc;
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+        // --- EDITOR LOGIC START ---
         function toggleSyntaxGuide() {
             const guide = document.getElementById('syntax-guide');
             guide.classList.toggle('open');
@@ -3424,6 +3431,7 @@ return SunCalc;
                 if (githubToggle) githubToggle.checked = false;
             }
         }
+        // --- EDITOR LOGIC END ---
 
         // --- NEW: Fetch GitHub Data (Direct) ---
         async function fetchGitHubData(url, force = false) {
@@ -3842,6 +3850,7 @@ return SunCalc;
         initApp();
         initCalendarSwipe();
 
+        // --- EDITOR LOGIC START ---
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -3853,6 +3862,7 @@ return SunCalc;
             reader.readAsText(file);
             event.target.value = '';
         }
+        // --- EDITOR LOGIC END ---
 
         
         // Load config from localStorage if available
@@ -5695,6 +5705,7 @@ function renderCalendarGrid(data) {
         let currentModalTithiBlock = "";
         let currentUploadDateKey = null;
 
+        // --- EDITOR LOGIC START ---
         function triggerBannerUpload(dateKey) {
             currentUploadDateKey = dateKey;
             document.getElementById('bannerInput').click();
@@ -5773,6 +5784,7 @@ function renderCalendarGrid(data) {
                  }
             }
         }
+        // --- EDITOR LOGIC END ---
 
         function formatBodyLines(lines) {
             let html = '';
@@ -6167,41 +6179,43 @@ function renderCalendarGrid(data) {
             return false;
         }
 
+        // --- EDITOR LOGIC START ---
         function downloadCalendar() {
             // 1. Clone the current document structure
             const clone = document.documentElement.cloneNode(true);
 
-            // --- OPTIMIZATION START ---
-            // 2. PURGE HEAVY CONTAINERS
-            // We empty these because the App will re-render them instantly on load.
-            // This saves ~150KB - 200KB of redundant HTML code.
-            const idsToEmpty = [
-                'calendar-grid',       // The big monthly grid
-                'year-grid',           // The massive year view (365 divs)
-                'festival-list',       // The list of festivals
-                'panchang-list',       // The panchang details
-                'panchang-pills',      // Panchang header pills
-                'banner-slides',       // Image carousel
-                'banner-dots'          // Carousel dots
-            ];
-            
+            // --- OPTIMIZATION: PURGE HEAVY CONTAINERS ---
+            const idsToEmpty = ['calendar-grid', 'year-grid', 'festival-list', 'panchang-list', 'panchang-pills', 'banner-slides', 'banner-dots'];
             idsToEmpty.forEach(id => {
                 const el = clone.querySelector(`#${id}`);
-                if(el) el.innerHTML = ''; // Wipe content, keep ID
+                if(el) el.innerHTML = '';
             });
-            // --- OPTIMIZATION END ---
 
-            // 3. Remove Editor & Dev Tools (Standard App Mode cleanup)
-            const editorPanel = clone.querySelector('#editor-panel');
-            if(editorPanel) editorPanel.remove();
+            // 2. Remove Editor Components (The "White-Label" Scrub)
+            const removeSelectors = [
+                '#editor-panel',             // The entire editor
+                '#clear-confirmation-modal', // Editor modal
+                '#link-modal',               // Editor modal
+                '#bannerInput',              // Upload input
+                '#fileInput',                // Upload input
+                '#container-sync-settings',  // Developer settings
+                '#container-lang-links',     // Developer settings
+                '#app-loader'                // Existing loader
+            ];
+            removeSelectors.forEach(sel => {
+                const el = clone.querySelector(sel);
+                if(el) el.remove();
+            });
             
             // Adjust layout for App Mode
             const mainWrapper = clone.querySelector('.flex.flex-col.md\\:flex-row');
             if(mainWrapper) mainWrapper.classList.remove('h-full', 'overflow-hidden');
 
             const body = clone.querySelector('body');
-            body.classList.remove('h-screen', 'overflow-hidden');
-            body.classList.add('min-h-screen', 'overflow-y-auto', 'bg-[#fdfbf7]');
+            if(body) {
+                body.classList.remove('h-screen', 'overflow-hidden');
+                body.classList.add('min-h-screen', 'overflow-y-auto', 'bg-[#fdfbf7]');
+            }
 
             const previewPanel = clone.querySelector('#preview-container');
             if(previewPanel) {
@@ -6209,19 +6223,21 @@ function renderCalendarGrid(data) {
                 previewPanel.style.overflow = 'visible';
             }
 
-            // Remove settings/buttons not needed in the standalone file
-            const removeSelectors = [
-                '#container-sync-settings',
-                '#container-lang-links',
-                '#download-btn',
-                '#app-loader' // Remove existing loader if present
-            ];
-            removeSelectors.forEach(sel => {
-                const el = clone.querySelector(sel);
-                if(el) el.remove();
+            // 3. Scrub Script (Remove Editor Logic)
+            const scripts = clone.querySelectorAll('script');
+            scripts.forEach(script => {
+                let code = script.innerHTML;
+                // Only modify if markers are present
+                if (code.includes('EDITOR LOGIC START')) {
+                    // Remove marked blocks
+                    code = code.replace(/\/\/ --- EDITOR LOGIC START ---[\s\S]*?\/\/ --- EDITOR LOGIC END ---/g, '');
+                    // Remove empty lines
+                    code = code.replace(/^\s*[\r\n]/gm, '');
+                    script.innerHTML = code;
+                }
             });
 
-            // 4. Inject Loading Screen (Visual feedback while it re-renders)
+            // 4. Inject Loading Screen
             const loaderHtml = `
             <div id="app-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm pointer-events-none transition-opacity duration-500">
                 <div class="mb-6 animate-pulse">
@@ -6231,11 +6247,13 @@ function renderCalendarGrid(data) {
                 </div>
                 <h2 class="text-2xl font-bold text-gray-800">Initializing...</h2>
             </div>`;
-            const loaderDiv = document.createElement('div');
-            loaderDiv.innerHTML = loaderHtml;
-            body.prepend(loaderDiv.firstElementChild);
+            if(body) {
+                const loaderDiv = document.createElement('div');
+                loaderDiv.innerHTML = loaderHtml;
+                body.prepend(loaderDiv.firstElementChild);
+            }
 
-            // 5. Encrypt Config
+            // 5. Encrypt Config & Create State
             const exportConfig = JSON.parse(JSON.stringify(appState.config));
             if (exportConfig.syncLinks) {
                 Object.keys(exportConfig.syncLinks).forEach(k => {
@@ -6246,7 +6264,6 @@ function renderCalendarGrid(data) {
                 exportConfig.linksEncrypted = true;
             }
 
-            // 6. Create State Object
             const stateToSave = {
                 activeMonthIndex: appState.activeMonthIndex || 0,
                 monthsData: appState.monthsData || [],
@@ -6262,12 +6279,12 @@ function renderCalendarGrid(data) {
             const title = clone.querySelector('title');
             if(title) title.innerText = appState.config.title || "My Panchang App";
 
-            // 7. Inject Data Script
+            // 6. Inject Data Script
             const dataScript = document.createElement('script');
             dataScript.textContent = `window.exportedData = ${JSON.stringify(stateToSave)};`;
-            clone.querySelector('body').prepend(dataScript);
+            if(body) body.prepend(dataScript);
 
-            // 8. Download
+            // 7. Download
             const htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
             const blob = new Blob([htmlContent], { type: "text/html" });
             const url = URL.createObjectURL(blob);
@@ -6280,6 +6297,7 @@ function renderCalendarGrid(data) {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
+        // --- EDITOR LOGIC END ---
 
         function showToast(message) {
             const toast = document.createElement('div');
