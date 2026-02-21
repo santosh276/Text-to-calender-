@@ -3756,7 +3756,6 @@ return SunCalc;
             } 
             // Priority 2: Text Cache
             else {
-                // --- EDITOR LOGIC START ---
                 const cachedText = localStorage.getItem('panchang_autosave_text');
                 if (cachedText) {
                     console.log("Loaded from Text Cache");
@@ -3769,7 +3768,6 @@ return SunCalc;
                         console.log("Text Cache present but data deemed invalid/empty.");
                     }
                 }
-                // --- EDITOR LOGIC END ---
             }
 
             // --- EDITOR LOGIC START ---
@@ -3828,8 +3826,10 @@ return SunCalc;
                 const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
 
                 let allowProxy = false;
+                // --- EDITOR LOGIC START ---
                 // In Editor Mode, we allow Proxy Sync (Google Docs)
                 if (document.getElementById('editor')) allowProxy = true;
+                // --- EDITOR LOGIC END ---
 
                 // ENFORCE RESTRICTION: In App Mode, ONLY GitHub Direct Sync is allowed.
                 if (!allowProxy && !isGitHub) {
@@ -3846,7 +3846,9 @@ return SunCalc;
                     setTimeout(() => {
                         console.log("Scenario A: Background Sync...");
                         let shouldForce = false;
+                        // --- EDITOR LOGIC START ---
                         if (document.getElementById('editor')) shouldForce = true;
+                        // --- EDITOR LOGIC END ---
 
                         if (isGitHub) fetchGitHubData(url, shouldForce);
                         else fetchLiveDoc(url, shouldForce);
