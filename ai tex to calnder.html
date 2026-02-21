@@ -5284,6 +5284,27 @@ function renderCalendarGrid(data) {
             liveClockInterval = setInterval(updateTime, 1000);
         }
 
+        function adjustUpNextIcon(card) {
+            const wrapper = card.querySelector('.up-next-om-wrapper');
+            const icon = card.querySelector('.up-next-om-icon');
+            if (!wrapper || !icon) return;
+
+            const w = card.offsetWidth;
+
+            // Algorithm: Scale icon based on container width
+            // Target: Icon should be roughly 50% of container width, but min 140px.
+            // Old was fixed 8rem (~128px)
+            let size = Math.max(140, w * 0.5);
+
+            // Position: "slightly below side" implies pushing it down and right.
+            const bottomOffset = -size * 0.20;
+            const rightOffset = -size * 0.10;
+
+            icon.style.fontSize = `${size}px`;
+            wrapper.style.bottom = `${bottomOffset}px`;
+            wrapper.style.right = `${rightOffset}px`;
+        }
+
         function renderFestivals(data) {
             stopLiveClock();
             const section = document.getElementById('sec-festivals');
@@ -5364,11 +5385,16 @@ function renderCalendarGrid(data) {
                     </div>
                     <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
                     <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-black/5 blur-xl pointer-events-none"></div>
-                    <div class="absolute bottom-0 right-0 opacity-10 pointer-events-none">
-                        <span class="text-[8rem] leading-none font-serif select-none text-white" style="font-family: Georgia, serif;">ॐ</span>
+                    <div class="absolute bottom-0 right-0 opacity-10 pointer-events-none up-next-om-wrapper">
+                        <span class="text-[8rem] leading-none font-serif select-none text-white up-next-om-icon" style="font-family: Georgia, serif;">ॐ</span>
                     </div>
                 `;
                 section.appendChild(eventCard);
+
+                // Automatic fitting algorithm
+                adjustUpNextIcon(eventCard);
+                const ro = new ResizeObserver(() => adjustUpNextIcon(eventCard));
+                ro.observe(eventCard);
 
             }
 
