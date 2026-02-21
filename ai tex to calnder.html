@@ -3740,6 +3740,7 @@ return SunCalc;
             } 
             // Priority 2: Text Cache
             else {
+                // --- EDITOR LOGIC START ---
                 const cachedText = localStorage.getItem('panchang_autosave_text');
                 if (cachedText) {
                     console.log("Loaded from Text Cache");
@@ -3752,6 +3753,7 @@ return SunCalc;
                         console.log("Text Cache present but data deemed invalid/empty.");
                     }
                 }
+                // --- EDITOR LOGIC END ---
             }
 
             // --- EDITOR LOGIC START ---
