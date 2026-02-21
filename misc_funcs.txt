@@ -1,0 +1,141 @@
+        let currentIsolationFilter = null; // null = Show All
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        // --- EDITOR LOGIC START ---
+        function toggleSyntaxGuide() {
+            const guide = document.getElementById('syntax-guide');
+            guide.classList.toggle('open');
+        }
+
+        function openClearModal() {
+            lockScroll();
+            const modal = document.getElementById('clear-confirmation-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.remove('modal-hidden'), 10);
+        }
+        function closeClearModal() {
+            const modal = document.getElementById('clear-confirmation-modal');
+            modal.classList.add('modal-hidden');
+            unlockScroll();
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        function performClear() {
+            const ed = document.getElementById('editor');
+            if(ed) {
+                ed.value = "";
+                appState.activeMonthIndex = 0;
+                parseInput("");
+                closeClearModal();
+            }
+        }
+
+        function insertImageToEditor(url, type, extraParam) {
+            let newText = editor.value;
+            if (type === 'logo') {
+                const configBlockRegex = /::: config([\s\S]*?):::/;
+                const logoLine = `@ Logo : ![App Logo](${url})`;
+                if (configBlockRegex.test(newText)) {
+                    newText = newText.replace(configBlockRegex, (match, content) => {
+                        if (content.match(/@\s*Logo\s*:/)) { return match.replace(/@\s*Logo\s*:.*(\r?\n|$)/, `${logoLine}\n`); }
+                        else { return `::: config\n${logoLine}${content}:::`; }
+                    });
+                } else { newText = `::: config\n${logoLine}\n:::\n\n` + newText; }
+                appState.config.logoUrl = url;
+            } else if (type === 'banner' || type === 'gridbg') {
+                const date = extraParam;
+                if (!date) { alert("Please select a date."); return; }
+                const dateHeaderRegex = new RegExp(`(>>\\s+${date})`);
+                const tagLine = type === 'banner' ? `![Banner](${url})` : `![GridBg](${url})`;
+                if(newText.match(dateHeaderRegex)) { newText = newText.replace(dateHeaderRegex, `$1\n${tagLine}`); }
+                else { newText += `\n\n::: details\n>> ${date}\n${tagLine}\n@ Tag : New Event\n:::`; }
+            }
+            editor.value = newText;
+            parseInput(newText);
+            render();
+        }
+
+        function openLinkModal() {
+            lockScroll();
+            const modal = document.getElementById('link-modal');
+            let year = new Date().getFullYear();
+            let month = new Date().getMonth();
+            if (appState.monthsData && appState.monthsData.length > 0) {
+                const currentData = appState.monthsData[appState.activeMonthIndex];
+                if (currentData) { year = currentData.year; month = currentData.month; }
+            }
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const dropdown = document.getElementById('link-date-select');
+            dropdown.innerHTML = '<option value="" disabled selected>Select Date</option>';
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${String(d).padStart(2, '0')}-${String(month + 1).padStart(2, '0')}-${year}`;
+                const dateObj = new Date(year, month, d);
+                const dayName = daysOfWeek[dateObj.getDay()];
+                const option = document.createElement('option');
+                option.value = dateStr;
+                option.text = `${dateStr} (${dayName})`;
+                dropdown.appendChild(option);
+            }
+            updateLinkType('logo');
+            document.getElementById('link-url-input').value = '';
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.remove('modal-hidden'), 10);
+        }
+
+        function closeLinkModal() {
+            const modal = document.getElementById('link-modal');
+            modal.classList.add('modal-hidden');
+            unlockScroll();
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function updateLinkType(type) {
+            tempLinkState.selectedType = type;
+            document.querySelectorAll('#link-modal .radio-option').forEach(el => el.classList.remove('selected'));
+            const selectedEl = document.querySelector(`#link-modal .radio-option[onclick="updateLinkType('${type}')"]`);
+            if(selectedEl) selectedEl.classList.add('selected');
+
+            const dateContainer = document.getElementById('link-date-container');
+            dateContainer.classList.add('hidden');
+
+            if(type === 'banner' || type === 'gridbg') {
+                dateContainer.classList.remove('hidden');
+            }
+        }
+
+        function convertGoogleDriveLink(url) {
+            // 1. Check for /file/d/ID pattern (supports trailing slash, question mark, or end of line)
+            const fileIdRegex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
+            let match = url.match(fileIdRegex);
+
+            // 2. Check for id=ID pattern (e.g. open?id=, uc?id=)
+            if (!match) {
+                const idParamRegex = /[?&]id=([a-zA-Z0-9_-]+)/;
+                match = url.match(idParamRegex);
+            }
+
+            if (match && match[1]) {
+                // Use the thumbnail endpoint with a large size (w4096) to ensure high resolution
+                // This approach bypasses the 'Virus Scan' warning page that breaks 'uc?export=view' for large files
+                return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w4096`;
+            }
+            return url;
+        }
+
+        function performLinkInsert() {
+            let url = document.getElementById('link-url-input').value.trim();
+            if (!url) { alert("Please enter a URL."); return; }
+
+            // Convert Google Drive Links to Direct View Links
+            url = convertGoogleDriveLink(url);
+
+            const type = tempLinkState.selectedType;
+            let extraParam = null;
+            if (type === 'banner' || type === 'gridbg') {
+                extraParam = document.getElementById('link-date-select').value;
+                if (!extraParam) { alert("Please select a date."); return; }
+            }
+            insertImageToEditor(url, type, extraParam);
+            closeLinkModal();
+        }

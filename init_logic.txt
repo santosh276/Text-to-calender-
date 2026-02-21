@@ -1,0 +1,131 @@
+            // If more than 1 month, it is likely valid data
+            if (state.monthsData.length > 1) return true;
+
+            // If single month (could be default), check for content
+            const m = state.monthsData[0];
+            const hasEvents = m.events && m.events.length > 0;
+            const hasPanchang = m.panchang && Object.keys(m.panchang).length > 0;
+
+            return hasEvents || hasPanchang;
+        }
+
+        function initApp() {
+            // 1. Attempt Cache Load
+            let dataFound = false;
+
+            // Priority 1: JSON Cache
+            // Updated Check: Must have VALID data, not just skeleton
+            if (loadStateFromCache() && hasValidData(appState)) {
+                console.log("Loaded valid data from JSON Cache");
+                dataFound = true;
+            }
+            // Priority 2: Text Cache
+            else {
+                const cachedText = localStorage.getItem('panchang_autosave_text');
+                if (cachedText) {
+                    console.log("Loaded from Text Cache");
+                    parseInput(cachedText); // This populates appState
+
+                    // Double check if the parsed text actually produced valid data
+                    if (hasValidData(appState)) {
+                        dataFound = true;
+                    } else {
+                        console.log("Text Cache present but data deemed invalid/empty.");
+                    }
+                }
+            }
+
+            // Determine Environment
+            const isEditor = !!document.getElementById('editor');
+
+            // Setup UI based on Environment
+            if (window.exportedData && !isEditor) {
+                // App Mode
+                const editorPanel = document.getElementById('editor-panel');
+                if (editorPanel) editorPanel.style.display = 'none';
+                const previewPanel = document.getElementById('preview-container');
+                if (previewPanel) {
+                    previewPanel.classList.remove('md:w-[65%]');
+                    previewPanel.classList.add('w-full');
+                }
+
+                if (!dataFound) {
+                    // Use skeleton but mark as not found so we force sync
+                    appState = window.exportedData;
+
+                    // Safety Patch: Ensure recurringDetails exists (Fix for older exports)
+                    if (!appState.recurringDetails) appState.recurringDetails = {};
+                    if (!appState.details) appState.details = {};
+                }
+            } else if (isEditor) {
+                // Editor Mode
+                const editor = document.getElementById('editor');
+                if (dataFound) {
+                    const cachedText = localStorage.getItem('panchang_autosave_text');
+                    if (cachedText && editor.value !== cachedText) editor.value = cachedText;
+                } else {
+                    // Initial parse of default content
+                    parseInput(editor.value);
+                    dataFound = true; // Editor always has default data
+                }
+
+                // Auto-Save Listener
+                let timeout;
+                editor.addEventListener('input', (e) => {
+                    const val = e.target.value;
+                    parseInput(val);
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
+                });
+            }
+
+            // Render whatever we have (Data or Skeleton)
+            render();
+
+            const loader = document.getElementById('app-loader');
+
+            // 2. Conditional Fetching Logic
+            if (appState.config && appState.config.liveUrl) {
+                const url = appState.config.liveUrl;
+                const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
+
+                // ENFORCE RESTRICTION: In App Mode, ONLY GitHub Direct Sync is allowed.
+                if (!isEditor && !isGitHub) {
+                    console.warn("App Mode Restriction: Live Sync Docs (Proxy) is disabled. Ignoring URL.");
+                    if (loader) setTimeout(() => loader.remove(), 500);
+                    return;
+                }
+
+                if (dataFound) {
+                    // Scenario A: Data Exists (Show it instantly, remove loader, update in background)
+                    if (loader) setTimeout(() => loader.remove(), 500);
+
+                    // Background Sync (respecting timer)
+                    setTimeout(() => {
+                        console.log("Scenario A: Background Sync...");
+                        const shouldForce = isEditor;
+                        if (isGitHub) fetchGitHubData(url, shouldForce);
+                        else fetchLiveDoc(url, shouldForce);
+                    }, 2000);
+                } else {
+                    // Scenario B: No Data (Blank) -> FORCE Sync Immediately & Keep Loader
+                    console.log("Scenario B: Cold Start - Force Syncing...");
+
+                    // Force Sync (ignore timer)
+                    const promise = isGitHub ? fetchGitHubData(url, true) : fetchLiveDoc(url, true);
+
+                    if (promise && typeof promise.then === 'function') {
+                        promise.then(() => {
+                            // Check if we actually got data (monthsData should not be empty)
+                            if (hasValidData(appState)) {
+                                if (loader) loader.remove();
+                            } else {
+                                // Still no data? Show Retry
+                                showRetryUI(loader);
+                            }
+                        }).catch(() => {
+                            showRetryUI(loader);
+                        });
+                    } else {
+                        // If logic fails to produce a promise, remove loader as safety
+                        if (loader) loader.remove();

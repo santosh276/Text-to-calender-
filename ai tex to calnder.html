@@ -2960,6 +2960,7 @@ return SunCalc;
 
             document.getElementById('language-select').value = appState.config.language || 'en';
             
+            // --- EDITOR LOGIC START ---
             // Environment Check: Hide Sync Settings in App Mode (User View)
             const isEditor = !!document.getElementById('editor');
             
@@ -2980,6 +2981,7 @@ return SunCalc;
                      docsContainer.style.display = 'flex'; // Docs sync is editor-only feature
                  }
             }
+            // --- EDITOR LOGIC END ---
 
             // Update toggle state
             const toggle = document.getElementById('banner-toggle');
@@ -3336,7 +3338,6 @@ return SunCalc;
                 alert("Invalid Google Drive Link. Please use a standard sharing link.");
             }
         }
-
         // --- LIVE GOOGLE DOC SYNC FEATURE ---
 
         // 1. Configure the Link (User clicks button)
@@ -3437,10 +3438,12 @@ return SunCalc;
         async function fetchGitHubData(url, force = false) {
             if (!url) return;
 
+            // --- EDITOR LOGIC START ---
             // Auto-detect Editor Mode to enforce Force Update
             if (document.getElementById('editor')) {
                 force = true;
             }
+            // --- EDITOR LOGIC END ---
             
             // UI Feedback (Target specific button if possible, else fallback)
             const syncBtn = document.querySelector('button[onclick="configureGitHubSync()"]');
@@ -3503,6 +3506,7 @@ return SunCalc;
             }
         }
 
+        // --- EDITOR LOGIC START ---
         // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
         async function fetchLiveDoc(url, force = false) {
             if (!url) return;
@@ -3611,6 +3615,7 @@ return SunCalc;
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
         }
+        // --- EDITOR LOGIC END ---
 
         // Shared Logic for updating app state from fetched text
         function updateAppWithFetchedData(cleanText) {
@@ -3621,13 +3626,14 @@ return SunCalc;
                 // 2. Non-Blocking Render
                 requestAnimationFrame(() => {
                     try {
+                        // --- EDITOR LOGIC START ---
                         const editor = document.getElementById('editor');
-                        
                         if (editor) {
                             if (editor.value !== cleanText) {
                                 editor.value = cleanText;
                             }
                         }
+                        // --- EDITOR LOGIC END ---
                         
                         // Heavy lifting
                         parseInput(cleanText);
@@ -3643,8 +3649,11 @@ return SunCalc;
                              if(titleEl) titleEl.innerText = appState.config.title;
                         }
                         
-                        if (editor) showToast("Calendar updated from Cloud!");
-                        else console.log("App updated seamlessly from background cloud fetch.");
+                        // --- EDITOR LOGIC START ---
+                        if (document.getElementById('editor')) showToast("Calendar updated from Cloud!");
+                        else
+                        // --- EDITOR LOGIC END ---
+                        console.log("App updated seamlessly from background cloud fetch.");
                         
                         resolve();
                     } catch (e) {
@@ -3744,29 +3753,8 @@ return SunCalc;
                 }
             }
 
-            // Determine Environment
-            const isEditor = !!document.getElementById('editor');
-            
-            // Setup UI based on Environment
-            if (window.exportedData && !isEditor) {
-                // App Mode
-                const editorPanel = document.getElementById('editor-panel');
-                if (editorPanel) editorPanel.style.display = 'none';
-                const previewPanel = document.getElementById('preview-container');
-                if (previewPanel) { 
-                    previewPanel.classList.remove('md:w-[65%]'); 
-                    previewPanel.classList.add('w-full'); 
-                }
-                
-                if (!dataFound) {
-                    // Use skeleton but mark as not found so we force sync
-                    appState = window.exportedData;
-                    
-                    // Safety Patch: Ensure recurringDetails exists (Fix for older exports)
-                    if (!appState.recurringDetails) appState.recurringDetails = {};
-                    if (!appState.details) appState.details = {};
-                }
-            } else if (isEditor) {
+            // --- EDITOR LOGIC START ---
+            if (document.getElementById('editor')) {
                 // Editor Mode
                 const editor = document.getElementById('editor');
                 if (dataFound) {
@@ -3787,6 +3775,28 @@ return SunCalc;
                     timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
                 });
             }
+            // --- EDITOR LOGIC END ---
+
+            // App Mode Logic
+            if (window.exportedData) {
+                // App Mode
+                const editorPanel = document.getElementById('editor-panel');
+                if (editorPanel) editorPanel.style.display = 'none';
+                const previewPanel = document.getElementById('preview-container');
+                if (previewPanel) {
+                    previewPanel.classList.remove('md:w-[65%]');
+                    previewPanel.classList.add('w-full');
+                }
+
+                if (!dataFound) {
+                    // Use skeleton but mark as not found so we force sync
+                    appState = window.exportedData;
+
+                    // Safety Patch: Ensure recurringDetails exists (Fix for older exports)
+                    if (!appState.recurringDetails) appState.recurringDetails = {};
+                    if (!appState.details) appState.details = {};
+                }
+            }
 
             // Render whatever we have (Data or Skeleton)
             render();
@@ -3798,8 +3808,14 @@ return SunCalc;
                 const url = appState.config.liveUrl;
                 const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
 
+                let allowProxy = false;
+                // --- EDITOR LOGIC START ---
+                // In Editor Mode, we allow Proxy Sync (Google Docs)
+                if (document.getElementById('editor')) allowProxy = true;
+                // --- EDITOR LOGIC END ---
+
                 // ENFORCE RESTRICTION: In App Mode, ONLY GitHub Direct Sync is allowed.
-                if (!isEditor && !isGitHub) {
+                if (!allowProxy && !isGitHub) {
                     console.warn("App Mode Restriction: Live Sync Docs (Proxy) is disabled. Ignoring URL.");
                     if (loader) setTimeout(() => loader.remove(), 500);
                     return;
@@ -3812,7 +3828,11 @@ return SunCalc;
                     // Background Sync (respecting timer)
                     setTimeout(() => {
                         console.log("Scenario A: Background Sync...");
-                        const shouldForce = isEditor; 
+                        let shouldForce = false;
+                        // --- EDITOR LOGIC START ---
+                        if (document.getElementById('editor')) shouldForce = true;
+                        // --- EDITOR LOGIC END ---
+
                         if (isGitHub) fetchGitHubData(url, shouldForce);
                         else fetchLiveDoc(url, shouldForce);
                     }, 2000);
