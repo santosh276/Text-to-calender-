@@ -3435,7 +3435,6 @@ return SunCalc;
         }
         // --- EDITOR LOGIC END ---
 
-        // --- EDITOR LOGIC START ---
         // --- NEW: Fetch GitHub Data (Direct) ---
         async function fetchGitHubData(url, force = false) {
             if (!url) return;
@@ -3445,10 +3444,12 @@ return SunCalc;
                 force = true;
             }
             
+            // --- EDITOR LOGIC START ---
             // UI Feedback (Target specific button if possible, else fallback)
             const syncBtn = document.querySelector('button[onclick="configureGitHubSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
+            // --- EDITOR LOGIC END ---
             
             // TIMER LOGIC (Only if NOT forced)
             if (!force) {
@@ -3458,7 +3459,9 @@ return SunCalc;
                 
                 if (lastSync && (now - parseInt(lastSync) < interval)) {
                     console.log(`Sync Timer Valid. Elapsed: ${now - parseInt(lastSync)}ms < Interval: ${interval}ms`);
+                    // --- EDITOR LOGIC START ---
                     if(syncBtn) syncBtn.innerHTML = originalText;
+                    // --- EDITOR LOGIC END ---
                     return; // Stop.
                 }
             }
@@ -3487,7 +3490,9 @@ return SunCalc;
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff: Data is identical. Update timestamp only.");
                          localStorage.setItem('panchang_last_sync_ts', Date.now());
+                         // --- EDITOR LOGIC START ---
                          if(syncBtn) showToast("Sync: No changes found.");
+                         // --- EDITOR LOGIC END ---
                          return; 
                     }
                 }
@@ -3500,14 +3505,16 @@ return SunCalc;
 
             } catch (e) {
                 console.error("GitHub Sync Error:", e);
+                // --- EDITOR LOGIC START ---
                 showToast("Sync Error: " + e.message);
+                // --- EDITOR LOGIC END ---
             } finally {
+                // --- EDITOR LOGIC START ---
                 if(syncBtn) syncBtn.innerHTML = originalText;
+                // --- EDITOR LOGIC END ---
             }
         }
-        // --- EDITOR LOGIC END ---
 
-        // --- EDITOR LOGIC START ---
         // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
         async function fetchLiveDoc(url, force = false) {
             if (!url) return;
@@ -3529,10 +3536,12 @@ return SunCalc;
                 force = true;
             }
 
+            // --- EDITOR LOGIC START ---
             // UI Feedback
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
             if(syncBtn) syncBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...';
+            // --- EDITOR LOGIC END ---
             
             // TIMER LOGIC (Only if NOT forced)
             if (!force) {
@@ -3542,7 +3551,9 @@ return SunCalc;
                 
                 if (lastSync && (now - parseInt(lastSync) < interval)) {
                     console.log(`Sync Timer Valid (Docs). Elapsed: ${now - parseInt(lastSync)}ms < Interval: ${interval}ms`);
+                    // --- EDITOR LOGIC START ---
                     if(syncBtn) syncBtn.innerHTML = originalText;
+                    // --- EDITOR LOGIC END ---
                     return; // Stop.
                 }
             }
@@ -3598,7 +3609,9 @@ return SunCalc;
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff (Docs): Data is identical. Update timestamp only.");
                          localStorage.setItem('panchang_last_sync_ts', Date.now());
+                         // --- EDITOR LOGIC START ---
                          if(syncBtn) showToast("Sync: No changes found.");
+                         // --- EDITOR LOGIC END ---
                          return; 
                     }
                 }
@@ -3611,14 +3624,16 @@ return SunCalc;
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
+                // --- EDITOR LOGIC START ---
                 showToast("Sync Error: " + e.message);
+                // --- EDITOR LOGIC END ---
             } finally {
+                // --- EDITOR LOGIC START ---
                 if(syncBtn) syncBtn.innerHTML = originalText;
+                // --- EDITOR LOGIC END ---
             }
         }
-        // --- EDITOR LOGIC END ---
 
-        // --- EDITOR LOGIC START ---
         // Shared Logic for updating app state from fetched text
         function updateAppWithFetchedData(cleanText) {
             return new Promise((resolve, reject) => {
@@ -3628,12 +3643,14 @@ return SunCalc;
                 // 2. Non-Blocking Render
                 requestAnimationFrame(() => {
                     try {
+                        // --- EDITOR LOGIC START ---
                         const editor = document.getElementById('editor');
                         if (editor) {
                             if (editor.value !== cleanText) {
                                 editor.value = cleanText;
                             }
                         }
+                        // --- EDITOR LOGIC END ---
                         
                         // Heavy lifting
                         parseInput(cleanText);
@@ -3649,8 +3666,10 @@ return SunCalc;
                              if(titleEl) titleEl.innerText = appState.config.title;
                         }
                         
+                        // --- EDITOR LOGIC START ---
                         if (document.getElementById('editor')) showToast("Calendar updated from Cloud!");
                         else
+                        // --- EDITOR LOGIC END ---
                         console.log("App updated seamlessly from background cloud fetch.");
                         
                         resolve();
@@ -3661,7 +3680,6 @@ return SunCalc;
                 });
             });
         }
-        // --- EDITOR LOGIC END ---
 
         function retryAppInitialization() {
             const retryCount = parseInt(sessionStorage.getItem('panchang_retry_count') || '0');
@@ -3804,7 +3822,6 @@ return SunCalc;
             
             const loader = document.getElementById('app-loader');
 
-            // --- EDITOR LOGIC START ---
             // 2. Conditional Fetching Logic
             if (appState.config && appState.config.liveUrl) {
                 const url = appState.config.liveUrl;
@@ -3858,9 +3875,7 @@ return SunCalc;
                         if (loader) loader.remove();
                     }
                 }
-            } else
-            // --- EDITOR LOGIC END ---
-            {
+            } else {
                 // No Sync Configured
                 if (loader) setTimeout(() => loader.remove(), 500);
             }
@@ -3907,7 +3922,6 @@ return SunCalc;
 
         // Initialization logic moved to initAutoSync()
 
-        // --- EDITOR LOGIC START ---
         function parseInput(text) {
             const lines = text.split('\n');
             let currentBlock = null;
@@ -4137,7 +4151,6 @@ return SunCalc;
 
             render();
         }
-        // --- EDITOR LOGIC END ---
 
         function findTodayIndex() {
             const today = new Date();
