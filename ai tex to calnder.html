@@ -3435,16 +3435,15 @@ return SunCalc;
         }
         // --- EDITOR LOGIC END ---
 
+        // --- EDITOR LOGIC START ---
         // --- NEW: Fetch GitHub Data (Direct) ---
         async function fetchGitHubData(url, force = false) {
             if (!url) return;
 
-            // --- EDITOR LOGIC START ---
             // Auto-detect Editor Mode to enforce Force Update
             if (document.getElementById('editor')) {
                 force = true;
             }
-            // --- EDITOR LOGIC END ---
             
             // UI Feedback (Target specific button if possible, else fallback)
             const syncBtn = document.querySelector('button[onclick="configureGitHubSync()"]');
@@ -3506,6 +3505,7 @@ return SunCalc;
                 if(syncBtn) syncBtn.innerHTML = originalText;
             }
         }
+        // --- EDITOR LOGIC END ---
 
         // --- EDITOR LOGIC START ---
         // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
@@ -3618,6 +3618,7 @@ return SunCalc;
         }
         // --- EDITOR LOGIC END ---
 
+        // --- EDITOR LOGIC START ---
         // Shared Logic for updating app state from fetched text
         function updateAppWithFetchedData(cleanText) {
             return new Promise((resolve, reject) => {
@@ -3627,14 +3628,12 @@ return SunCalc;
                 // 2. Non-Blocking Render
                 requestAnimationFrame(() => {
                     try {
-                        // --- EDITOR LOGIC START ---
                         const editor = document.getElementById('editor');
                         if (editor) {
                             if (editor.value !== cleanText) {
                                 editor.value = cleanText;
                             }
                         }
-                        // --- EDITOR LOGIC END ---
                         
                         // Heavy lifting
                         parseInput(cleanText);
@@ -3650,10 +3649,8 @@ return SunCalc;
                              if(titleEl) titleEl.innerText = appState.config.title;
                         }
                         
-                        // --- EDITOR LOGIC START ---
                         if (document.getElementById('editor')) showToast("Calendar updated from Cloud!");
                         else
-                        // --- EDITOR LOGIC END ---
                         console.log("App updated seamlessly from background cloud fetch.");
                         
                         resolve();
@@ -3664,6 +3661,7 @@ return SunCalc;
                 });
             });
         }
+        // --- EDITOR LOGIC END ---
 
         function retryAppInitialization() {
             const retryCount = parseInt(sessionStorage.getItem('panchang_retry_count') || '0');
@@ -3806,16 +3804,15 @@ return SunCalc;
             
             const loader = document.getElementById('app-loader');
 
+            // --- EDITOR LOGIC START ---
             // 2. Conditional Fetching Logic
             if (appState.config && appState.config.liveUrl) {
                 const url = appState.config.liveUrl;
                 const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
 
                 let allowProxy = false;
-                // --- EDITOR LOGIC START ---
                 // In Editor Mode, we allow Proxy Sync (Google Docs)
                 if (document.getElementById('editor')) allowProxy = true;
-                // --- EDITOR LOGIC END ---
 
                 // ENFORCE RESTRICTION: In App Mode, ONLY GitHub Direct Sync is allowed.
                 if (!allowProxy && !isGitHub) {
@@ -3832,9 +3829,7 @@ return SunCalc;
                     setTimeout(() => {
                         console.log("Scenario A: Background Sync...");
                         let shouldForce = false;
-                        // --- EDITOR LOGIC START ---
                         if (document.getElementById('editor')) shouldForce = true;
-                        // --- EDITOR LOGIC END ---
 
                         if (isGitHub) fetchGitHubData(url, shouldForce);
                         else fetchLiveDoc(url, shouldForce);
@@ -3863,7 +3858,9 @@ return SunCalc;
                         if (loader) loader.remove();
                     }
                 }
-            } else {
+            } else
+            // --- EDITOR LOGIC END ---
+            {
                 // No Sync Configured
                 if (loader) setTimeout(() => loader.remove(), 500);
             }
