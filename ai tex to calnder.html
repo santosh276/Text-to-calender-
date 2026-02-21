@@ -89,6 +89,7 @@
 .text-transparent { color: transparent; }
 .from-orange-400 { --tw-gradient-from: #fb923c; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
 .to-red-600 { --tw-gradient-to: #dc2626; }
+.opacity-12 { opacity: 0.12; }
 .opacity-20 { opacity: 0.2; }
 .w-1{width:.25rem}.h-1{height:.25rem}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68/var(--tw-bg-opacity,1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94/var(--tw-bg-opacity,1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246/var(--tw-bg-opacity,1))}.bg-gray-400{--tw-bg-opacity:1;background-color:rgb(156 163 175/var(--tw-bg-opacity,1))}@media (min-width:1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (min-width:1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .mb-8{margin-bottom:1rem}
@@ -1174,7 +1175,7 @@
                     <button onclick="openLinkModal()" class="header-btn flex-1"><i class="fa-solid fa-link"></i> Insert Link</button>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="downloadCalendar()" class="header-btn flex-1"><i class="fa-solid fa-download"></i> Download HTML</button>
+                    <button onclick="downloadCalendar()" class="header-btn flex-1"><i class="fa-solid fa-download"></i> Download app</button>
                     <button onclick="downloadTxtFile()" class="header-btn flex-1"><i class="fa-solid fa-file-lines"></i> Download TXT</button>
                 </div>
                 <div class="flex gap-3">
@@ -5284,6 +5285,27 @@ function renderCalendarGrid(data) {
             liveClockInterval = setInterval(updateTime, 1000);
         }
 
+        function adjustUpNextIcon(card) {
+            const wrapper = card.querySelector('.up-next-om-wrapper');
+            const icon = card.querySelector('.up-next-om-icon');
+            if (!wrapper || !icon) return;
+
+            const w = card.offsetWidth;
+            
+            // Algorithm: Scale icon based on container width
+            // Target: Icon should be roughly 50% of container width, but min 140px.
+            // Old was fixed 8rem (~128px)
+            let size = Math.max(140, w * 0.5);
+            
+            // Position: "slightly below side" implies pushing it down and right.
+            const bottomOffset = -size * 0.20; 
+            const rightOffset = -size * 0.10;
+
+            icon.style.fontSize = `${size}px`;
+            wrapper.style.bottom = `${bottomOffset}px`;
+            wrapper.style.right = `${rightOffset}px`;
+        }
+
         function renderFestivals(data) {
             stopLiveClock();
             const section = document.getElementById('sec-festivals');
@@ -5364,11 +5386,16 @@ function renderCalendarGrid(data) {
                     </div>
                     <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
                     <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-black/5 blur-xl pointer-events-none"></div>
-                    <div class="absolute bottom-0 right-0 opacity-10 pointer-events-none">
-                        <span class="text-[8rem] leading-none font-serif select-none text-white" style="font-family: Georgia, serif;">ॐ</span>
+                    <div class="absolute bottom-0 right-0 opacity-12 pointer-events-none up-next-om-wrapper">
+                        <span class="text-[8rem] leading-none font-serif select-none text-white up-next-om-icon" style="font-family: Georgia, serif;">ॐ</span>
                     </div>
                 `;
                 section.appendChild(eventCard);
+                
+                // Automatic fitting algorithm
+                adjustUpNextIcon(eventCard);
+                const ro = new ResizeObserver(() => adjustUpNextIcon(eventCard));
+                ro.observe(eventCard);
 
             }
 
