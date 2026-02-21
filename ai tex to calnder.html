@@ -3292,6 +3292,7 @@ return SunCalc;
             URL.revokeObjectURL(url);
         }
 
+        // --- EDITOR LOGIC START ---
         // --- NEW FUNCTION: Fetch Text from Google Drive ---
         async function fetchDriveData() {
             // 1. Ask user for the link
@@ -3907,6 +3908,7 @@ return SunCalc;
 
         // Initialization logic moved to initAutoSync()
 
+        // --- EDITOR LOGIC START ---
         function parseInput(text) {
             const lines = text.split('\n');
             let currentBlock = null;
@@ -4136,6 +4138,7 @@ return SunCalc;
 
             render();
         }
+        // --- EDITOR LOGIC END ---
 
         function findTodayIndex() {
             const today = new Date();
@@ -6305,7 +6308,10 @@ function renderCalendarGrid(data) {
             if(body) body.prepend(dataScript);
 
             // 7. Download
-            const htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
+            let htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
+            // Scrub HTML Comments
+            htmlContent = htmlContent.replace(/<!--[\s\S]*?-->/g, "");
+
             const blob = new Blob([htmlContent], { type: "text/html" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
