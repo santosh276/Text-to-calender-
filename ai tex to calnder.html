@@ -3477,7 +3477,7 @@ return SunCalc;
             } else if (url === "") {
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
-                showToast("GitHub Sync removed.");
+                // showToast("GitHub Sync removed.");
                 
                 const githubToggle = document.getElementById('toggle-sync-github');
                 if (githubToggle) githubToggle.checked = false;
