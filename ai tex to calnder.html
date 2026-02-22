@@ -510,6 +510,7 @@
             transform: scale(0.95);
         }
 
+        /* --- EDITOR STYLES START --- */
         /* STRICT CONTAINER MANAGEMENT: Formatting Guide */
         #syntax-guide { 
             max-height: 0; 
@@ -567,6 +568,7 @@
         .hl-string { color: #a78bfa; }
         .hl-tag { color: #34d399; }
         .hl-comment { color: #6b7280; }
+        /* --- EDITOR STYLES END --- */
 
         .premium-header-bg { background: linear-gradient(135deg, #800000 0%, #ed1c24 65%, #f15a24 100%); position: relative; overflow: hidden; }
         .premium-header-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 30%); pointer-events: none; }
@@ -5740,9 +5742,10 @@ function renderCalendarGrid(data) {
         let currentModalIndex = 0;
         let currentModalDayEvents = [];
         let currentModalTithiBlock = "";
-        let currentUploadDateKey = null;
 
         // --- EDITOR LOGIC START ---
+        let currentUploadDateKey = null;
+
         function triggerBannerUpload(dateKey) {
             currentUploadDateKey = dateKey;
             document.getElementById('bannerInput').click();
@@ -6271,6 +6274,16 @@ function renderCalendarGrid(data) {
                     // Remove empty lines
                     code = code.replace(/^\s*[\r\n]/gm, '');
                     script.innerHTML = code;
+                }
+            });
+
+            // Scrub Styles
+            const styles = clone.querySelectorAll('style');
+            styles.forEach(style => {
+                let css = style.innerHTML;
+                if (css.includes('EDITOR STYLES START')) {
+                    css = css.replace(/\/\* --- EDITOR STYLES START --- \*\/[\s\S]*?\/\* --- EDITOR STYLES END --- \*\//g, '');
+                    style.innerHTML = css;
                 }
             });
 
