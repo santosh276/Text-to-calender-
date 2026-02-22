@@ -6493,8 +6493,8 @@ function renderCalendarGrid(data) {
             existing.forEach(t => t.remove());
 
             const toast = document.createElement('div');
-            // Light Wait Style: White Glass, Soft Shadow, Neutral
-            toast.className = 'custom-toast fixed bottom-10 left-1/2 transform -translate-x-1/2 z-[300] flex items-center gap-3 px-6 py-3.5 rounded-2xl shadow-2xl shadow-gray-200/50 transition-all duration-500 ease-out translate-y-10 opacity-0 border border-white/60 backdrop-blur-xl bg-white/80 cursor-pointer';
+            // Normal Style: Solid White, Gray Border, No Blur
+            toast.className = 'custom-toast fixed bottom-10 left-1/2 transform -translate-x-1/2 z-[300] flex items-center gap-3 px-6 py-3.5 rounded-2xl shadow-xl transition-all duration-500 ease-out translate-y-10 opacity-0 border border-gray-200 bg-white cursor-pointer';
 
             // Auto-detect type
             const msgLower = message.toLowerCase();
@@ -6503,24 +6503,25 @@ function renderCalendarGrid(data) {
                 else if (msgLower.includes('success') || msgLower.includes('saved') || msgLower.includes('imported')) type = 'success';
             }
 
-            // Icons & Colors (Lighter Palette)
+            // Icons & Colors
             let iconHtml = '<i class="fa-solid fa-circle-info"></i>';
-            let iconColor = 'text-orange-400';
+            let iconColor = 'text-orange-500';
             let textColor = 'text-gray-800';
 
             if (type === 'success') {
                 iconHtml = '<i class="fa-solid fa-circle-check"></i>';
                 iconColor = 'text-green-500';
-                toast.classList.add('border-green-100');
+                toast.classList.add('border-green-200'); // Stronger tint for solid bg
             } else if (type === 'error') {
                 iconHtml = '<i class="fa-solid fa-circle-exclamation"></i>';
                 iconColor = 'text-red-500';
-                toast.classList.add('border-red-100');
+                toast.classList.add('border-red-200'); // Stronger tint
             } else {
                 // Info / Default
                 iconHtml = '<i class="fa-solid fa-circle-info"></i>';
-                iconColor = 'text-orange-400';
-                // Base white border is sufficient
+                iconColor = 'text-orange-500';
+                // Base gray border is sufficient, or add orange tint
+                // toast.classList.add('border-orange-200');
             }
 
             toast.innerHTML = `
