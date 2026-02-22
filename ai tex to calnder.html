@@ -3293,6 +3293,7 @@ return SunCalc;
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
+        // --- EDITOR LOGIC END ---
 
         // --- EDITOR LOGIC START ---
         // --- NEW FUNCTION: Fetch Text from Google Drive ---
@@ -6263,20 +6264,6 @@ function renderCalendarGrid(data) {
                 previewPanel.style.overflow = 'visible';
             }
 
-            // 3. Scrub Script (Remove Editor Logic)
-            const scripts = clone.querySelectorAll('script');
-            scripts.forEach(script => {
-                let code = script.innerHTML;
-                // Only modify if markers are present
-                if (code.includes('EDITOR LOGIC START')) {
-                    // Remove marked blocks
-                    code = code.replace(/\/\/ --- EDITOR LOGIC START ---[\s\S]*?\/\/ --- EDITOR LOGIC END ---/g, '');
-                    // Remove empty lines
-                    code = code.replace(/^\s*[\r\n]/gm, '');
-                    script.innerHTML = code;
-                }
-            });
-
             // Scrub Styles
             const styles = clone.querySelectorAll('style');
             styles.forEach(style => {
@@ -6284,6 +6271,26 @@ function renderCalendarGrid(data) {
                 if (css.includes('EDITOR STYLES START')) {
                     css = css.replace(/\/\* --- EDITOR STYLES START --- \*\/[\s\S]*?\/\* --- EDITOR STYLES END --- \*\//g, '');
                     style.innerHTML = css;
+                }
+            });
+
+            // 3. Scrub Script (Remove Editor Logic)
+            const scripts = clone.querySelectorAll('script');
+            scripts.forEach(script => {
+                let code = script.innerHTML;
+                // Only modify if markers are present
+                // Use split strings to avoid self-deletion during export
+                const startMarker = '// --- ' + 'EDITOR LOGIC START ---';
+                const endMarker = '// --- ' + 'EDITOR LOGIC END ---';
+
+                if (code.includes(startMarker)) {
+                    // Remove marked blocks
+                    // Construct regex dynamically to avoid literal match in source code
+                    const regex = new RegExp(startMarker.replace(/\//g, '\\/') + '[\\s\\S]*?' + endMarker.replace(/\//g, '\\/'), 'g');
+                    code = code.replace(regex, '');
+                    // Remove empty lines
+                    code = code.replace(/^\s*[\r\n]/gm, '');
+                    script.innerHTML = code;
                 }
             });
 
