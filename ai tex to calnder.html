@@ -5547,31 +5547,32 @@ function renderCalendarGrid(data) {
 
                 // --- CARD 1: Event Details ---
                 const eventCard = document.createElement('div');
-                eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
+                eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95 bg-aurora border border-white/60";
                 eventCard.onclick = () => openDayModal(upNextEvent.date, data);
-                eventCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)";
-                eventCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
+                // Updated shadow to match Toast UI/Aurora theme
+                eventCard.style.boxShadow = "0 10px 15px -3px rgba(255, 237, 213, 0.5), 0 4px 6px -4px rgba(255, 237, 213, 0.5)";
                 
                 eventCard.innerHTML = `
-                    <div class="p-4 relative z-10 text-white flex flex-col gap-3">
+                    <div class="p-4 relative z-10 text-gray-900 flex flex-col gap-3">
                         <div class="flex justify-between items-start">
-                             <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase flex items-center gap-2">
+                             <div class="text-[10px] font-bold text-deepred tracking-widest uppercase flex items-center gap-2">
                                 <i class="fa-regular fa-calendar"></i> UP NEXT
                              </div>
-                             <div class="bg-white/20 backdrop-blur-[10px] px-3 py-1 rounded-full text-[10px] font-bold border border-white/50 shadow-lg">
+                             <div class="bg-white/60 backdrop-blur-[10px] px-3 py-1 rounded-full text-[10px] font-bold border border-orange-100 shadow-sm text-orange-700">
                                 ${badgeText}
                              </div>
                         </div>
 
                         <div>
-                            <h3 class="font-extrabold text-lg leading-tight mb-1 drop-shadow-sm whitespace-normal">${upNextEvent.engName}</h3>
-                            <p class="text-sm font-medium opacity-90 font-oriya leading-relaxed">${upNextEvent.locName || ''}</p>
+                            <h3 class="font-extrabold text-lg leading-tight mb-1 text-gray-900 whitespace-normal">${upNextEvent.engName}</h3>
+                            <p class="text-sm font-medium text-gray-600 font-oriya leading-relaxed">${upNextEvent.locName || ''}</p>
                         </div>
                     </div>
-                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
-                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-black/5 blur-xl pointer-events-none"></div>
-                    <div class="absolute bottom-0 right-0 opacity-12 pointer-events-none up-next-om-wrapper">
-                        <span class="text-[8rem] leading-none font-serif select-none text-white up-next-om-icon" style="font-family: Georgia, serif;">ॐ</span>
+                    <!-- Decoration: Subtle Orange/Purple hints matching Aurora -->
+                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-orange-500/5 blur-2xl pointer-events-none"></div>
+                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-purple-500/5 blur-xl pointer-events-none"></div>
+                    <div class="absolute bottom-0 right-0 opacity-10 pointer-events-none up-next-om-wrapper">
+                        <span class="text-[8rem] leading-none font-serif select-none text-deepred up-next-om-icon" style="font-family: Georgia, serif;">ॐ</span>
                     </div>
                 `;
                 section.appendChild(eventCard);
@@ -5585,16 +5586,16 @@ function renderCalendarGrid(data) {
 
             // --- CARD 2: Clock (Always Visible) ---
             const clockCard = document.createElement('div');
-            clockCard.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg";
-            clockCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)"; // Same gradient aesthetic
-            clockCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
+            clockCard.className = "mb-4 relative overflow-hidden rounded-xl shadow-lg bg-aurora border border-white/60";
+            // Updated shadow
+            clockCard.style.boxShadow = "0 10px 15px -3px rgba(255, 237, 213, 0.5), 0 4px 6px -4px rgba(255, 237, 213, 0.5)";
 
             clockCard.innerHTML = `
-                <div class="p-3 relative z-10 text-white text-center flex flex-col items-center justify-center h-full">
-                     <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">--:--:-- --</div>
-                     <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
+                <div class="p-3 relative z-10 text-gray-900 text-center flex flex-col items-center justify-center h-full">
+                     <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight text-deepred whitespace-nowrap">--:--:-- --</div>
+                     <div class="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-semibold mt-1">Current Time</div>
                 </div>
-                <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
+                <div class="absolute inset-0 bg-white/10 pointer-events-none"></div>
             `;
             section.appendChild(clockCard);
             
