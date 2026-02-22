@@ -1151,7 +1151,7 @@
         </div>
 
         <div class="flex gap-3">
-          <button onclick="retryAppInitialization()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-5">
+          <button onclick="syncAndResetApp()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-5">
             <i class="fa-solid fa-rotate-right text-[24px]"></i>
           </button>
           <button onclick="openSettingsModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
@@ -3027,21 +3027,54 @@ return SunCalc;
         function changeLanguage(langCode) {
             appState.config.language = langCode;
             
-            // Auto-Switch Live Sync Link if configured
+            // 1. Clear Data State
+            appState.monthsData = [];
+            appState.recurringEvents = [];
+            appState.details = {};
+            appState.recurringDetails = {};
+            appState.manualTithis = {};
+            appState.customSeasonDescriptions = {};
+            appState.images = {};
+
+            // 2. Clear Storage & Cache
+            localStorage.removeItem('panchang_autosave_text');
+            localStorage.removeItem('panchang_cached_state');
+            localStorage.removeItem('panchang_last_sync_ts');
+
+            // 3. Clear Editor
+            const editor = document.getElementById('editor');
+            if (editor) editor.value = '';
+
+            // 4. Check for Sync Link
+            let link = null;
             if (appState.config.syncLinks && appState.config.syncLinks[langCode]) {
-                let link = appState.config.syncLinks[langCode];
-                if (link) {
-                    if (appState.config.linksEncrypted) {
+                link = appState.config.syncLinks[langCode];
+                if (appState.config.linksEncrypted) {
+                    try {
                         link = LinkSecurity.decrypt(link);
+                    } catch (e) {
+                        console.error("Decryption failed", e);
+                        link = null;
                     }
-                    appState.config.liveUrl = link;
-                    appState.config.syncGitHubUrl = link;
-                    fetchGitHubData(link, true);
                 }
             }
-            
-            saveConfigToStorage();
-            render();
+
+            // 5. Update Config & Trigger Sync
+            if (link) {
+                appState.config.liveUrl = link;
+                appState.config.syncGitHubUrl = link;
+                saveConfigToStorage(); // Persist new language & url
+                
+                showToast(`Fetching ${langCode.toUpperCase()} dataset...`);
+                fetchGitHubData(link, true);
+            } else {
+                delete appState.config.liveUrl;
+                delete appState.config.syncGitHubUrl;
+                saveConfigToStorage(); // Persist removal
+                
+                showToast(`${langCode.toUpperCase()} selected. No data available.`);
+                render(); // Render blank state
+            }
         }
 
         // --- EDITOR LOGIC START ---
@@ -3078,6 +3111,21 @@ return SunCalc;
                     showToast(`Link removed for ${lang.toUpperCase()}`);
                 }
             }
+
+            // Auto-Fetch if affecting Active Language
+            if (lang === appState.config.language) {
+                if (url) {
+                    appState.config.liveUrl = url;
+                    appState.config.syncGitHubUrl = url;
+                    showToast(`Fetching ${lang.toUpperCase()} dataset...`);
+                    fetchGitHubData(url, true);
+                } else {
+                    delete appState.config.liveUrl;
+                    delete appState.config.syncGitHubUrl;
+                    showToast("Active link removed.");
+                }
+            }
+            
             saveConfigToStorage();
         }
         // --- EDITOR LOGIC END ---
@@ -3429,7 +3477,7 @@ return SunCalc;
             } else if (url === "") {
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
-                showToast("GitHub Sync removed.");
+                // showToast("GitHub Sync removed.");
                 
                 const githubToggle = document.getElementById('toggle-sync-github');
                 if (githubToggle) githubToggle.checked = false;
@@ -3683,6 +3731,48 @@ return SunCalc;
             });
         }
 
+        function syncAndResetApp() {
+            // 1. Deep Cleanup (Data only - preserve User Config)
+            localStorage.removeItem('panchang_cached_state');
+            localStorage.removeItem('panchang_autosave_text');
+            localStorage.removeItem('panchang_last_sync_ts');
+            sessionStorage.removeItem('panchang_retry_count');
+            
+            // 2. Identify Language & Link
+            const currentLang = appState.config.language || 'en';
+            let link = null;
+            
+            if (appState.config.syncLinks && appState.config.syncLinks[currentLang]) {
+                link = appState.config.syncLinks[currentLang];
+                // Decrypt if needed
+                if (appState.config.linksEncrypted) {
+                    try {
+                        link = LinkSecurity.decrypt(link);
+                    } catch (e) {
+                        console.error("Link decryption failed during syncAndReset", e);
+                        link = null;
+                    }
+                }
+            }
+
+            // 3. Action
+            if (link) {
+                // Update Live URL to match current language source
+                appState.config.liveUrl = link;
+                appState.config.syncGitHubUrl = link;
+                saveConfigToStorage();
+                
+                showToast(`Resetting and syncing ${currentLang.toUpperCase()} data...`);
+                
+                // Force Fetch (bypass cache/timer)
+                fetchGitHubData(link, true);
+            } else {
+                // Fallback to standard retry (reloads page) if no source is configured
+                showToast("No sync source. Performing full reset...");
+                retryAppInitialization();
+            }
+        }
+
         function retryAppInitialization() {
             const retryCount = parseInt(sessionStorage.getItem('panchang_retry_count') || '0');
             
@@ -3907,7 +3997,9 @@ return SunCalc;
         // Load config from localStorage if available
         try {
             const savedConfig = localStorage.getItem('panchangConfig');
+            
             if (savedConfig) {
+                // Case A: Returning User (Load Config)
                 const parsed = JSON.parse(savedConfig);
                 // Merge saved config into defaults
                 if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
@@ -3918,6 +4010,49 @@ return SunCalc;
                 if (appState.config.location) {
                     // Slight delay to allow render to happen first
                     setTimeout(() => getUserLocation(), 2000);
+                }
+            } else {
+                // Case B: First Time User (Set Default EN & Fetch)
+                console.log("First time user detected. Setting default to English.");
+                
+                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
+                
+                // 1. Force English
+                appState.config.language = 'en';
+                
+                // 2. Initial Save
+                saveConfigToStorage();
+                
+                // 3. Update UI (Language Dropdown)
+                const langSelect = document.getElementById('language-select');
+                if (langSelect) langSelect.value = 'en';
+
+                // 4. Auto-Fetch English Data
+                if (appState.config.syncLinks && appState.config.syncLinks['en']) {
+                    let link = appState.config.syncLinks['en'];
+                    
+                    // Decrypt if needed
+                    if (appState.config.linksEncrypted) {
+                        try {
+                            link = LinkSecurity.decrypt(link);
+                        } catch (e) {
+                            console.error("Link decryption failed during init", e);
+                            link = null;
+                        }
+                    }
+                    
+                    if (link) {
+                        console.log("Auto-fetching default English dataset...");
+                        appState.config.liveUrl = link;
+                        appState.config.syncGitHubUrl = link;
+                        saveConfigToStorage(); // Save liveUrl
+                        
+                        // Show Loader Message
+                        const loaderTitle = document.querySelector('#app-loader h2');
+                        if (loaderTitle) loaderTitle.innerText = "Loading English Calendar...";
+                        
+                        fetchGitHubData(link, true);
+                    }
                 }
             }
         } catch (e) {
@@ -6352,25 +6487,67 @@ function renderCalendarGrid(data) {
         }
         // --- EDITOR LOGIC END ---
 
-        function showToast(message) {
+        function showToast(message, type = 'default') {
+            // Remove existing toasts to prevent stacking
+            const existing = document.querySelectorAll('.custom-toast');
+            existing.forEach(t => t.remove());
+
             const toast = document.createElement('div');
-            // Removed 'animate-bounce' to prevent infinite bouncing distraction
-            toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-[300] text-sm font-medium transition-all duration-300 opacity-0 translate-y-4';
-            toast.innerText = message;
+            // Aurora Style: Animated Gradient, Light Border, Shadow
+            toast.className = 'custom-toast fixed bottom-10 left-1/2 transform -translate-x-1/2 z-[300] flex items-center gap-3 px-6 py-3.5 rounded-2xl shadow-2xl shadow-orange-100/50 transition-all duration-500 ease-out translate-y-10 opacity-0 border border-white/60 bg-aurora cursor-pointer';
+            
+            // Auto-detect type
+            const msgLower = message.toLowerCase();
+            if (type === 'default') {
+                if (msgLower.includes('error') || msgLower.includes('failed')) type = 'error';
+                else if (msgLower.includes('success') || msgLower.includes('saved') || msgLower.includes('imported')) type = 'success';
+            }
+
+            // Icons & Colors
+            let iconHtml = '<i class="fa-solid fa-circle-info"></i>';
+            let iconColor = 'text-orange-600'; // Deeper orange for contrast on gradient
+            let textColor = 'text-gray-900'; // Darker text
+
+            if (type === 'success') {
+                iconHtml = '<i class="fa-solid fa-circle-check"></i>';
+                iconColor = 'text-green-600';
+                toast.classList.add('border-green-200/50');
+            } else if (type === 'error') {
+                iconHtml = '<i class="fa-solid fa-circle-exclamation"></i>';
+                iconColor = 'text-red-600';
+                toast.classList.add('border-red-200/50');
+            } else {
+                // Info / Default
+                iconHtml = '<i class="fa-solid fa-circle-info"></i>';
+                iconColor = 'text-orange-600';
+                toast.classList.add('border-orange-200/50');
+            }
+
+            toast.innerHTML = `
+                <div class="text-lg ${iconColor} drop-shadow-sm">${iconHtml}</div>
+                <div class="font-bold text-sm ${textColor} tracking-wide leading-snug">${message}</div>
+            `;
+
+            // Click to dismiss
+            toast.onclick = () => {
+                toast.classList.add('opacity-0', 'translate-y-10', 'scale-95');
+                setTimeout(() => toast.remove(), 300);
+            };
+
             document.body.appendChild(toast);
             
             // Animate In
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    toast.classList.remove('opacity-0', 'translate-y-4');
+                    toast.classList.remove('opacity-0', 'translate-y-10');
                 });
             });
 
-            // Animate Out (2 seconds)
+            // Animate Out
             setTimeout(() => { 
-                toast.classList.add('opacity-0', 'translate-y-4');
-                setTimeout(() => toast.remove(), 300); 
-            }, 2000);
+                toast.classList.add('opacity-0', 'translate-y-10', 'scale-95');
+                setTimeout(() => toast.remove(), 500); 
+            }, 3000);
         }
 
         function handleLearnMore() {
