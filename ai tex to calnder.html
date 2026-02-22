@@ -4099,10 +4099,12 @@ return SunCalc;
                 if (currentBlock === 'config') {
                     const titleMatch = line.match(/^@\s*Title\s*:\s*(.+)/i);
                     const logoMatch = line.match(/^@\s*Logo\s*:\s*!\[(.*?)\]\((.*?)\)/i);
+                    const langMatch = line.match(/^@\s*Language\s*:\s*(.+)/i);
                     const syncMatch = line.match(/^@\s*Live Sync GitHub trigger in every\s*:\s*(\d+)\s*(minute|hour|day)s?/i);
 
-                    if (titleMatch) tempConfig.title = titleMatch[1];
-                    if (logoMatch) tempConfig.logoUrl = logoMatch[2];
+                    if (titleMatch) tempConfig.title = titleMatch[1].trim();
+                    if (logoMatch) tempConfig.logoUrl = logoMatch[2].trim();
+                    if (langMatch) tempConfig.language = langMatch[1].trim();
                     if (syncMatch) {
                          const val = parseInt(syncMatch[1]);
                          const unit = syncMatch[2].toLowerCase();
@@ -4265,6 +4267,12 @@ return SunCalc;
             appState.customSeasonDescriptions = parsedSeasonDescs;
             appState.config = tempConfig;
             
+            // Update UI for language
+            const langSelect = document.getElementById('language-select');
+            if (langSelect && appState.config.language) {
+                langSelect.value = appState.config.language;
+            }
+
             findTodayIndex();
             
             // Set viewDate if not already meaningful (e.g. initial load)
