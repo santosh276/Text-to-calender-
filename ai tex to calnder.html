@@ -1151,7 +1151,7 @@
         </div>
 
         <div class="flex gap-3">
-          <button onclick="retryAppInitialization()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-5">
+          <button onclick="syncAndResetApp()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-5">
             <i class="fa-solid fa-rotate-right text-[24px]"></i>
           </button>
           <button onclick="openSettingsModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
@@ -3729,6 +3729,48 @@ return SunCalc;
                     }
                 });
             });
+        }
+
+        function syncAndResetApp() {
+            // 1. Deep Cleanup (Data only - preserve User Config)
+            localStorage.removeItem('panchang_cached_state');
+            localStorage.removeItem('panchang_autosave_text');
+            localStorage.removeItem('panchang_last_sync_ts');
+            sessionStorage.removeItem('panchang_retry_count');
+
+            // 2. Identify Language & Link
+            const currentLang = appState.config.language || 'en';
+            let link = null;
+
+            if (appState.config.syncLinks && appState.config.syncLinks[currentLang]) {
+                link = appState.config.syncLinks[currentLang];
+                // Decrypt if needed
+                if (appState.config.linksEncrypted) {
+                    try {
+                        link = LinkSecurity.decrypt(link);
+                    } catch (e) {
+                        console.error("Link decryption failed during syncAndReset", e);
+                        link = null;
+                    }
+                }
+            }
+
+            // 3. Action
+            if (link) {
+                // Update Live URL to match current language source
+                appState.config.liveUrl = link;
+                appState.config.syncGitHubUrl = link;
+                saveConfigToStorage();
+
+                showToast(`Resetting and syncing ${currentLang.toUpperCase()} data...`);
+
+                // Force Fetch (bypass cache/timer)
+                fetchGitHubData(link, true);
+            } else {
+                // Fallback to standard retry (reloads page) if no source is configured
+                showToast("No sync source. Performing full reset...");
+                retryAppInitialization();
+            }
         }
 
         function retryAppInitialization() {
