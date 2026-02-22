@@ -3997,7 +3997,9 @@ return SunCalc;
         // Load config from localStorage if available
         try {
             const savedConfig = localStorage.getItem('panchangConfig');
+
             if (savedConfig) {
+                // Case A: Returning User (Load Config)
                 const parsed = JSON.parse(savedConfig);
                 // Merge saved config into defaults
                 if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
@@ -4008,6 +4010,49 @@ return SunCalc;
                 if (appState.config.location) {
                     // Slight delay to allow render to happen first
                     setTimeout(() => getUserLocation(), 2000);
+                }
+            } else {
+                // Case B: First Time User (Set Default EN & Fetch)
+                console.log("First time user detected. Setting default to English.");
+
+                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
+
+                // 1. Force English
+                appState.config.language = 'en';
+
+                // 2. Initial Save
+                saveConfigToStorage();
+
+                // 3. Update UI (Language Dropdown)
+                const langSelect = document.getElementById('language-select');
+                if (langSelect) langSelect.value = 'en';
+
+                // 4. Auto-Fetch English Data
+                if (appState.config.syncLinks && appState.config.syncLinks['en']) {
+                    let link = appState.config.syncLinks['en'];
+
+                    // Decrypt if needed
+                    if (appState.config.linksEncrypted) {
+                        try {
+                            link = LinkSecurity.decrypt(link);
+                        } catch (e) {
+                            console.error("Link decryption failed during init", e);
+                            link = null;
+                        }
+                    }
+
+                    if (link) {
+                        console.log("Auto-fetching default English dataset...");
+                        appState.config.liveUrl = link;
+                        appState.config.syncGitHubUrl = link;
+                        saveConfigToStorage(); // Save liveUrl
+
+                        // Show Loader Message
+                        const loaderTitle = document.querySelector('#app-loader h2');
+                        if (loaderTitle) loaderTitle.innerText = "Loading English Calendar...";
+
+                        fetchGitHubData(link, true);
+                    }
                 }
             }
         } catch (e) {
