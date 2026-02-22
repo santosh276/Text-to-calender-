@@ -3514,6 +3514,20 @@ return SunCalc;
                     // --- EDITOR LOGIC END ---
                     return; // Stop.
                 }
+
+                // Strict Data Cleanup BEFORE Fetch (Requested Improvement)
+                console.log("Auto-sync timer triggered. Cleaning up old data...");
+                showToast("Auto-syncing latest data...");
+
+                localStorage.removeItem('panchang_cached_state');
+                localStorage.removeItem('panchang_autosave_text');
+
+                appState.monthsData = [];
+                appState.recurringEvents = [];
+                appState.details = {};
+                appState.recurringDetails = {};
+                appState.manualTithis = {};
+                appState.customSeasonDescriptions = {};
             }
 
             try {
@@ -3606,6 +3620,20 @@ return SunCalc;
                     // --- EDITOR LOGIC END ---
                     return; // Stop.
                 }
+
+                // Strict Data Cleanup BEFORE Fetch (Requested Improvement)
+                console.log("Auto-sync timer triggered. Cleaning up old data...");
+                showToast("Auto-syncing latest data...");
+
+                localStorage.removeItem('panchang_cached_state');
+                localStorage.removeItem('panchang_autosave_text');
+
+                appState.monthsData = [];
+                appState.recurringEvents = [];
+                appState.details = {};
+                appState.recurringDetails = {};
+                appState.manualTithis = {};
+                appState.customSeasonDescriptions = {};
             }
 
             try {
