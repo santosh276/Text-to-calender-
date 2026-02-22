@@ -3027,21 +3027,54 @@ return SunCalc;
         function changeLanguage(langCode) {
             appState.config.language = langCode;
             
-            // Auto-Switch Live Sync Link if configured
+            // 1. Clear Data State
+            appState.monthsData = [];
+            appState.recurringEvents = [];
+            appState.details = {};
+            appState.recurringDetails = {};
+            appState.manualTithis = {};
+            appState.customSeasonDescriptions = {};
+            appState.images = {};
+
+            // 2. Clear Storage & Cache
+            localStorage.removeItem('panchang_autosave_text');
+            localStorage.removeItem('panchang_cached_state');
+            localStorage.removeItem('panchang_last_sync_ts');
+
+            // 3. Clear Editor
+            const editor = document.getElementById('editor');
+            if (editor) editor.value = '';
+
+            // 4. Check for Sync Link
+            let link = null;
             if (appState.config.syncLinks && appState.config.syncLinks[langCode]) {
-                let link = appState.config.syncLinks[langCode];
-                if (link) {
-                    if (appState.config.linksEncrypted) {
+                link = appState.config.syncLinks[langCode];
+                if (appState.config.linksEncrypted) {
+                    try {
                         link = LinkSecurity.decrypt(link);
+                    } catch (e) {
+                        console.error("Decryption failed", e);
+                        link = null;
                     }
-                    appState.config.liveUrl = link;
-                    appState.config.syncGitHubUrl = link;
-                    fetchGitHubData(link, true);
                 }
             }
-            
-            saveConfigToStorage();
-            render();
+
+            // 5. Update Config & Trigger Sync
+            if (link) {
+                appState.config.liveUrl = link;
+                appState.config.syncGitHubUrl = link;
+                saveConfigToStorage(); // Persist new language & url
+
+                showToast(`Fetching ${langCode.toUpperCase()} dataset...`);
+                fetchGitHubData(link, true);
+            } else {
+                delete appState.config.liveUrl;
+                delete appState.config.syncGitHubUrl;
+                saveConfigToStorage(); // Persist removal
+
+                showToast(`${langCode.toUpperCase()} selected. No data available.`);
+                render(); // Render blank state
+            }
         }
 
         // --- EDITOR LOGIC START ---
@@ -3078,6 +3111,21 @@ return SunCalc;
                     showToast(`Link removed for ${lang.toUpperCase()}`);
                 }
             }
+
+            // Auto-Fetch if affecting Active Language
+            if (lang === appState.config.language) {
+                if (url) {
+                    appState.config.liveUrl = url;
+                    appState.config.syncGitHubUrl = url;
+                    showToast(`Fetching ${lang.toUpperCase()} dataset...`);
+                    fetchGitHubData(url, true);
+                } else {
+                    delete appState.config.liveUrl;
+                    delete appState.config.syncGitHubUrl;
+                    showToast("Active link removed.");
+                }
+            }
+
             saveConfigToStorage();
         }
         // --- EDITOR LOGIC END ---
