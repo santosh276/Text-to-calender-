@@ -3477,7 +3477,7 @@ return SunCalc;
             } else if (url === "") {
                 delete appState.config.liveUrl;
                 saveConfigToStorage();
-                // showToast("GitHub Sync removed.");
+                showToast("GitHub Sync removed.");
                 
                 const githubToggle = document.getElementById('toggle-sync-github');
                 if (githubToggle) githubToggle.checked = false;
@@ -6487,25 +6487,67 @@ function renderCalendarGrid(data) {
         }
         // --- EDITOR LOGIC END ---
 
-        function showToast(message) {
+        function showToast(message, type = 'default') {
+            // Remove existing toasts to prevent stacking
+            const existing = document.querySelectorAll('.custom-toast');
+            existing.forEach(t => t.remove());
+
             const toast = document.createElement('div');
-            // Removed 'animate-bounce' to prevent infinite bouncing distraction
-            toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-[300] text-sm font-medium transition-all duration-300 opacity-0 translate-y-4';
-            toast.innerText = message;
+            // Glassmorphism, Rounded Pill, Bottom Center, Shadow
+            toast.className = 'custom-toast fixed bottom-10 left-1/2 transform -translate-x-1/2 z-[300] flex items-center gap-3 px-6 py-3.5 rounded-2xl shadow-2xl shadow-orange-100/50 transition-all duration-500 ease-out translate-y-10 opacity-0 border border-white/50 backdrop-blur-xl bg-white/90 cursor-pointer';
+
+            // Auto-detect type
+            const msgLower = message.toLowerCase();
+            if (type === 'default') {
+                if (msgLower.includes('error') || msgLower.includes('failed')) type = 'error';
+                else if (msgLower.includes('success') || msgLower.includes('saved') || msgLower.includes('imported')) type = 'success';
+            }
+
+            // Icons & Colors
+            let iconHtml = '<i class="fa-solid fa-circle-info"></i>';
+            let iconColor = 'text-orange-500';
+            let textColor = 'text-gray-800';
+
+            if (type === 'success') {
+                iconHtml = '<i class="fa-solid fa-circle-check"></i>';
+                iconColor = 'text-green-500';
+                toast.classList.add('border-green-100');
+            } else if (type === 'error') {
+                iconHtml = '<i class="fa-solid fa-circle-exclamation"></i>';
+                iconColor = 'text-red-500';
+                toast.classList.add('border-red-100');
+            } else {
+                // Info / Default (Orange Theme)
+                iconHtml = '<i class="fa-solid fa-circle-info"></i>';
+                iconColor = 'text-orange-500';
+                toast.classList.add('border-orange-100');
+            }
+
+            toast.innerHTML = `
+                <div class="text-lg ${iconColor} drop-shadow-sm">${iconHtml}</div>
+                <div class="font-bold text-sm ${textColor} tracking-wide leading-snug">${message}</div>
+            `;
+
+            // Click to dismiss
+            toast.onclick = () => {
+                toast.classList.add('opacity-0', 'translate-y-10', 'scale-95');
+                setTimeout(() => toast.remove(), 300);
+            };
+
             document.body.appendChild(toast);
             
             // Animate In
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    toast.classList.remove('opacity-0', 'translate-y-4');
+                    toast.classList.remove('opacity-0', 'translate-y-10');
                 });
             });
 
-            // Animate Out (2 seconds)
+            // Animate Out
             setTimeout(() => { 
-                toast.classList.add('opacity-0', 'translate-y-4');
-                setTimeout(() => toast.remove(), 300); 
-            }, 2000);
+                toast.classList.add('opacity-0', 'translate-y-10', 'scale-95');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
         }
 
         function handleLearnMore() {
