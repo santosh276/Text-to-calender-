@@ -1131,6 +1131,130 @@
         text-transform: uppercase;
     }
     </style>
+<style>
+        /* TIMELINE UI STYLES */
+        :root {
+            --bg-outer: #e2e8f0;
+            --bg-app: #ffffff;
+
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+
+            --primary-orange: #ea580c;
+            --primary-orange-glow: rgba(234, 88, 12, 0.25);
+
+            --card-red-start: #ef4444;
+            --card-red-end: #dc2626;
+            --card-green-start: #10b981;
+            --card-green-end: #059669;
+            --card-neutral-start: #64748b;
+            --card-neutral-end: #475569;
+            --card-orange-start: #f97316;
+            --card-orange-end: #ea580c;
+
+            --glass-bg: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        .timeline-app-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background-color: transparent;
+            margin: 0 auto;
+        }
+
+        .timeline-main-content {
+            flex: 1;
+            padding: 0;
+            position: relative;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .section-title h3 { font-size: 18px; font-weight: 800; color: var(--text-main); }
+        .section-title .badge { font-size: 14px; font-weight: 600; color: var(--text-muted); background: rgba(0, 0, 0, 0.05); padding: 4px 12px; border-radius: 999px; }
+
+        .current-time {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 10;
+        }
+        .current-time .label { width: 64px; text-align: right; font-size: 12px; font-weight: 900; color: var(--primary-orange); letter-spacing: 0.05em; }
+        .current-time .line-container { flex: 1; display: flex; align-items: center; gap: 8px; }
+        .pulse-dot { width: 10px; height: 10px; background-color: var(--primary-orange); border-radius: 50%; box-shadow: 0 0 10px rgba(234,88,12,0.6); position: relative; z-index: 10; }
+        @keyframes pulse-anim { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.5); opacity: 0; } }
+        .pulse-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background-color: var(--primary-orange); animation: pulse-anim 1.5s infinite; }
+        .gradient-line { height: 2px; width: 100%; background: linear-gradient(90deg, var(--primary-orange) 0%, transparent 100%); border-radius: 2px; }
+        .current-time .time { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+
+        .timeline-container { position: relative; display: flex; flex-direction: column; gap: 32px; }
+
+        .timeline-spine {
+            position: absolute; left: 40px; top: 8px; bottom: 24px; width: 2px;
+            background-color: rgba(0, 0, 0, 0.08); border-radius: 2px;
+        }
+
+        .timeline-item { display: flex; align-items: stretch; gap: 16px; position: relative; }
+
+        .time-dot-col {
+            width: 64px; display: flex; flex-direction: column; align-items: flex-end; padding-top: 20px;
+        }
+        .time-txt { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+        .timeline-dot {
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--bg-app);
+            border: 2px solid; margin-top: 4px; margin-bottom: 4px; margin-right: -22px; z-index: 10;
+        }
+        .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
+
+        .timeline-card {
+            flex: 1; border-radius: 32px; padding: 24px; color: white; position: relative; overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .timeline-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2); }
+
+        .bg-red-gradient { background: linear-gradient(135deg, var(--card-red-start), var(--card-red-end)); box-shadow: 0 10px 30px -10px rgba(220, 38, 38, 0.3); }
+        .bg-green-gradient { background: linear-gradient(135deg, var(--card-green-start), var(--card-green-end)); box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.3); }
+        .bg-neutral-gradient { background: linear-gradient(135deg, var(--card-neutral-start), var(--card-neutral-end)); box-shadow: 0 10px 30px -10px rgba(71, 85, 105, 0.2); }
+        .bg-orange-gradient { background: linear-gradient(135deg, var(--card-orange-start), var(--card-orange-end)); box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.3); }
+
+        .card-blur-circle { position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: rgba(255, 255, 255, 0.15); border-radius: 50%; filter: blur(24px); }
+        .card-dots-pattern { position: absolute; inset: 0; opacity: 0.15; background-image: radial-gradient(white 2px, transparent 2px); background-size: 20px 20px; }
+        .card-pinstripe { position: absolute; inset: 0; opacity: 0.2; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 12px); }
+        .card-dark-blur { position: absolute; bottom: -80px; right: -80px; width: 256px; height: 256px; background: rgba(0, 0, 0, 0.2); border-radius: 50%; filter: blur(32px); }
+
+        .card-content { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100%; justify-content: space-between; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .glass-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 4px 12px; border-radius: 999px; }
+        .glass-pill span { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+        .timeline-icon { width: 14px; height: 14px; fill: currentColor; }
+        .pulse-text { background: rgba(127, 29, 29, 0.4); border: 1px solid rgba(252, 165, 165, 0.4); font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; animation: pulse-opacity 2s infinite; }
+        @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .card-title { font-size: 24px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 4px; line-height: 1.1; }
+        .card-title.large { font-size: 32px; }
+        .card-desc { font-size: 14px; font-weight: 500; opacity: 0.95; line-height: 1.4; margin-bottom: 16px; }
+
+        .card-footer { background: rgba(0, 0, 0, 0.15); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255, 255, 255, 0.15); }
+        .footer-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+        .footer-value { font-size: 14px; font-weight: 700; }
+        .footer-value.large { font-size: 20px; }
+        .footer-value.large span { font-size: 12px; font-weight: 400; opacity: 0.9; }
+
+        .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
+        .progress-line { width: 100%; height: 1px; background: rgba(255, 255, 255, 0.4); position: relative; }
+        .progress-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; background: #059669; padding: 2px 8px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.3); }
+        .simple-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 12px; margin-top: auto; }
+</style>
+
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
 
@@ -5179,47 +5303,95 @@ function renderCalendarGrid(data) {
     }
 }
 
-        // --- NEW HELPER: Calculate Rahu Kalam, Yamaganda, Abhijit ---
+        // --- UPDATED HELPER: Calculate Rahu Kalam, Yamaganda, Gulika, Abhijit ---
         function getSpecialTimes(date, sunrise, sunset) {
             if (!sunrise || !sunset) return null;
 
             const dayOfWeek = date.getDay(); // 0 = Sunday
             const duration = (sunset - sunrise); // Duration in ms
-            const part = duration / 8; // Dividing day into 8 parts (Traditional method)
+            const part = duration / 8; // Dividing day into 8 parts
 
-            // Standard Vedic Slots (0-indexed parts of the day)
+            // Slots (0-indexed parts of the day)
             // Sun=7, Mon=1, Tue=6, Wed=4, Thu=5, Fri=3, Sat=2
             const rahuSlots = [7, 1, 6, 4, 5, 3, 2]; 
             // Sun=4, Mon=3, Tue=2, Wed=1, Thu=0, Fri=6, Sat=5
             const yamaSlots = [4, 3, 2, 1, 0, 6, 5]; 
+            // Sun=6, Mon=5, Tue=4, Wed=3, Thu=2, Fri=1, Sat=0
+            const gulikaSlots = [6, 5, 4, 3, 2, 1, 0];
 
-            const formatTime = (ms) => {
-                const d = new Date(ms);
-                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const createTimeObj = (name, startMs, endMs, type, description, gradientClass, iconColor) => {
+                const s = new Date(startMs);
+                const e = new Date(endMs);
+                return {
+                    name,
+                    start: s,
+                    end: e,
+                    type,
+                    description,
+                    gradientClass,
+                    iconColor,
+                    duration: Math.round((e - s) / 60000) + 'm'
+                };
             };
 
-            // Calculate Rahu Kalam
-            const rahuStart = new Date(sunrise.getTime() + (rahuSlots[dayOfWeek] * part));
-            const rahuEnd = new Date(rahuStart.getTime() + part);
+            const times = [];
 
-            // Calculate Yamaganda
-            const yamaStart = new Date(sunrise.getTime() + (yamaSlots[dayOfWeek] * part));
-            const yamaEnd = new Date(yamaStart.getTime() + part);
+            // 1. Rahu Kalam
+            const rahuStart = sunrise.getTime() + (rahuSlots[dayOfWeek] * part);
+            times.push(createTimeObj(
+                "Rahu Kalam",
+                rahuStart,
+                rahuStart + part,
+                "bad",
+                "Period of ignorance. Not suited for auspicious acts.",
+                "bg-orange-gradient",
+                "dot-orange"
+            ));
 
-            // Calculate Abhijit Muhurat (Midday - 24 mins to Midday + 24 mins approx)
-            // More precise: 8th Muhurat of the 15 Muhurats in the day.
-            const dayMid = new Date(sunrise.getTime() + (duration / 2));
-            const abhijitStart = new Date(dayMid.getTime() - (24 * 60 * 1000));
-            const abhijitEnd = new Date(dayMid.getTime() + (24 * 60 * 1000));
-            
-            // Skip Abhijit on Wednesday (generally considered bad)
-            const hasAbhijit = dayOfWeek !== 3; 
+            // 2. Yamaganda
+            const yamaStart = sunrise.getTime() + (yamaSlots[dayOfWeek] * part);
+            times.push(createTimeObj(
+                "Yamaganda",
+                yamaStart,
+                yamaStart + part,
+                "bad",
+                "Inauspicious. Avoid travel and beginning new ventures.",
+                "bg-red-gradient",
+                "dot-red"
+            ));
 
-            return {
-                rahu: `${formatTime(rahuStart)} - ${formatTime(rahuEnd)}`,
-                yama: `${formatTime(yamaStart)} - ${formatTime(yamaEnd)}`,
-                abhijit: hasAbhijit ? `${formatTime(abhijitStart)} - ${formatTime(abhijitEnd)}` : "None (Wed)"
-            };
+            // 3. Gulika Kalam
+            const gulikaStart = sunrise.getTime() + (gulikaSlots[dayOfWeek] * part);
+            times.push(createTimeObj(
+                "Gulika Kalam",
+                gulikaStart,
+                gulikaStart + part,
+                "neutral",
+                "Suitable time for repeating activities.",
+                "bg-neutral-gradient",
+                "dot-slate"
+            ));
+
+            // 4. Abhijit Muhurat (Only if not Wednesday)
+            if (dayOfWeek !== 3) {
+                const dayMid = sunrise.getTime() + (duration / 2);
+                const abhijitStart = dayMid - (24 * 60 * 1000);
+                const abhijitEnd = dayMid + (24 * 60 * 1000);
+                times.push(createTimeObj(
+                    "Abhijit Muhurat",
+                    abhijitStart,
+                    abhijitEnd,
+                    "good",
+                    "Best time of the day for new beginnings. The sun's position removes most doshas.",
+                    "bg-green-gradient",
+                    "dot-green"
+                ));
+            }
+
+            // Sort by start time
+            times.sort((a, b) => a.start - b.start);
+
+            return times;
         }
 
         // --- UPDATED MAIN RENDER FUNCTION ---
@@ -5394,32 +5566,6 @@ function renderCalendarGrid(data) {
 
             list.appendChild(gridDiv);
 
-            // 6. Render Muhurat Strip (Rahu, Yama, Abhijit)
-            if (muhurats) {
-                const muhuratDiv = document.createElement('div');
-                muhuratDiv.innerHTML = `<h4 class="text-xs font-bold text-gray-500 mb-2 mt-4 uppercase tracking-wider pl-1">Auspicious Timings</h4>`;
-                
-                const strip = document.createElement('div');
-                strip.className = "muhurat-strip custom-scroll";
-
-                strip.innerHTML = `
-                    <div class="muhurat-pill muhurat-good" title="Best time for new beginnings">
-                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Abhijit</span>
-                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.abhijit}</span>
-                    </div>
-                    <div class="muhurat-pill muhurat-bad" title="Avoid auspicious work">
-                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Rahu Kalam</span>
-                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.rahu}</span>
-                    </div>
-                    <div class="muhurat-pill muhurat-bad" title="Inauspicious time">
-                        <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Yamaganda</span>
-                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.yama}</span>
-                    </div>
-                `;
-                
-                muhuratDiv.appendChild(strip);
-                list.appendChild(muhuratDiv);
-            }
 
             // 7. Location Button Logic (Moved to bottom of list)
             const locContainer = document.createElement('div');
@@ -6006,6 +6152,11 @@ function renderCalendarGrid(data) {
                     moonTimes = SunCalc.getMoonTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
                 }
             }
+
+            let muhurats = null;
+            if (sunTimes.sunrise && sunTimes.sunset) {
+                muhurats = getSpecialTimes(dateObj, sunTimes.sunrise, sunTimes.sunset);
+            }
             const fmtAstroTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
             
             // Astro Data
@@ -6245,6 +6396,99 @@ function renderCalendarGrid(data) {
                             </div>
                         </div>` : ''}
 
+
+                        <!-- 3. Auspicious Timings Timeline -->
+                        ${muhurats && muhurats.length > 0 ? (() => {
+                            // Helper to get Icon
+                            const getIconForType = (type) => {
+                                if (type === 'good') return `<svg class="timeline-icon" style="color: #fef08a;" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z"/></svg>`;
+                                if (type === 'bad') return `<svg class="timeline-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm-1.5 8c-.83 0-1.5-.67-1.5-1.5S9.67 7 10.5 7s1.5.67 1.5 1.5S11.33 10 10.5 10zm3 0c-.83 0-1.5-.67-1.5-1.5S12.67 7 13.5 7s1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM15 19H9v1c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1z"/></svg>`;
+                                return `<svg class="timeline-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>`;
+                            };
+
+                            const isCurrent = (start, end) => {
+                                const now = new Date();
+                                return now >= start && now <= end;
+                            };
+
+                            const now = new Date();
+                            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const dateStr = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+                            let html = `
+                            <div class="modal-card">
+                                <div class="section-title">
+                                    <h3>Timeline</h3>
+                                    <span class="badge">${dateStr}</span>
+                                </div>
+
+                                <div class="current-time">
+                                    <div class="label">NOW</div>
+                                    <div class="line-container">
+                                        <div class="pulse-dot"></div>
+                                        <div class="gradient-line"></div>
+                                    </div>
+                                    <div class="time">${timeStr}</div>
+                                </div>
+
+                                <div class="timeline-container">
+                                    <div class="timeline-spine"></div>
+                            `;
+
+                            muhurats.forEach(m => {
+                                const startStr = m.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                const endStr = m.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                const [tTime, tPeriod] = startStr.split(' ');
+
+                                html += `
+                                    <div class="timeline-item">
+                                        <div class="time-dot-col">
+                                            <span class="time-txt">${tTime}</span>
+                                            <div class="timeline-dot ${m.iconColor}"></div>
+                                            <span class="time-txt">${tPeriod || ''}</span>
+                                        </div>
+
+                                        <div class="timeline-card ${m.gradientClass}">
+                                            ${m.type === 'good' ? '<div class="card-dots-pattern"></div>' : ''}
+                                            ${m.type === 'bad' ? '<div class="card-blur-circle"></div>' : ''}
+                                            ${m.type === 'neutral' ? '<div class="card-pinstripe"></div>' : ''}
+
+                                            <div class="card-content">
+                                                <div class="card-header">
+                                                    <div class="glass-pill">
+                                                        ${getIconForType(m.type)}
+                                                        <span>${m.type === 'good' ? 'Most Auspicious' : (m.type === 'bad' ? (m.name.includes('Rahu') ? 'Strictly Avoid' : 'Inauspicious') : 'Neutral')}</span>
+                                                    </div>
+                                                    ${isCurrent(m.start, m.end) ? '<span class="pulse-text">Active Now</span>' : ''}
+                                                </div>
+
+                                                <div>
+                                                    <h2 class="card-title ${m.type === 'good' ? 'large' : ''}">${m.name.replace(' ', '<br/>')}</h2>
+                                                    <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
+                                                </div>
+
+                                                <div class="card-footer">
+                                                    <div>
+                                                        <p class="footer-label">Ends at</p>
+                                                        <p class="footer-value">${endStr}</p>
+                                                    </div>
+                                                    <div style="text-align: right;">
+                                                        <p class="footer-label">Duration</p>
+                                                        <p class="footer-value">${m.duration}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+
+                            html += `
+                                </div>
+                            </div>`;
+
+                            return html;
+                        })() : ''}
 
                         <!-- 3. Upcoming Special Tithis -->
                         ${upcoming.length > 0 ? `
