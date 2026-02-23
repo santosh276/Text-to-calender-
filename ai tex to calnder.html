@@ -1241,6 +1241,205 @@
         .simple-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 12px; margin-top: auto; }
 </style>
 
+<style>
+        /* =========================================
+           PREMIUM CUSTOM CSS (OFFLINE & RESPONSIVE)
+           ========================================= */
+
+        :root {
+            /* Extremely soft, warm off-white background (easy on the eyes) */
+            --bg-outer: #f8fafc;
+            --bg-app: #ffffff;
+
+            /* High contrast text colors for perfect readability */
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+
+            /* Vibrant but elegant accent colors */
+            --primary-orange: #ea580c;
+            --primary-orange-glow: rgba(234, 88, 12, 0.2);
+
+            /* Richer, deeper gradients for the cards */
+            --card-red-start: #ef4444;
+            --card-red-end: #b91c1c;
+            --card-green-start: #10b981;
+            --card-green-end: #047857;
+            --card-neutral-start: #64748b;
+            --card-neutral-end: #334155;
+            --card-orange-start: #f97316;
+            --card-orange-end: #c2410c;
+
+            /* Frosted glass effects */
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.25);
+        }
+
+        /* --- 'NOW' Indicator (The Beacon) --- */
+        .current-time {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            position: relative;
+            z-index: 10;
+        }
+        .current-time .label { width: 56px; text-align: right; font-size: 11px; font-weight: 800; color: var(--primary-orange); letter-spacing: 0.1em; }
+        .current-time .line-container { flex: 1; display: flex; align-items: center; gap: 0; }
+
+        .pulse-beacon {
+            width: 12px; height: 12px;
+            background-color: var(--primary-orange);
+            border-radius: 50%;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.2);
+        }
+        @keyframes radar-ping {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(3.5); opacity: 0; }
+        }
+        .pulse-beacon::after {
+            content: ''; position: absolute; inset: 0; border-radius: 50%;
+            background-color: var(--primary-orange);
+            animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        .gradient-line { height: 2px; width: 100%; background: linear-gradient(90deg, var(--primary-orange) 0%, transparent 100%); opacity: 0.5; }
+        .current-time .time { font-size: 13px; font-weight: 800; color: var(--text-muted); }
+
+        /* --- Timeline Structure --- */
+        .timeline-container { position: relative; display: flex; flex-direction: column; gap: 40px; }
+
+        /* The central string */
+        .timeline-spine {
+            position: absolute; left: 34px; top: 12px; bottom: 32px; width: 2px;
+            background-color: rgba(0, 0, 0, 0.06); border-radius: 2px;
+        }
+
+        .timeline-item {
+            display: flex; align-items: stretch; gap: 20px; position: relative;
+            /* Animation for floating in */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Delays so they cascade down the screen nicely */
+        .timeline-item:nth-child(2) { animation-delay: 0.1s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.3s; }
+        .timeline-item:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Left side times */
+        .time-dot-col {
+            width: 56px; display: flex; flex-direction: column; align-items: flex-end; padding-top: 18px;
+        }
+        .time-txt { font-size: 12px; font-weight: 800; color: var(--text-muted); line-height: 1; }
+        .time-txt.am-pm { font-size: 10px; font-weight: 600; opacity: 0.7; margin-top: 4px; }
+
+        .timeline-dot {
+            width: 14px; height: 14px; border-radius: 50%; background-color: var(--bg-app);
+            border: 3px solid; margin-top: 6px; margin-bottom: 6px; margin-right: -27px; z-index: 10;
+            box-shadow: 0 0 0 4px var(--bg-app); /* Gives breathing room around the dot */
+        }
+        .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
+
+        /* --- Premium Cards --- */
+        .timeline-card {
+            flex: 1; border-radius: 28px; padding: 24px; color: white; position: relative; overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Glass edge */
+        }
+        /* Hover "lift" effect */
+        .timeline-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15), 0 10px 20px -5px rgba(0,0,0,0.1);
+        }
+
+        .bg-red-gradient { background: linear-gradient(135deg, var(--card-red-start), var(--card-red-end)); box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.2); }
+        .bg-green-gradient { background: linear-gradient(135deg, var(--card-green-start), var(--card-green-end)); box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2); }
+        .bg-neutral-gradient { background: linear-gradient(135deg, var(--card-neutral-start), var(--card-neutral-end)); box-shadow: 0 10px 25px -5px rgba(71, 85, 105, 0.15); }
+        .bg-orange-gradient { background: linear-gradient(135deg, var(--card-orange-start), var(--card-orange-end)); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.2); }
+
+        /* Subtle Card Decorations for depth */
+        .card-glare { position: absolute; top: 0; left: 0; right: 0; height: 100px; background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%); pointer-events: none; }
+        .card-blur-circle { position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; filter: blur(30px); pointer-events: none; }
+        .card-pinstripe { position: absolute; inset: 0; opacity: 0.15; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 16px); pointer-events: none; }
+
+        /* Card Text & Inner Layout */
+        .card-content { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100%; justify-content: space-between; gap: 20px;}
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+
+        .glass-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            padding: 6px 14px; border-radius: 999px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .glass-pill span { font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+        .timeline-icon { width: 14px; height: 14px; fill: currentColor; }
+
+        .pulse-text {
+            background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 8px;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            animation: pulse-opacity 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .card-text-area { display: flex; flex-direction: column; gap: 8px; }
+        .card-title { font-size: 26px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card-title.large { font-size: 36px; }
+        .card-desc { font-size: 15px; font-weight: 500; opacity: 0.9; line-height: 1.5; }
+
+        /* Improved Card Footers (The data blocks) */
+        .card-footer {
+            background: rgba(0, 0, 0, 0.15); border-radius: 16px; padding: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-label { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-weight: 600; }
+        .footer-value { font-size: 16px; font-weight: 800; letter-spacing: -0.01em;}
+        .footer-value.large { font-size: 24px; }
+        .footer-value.large span { font-size: 14px; font-weight: 600; opacity: 0.8; }
+
+        .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 12px; position: relative;}
+        .progress-line { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.2); position: relative; border-radius: 2px; }
+        .progress-badge {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 11px; font-weight: 800; background: #047857; padding: 4px 10px; border-radius: 99px;
+            border: 2px solid var(--card-green-start); box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .simple-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 16px; margin-top: 8px;
+        }
+
+        /* =========================================
+           DESKTOP LAYOUT (The Dashboard Grid)
+           ========================================= */
+        @media (min-width: 1024px) {
+            /* Turn the list into a Grid */
+            .timeline-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+            .timeline-spine { display: none; }
+
+            .timeline-item { flex-direction: column; gap: 16px; }
+            .time-dot-col {
+                width: 100%; flex-direction: row; align-items: center; justify-content: flex-start; padding-top: 0; gap: 12px;
+            }
+            .time-txt { font-size: 15px; }
+            .time-txt.am-pm { font-size: 13px; margin-top: 0; }
+            .timeline-dot { margin: 0; }
+
+            .card-title { font-size: 28px; }
+            .card-title.large { font-size: 40px; }
+            .card-desc { font-size: 16px; }
+        }
+</style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
 
@@ -5596,6 +5795,10 @@ function renderCalendarGrid(data) {
                 if (el) {
                     el.innerText = timeString;
                 }
+                const el2 = document.getElementById('timings-clock');
+                if (el2) {
+                    el2.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
             };
             
             updateTime();
@@ -5627,7 +5830,7 @@ function renderCalendarGrid(data) {
             const container = document.getElementById('sec-timings');
             if (!container) return;
 
-            // 1. Calculate Date (Same logic as renderPanchang)
+            // 1. Calculate Date
             const today = new Date();
             const calcDate = (data.month === today.getMonth() && data.year === today.getFullYear())
                            ? new Date()
@@ -5663,12 +5866,8 @@ function renderCalendarGrid(data) {
                  return `<svg class="timeline-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>`;
             };
 
-            const isCurrent = (start, end) => {
-                const now = new Date();
-                return now >= start && now <= end;
-            };
-
-            const timeStr = calcDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             let html = `
                 <div class="section-title">
@@ -5682,7 +5881,7 @@ function renderCalendarGrid(data) {
                         <div class="pulse-dot"></div>
                         <div class="gradient-line"></div>
                     </div>
-                    <div class="time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div class="time" id="timings-clock">${timeStr}</div>
                 </div>
 
                 <div class="timeline-container">
@@ -5690,16 +5889,82 @@ function renderCalendarGrid(data) {
             `;
 
             muhurats.forEach(m => {
+                const isActive = (now >= m.start && now <= m.end);
+                const isUpcoming = (now < m.start);
+
                 const startStr = m.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const endStr = m.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const [tTime, tPeriod] = startStr.split(' ');
+
+                // Logic for Footer Type
+                // Use Advanced Footer for: Active events OR Abhijit Muhurat
+                const useAdvancedFooter = isActive || m.type === 'good';
+
+                let footerHtml = '';
+                if (useAdvancedFooter) {
+                    // Calculate Progress
+                    const totalDuration = m.end - m.start;
+                    const elapsed = now - m.start;
+                    let progressPct = 0;
+                    let statusText = '';
+
+                    if (isActive) {
+                        progressPct = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+                        const remainingMs = m.end - now;
+                        const remMins = Math.ceil(remainingMs / 60000);
+                        statusText = `Ends in ${Math.floor(remMins/60)}h ${remMins%60}m`;
+                    } else if (isUpcoming) {
+                        const waitMs = m.start - now;
+                        const waitMins = Math.ceil(waitMs / 60000);
+                        statusText = `Upcoming in ${Math.floor(waitMins/60)}h ${waitMins%60}m`;
+                    } else {
+                        progressPct = 100;
+                        statusText = "Completed";
+                    }
+
+                    footerHtml = `
+                        <div class="card-footer" style="background: rgba(0,0,0,0.2); display: block;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+                                <div>
+                                    <p class="footer-label" style="opacity:0.8;">Starts</p>
+                                    <p class="footer-value large">${startStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-70">${startStr.slice(-2)}</span></p>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-line">
+                                        <span class="progress-badge">${m.duration}</span>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <p class="footer-label" style="opacity:0.8;">Ends</p>
+                                    <p class="footer-value large">${endStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-70">${endStr.slice(-2)}</span></p>
+                                </div>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden;">
+                                <div style="width: ${progressPct}%; height: 100%; background: white; border-radius: 4px; transition: width 1s linear;"></div>
+                            </div>
+                            <p style="text-align: center; font-size: 10px; margin-top: 12px; font-weight: 700; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.1em;">${statusText}</p>
+                        </div>
+                    `;
+                } else {
+                    // Simple Footer
+                    footerHtml = `
+                        <div class="simple-footer">
+                            <span style="font-size: 14px; font-weight: 700;">${startStr}</span>
+                            <div class="flex items-center gap-1 opacity-60">
+                                <i class="fa-solid fa-arrow-right-long"></i>
+                                <span class="text-[10px] font-bold">${m.duration}</span>
+                            </div>
+                            <span style="font-size: 14px; font-weight: 700;">${endStr}</span>
+                        </div>
+                    `;
+                }
 
                 html += `
                     <div class="timeline-item">
                         <div class="time-dot-col">
                             <span class="time-txt">${tTime}</span>
                             <div class="timeline-dot ${m.iconColor}"></div>
-                            <span class="time-txt">${tPeriod || ''}</span>
+                            <span class="time-txt am-pm">${tPeriod || ''}</span>
                         </div>
 
                         <div class="timeline-card ${m.gradientClass}">
@@ -5713,24 +5978,15 @@ function renderCalendarGrid(data) {
                                         ${getIconForType(m.type)}
                                         <span>${m.type === 'good' ? 'Most Auspicious' : (m.type === 'bad' ? (m.name.includes('Rahu') ? 'Strictly Avoid' : 'Inauspicious') : 'Neutral')}</span>
                                     </div>
-                                    ${isCurrent(m.start, m.end) ? '<span class="pulse-text">Active Now</span>' : ''}
+                                    ${isActive ? '<span class="pulse-text">Active Now</span>' : ''}
                                 </div>
 
-                                <div>
+                                <div class="card-text-area">
                                     <h2 class="card-title ${m.type === 'good' ? 'large' : ''}">${m.name.replace(' ', '<br/>')}</h2>
                                     <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
                                 </div>
 
-                                <div class="card-footer">
-                                    <div>
-                                        <p class="footer-label">Ends at</p>
-                                        <p class="footer-value">${endStr}</p>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <p class="footer-label">Duration</p>
-                                        <p class="footer-value">${m.duration}</p>
-                                    </div>
-                                </div>
+                                ${footerHtml}
                             </div>
                         </div>
                     </div>
@@ -6258,10 +6514,6 @@ function renderCalendarGrid(data) {
                 }
             }
 
-            let muhurats = null;
-            if (sunTimes.sunrise && sunTimes.sunset) {
-                muhurats = getSpecialTimes(dateObj, sunTimes.sunrise, sunTimes.sunset);
-            }
             const fmtAstroTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
             
             // Astro Data
