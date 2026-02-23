@@ -1164,25 +1164,34 @@
             --glass-border: rgba(255, 255, 255, 0.25);
         }
 
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-title h3 { font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: -0.01em; }
+        .section-title .badge { font-size: 11px; font-weight: 700; color: var(--text-muted); background: rgba(0, 0, 0, 0.04); padding: 4px 10px; border-radius: 999px; letter-spacing: 0.02em; }
+
         /* --- 'NOW' Indicator (The Beacon) --- */
         .current-time {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 32px;
+            gap: 12px;
+            margin-bottom: 20px;
             position: relative;
             z-index: 10;
         }
-        .current-time .label { width: 56px; text-align: right; font-size: 11px; font-weight: 800; color: var(--primary-orange); letter-spacing: 0.1em; }
+        .current-time .label { width: 48px; text-align: right; font-size: 10px; font-weight: 800; color: var(--primary-orange); letter-spacing: 0.1em; }
         .current-time .line-container { flex: 1; display: flex; align-items: center; gap: 0; }
 
         .pulse-beacon {
-            width: 12px; height: 12px;
+            width: 10px; height: 10px;
             background-color: var(--primary-orange);
             border-radius: 50%;
             position: relative;
             z-index: 10;
-            box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.2);
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2);
         }
         @keyframes radar-ping {
             0% { transform: scale(1); opacity: 0.8; }
@@ -1194,19 +1203,19 @@
             animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
         .gradient-line { height: 2px; width: 100%; background: linear-gradient(90deg, var(--primary-orange) 0%, transparent 100%); opacity: 0.5; }
-        .current-time .time { font-size: 13px; font-weight: 800; color: var(--text-muted); }
+        .current-time .time { font-size: 12px; font-weight: 800; color: var(--text-muted); }
 
         /* --- Timeline Structure --- */
-        .timeline-container { position: relative; display: flex; flex-direction: column; gap: 40px; }
+        .timeline-container { position: relative; display: flex; flex-direction: column; gap: 24px; }
 
         /* The central string */
         .timeline-spine {
-            position: absolute; left: 34px; top: 12px; bottom: 32px; width: 2px;
+            position: absolute; left: 28px; top: 10px; bottom: 20px; width: 2px;
             background-color: rgba(0, 0, 0, 0.06); border-radius: 2px;
         }
 
         .timeline-item {
-            display: flex; align-items: stretch; gap: 20px; position: relative;
+            display: flex; align-items: stretch; gap: 12px; position: relative;
             /* Animation for floating in */
             opacity: 0;
             transform: translateY(20px);
@@ -1225,21 +1234,21 @@
 
         /* Left side times */
         .time-dot-col {
-            width: 56px; display: flex; flex-direction: column; align-items: flex-end; padding-top: 18px;
+            width: 48px; display: flex; flex-direction: column; align-items: flex-end; padding-top: 14px;
         }
-        .time-txt { font-size: 12px; font-weight: 800; color: var(--text-muted); line-height: 1; }
-        .time-txt.am-pm { font-size: 10px; font-weight: 600; opacity: 0.7; margin-top: 4px; }
+        .time-txt { font-size: 11px; font-weight: 800; color: var(--text-muted); line-height: 1; }
+        .time-txt.am-pm { font-size: 9px; font-weight: 600; opacity: 0.7; margin-top: 2px; }
 
         .timeline-dot {
-            width: 14px; height: 14px; border-radius: 50%; background-color: var(--bg-app);
-            border: 3px solid; margin-top: 6px; margin-bottom: 6px; margin-right: -27px; z-index: 10;
-            box-shadow: 0 0 0 4px var(--bg-app); /* Gives breathing room around the dot */
+            width: 10px; height: 10px; border-radius: 50%; background-color: var(--bg-app);
+            border: 2px solid; margin-top: 6px; margin-bottom: 6px; margin-right: -21px; z-index: 10;
+            box-shadow: 0 0 0 3px var(--bg-app); /* Gives breathing room around the dot */
         }
         .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
 
         /* --- Premium Cards --- */
         .timeline-card {
-            flex: 1; border-radius: 28px; padding: 24px; color: white; position: relative; overflow: hidden;
+            flex: 1; border-radius: 20px; padding: 16px; color: white; position: relative; overflow: hidden;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             border: 1px solid rgba(255, 255, 255, 0.15); /* Glass edge */
         }
@@ -1260,53 +1269,53 @@
         .card-pinstripe { position: absolute; inset: 0; opacity: 0.15; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 16px); pointer-events: none; }
 
         /* Card Text & Inner Layout */
-        .card-content { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100%; justify-content: space-between; gap: 20px;}
+        .card-content { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100%; justify-content: space-between; gap: 12px;}
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
 
         .glass-pill {
-            display: inline-flex; align-items: center; gap: 8px;
+            display: inline-flex; align-items: center; gap: 6px;
             background: var(--glass-bg); border: 1px solid var(--glass-border);
-            padding: 6px 14px; border-radius: 999px;
+            padding: 4px 10px; border-radius: 999px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
-        .glass-pill span { font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-        .timeline-icon { width: 14px; height: 14px; fill: currentColor; }
+        .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+        .timeline-icon { width: 12px; height: 12px; fill: currentColor; }
 
         .pulse-text {
             background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 8px;
+            font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px;
             text-transform: uppercase; letter-spacing: 0.05em;
             animation: pulse-opacity 2.5s ease-in-out infinite;
         }
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        .card-text-area { display: flex; flex-direction: column; gap: 8px; }
-        .card-title { font-size: 26px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card-title.large { font-size: 36px; }
-        .card-desc { font-size: 15px; font-weight: 500; opacity: 0.9; line-height: 1.5; }
+        .card-text-area { display: flex; flex-direction: column; gap: 6px; }
+        .card-title { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card-title.large { font-size: 28px; }
+        .card-desc { font-size: 13px; font-weight: 500; opacity: 0.9; line-height: 1.4; }
 
         /* Improved Card Footers (The data blocks) */
         .card-footer {
-            background: rgba(0, 0, 0, 0.15); border-radius: 16px; padding: 16px;
+            background: rgba(0, 0, 0, 0.15); border-radius: 12px; padding: 12px;
             display: flex; justify-content: space-between; align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .footer-label { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-weight: 600; }
-        .footer-value { font-size: 16px; font-weight: 800; letter-spacing: -0.01em;}
-        .footer-value.large { font-size: 24px; }
-        .footer-value.large span { font-size: 14px; font-weight: 600; opacity: 0.8; }
+        .footer-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; font-weight: 600; }
+        .footer-value { font-size: 14px; font-weight: 800; letter-spacing: -0.01em;}
+        .footer-value.large { font-size: 18px; }
+        .footer-value.large span { font-size: 12px; font-weight: 600; opacity: 0.8; }
 
-        .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 12px; position: relative;}
+        .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
         .progress-line { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.2); position: relative; border-radius: 2px; }
         .progress-badge {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 11px; font-weight: 800; background: #047857; padding: 4px 10px; border-radius: 99px;
+            font-size: 9px; font-weight: 800; background: #047857; padding: 3px 8px; border-radius: 99px;
             border: 2px solid var(--card-green-start); box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .simple-footer {
             display: flex; justify-content: space-between; align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 16px; margin-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 12px; margin-top: 6px;
         }
 
         /* =========================================
