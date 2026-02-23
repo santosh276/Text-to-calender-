@@ -5191,7 +5191,9 @@ function renderCalendarGrid(data) {
             // Sun=7, Mon=1, Tue=6, Wed=4, Thu=5, Fri=3, Sat=2
             const rahuSlots = [7, 1, 6, 4, 5, 3, 2]; 
             // Sun=4, Mon=3, Tue=2, Wed=1, Thu=0, Fri=6, Sat=5
-            const yamaSlots = [4, 3, 2, 1, 0, 6, 5]; 
+            const yamaSlots = [4, 3, 2, 1, 0, 6, 5];
+            // Gulika: Sun=6, Mon=5, Tue=4, Wed=3, Thu=2, Fri=1, Sat=0
+            const gulikaSlots = [6, 5, 4, 3, 2, 1, 0];
 
             const formatTime = (ms) => {
                 const d = new Date(ms);
@@ -5206,6 +5208,10 @@ function renderCalendarGrid(data) {
             const yamaStart = new Date(sunrise.getTime() + (yamaSlots[dayOfWeek] * part));
             const yamaEnd = new Date(yamaStart.getTime() + part);
 
+            // Calculate Gulika Kalam
+            const gulikaStart = new Date(sunrise.getTime() + (gulikaSlots[dayOfWeek] * part));
+            const gulikaEnd = new Date(gulikaStart.getTime() + part);
+
             // Calculate Abhijit Muhurat (Midday - 24 mins to Midday + 24 mins approx)
             // More precise: 8th Muhurat of the 15 Muhurats in the day.
             const dayMid = new Date(sunrise.getTime() + (duration / 2));
@@ -5216,9 +5222,10 @@ function renderCalendarGrid(data) {
             const hasAbhijit = dayOfWeek !== 3; 
 
             return {
-                rahu: `${formatTime(rahuStart)} - ${formatTime(rahuEnd)}`,
-                yama: `${formatTime(yamaStart)} - ${formatTime(yamaEnd)}`,
-                abhijit: hasAbhijit ? `${formatTime(abhijitStart)} - ${formatTime(abhijitEnd)}` : "None (Wed)"
+                rahu: { start: rahuStart, end: rahuEnd, text: `${formatTime(rahuStart)} - ${formatTime(rahuEnd)}` },
+                yama: { start: yamaStart, end: yamaEnd, text: `${formatTime(yamaStart)} - ${formatTime(yamaEnd)}` },
+                abhijit: hasAbhijit ? { start: abhijitStart, end: abhijitEnd, text: `${formatTime(abhijitStart)} - ${formatTime(abhijitEnd)}` } : { start: null, end: null, text: "None (Wed)" },
+                gulika: { start: gulikaStart, end: gulikaEnd, text: `${formatTime(gulikaStart)} - ${formatTime(gulikaEnd)}` }
             };
         }
 
@@ -5405,15 +5412,15 @@ function renderCalendarGrid(data) {
                 strip.innerHTML = `
                     <div class="muhurat-pill muhurat-good" title="Best time for new beginnings">
                         <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Abhijit</span>
-                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.abhijit}</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.abhijit.text}</span>
                     </div>
                     <div class="muhurat-pill muhurat-bad" title="Avoid auspicious work">
                         <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Rahu Kalam</span>
-                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.rahu}</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.rahu.text}</span>
                     </div>
                     <div class="muhurat-pill muhurat-bad" title="Inauspicious time">
                         <span class="text-[9px] font-bold uppercase opacity-80 mb-1">Yamaganda</span>
-                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.yama}</span>
+                        <span class="text-xs font-extrabold whitespace-nowrap">${muhurats.yama.text}</span>
                     </div>
                 `;
                 
@@ -6000,10 +6007,14 @@ function renderCalendarGrid(data) {
             // Calculate Sun/Moon Times
             let sunTimes = { sunrise: null, sunset: null };
             let moonTimes = { rise: null, set: null };
+            let muhurats = null;
             if (appState.config.location && SunCalc) {
                 sunTimes = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
                 if (SunCalc.getMoonTimes) {
                     moonTimes = SunCalc.getMoonTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+                }
+                if (sunTimes.sunrise && sunTimes.sunset) {
+                    muhurats = getSpecialTimes(dateObj, sunTimes.sunrise, sunTimes.sunset);
                 }
             }
             const fmtAstroTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
@@ -6245,6 +6256,9 @@ function renderCalendarGrid(data) {
                             </div>
                         </div>` : ''}
 
+
+                        <!-- 2b. Auspicious Timings Dashboard -->
+                        ${renderAuspiciousDashboard(muhurats)}
 
                         <!-- 3. Upcoming Special Tithis -->
                         ${upcoming.length > 0 ? `
@@ -6582,6 +6596,150 @@ function renderCalendarGrid(data) {
                 container.style.minHeight = `${finalHeight}px`;
                 container.style.height = `${finalHeight}px`;
             }, 50);
+        }
+
+        function renderAuspiciousDashboard(muhurats) {
+            if (!muhurats) return '';
+
+            const now = new Date();
+            const getStatus = (start, end) => {
+                if (!start || !end) return { label: 'Inactive', color: 'text-gray-400', percent: 0 };
+
+                if (now < start) {
+                     // Calculate time diff
+                     const diffMins = Math.floor((start - now) / 60000);
+                     let timeText = "";
+                     if (diffMins > 60) timeText = `in ${Math.floor(diffMins/60)}h ${diffMins%60}m`;
+                     else timeText = `in ${diffMins}m`;
+
+                     if (diffMins > 1440) return { label: 'Upcoming', color: 'text-white/80', percent: 0 };
+                     return { label: `Upcoming ${timeText}`, color: 'text-white/80', percent: 0 };
+                } else if (now >= start && now <= end) {
+                     const total = end - start;
+                     const elapsed = now - start;
+                     const percent = Math.min(100, Math.max(0, (elapsed / total) * 100));
+
+                     const remainingMins = Math.floor((end - now) / 60000);
+                     const label = remainingMins < 15 ? 'Ending Soon' : 'Active Now';
+                     const labelColor = remainingMins < 15 ? 'text-white font-bold animate-pulse' : 'text-white font-bold';
+
+                     return { label: label, color: labelColor, percent: percent, active: true };
+                } else {
+                     return { label: 'Ended', color: 'text-white/60', percent: 100 };
+                }
+            };
+
+            // Cards Config
+            const cards = [
+                {
+                    key: 'yama',
+                    title: 'Yamaganda',
+                    sub: 'Avoid travel and new ventures',
+                    tag: 'INAUSPICIOUS',
+                    icon: 'fa-skull',
+                    gradient: 'from-red-500 to-red-600',
+                    shadow: 'shadow-red-500/40',
+                    data: muhurats.yama
+                },
+                {
+                    key: 'abhijit',
+                    title: 'Abhijit Muhurat',
+                    sub: 'The best time of the day for new beginnings.',
+                    tag: 'MOST AUSPICIOUS',
+                    icon: 'fa-sun',
+                    gradient: 'from-green-500 to-green-600',
+                    shadow: 'shadow-green-500/40',
+                    data: muhurats.abhijit
+                },
+                {
+                    key: 'gulika',
+                    title: 'Gulika Kalam',
+                    sub: 'Suitable for repeating activities.',
+                    tag: 'NEUTRAL',
+                    icon: 'fa-scale-balanced',
+                    gradient: 'from-slate-700 to-slate-800',
+                    shadow: 'shadow-slate-500/40',
+                    data: muhurats.gulika
+                },
+                {
+                    key: 'rahu',
+                    title: 'Rahu Kalam',
+                    sub: 'Period of ignorance. Strictly avoid auspicious acts.',
+                    tag: 'AVOID',
+                    icon: 'fa-triangle-exclamation',
+                    gradient: 'from-orange-500 to-orange-600',
+                    shadow: 'shadow-orange-500/40',
+                    data: muhurats.rahu
+                }
+            ];
+
+            let html = `<div class="space-y-4 mt-6 mb-8">`;
+
+            cards.forEach(card => {
+                if (!card.data || !card.data.start) return;
+
+                const status = getStatus(card.data.start, card.data.end);
+
+                // Format times separately
+                const startTime = card.data.text.split(' - ')[0];
+                const endTime = card.data.text.split(' - ')[1];
+
+                // Duration
+                const durationMs = card.data.end - card.data.start;
+                const durationMins = Math.floor(durationMs / 60000);
+
+                html += `
+                <div class="relative overflow-hidden rounded-3xl shadow-lg bg-gradient-to-br ${card.gradient} text-white p-5 ${card.shadow}">
+
+                    <!-- Top Row: Tag & Status -->
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-2 border border-white/30">
+                            <i class="fa-solid ${card.icon} text-xs"></i>
+                            <span class="text-[10px] font-bold tracking-widest uppercase">${card.tag}</span>
+                        </div>
+                        <div class="text-[10px] font-bold uppercase tracking-wide bg-black/20 px-2 py-1 rounded-lg border border-white/10 ${status.color}">
+                            ${status.label}
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <h3 class="text-2xl font-bold mb-1 leading-tight">${card.title}</h3>
+                    <p class="text-white/80 text-xs font-medium leading-relaxed mb-6 max-w-[90%]">${card.sub}</p>
+
+                    <!-- Bottom Section: Time & Progress -->
+                    <div class="bg-black/20 rounded-2xl p-4 backdrop-blur-sm border border-white/10">
+                        <div class="flex justify-between items-end mb-2">
+                            <div>
+                                <div class="text-[9px] text-white/60 font-bold uppercase tracking-wider mb-0.5">Start Time</div>
+                                <div class="text-xl font-bold font-mono leading-none">${startTime}</div>
+                            </div>
+                            ${status.active ? '<i class="fa-solid fa-arrow-right-long text-white/50 mb-1 animate-pulse"></i>' : ''}
+                            <div class="text-right">
+                                <div class="text-[9px] text-white/60 font-bold uppercase tracking-wider mb-0.5">End Time</div>
+                                <div class="text-xl font-bold font-mono leading-none">${endTime}</div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="h-1.5 w-full bg-black/20 rounded-full overflow-hidden mt-3 relative">
+                            <div class="h-full bg-white/90 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-all duration-1000" style="width: ${status.percent}%"></div>
+                        </div>
+
+                        <div class="flex justify-between items-center mt-2 text-[9px] font-bold uppercase tracking-wide opacity-70">
+                            <span>${status.label.includes('Upcoming') ? 'Upcoming' : (status.active ? 'Active' : 'Duration')}</span>
+                            <span>${durationMins} Mins Duration</span>
+                        </div>
+                    </div>
+
+                    <!-- Background Decoration -->
+                    <div class="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
+                    <div class="absolute bottom-0 left-0 -ml-6 -mb-6 w-24 h-24 rounded-full bg-black/10 blur-2xl pointer-events-none"></div>
+                </div>
+                `;
+            });
+
+            html += `</div>`;
+            return html;
         }
 
     </script>
