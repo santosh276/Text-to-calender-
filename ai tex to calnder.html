@@ -1246,6 +1246,31 @@
         }
         .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
 
+        /* --- Updated Dot Style (Thumbtack) --- */
+        @media (max-width: 1023px) {
+            .timeline-spine { display: none; }
+            
+            .time-dot-col {
+                position: relative;
+                overflow: visible;
+                margin-right: 0;
+                /* Remove old padding if needed, but keeping it safe */
+            }
+
+            .timeline-dot {
+                position: absolute;
+                right: -19px; /* Pinned to the card edge */
+                top: 22px;    /* Align with card title area */
+                width: 14px;
+                height: 14px;
+                border-width: 3px;
+                background-color: white !important; /* Ensure it looks like a pin head */
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Drop shadow for depth */
+                z-index: 20;
+                margin: 0;
+            }
+        }
+
         /* --- Premium Cards --- */
         .timeline-card {
             flex: 1; border-radius: 20px; padding: 16px; color: white; position: relative; overflow: hidden;
@@ -5777,7 +5802,7 @@ function renderCalendarGrid(data) {
                 <div class="current-time">
                     <div class="label">NOW</div>
                     <div class="line-container">
-                        <div class="pulse-dot"></div>
+                        <div class="pulse-beacon"></div>
                         <div class="gradient-line"></div>
                     </div>
                     <div class="time" id="timings-clock">${timeStr}</div>
