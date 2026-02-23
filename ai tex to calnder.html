@@ -1271,22 +1271,6 @@
             }
         }
 
-        /* Caution Stripes Pattern */
-        .caution-stripes {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background-image: repeating-linear-gradient(
-                -45deg,
-                rgba(0, 0, 0, 0.05),
-                rgba(0, 0, 0, 0.05) 10px,
-                transparent 10px,
-                transparent 20px
-            );
-            z-index: 0;
-            border-radius: 20px; /* Match card radius */
-        }
-
         /* --- Premium Cards --- */
         .timeline-card {
             flex: 1; border-radius: 20px; padding: 16px; color: white; position: relative; overflow: hidden;
@@ -5825,6 +5809,7 @@ function renderCalendarGrid(data) {
                 </div>
 
                 <div class="timeline-container">
+                    <div class="timeline-spine"></div>
             `;
 
             muhurats.forEach(m => {
@@ -5907,7 +5892,6 @@ function renderCalendarGrid(data) {
                         </div>
 
                         <div class="timeline-card ${m.gradientClass}">
-                            ${m.name.includes("Rahu") ? '<div class="caution-stripes"></div>' : ''}
                             ${m.type === 'good' ? '<div class="card-dots-pattern"></div>' : ''}
                             ${m.type === 'bad' ? '<div class="card-blur-circle"></div>' : ''}
                             ${m.type === 'neutral' ? '<div class="card-pinstripe"></div>' : ''}
