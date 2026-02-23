@@ -1246,6 +1246,47 @@
         }
         .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
 
+        /* --- Updated Dot Style (Thumbtack) --- */
+        @media (max-width: 1023px) {
+            .timeline-spine { display: none; }
+
+            .time-dot-col {
+                position: relative;
+                overflow: visible;
+                margin-right: 0;
+                /* Remove old padding if needed, but keeping it safe */
+            }
+
+            .timeline-dot {
+                position: absolute;
+                right: -19px; /* Pinned to the card edge */
+                top: 22px;    /* Align with card title area */
+                width: 14px;
+                height: 14px;
+                border-width: 3px;
+                background-color: white !important; /* Ensure it looks like a pin head */
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Drop shadow for depth */
+                z-index: 20;
+                margin: 0;
+            }
+        }
+
+        /* Caution Stripes Pattern */
+        .caution-stripes {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image: repeating-linear-gradient(
+                -45deg,
+                rgba(0, 0, 0, 0.05),
+                rgba(0, 0, 0, 0.05) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            z-index: 0;
+            border-radius: 20px; /* Match card radius */
+        }
+
         /* --- Premium Cards --- */
         .timeline-card {
             flex: 1; border-radius: 20px; padding: 16px; color: white; position: relative; overflow: hidden;
@@ -5784,7 +5825,6 @@ function renderCalendarGrid(data) {
                 </div>
 
                 <div class="timeline-container">
-                    <div class="timeline-spine"></div>
             `;
 
             muhurats.forEach(m => {
@@ -5867,6 +5907,7 @@ function renderCalendarGrid(data) {
                         </div>
 
                         <div class="timeline-card ${m.gradientClass}">
+                            ${m.name.includes("Rahu") ? '<div class="caution-stripes"></div>' : ''}
                             ${m.type === 'good' ? '<div class="card-dots-pattern"></div>' : ''}
                             ${m.type === 'bad' ? '<div class="card-blur-circle"></div>' : ''}
                             ${m.type === 'neutral' ? '<div class="card-pinstripe"></div>' : ''}
