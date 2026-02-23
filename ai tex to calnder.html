@@ -1314,21 +1314,44 @@
         }
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        .card-text-area { display: flex; flex-direction: column; gap: 6px; }
-        .card-title { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card-title.large { font-size: 28px; }
-        .card-desc { font-size: 13px; font-weight: 500; opacity: 0.9; line-height: 1.4; }
+        .card-text-area { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .card-title {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .card-title.large { font-size: 22px; }
+        .card-desc {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 1;
+            line-height: 1.4;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
 
         /* Improved Card Footers (The data blocks) */
         .card-footer { 
-            background: rgba(0, 0, 0, 0.15); border-radius: 12px; padding: 12px; 
+            background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 12px;
             display: flex; justify-content: space-between; align-items: center; 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
-        .footer-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; font-weight: 600; }
+        .footer-label {
+            font-size: 10px;
+            opacity: 0.95;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.95);
+        }
         .footer-value { font-size: 14px; font-weight: 800; letter-spacing: -0.01em;}
         .footer-value.large { font-size: 18px; }
-        .footer-value.large span { font-size: 12px; font-weight: 600; opacity: 0.8; }
+        .footer-value.large span { font-size: 12px; font-weight: 700; opacity: 0.9; }
 
         .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
         .progress-line { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.2); position: relative; border-radius: 2px; }
@@ -1359,9 +1382,9 @@
             .time-txt.am-pm { font-size: 13px; margin-top: 0; }
             .timeline-dot { margin: 0; }
 
-            .card-title { font-size: 28px; }
-            .card-title.large { font-size: 40px; }
-            .card-desc { font-size: 16px; }
+            .card-title { font-size: 24px; }
+            .card-title.large { font-size: 32px; }
+            .card-desc { font-size: 15px; }
         }
 </style>
 </head>
@@ -5850,8 +5873,8 @@ function renderCalendarGrid(data) {
                         <div class="card-footer" style="background: rgba(0,0,0,0.2); display: block;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
                                 <div>
-                                    <p class="footer-label" style="opacity:0.8;">Starts</p>
-                                    <p class="footer-value large">${startStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-70">${startStr.slice(-2)}</span></p>
+                                    <p class="footer-label">Starts</p>
+                                    <p class="footer-value large">${startStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-90">${startStr.slice(-2)}</span></p>
                                 </div>
                                 <div class="progress-container">
                                     <div class="progress-line">
@@ -5859,14 +5882,14 @@ function renderCalendarGrid(data) {
                                     </div>
                                 </div>
                                 <div style="text-align: right;">
-                                    <p class="footer-label" style="opacity:0.8;">Ends</p>
-                                    <p class="footer-value large">${endStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-70">${endStr.slice(-2)}</span></p>
+                                    <p class="footer-label">Ends</p>
+                                    <p class="footer-value large">${endStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-90">${endStr.slice(-2)}</span></p>
                                 </div>
                             </div>
                             <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden;">
                                 <div style="width: ${progressPct}%; height: 100%; background: white; border-radius: 4px; transition: width 1s linear;"></div>
                             </div>
-                            <p style="text-align: center; font-size: 10px; margin-top: 12px; font-weight: 700; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.1em;">${statusText}</p>
+                            <p style="text-align: center; font-size: 10px; margin-top: 12px; font-weight: 700; opacity: 1; text-transform: uppercase; letter-spacing: 0.1em;">${statusText}</p>
                         </div>
                     `;
                 } else {
@@ -5906,7 +5929,7 @@ function renderCalendarGrid(data) {
                                 </div>
                                 
                                 <div class="card-text-area">
-                                    <h2 class="card-title ${m.type === 'good' ? 'large' : ''}">${m.name.replace(' ', '<br/>')}</h2>
+                                    <h2 class="card-title ${m.type === 'good' ? 'large' : ''}">${m.name}</h2>
                                     <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
                                 </div>
                                 
