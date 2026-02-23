@@ -1132,116 +1132,6 @@
     }
     </style>
 <style>
-        /* TIMELINE UI STYLES */
-        :root {
-            --bg-outer: #e2e8f0;
-            --bg-app: #ffffff;
-
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-
-            --primary-orange: #ea580c;
-            --primary-orange-glow: rgba(234, 88, 12, 0.25);
-
-            --card-red-start: #ef4444;
-            --card-red-end: #dc2626;
-            --card-green-start: #10b981;
-            --card-green-end: #059669;
-            --card-neutral-start: #64748b;
-            --card-neutral-end: #475569;
-            --card-orange-start: #f97316;
-            --card-orange-end: #ea580c;
-
-            --glass-bg: rgba(255, 255, 255, 0.2);
-            --glass-border: rgba(255, 255, 255, 0.3);
-        }
-
-
-        .section-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        .section-title h3 { font-size: 18px; font-weight: 800; color: var(--text-main); }
-        .section-title .badge { font-size: 14px; font-weight: 600; color: var(--text-muted); background: rgba(0, 0, 0, 0.05); padding: 4px 12px; border-radius: 999px; }
-
-        .current-time {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            position: relative;
-            z-index: 10;
-        }
-        .current-time .label { width: 64px; text-align: right; font-size: 12px; font-weight: 900; color: var(--primary-orange); letter-spacing: 0.05em; }
-        .current-time .line-container { flex: 1; display: flex; align-items: center; gap: 8px; }
-        .pulse-dot { width: 10px; height: 10px; background-color: var(--primary-orange); border-radius: 50%; box-shadow: 0 0 10px rgba(234,88,12,0.6); position: relative; z-index: 10; }
-        @keyframes pulse-anim { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.5); opacity: 0; } }
-        .pulse-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background-color: var(--primary-orange); animation: pulse-anim 1.5s infinite; }
-        .gradient-line { height: 2px; width: 100%; background: linear-gradient(90deg, var(--primary-orange) 0%, transparent 100%); border-radius: 2px; }
-        .current-time .time { font-size: 12px; font-weight: 700; color: var(--text-muted); }
-
-        .timeline-container { position: relative; display: flex; flex-direction: column; gap: 32px; }
-
-        .timeline-spine {
-            position: absolute; left: 40px; top: 8px; bottom: 24px; width: 2px;
-            background-color: rgba(0, 0, 0, 0.08); border-radius: 2px;
-        }
-
-        .timeline-item { display: flex; align-items: stretch; gap: 16px; position: relative; }
-
-        .time-dot-col {
-            width: 64px; display: flex; flex-direction: column; align-items: flex-end; padding-top: 20px;
-        }
-        .time-txt { font-size: 11px; font-weight: 700; color: var(--text-muted); }
-        .timeline-dot {
-            width: 12px; height: 12px; border-radius: 50%; background-color: var(--bg-app);
-            border: 2px solid; margin-top: 4px; margin-bottom: 4px; margin-right: -22px; z-index: 10;
-        }
-        .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
-
-        .timeline-card {
-            flex: 1; border-radius: 32px; padding: 24px; color: white; position: relative; overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .timeline-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2); }
-
-        .bg-red-gradient { background: linear-gradient(135deg, var(--card-red-start), var(--card-red-end)); box-shadow: 0 10px 30px -10px rgba(220, 38, 38, 0.3); }
-        .bg-green-gradient { background: linear-gradient(135deg, var(--card-green-start), var(--card-green-end)); box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.3); }
-        .bg-neutral-gradient { background: linear-gradient(135deg, var(--card-neutral-start), var(--card-neutral-end)); box-shadow: 0 10px 30px -10px rgba(71, 85, 105, 0.2); }
-        .bg-orange-gradient { background: linear-gradient(135deg, var(--card-orange-start), var(--card-orange-end)); box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.3); }
-
-        .card-blur-circle { position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: rgba(255, 255, 255, 0.15); border-radius: 50%; filter: blur(24px); }
-        .card-dots-pattern { position: absolute; inset: 0; opacity: 0.15; background-image: radial-gradient(white 2px, transparent 2px); background-size: 20px 20px; }
-        .card-pinstripe { position: absolute; inset: 0; opacity: 0.2; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 12px); }
-        .card-dark-blur { position: absolute; bottom: -80px; right: -80px; width: 256px; height: 256px; background: rgba(0, 0, 0, 0.2); border-radius: 50%; filter: blur(32px); }
-
-        .card-content { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100%; justify-content: space-between; }
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-        .glass-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 4px 12px; border-radius: 999px; }
-        .glass-pill span { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
-        .timeline-icon { width: 14px; height: 14px; fill: currentColor; }
-        .pulse-text { background: rgba(127, 29, 29, 0.4); border: 1px solid rgba(252, 165, 165, 0.4); font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; animation: pulse-opacity 2s infinite; }
-        @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-
-        .card-title { font-size: 24px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 4px; line-height: 1.1; }
-        .card-title.large { font-size: 32px; }
-        .card-desc { font-size: 14px; font-weight: 500; opacity: 0.95; line-height: 1.4; margin-bottom: 16px; }
-
-        .card-footer { background: rgba(0, 0, 0, 0.15); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255, 255, 255, 0.15); }
-        .footer-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
-        .footer-value { font-size: 14px; font-weight: 700; }
-        .footer-value.large { font-size: 20px; }
-        .footer-value.large span { font-size: 12px; font-weight: 400; opacity: 0.9; }
-
-        .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
-        .progress-line { width: 100%; height: 1px; background: rgba(255, 255, 255, 0.4); position: relative; }
-        .progress-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; background: #059669; padding: 2px 8px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.3); }
-        .simple-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 12px; margin-top: auto; }
-</style>
-
-<style>
         /* =========================================
            PREMIUM CUSTOM CSS (OFFLINE & RESPONSIVE)
            ========================================= */
@@ -5871,7 +5761,7 @@ function renderCalendarGrid(data) {
 
             let html = `
                 <div class="section-title">
-                    <h3 class="font-bold text-green-700 mb-0"><i class="fa-solid fa-clock-rotate-left mr-2"></i>Auspicious Timings</h3>
+                    <h3 class="font-bold text-green-700 mb-0"><i class="fa-solid fa-clock text-orange-600 mr-2"></i>Auspicious Timings</h3>
                     <span class="badge">${dateStr}</span>
                 </div>
 
