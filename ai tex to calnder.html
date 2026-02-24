@@ -1150,14 +1150,14 @@
             --primary-orange-glow: rgba(234, 88, 12, 0.2);
             
             /* Richer, deeper gradients for the cards */
-            --card-red-start: #ef4444;
-            --card-red-end: #b91c1c;
+            --card-red-start: #E11D48;
+            --card-red-end: #9F1239;
             --card-green-start: #10b981;
             --card-green-end: #047857;
-            --card-neutral-start: #64748b;
-            --card-neutral-end: #334155;
-            --card-orange-start: #f97316;
-            --card-orange-end: #c2410c;
+            --card-neutral-start: #475569;
+            --card-neutral-end: #1E293B;
+            --card-orange-start: #EA580C;
+            --card-orange-end: #9A3412;
 
             /* Frosted glass effects */
             --glass-bg: rgba(255, 255, 255, 0.15);
@@ -1283,10 +1283,10 @@
             box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15), 0 10px 20px -5px rgba(0,0,0,0.1); 
         }
         
-        .bg-red-gradient { background: linear-gradient(135deg, var(--card-red-start), var(--card-red-end)); box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.2); }
+        .bg-red-gradient { background: linear-gradient(135deg, var(--card-red-start), var(--card-red-end)); box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.3); }
         .bg-green-gradient { background: linear-gradient(135deg, var(--card-green-start), var(--card-green-end)); box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2); }
-        .bg-neutral-gradient { background: linear-gradient(135deg, var(--card-neutral-start), var(--card-neutral-end)); box-shadow: 0 10px 25px -5px rgba(71, 85, 105, 0.15); }
-        .bg-orange-gradient { background: linear-gradient(135deg, var(--card-orange-start), var(--card-orange-end)); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.2); }
+        .bg-neutral-gradient { background: linear-gradient(135deg, var(--card-neutral-start), var(--card-neutral-end)); box-shadow: 0 10px 25px -5px rgba(71, 85, 105, 0.2); }
+        .bg-orange-gradient { background: linear-gradient(135deg, var(--card-orange-start), var(--card-orange-end)); box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.3); }
 
         /* Subtle Card Decorations for depth */
         .card-glare { position: absolute; top: 0; left: 0; right: 0; height: 100px; background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%); pointer-events: none; }
@@ -1336,10 +1336,16 @@
 
         /* Improved Card Footers (The data blocks) */
         .card-footer { 
-            background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 12px; 
+            border-radius: 12px; padding: 12px;
             display: flex; justify-content: space-between; align-items: center; 
-            border: 1px solid rgba(255, 255, 255, 0.15); 
         }
+
+        /* Themed Footer Backgrounds */
+        .footer-green { background: rgba(4, 120, 87, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .footer-orange { background: rgba(154, 52, 18, 0.3); border: 1px solid rgba(234, 88, 12, 0.3); }
+        .footer-red { background: rgba(159, 18, 57, 0.3); border: 1px solid rgba(225, 29, 72, 0.3); }
+        .footer-neutral { background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(71, 85, 105, 0.3); }
+
         .footer-label { 
             font-size: 10px; 
             opacity: 0.95; 
@@ -1354,12 +1360,18 @@
         .footer-value.large span { font-size: 12px; font-weight: 700; opacity: 0.9; }
 
         .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
-        .progress-line { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.2); position: relative; border-radius: 2px; }
+        .progress-line { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.8); position: relative; border-radius: 2px; }
         .progress-badge { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            font-size: 9px; font-weight: 800; background: #047857; padding: 3px 8px; border-radius: 99px; 
-            border: 2px solid var(--card-green-start); box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 9999px;
+            border-width: 2px; border-style: solid; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+
+        /* Themed Badges */
+        .badge-green { background-color: #064E3B; border-color: #34D399; color: white; }
+        .badge-orange { background-color: #7C2D12; border-color: #FB923C; color: white; }
+        .badge-red { background-color: #881337; border-color: #F43F5E; color: white; }
+        .badge-neutral { background-color: #0F172A; border-color: #94A3B8; color: white; }
         
         .simple-footer { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -5456,7 +5468,7 @@ function renderCalendarGrid(data) {
             // Sun=6, Mon=5, Tue=4, Wed=3, Thu=2, Fri=1, Sat=0
             const gulikaSlots = [6, 5, 4, 3, 2, 1, 0];
 
-            const createTimeObj = (name, startMs, endMs, type, description, gradientClass, iconColor) => {
+            const createTimeObj = (name, startMs, endMs, type, description, gradientClass, iconColor, themeKey) => {
                 const s = new Date(startMs);
                 const e = new Date(endMs);
                 return {
@@ -5467,6 +5479,7 @@ function renderCalendarGrid(data) {
                     description,
                     gradientClass,
                     iconColor,
+                    themeKey,
                     duration: Math.round((e - s) / 60000) + 'm'
                 };
             };
@@ -5482,7 +5495,8 @@ function renderCalendarGrid(data) {
                 "bad", 
                 "Period of ignorance. Not suited for auspicious acts.",
                 "bg-orange-gradient",
-                "dot-orange"
+                "dot-orange",
+                "orange"
             ));
 
             // 2. Yamaganda
@@ -5494,7 +5508,8 @@ function renderCalendarGrid(data) {
                 "bad", 
                 "Inauspicious. Avoid travel and beginning new ventures.",
                 "bg-red-gradient",
-                "dot-red"
+                "dot-red",
+                "red"
             ));
 
             // 3. Gulika Kalam
@@ -5506,7 +5521,8 @@ function renderCalendarGrid(data) {
                 "neutral", 
                 "Suitable time for repeating activities.",
                 "bg-neutral-gradient",
-                "dot-slate"
+                "dot-slate",
+                "neutral"
             ));
 
             // 4. Abhijit Muhurat (Only if not Wednesday)
@@ -5521,7 +5537,8 @@ function renderCalendarGrid(data) {
                     "good", 
                     "Best time of the day for new beginnings. The sun's position removes most doshas.",
                     "bg-green-gradient",
-                    "dot-green"
+                    "dot-green",
+                    "green"
                 ));
             }
 
@@ -5870,7 +5887,7 @@ function renderCalendarGrid(data) {
                     }
 
                     footerHtml = `
-                        <div class="card-footer" style="background: rgba(0,0,0,0.2); display: block;">
+                        <div class="card-footer footer-${m.themeKey}" style="display: block;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
                                 <div>
                                     <p class="footer-label">Starts</p>
@@ -5878,7 +5895,7 @@ function renderCalendarGrid(data) {
                                 </div>
                                 <div class="progress-container">
                                     <div class="progress-line">
-                                        <span class="progress-badge">${m.duration}</span>
+                                        <span class="progress-badge badge-${m.themeKey}">${m.duration}</span>
                                     </div>
                                 </div>
                                 <div style="text-align: right;">
