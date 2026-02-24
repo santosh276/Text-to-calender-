@@ -1289,12 +1289,19 @@
         .bg-orange-gradient { background: linear-gradient(135deg, var(--card-orange-start), var(--card-orange-end)); box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.3); }
 
         /* NEW PREMIUM GRADIENTS */
-        .bg-emerald-gradient { background: linear-gradient(135deg, #10b981 0%, #047857 100%); box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.3); }
-        .bg-gold-gradient { background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%); box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.3); }
-        .bg-skyblue-gradient { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.3); }
-        .bg-rust-gradient { background: linear-gradient(135deg, #ea580c 0%, #9a3412 100%); box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.4); }
-        .bg-crimson-gradient { background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%); box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.4); }
-        .bg-slate-gradient { background: linear-gradient(135deg, #475569 0%, #1e293b 100%); box-shadow: 0 10px 25px -5px rgba(71, 85, 105, 0.3); }
+        /* --- UPDATED PREMIUM GRADIENTS --- */
+        /* Auspicious */
+        .bg-gold-gradient { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.3); }
+        .bg-lavender-gradient { background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%); box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.3); }
+        .bg-teal-gradient { background: linear-gradient(135deg, #2dd4bf 0%, #0f766e 100%); box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.3); }
+        .bg-royalblue-gradient { background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%); box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3); }
+        .bg-purple-gradient { background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%); box-shadow: 0 10px 25px -5px rgba(147, 51, 234, 0.3); }
+
+        /* Inauspicious */
+        .bg-charcoal-gradient { background: linear-gradient(135deg, #374151 0%, #111827 100%); box-shadow: 0 10px 25px -5px rgba(31, 41, 55, 0.4); }
+        .bg-deepred-gradient { background: linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%); box-shadow: 0 10px 25px -5px rgba(185, 28, 28, 0.4); }
+        .bg-burntorange-gradient { background: linear-gradient(135deg, #fb923c 0%, #9a3412 100%); box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.4); }
+
 
         /* TAB UI STYLES */
         .timings-tab-container {
@@ -1322,7 +1329,7 @@
         }
         .timings-tab-btn.active {
             color: #ffffff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
         /* Active Pill Background */
         .tab-indicator {
@@ -1336,30 +1343,42 @@
             z-index: 1;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
         }
-        .tab-indicator.auspicious { background: linear-gradient(90deg, #10b981, #059669); transform: translateX(0); }
-        .tab-indicator.inauspicious { background: linear-gradient(90deg, #ef4444, #b91c1c); transform: translateX(100%); width: calc(50% - 4px); } /* Adjust based on count */
+        /* Updated Tab Colors to match new themes */
+        .tab-indicator.auspicious { background: linear-gradient(90deg, #2dd4bf, #0f766e); transform: translateX(0); } /* Teal */
+        .tab-indicator.inauspicious { background: linear-gradient(90deg, #f87171, #991b1b); transform: translateX(100%); width: calc(50% - 4px); } /* Red */
 
         /* FOOTER THEMES */
-        .footer-emerald { background: rgba(6, 78, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); }
-        .footer-gold { background: rgba(120, 53, 15, 0.3); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .footer-skyblue { background: rgba(12, 74, 110, 0.3); border: 1px solid rgba(56, 189, 248, 0.3); }
-        .footer-rust { background: rgba(124, 45, 18, 0.3); border: 1px solid rgba(234, 88, 12, 0.3); }
-        .footer-crimson { background: rgba(136, 19, 55, 0.3); border: 1px solid rgba(225, 29, 72, 0.3); }
-        .footer-slate { background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(71, 85, 105, 0.3); }
+        .footer-gold { background: rgba(180, 83, 9, 0.3); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .footer-lavender { background: rgba(109, 40, 217, 0.3); border: 1px solid rgba(167, 139, 250, 0.3); }
+        .footer-teal { background: rgba(15, 118, 110, 0.3); border: 1px solid rgba(45, 212, 191, 0.3); }
+        .footer-royalblue { background: rgba(30, 64, 175, 0.3); border: 1px solid rgba(96, 165, 250, 0.3); }
+        .footer-purple { background: rgba(126, 34, 206, 0.3); border: 1px solid rgba(192, 132, 252, 0.3); }
 
-        .badge-emerald { background-color: #065f46; border-color: #34d399; color: white; }
-        .badge-gold { background-color: #78350f; border-color: #fbbf24; color: white; }
-        .badge-skyblue { background-color: #0c4a6e; border-color: #38bdf8; color: white; }
-        .badge-rust { background-color: #7c2d12; border-color: #fdba74; color: white; }
-        .badge-crimson { background-color: #881337; border-color: #fca5a5; color: white; }
-        .badge-slate { background-color: #0f172a; border-color: #94a3b8; color: white; }
+        .footer-charcoal { background: rgba(17, 24, 39, 0.5); border: 1px solid rgba(107, 114, 128, 0.3); }
+        .footer-deepred { background: rgba(127, 29, 29, 0.3); border: 1px solid rgba(248, 113, 113, 0.3); }
+        .footer-burntorange { background: rgba(124, 45, 18, 0.3); border: 1px solid rgba(251, 146, 60, 0.3); }
 
-        .dot-emerald { border-color: #10b981; }
-        .dot-gold { border-color: #f59e0b; }
-        .dot-skyblue { border-color: #38bdf8; }
-        .dot-rust { border-color: #ea580c; }
-        .dot-crimson { border-color: #e11d48; }
-        .dot-slate { border-color: #64748b; }
+        /* BADGES */
+        .badge-gold { background-color: #92400e; border-color: #fcd34d; color: white; }
+        .badge-lavender { background-color: #5b21b6; border-color: #c4b5fd; color: white; }
+        .badge-teal { background-color: #115e59; border-color: #5eead4; color: white; }
+        .badge-royalblue { background-color: #1e40af; border-color: #93c5fd; color: white; }
+        .badge-purple { background-color: #6b21a8; border-color: #d8b4fe; color: white; }
+
+        .badge-charcoal { background-color: #1f2937; border-color: #9ca3af; color: white; }
+        .badge-deepred { background-color: #7f1d1d; border-color: #fca5a5; color: white; }
+        .badge-burntorange { background-color: #7c2d12; border-color: #fdba74; color: white; }
+
+        /* DOTS */
+        .dot-gold { border-color: #fbbf24; }
+        .dot-lavender { border-color: #a78bfa; }
+        .dot-teal { border-color: #2dd4bf; }
+        .dot-royalblue { border-color: #60a5fa; }
+        .dot-purple { border-color: #c084fc; }
+
+        .dot-charcoal { border-color: #9ca3af; }
+        .dot-deepred { border-color: #f87171; }
+        .dot-burntorange { border-color: #fb923c; }
 
         /* Subtle Card Decorations for depth */
         .card-glare { position: absolute; top: 0; left: 0; right: 0; height: 100px; background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%); pointer-events: none; }
@@ -5605,36 +5624,36 @@ function renderCalendarGrid(data) {
             const auspicious = [];
             const inauspicious = [];
 
-            // --- INAUSPICIOUS ---
+            // --- INAUSPICIOUS (New "Warm/Warning" Theme) ---
 
-            // Rahu Kalam
+            // Rahu Kalam (Dark Charcoal)
             const rahuStart = sunrise.getTime() + (rahuSlots[dayOfWeek] * part);
             inauspicious.push(createTimeObj(
                 "Rahu Kalam", rahuStart, rahuStart + part,
                 "bad", "Strictly avoid for any new undertaking.",
-                "bg-rust-gradient", "dot-rust", "rust"
+                "bg-charcoal-gradient", "dot-charcoal", "charcoal"
             ));
 
-            // Yamaganda
+            // Yamaganda (Deep Red)
             const yamaStart = sunrise.getTime() + (yamaSlots[dayOfWeek] * part);
             inauspicious.push(createTimeObj(
                 "Yamaganda", yamaStart, yamaStart + part,
                 "bad", "Inauspicious period. Avoid travel.",
-                "bg-crimson-gradient", "dot-crimson", "crimson"
+                "bg-deepred-gradient", "dot-deepred", "deepred"
             ));
 
-            // Gulika Kalam
+            // Gulika Kalam (Burnt Orange)
             const gulikaStart = sunrise.getTime() + (gulikaSlots[dayOfWeek] * part);
             inauspicious.push(createTimeObj(
                 "Gulika Kalam", gulikaStart, gulikaStart + part,
                 "neutral", "Period for repeating activities.",
-                "bg-slate-gradient", "dot-slate", "slate"
+                "bg-burntorange-gradient", "dot-burntorange", "burntorange"
             ));
 
 
-            // --- AUSPICIOUS ---
+            // --- AUSPICIOUS (New "Cool/Divine" Theme) ---
 
-            // Brahma Muhurta (Sunrise - 96m to -48m)
+            // Brahma Muhurta (Soft Gold)
             const brahmaStart = sunrise.getTime() - (96 * 60000);
             const brahmaEnd = sunrise.getTime() - (48 * 60000);
             auspicious.push(createTimeObj(
@@ -5643,65 +5662,86 @@ function renderCalendarGrid(data) {
                 "bg-gold-gradient", "dot-gold", "gold"
             ));
 
-            // Pratah Sandhya (Sunrise - 48m to Sunrise)
+            // Pratah Sandhya (Lavender)
             const pratahStart = sunrise.getTime() - (48 * 60000);
             auspicious.push(createTimeObj(
                 "Pratah Sandhya", pratahStart, sunrise.getTime(),
                 "good", "Time for morning prayers.",
-                "bg-gold-gradient", "dot-gold", "gold"
+                "bg-lavender-gradient", "dot-lavender", "lavender"
             ));
 
-            // Abhijit Muhurat (8th Muhurta) - Skip on Wednesday (3)
+            // Abhijit Muhurat (Teal) - Skip on Wednesday (3)
             if (dayOfWeek !== 3) {
                 const abhijitStart = sunrise.getTime() + (7 * muhurta);
                 const abhijitEnd = sunrise.getTime() + (8 * muhurta);
                 auspicious.push(createTimeObj(
                     "Abhijit Muhurat", abhijitStart, abhijitEnd,
                     "good", "Victory over obstacles. Best for new beginnings.",
-                    "bg-emerald-gradient", "dot-emerald", "emerald"
+                    "bg-teal-gradient", "dot-teal", "teal"
                 ));
             }
 
-            // Vijaya Muhurta (11th Muhurta)
+            // Vijaya Muhurta (Royal Blue)
             const vijayaStart = sunrise.getTime() + (10 * muhurta);
             const vijayaEnd = sunrise.getTime() + (11 * muhurta);
             auspicious.push(createTimeObj(
                 "Vijaya Muhurta", vijayaStart, vijayaEnd,
                 "good", "Time for victory and success.",
-                "bg-emerald-gradient", "dot-emerald", "emerald"
+                "bg-royalblue-gradient", "dot-royalblue", "royalblue"
             ));
 
-            // Amrit Kalam (Nakshatra Based)
+            // Amrit Kalam (Multi-Instance Nakshatra Based) - Mystic Purple
             try {
-                // Get Nakshatra Active at Sunrise to determine Amrit Kalam for the day
+                // Determine Nakshatra at Sunrise
                 const astro = VedicAstro.calculate(sunrise, 6);
-                const nakName = astro.nakshatra;
+                const sunriseNakName = astro.nakshatra;
+                const nakKeys = Object.keys(VedicAstro.AMRIT_GHATIS);
+                let currentNakIndex = nakKeys.indexOf(sunriseNakName);
 
-                // Find index using keys since we don't have access to internal NAKSHATRAS array
-                // But AMRIT_GHATIS keys match NAKSHATRAS names
-                const nakIndex = Object.keys(VedicAstro.AMRIT_GHATIS).indexOf(nakName);
+                // Helper to convert JD to Date
+                const jdToDate = (j) => new Date((j - 2440587.5) * 86400000);
 
-                if (nakIndex !== -1) {
-                     const jd = astro.jd;
-                     const times = VedicAstro.getNakshatraTimes(jd, nakIndex); // Returns JD {start, end}
+                // Search next 24h (approx 3 Nakshatras max)
+                let searchJD = astro.jd;
 
-                     // Convert JD to Date
-                     const jdToDate = (j) => new Date((j - 2440587.5) * 86400000);
-                     const nakStart = jdToDate(times.start);
-                     const nakEnd = jdToDate(times.end);
-                     const nakDur = nakEnd - nakStart;
+                if (currentNakIndex !== -1) {
+                    for(let i=0; i<3; i++) {
+                        // Find timing for currentNakIndex (wrapping 27)
+                        const times = VedicAstro.getNakshatraTimes(searchJD, currentNakIndex);
+                        const nakStart = jdToDate(times.start);
+                        const nakEnd = jdToDate(times.end);
 
-                     const ghatis = VedicAstro.AMRIT_GHATIS[nakName]; // [start, end]
-                     if (ghatis) {
-                         const amritStart = new Date(nakStart.getTime() + (ghatis[0]/60 * nakDur));
-                         const amritEnd = new Date(nakStart.getTime() + (ghatis[1]/60 * nakDur));
+                        // Safety: Nakshatra duration check (skip anomalies)
+                        if (nakEnd > nakStart) {
+                            const nakDur = nakEnd - nakStart;
 
-                         auspicious.push(createTimeObj(
-                            "Amrit Kalam", amritStart, amritEnd,
-                            "good", "Most auspicious time for any work.",
-                            "bg-skyblue-gradient", "dot-skyblue", "skyblue"
-                         ));
-                     }
+                            // Get Ghati Values
+                            const nakNameKey = nakKeys[currentNakIndex % 27];
+                            const ghatis = VedicAstro.AMRIT_GHATIS[nakNameKey];
+
+                            if (ghatis) {
+                                const amritStart = new Date(nakStart.getTime() + (ghatis[0]/60 * nakDur));
+                                const amritEnd = new Date(nakStart.getTime() + (ghatis[1]/60 * nakDur));
+
+                                // Add if it falls within the relevant day window (Sunrise to Next Sunrise)
+                                const nextSunrise = new Date(sunrise.getTime() + 24*60*60*1000);
+                                if (amritEnd > sunrise && amritStart < nextSunrise) {
+                                     auspicious.push(createTimeObj(
+                                        "Amrit Kalam", amritStart, amritEnd,
+                                        "good", "Most auspicious time for any work.",
+                                        "bg-purple-gradient", "dot-purple", "purple"
+                                     ));
+                                }
+                            }
+                        }
+
+                        // Prepare for next
+                        currentNakIndex++;
+                        searchJD = times.end + 0.05; // Advance search center
+
+                        // Stop if we've gone too far into future
+                        if (nakStart > new Date(sunrise.getTime() + 28*60*60*1000)) break;
+                    }
                 }
             } catch (e) { console.error("Amrit Kalam Calc Failed", e); }
 
