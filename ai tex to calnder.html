@@ -1336,29 +1336,29 @@
 
         /* Improved Card Footers (The data blocks) */
         .card-footer { 
-            background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 12px; 
-            display: flex; justify-content: space-between; align-items: center; 
+            background: linear-gradient(to bottom, #B91C1C, #991B1B);
+            border-radius: 12px; padding: 16px;
+            display: block;
             border: 1px solid rgba(255, 255, 255, 0.15); 
         }
         .footer-label { 
             font-size: 10px; 
-            opacity: 0.95; 
+            font-weight: 700;
+            color: #ffffff;
             text-transform: uppercase; 
             letter-spacing: 0.05em; 
             margin-bottom: 2px; 
-            font-weight: 700; 
-            color: rgba(255,255,255,0.95);
         }
-        .footer-value { font-size: 14px; font-weight: 800; letter-spacing: -0.01em;}
-        .footer-value.large { font-size: 18px; }
-        .footer-value.large span { font-size: 12px; font-weight: 700; opacity: 0.9; }
+        .footer-value { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; color: #ffffff; }
+        .footer-value.large { font-size: 20px; }
+        .footer-value.large span { font-size: 12px; font-weight: 700; opacity: 0.9; color: #ffffff; }
 
         .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
-        .progress-line { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.2); position: relative; border-radius: 2px; }
+        .progress-line { width: 100%; height: 2px; background: rgba(127, 29, 29, 0.3); position: relative; border-radius: 2px; }
         .progress-badge { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            font-size: 9px; font-weight: 800; background: #047857; padding: 3px 8px; border-radius: 99px; 
-            border: 2px solid var(--card-green-start); box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 10px; font-weight: 700; background: #7F1D1D; padding: 4px 10px; border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 2px 4px rgba(0,0,0,0.2); color: #ffffff;
         }
         
         .simple-footer { 
@@ -5870,11 +5870,11 @@ function renderCalendarGrid(data) {
                     }
 
                     footerHtml = `
-                        <div class="card-footer" style="background: rgba(0,0,0,0.2); display: block;">
+                        <div class="card-footer">
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
                                 <div>
-                                    <p class="footer-label">Starts</p>
-                                    <p class="footer-value large">${startStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-90">${startStr.slice(-2)}</span></p>
+                                    <p class="footer-label">STARTS</p>
+                                    <p class="footer-value large">${startStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-90 text-white">${startStr.slice(-2)}</span></p>
                                 </div>
                                 <div class="progress-container">
                                     <div class="progress-line">
@@ -5882,14 +5882,14 @@ function renderCalendarGrid(data) {
                                     </div>
                                 </div>
                                 <div style="text-align: right;">
-                                    <p class="footer-label">Ends</p>
-                                    <p class="footer-value large">${endStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-90">${endStr.slice(-2)}</span></p>
+                                    <p class="footer-label">ENDS</p>
+                                    <p class="footer-value large">${endStr.replace(/ [AP]M/, '')} <span class="text-xs opacity-90 text-white">${endStr.slice(-2)}</span></p>
                                 </div>
                             </div>
-                            <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden;">
-                                <div style="width: ${progressPct}%; height: 100%; background: white; border-radius: 4px; transition: width 1s linear;"></div>
+                            <div style="width: 100%; height: 6px; background: rgba(127, 29, 29, 0.3); border-radius: 9999px; overflow: hidden;">
+                                <div style="width: ${progressPct}%; height: 100%; background: #ffffff; border-radius: 9999px; transition: width 1s linear;"></div>
                             </div>
-                            <p style="text-align: center; font-size: 10px; margin-top: 12px; font-weight: 700; opacity: 1; text-transform: uppercase; letter-spacing: 0.1em;">${statusText}</p>
+                            <p style="text-align: center; font-size: 10px; margin-top: 12px; font-weight: 700; opacity: 1; text-transform: uppercase; letter-spacing: 0.1em; color: #ffffff;">${statusText}</p>
                         </div>
                     `;
                 } else {
