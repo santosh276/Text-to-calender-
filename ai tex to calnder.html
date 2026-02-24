@@ -1246,6 +1246,17 @@
         }
         .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
 
+        /* Pulsing Dot Animations */
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        @keyframes pulse-orange { 0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(249, 115, 22, 0); } 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } }
+        @keyframes pulse-slate { 0% { box-shadow: 0 0 0 0 rgba(100, 116, 139, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(100, 116, 139, 0); } 100% { box-shadow: 0 0 0 0 rgba(100, 116, 139, 0); } }
+
+        .timeline-dot.active-pulse.dot-red { animation: pulse-red 2s infinite; }
+        .timeline-dot.active-pulse.dot-green { animation: pulse-green 2s infinite; }
+        .timeline-dot.active-pulse.dot-orange { animation: pulse-orange 2s infinite; }
+        .timeline-dot.active-pulse.dot-slate { animation: pulse-slate 2s infinite; }
+
         /* --- Updated Dot Style (Thumbtack) --- */
         @media (max-width: 1023px) {
             .timeline-spine { display: none; }
@@ -5910,7 +5921,7 @@ function renderCalendarGrid(data) {
                     <div class="timeline-item">
                         <div class="time-dot-col">
                             <span class="time-txt">${tTime}</span>
-                            <div class="timeline-dot ${m.iconColor}"></div>
+                            <div class="timeline-dot ${m.iconColor} ${isActive ? 'active-pulse' : ''}"></div>
                             <span class="time-txt am-pm">${tPeriod || ''}</span>
                         </div>
 
