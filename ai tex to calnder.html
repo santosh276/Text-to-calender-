@@ -784,6 +784,71 @@
         }
 
         /* --- New Panchang Styles --- */
+        /* --- Glass Time Box (Timings Card Footer) --- */
+        .glass-time-box {
+            background: rgba(255, 255, 255, 0.2); /* Frosted Glass */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Glass Edge */
+            border-radius: 12px;
+            padding: 6px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 70px; /* Consistent width */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .glass-time-box:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .glass-time-box .label {
+            font-size: 8px;
+            text-transform: uppercase;
+            font-weight: 800;
+            opacity: 0.7;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .glass-time-box .time {
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .glass-time-box .period {
+            font-size: 8px;
+            font-weight: 700;
+            opacity: 0.8;
+            margin-top: 1px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Update Simple Footer for new layout */
+        .simple-footer-modern {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 12px;
+            margin-top: 8px;
+        }
+
+        .arrow-separator {
+            font-size: 16px;
+            opacity: 0.6;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
         .panchang-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -6097,66 +6162,79 @@ function renderCalendarGrid(data) {
 
                         // Pill Footer Logic
                         let footerHtml = '';
-                        if (isActive || m.type === 'good') { 
-                            let progressPct = 0;
-                            let statusText = '';
-                            
-                            if (isActive) {
-                                const total = m.end - m.start;
-                                const elapsed = now - m.start;
-                                progressPct = Math.min(100, Math.max(0, (elapsed / total) * 100));
-                                const remainingMs = m.end - now;
-                                const remMins = Math.ceil(remainingMs / 60000);
-                                statusText = `Ends in ${Math.floor(remMins/60)}h ${remMins%60}m`;
-                            } else if (isUpcoming) {
-                                const waitMs = m.start - now;
-                                const waitMins = Math.ceil(waitMs / 60000);
-                                statusText = `Upcoming in ${Math.floor(waitMins/60)}h ${waitMins%60}m`;
-                            } else {
-                                progressPct = 100;
-                                statusText = "Completed";
-                            }
+                        const [startTime, startPeriod] = startStr.split(' ');
+                        const [endTime, endPeriod] = endStr.split(' ');
 
-                            // Dynamic Pill Colors
-                            const pillClass = `badge-${m.themeKey}`;
-                            const footerClass = `footer-${m.themeKey}`;
-                            
-                            if (isActive) {
-                                footerHtml = `
-                                <div class="card-footer ${footerClass}" style="display: block;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
-                                        <div><p class="footer-label">Start</p><p class="footer-value">${startStr}</p></div>
-                                        <div class="progress-container">
-                                            <div class="progress-track">
-                                                <div class="progress-fill" style="width: ${progressPct}%"></div>
-                                                <span class="progress-badge ${pillClass}">${m.duration}</span>
-                                            </div>
-                                        </div>
-                                        <div style="text-align: right;"><p class="footer-label">End</p><p class="footer-value">${endStr}</p></div>
-                                    </div>
-                                    <p style="text-align: center; font-size: 10px; font-weight: 700; opacity: 0.9;">${statusText}</p>
-                                </div>`;
-                            } else {
-                                // Simple Footer for inactive items
-                                footerHtml = `
-                                <div class="simple-footer">
-                                    <span style="font-size: 14px; font-weight: 700;">${startStr}</span>
-                                    <div class="flex items-center gap-1 opacity-60">
-                                        <span class="badge ${pillClass} text-[9px] px-2 py-0.5 rounded-full">${m.duration}</span>
-                                    </div>
-                                    <span style="font-size: 14px; font-weight: 700;">${endStr}</span>
-                                </div>`;
-                            }
+                        // Determine status text for active/upcoming
+                        let progressPct = 0;
+                        let statusText = '';
+
+                        if (isActive) {
+                            const total = m.end - m.start;
+                            const elapsed = now - m.start;
+                            progressPct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+                            const remainingMs = m.end - now;
+                            const remMins = Math.ceil(remainingMs / 60000);
+                            statusText = `Ends in ${Math.floor(remMins/60)}h ${remMins%60}m`;
+                        } else if (isUpcoming) {
+                            const waitMs = m.start - now;
+                            const waitMins = Math.ceil(waitMs / 60000);
+                            statusText = `Upcoming in ${Math.floor(waitMins/60)}h ${waitMins%60}m`;
                         } else {
-                             // Simple Footer
-                             const pillClass = `badge-${m.themeKey}`;
-                             footerHtml = `
-                                <div class="simple-footer">
-                                    <span style="font-size: 14px; font-weight: 700;">${startStr}</span>
-                                    <div class="flex items-center gap-1 opacity-60">
-                                        <span class="badge ${pillClass} text-[9px] px-2 py-0.5 rounded-full">${m.duration}</span>
+                            progressPct = 100;
+                            statusText = "Completed";
+                        }
+
+                        const pillClass = `badge-${m.themeKey}`;
+                        const footerClass = `footer-${m.themeKey}`;
+
+                        if (isActive) {
+                            // Active State with Progress Bar + Glass Boxes
+                            footerHtml = `
+                            <div class="card-footer ${footerClass}" style="display: block;">
+                                <div class="flex justify-between items-center mb-3">
+                                    <div class="glass-time-box">
+                                         <span class="label">Start</span>
+                                         <span class="time">${startTime}</span>
+                                         <span class="period">${startPeriod}</span>
                                     </div>
-                                    <span style="font-size: 14px; font-weight: 700;">${endStr}</span>
+
+                                    <div class="flex-1 mx-3">
+                                        <div class="progress-track h-1.5 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm">
+                                            <div class="progress-fill bg-white h-full rounded-full shadow-[0_0_10px_rgba(255,255,255,0.7)]" style="width: ${progressPct}%"></div>
+                                        </div>
+                                         <div class="text-center mt-2">
+                                            <span class="progress-badge ${pillClass} relative top-0 transform-none inline-block shadow-lg border border-white/20 backdrop-blur-md">${statusText}</span>
+                                         </div>
+                                    </div>
+
+                                    <div class="glass-time-box">
+                                         <span class="label">End</span>
+                                         <span class="time">${endTime}</span>
+                                         <span class="period">${endPeriod}</span>
+                                    </div>
+                                </div>
+                            </div>`;
+                        } else {
+                            // Inactive State: Glass Boxes + Arrow (Gulika Style)
+                             footerHtml = `
+                                <div class="simple-footer-modern">
+                                    <div class="glass-time-box">
+                                        <span class="label">Start</span>
+                                        <span class="time">${startTime}</span>
+                                        <span class="period">${startPeriod}</span>
+                                    </div>
+
+                                    <div class="flex flex-col items-center opacity-70 pb-1">
+                                        <span class="arrow-separator mb-1">&rarr;</span>
+                                        <span class="badge ${pillClass} text-[9px] px-2 py-0.5 rounded-full border border-white/20 shadow-sm">${m.duration}</span>
+                                    </div>
+
+                                    <div class="glass-time-box">
+                                        <span class="label">End</span>
+                                        <span class="time">${endTime}</span>
+                                        <span class="period">${endPeriod}</span>
+                                    </div>
                                 </div>`;
                         }
 
