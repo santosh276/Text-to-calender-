@@ -1368,15 +1368,7 @@
         .timeline-card.completed .progress-track {
             display: none !important;
         }
-        .timeline-card.completed .progress-badge {
-            position: absolute !important;
-            top: 1px !important;
-            right: 1px !important;
-            left: auto !important;
-            transform: none !important;
-            margin: 0 !important;
-            z-index: 50; 
-        }
+        /* .timeline-card.completed .progress-badge removed - uses unified positioning */
         .timeline-card.completed .pulse-text {
             display: none !important;
         }
@@ -1555,9 +1547,10 @@
         .progress-track { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.3); position: relative; border-radius: 2px; }
         .progress-fill { height: 100%; background: #ffffff; border-radius: 2px; transition: width 0.5s ease; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
         .progress-badge { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 9999px; 
-            border-width: 2px; border-style: solid; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            /* Unified Floating Badge Style */
+            display: inline-block;
+            font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 9999px;
+            border-width: 2px; border-style: solid; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             z-index: 2; white-space: nowrap;
         }
 
@@ -6339,8 +6332,8 @@ function renderCalendarGrid(data) {
                                 </div>
                                 <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''}" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
                                     <div class="card-content relative">
-                                        <div class="absolute top-0 right-0 z-20">
-                                            <span class="progress-badge ${pillClass} ${badgeClass} inline-block shadow-lg border border-white/20 backdrop-blur-md rounded-bl-xl rounded-tr-xl px-3 py-1 text-[10px] font-bold uppercase tracking-wider">${statusText}</span>
+                                        <div class="absolute top-2 right-2 z-20">
+                                            <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border border-white/20 backdrop-blur-md uppercase tracking-wider">${statusText}</span>
                                         </div>
                                         <div class="card-header pt-2">
                                             <div class="glass-pill">
