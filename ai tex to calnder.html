@@ -784,6 +784,88 @@
         }
 
         /* --- New Panchang Styles --- */
+        /* --- Ending Soon Pulse (Live Timers) --- */
+        @keyframes ending-soon-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        .badge-ending-soon {
+            background-color: rgba(220, 38, 38, 0.85) !important; 
+            color: #ffffff !important;
+            border-color: rgba(254, 202, 202, 0.5) !important;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            animation: ending-soon-pulse 1.5s infinite ease-in-out;
+            font-weight: 800;
+        }
+
+        /* --- Glass Time Box (Timings Card Footer) --- */
+        .glass-time-box {
+            background: rgba(255, 255, 255, 0.2); /* Frosted Glass */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Glass Edge */
+            border-radius: 12px;
+            padding: 6px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 70px; /* Consistent width */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .glass-time-box:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .glass-time-box .label {
+            font-size: 8px;
+            text-transform: uppercase;
+            font-weight: 800;
+            opacity: 0.7;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .glass-time-box .time {
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .glass-time-box .period {
+            font-size: 8px;
+            font-weight: 700;
+            opacity: 0.8;
+            margin-top: 1px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Update Simple Footer for new layout */
+        .simple-footer-modern { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-top: 1px solid rgba(255, 255, 255, 0.15); 
+            padding-top: 12px; 
+            margin-top: 8px; 
+        }
+        
+        .arrow-separator {
+            font-size: 16px;
+            opacity: 0.6;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
         .panchang-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -900,7 +982,11 @@
         position: absolute;
         top: 0;
         right: 0;
-        background-color: #22c55e;
+        background-color: rgba(34, 197, 94, 0.85);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border-left: 1px solid rgba(255, 255, 255, 0.3);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         color: white;
         font-size: 9px;
         font-weight: 800;
@@ -1277,6 +1363,24 @@
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             border: 1px solid rgba(255, 255, 255, 0.15); /* Glass edge */
         }
+        
+        /* Completed Card Styling */
+        .timeline-card.completed .progress-track {
+            display: none !important;
+        }
+        .timeline-card.completed .progress-badge {
+            position: absolute !important;
+            top: 1px !important;
+            right: 1px !important;
+            left: auto !important;
+            transform: none !important;
+            margin: 0 !important;
+            z-index: 50; 
+        }
+        .timeline-card.completed .pulse-text {
+            display: none !important;
+        }
+
         /* Hover "lift" effect */
         .timeline-card:hover { 
             transform: translateY(-4px) scale(1.01); 
@@ -1347,12 +1451,12 @@
         .footer-crimson { background: rgba(136, 19, 55, 0.3); border: 1px solid rgba(225, 29, 72, 0.3); }
         .footer-slate { background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(71, 85, 105, 0.3); }
 
-        .badge-emerald { background-color: #065f46; border-color: #34d399; color: white; }
-        .badge-gold { background-color: #78350f; border-color: #fbbf24; color: white; }
-        .badge-skyblue { background-color: #0c4a6e; border-color: #38bdf8; color: white; }
-        .badge-rust { background-color: #7c2d12; border-color: #fdba74; color: white; }
-        .badge-crimson { background-color: #881337; border-color: #fca5a5; color: white; }
-        .badge-slate { background-color: #0f172a; border-color: #94a3b8; color: white; }
+        .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-skyblue { background-color: rgba(12, 74, 110, 0.25); border-color: rgba(56, 189, 248, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-rust { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(253, 186, 116, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-crimson { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(252, 165, 165, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
         .dot-emerald { border-color: #10b981; }
         .dot-gold { border-color: #f59e0b; }
@@ -1375,6 +1479,7 @@
             background: var(--glass-bg); border: 1px solid var(--glass-border); 
             padding: 4px 10px; border-radius: 999px; 
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
         .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
         .timeline-icon { width: 12px; height: 12px; fill: currentColor; }
@@ -1384,6 +1489,7 @@
             font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; 
             text-transform: uppercase; letter-spacing: 0.05em; 
             animation: pulse-opacity 2.5s ease-in-out infinite; 
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
@@ -1443,10 +1549,49 @@
         }
 
         /* Themed Badges */
-        .badge-green { background-color: #064E3B; border-color: #34D399; color: white; }
-        .badge-orange { background-color: #7C2D12; border-color: #FB923C; color: white; }
-        .badge-red { background-color: #881337; border-color: #F43F5E; color: white; }
-        .badge-neutral { background-color: #0F172A; border-color: #94A3B8; color: white; }
+        .badge-green { background-color: rgba(6, 78, 59, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-orange { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(251, 146, 60, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-red { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(244, 63, 94, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-neutral { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+        /* Glassmorphic Badges for Festival List */
+        .badge-glass-red {
+            background-color: rgba(220, 38, 38, 0.85);
+            color: white;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .badge-glass-green {
+            background-color: rgba(22, 163, 74, 0.85);
+            color: white;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .badge-glass-blue {
+            background-color: rgba(37, 99, 235, 0.85);
+            color: white;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .badge-glass-gray {
+            background-color: rgba(75, 85, 99, 0.85);
+            color: white;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Light Theme Glass Badges (Year View) */
+        .badge-glass-orange-light {
+            background-color: rgba(249, 115, 22, 0.1);
+            color: rgb(194, 65, 12);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
         
         .simple-footer { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -1745,7 +1890,7 @@ The word "Nua" means new and "Khai" means food.
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-orange-50 to-transparent pointer-events-none"></div>
-                    <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
+                    <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 backdrop-blur-md px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
                         <i class="fa-solid fa-arrow-left"></i> Back
                     </button>
                     
@@ -5219,7 +5364,7 @@ return SunCalc;
                 
                 if (eventCount > 0) {
                     const badge = document.createElement('span');
-                    badge.className = "bg-orange-100 text-orange-700 text-[9px] font-bold px-2 py-0.5 rounded-full";
+                    badge.className = "badge-glass-orange-light text-[9px] font-bold px-2 py-0.5 rounded-full";
                     badge.innerText = `${eventCount} Events`;
                     headerDiv.appendChild(badge);
                 }
@@ -5940,6 +6085,69 @@ function renderCalendarGrid(data) {
             }
         }
 
+        function updateLiveTimers() {
+            const cards = document.querySelectorAll('.timeline-card[data-start][data-end]');
+            const now = new Date();
+
+            cards.forEach(card => {
+                const start = parseInt(card.getAttribute('data-start'));
+                const end = parseInt(card.getAttribute('data-end'));
+                
+                const badge = card.querySelector('.progress-badge');
+                const fill = card.querySelector('.progress-fill');
+                const pulseText = card.querySelector('.pulse-text');
+
+                if (!badge || !fill) return;
+
+                if (now < start) {
+                    // FUTURE
+                    const waitMs = start - now;
+                    const waitMins = Math.ceil(waitMs / 60000);
+                    const h = Math.floor(waitMins / 60);
+                    const m = waitMins % 60;
+                    
+                    badge.innerText = `UPCOMING IN ${h}H ${m}M`;
+                    fill.style.width = '0%';
+                    badge.classList.remove('badge-ending-soon');
+                    if (pulseText) pulseText.style.display = 'none';
+                    card.classList.remove('completed');
+
+                } else if (now >= start && now <= end) {
+                    // ACTIVE
+                    const total = end - start;
+                    const elapsed = now - start;
+                    const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+                    
+                    const remainingMs = end - now;
+                    const remMins = Math.ceil(remainingMs / 60000);
+                    const h = Math.floor(remMins / 60);
+                    const m = remMins % 60;
+
+                    fill.style.width = `${pct}%`;
+
+                    // "Ending Soon" Logic (less than 15 mins)
+                    if (remMins <= 15) {
+                        badge.innerText = "Ending Soon";
+                        badge.classList.add('badge-ending-soon');
+                    } else {
+                        badge.innerText = `ENDS IN ${h}H ${m}M`;
+                        badge.classList.remove('badge-ending-soon');
+                    }
+                    
+                    if (pulseText) pulseText.style.display = 'inline-block';
+                    card.classList.remove('completed');
+
+                } else {
+                    // COMPLETED
+                    badge.innerText = "Completed";
+                    fill.style.width = '100%';
+                    badge.classList.remove('badge-ending-soon');
+                    if (pulseText) pulseText.style.display = 'none';
+                    card.classList.add('completed');
+                }
+            });
+        }
+
         function startLiveClock() {
             stopLiveClock();
             
@@ -5954,6 +6162,9 @@ function renderCalendarGrid(data) {
                 if (el2) {
                     el2.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
+                
+                // Dynamic Timers Hook
+                updateLiveTimers();
             };
             
             updateTime();
@@ -6045,75 +6256,80 @@ function renderCalendarGrid(data) {
                     list.forEach(m => {
                         const isActive = (now >= m.start && now <= m.end);
                         const isUpcoming = (now < m.start);
+                        const isCompleted = (!isActive && !isUpcoming);
                         
-                        const startStr = m.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        const endStr = m.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const startStr = m.start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                        const endStr = m.end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
                         const [tTime, tPeriod] = startStr.split(' ');
 
                         // Pill Footer Logic
                         let footerHtml = '';
-                        if (isActive || m.type === 'good') { 
-                            let progressPct = 0;
-                            let statusText = '';
-                            
-                            if (isActive) {
-                                const total = m.end - m.start;
-                                const elapsed = now - m.start;
-                                progressPct = Math.min(100, Math.max(0, (elapsed / total) * 100));
-                                const remainingMs = m.end - now;
-                                const remMins = Math.ceil(remainingMs / 60000);
-                                statusText = `Ends in ${Math.floor(remMins/60)}h ${remMins%60}m`;
-                            } else if (isUpcoming) {
-                                const waitMs = m.start - now;
-                                const waitMins = Math.ceil(waitMs / 60000);
-                                statusText = `Upcoming in ${Math.floor(waitMins/60)}h ${waitMins%60}m`;
-                            } else {
-                                progressPct = 100;
-                                statusText = "Completed";
-                            }
+                        const [startTime, startPeriod] = startStr.split(' ');
+                        const [endTime, endPeriod] = endStr.split(' ');
 
-                            // Dynamic Pill Colors
-                            const pillClass = `badge-${m.themeKey}`;
-                            const footerClass = `footer-${m.themeKey}`;
+                        // Determine status text for active/upcoming
+                        let progressPct = 0;
+                        let statusText = '';
+                        let isEndingSoon = false;
+                        
+                        if (isActive) {
+                            const total = m.end - m.start;
+                            const elapsed = now - m.start;
+                            progressPct = Math.min(100, Math.max(0, (elapsed / total) * 100));
                             
-                            if (isActive) {
-                                footerHtml = `
-                                <div class="card-footer ${footerClass}" style="display: block;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
-                                        <div><p class="footer-label">Start</p><p class="footer-value">${startStr}</p></div>
-                                        <div class="progress-container">
-                                            <div class="progress-track">
-                                                <div class="progress-fill" style="width: ${progressPct}%"></div>
-                                                <span class="progress-badge ${pillClass}">${m.duration}</span>
-                                            </div>
-                                        </div>
-                                        <div style="text-align: right;"><p class="footer-label">End</p><p class="footer-value">${endStr}</p></div>
-                                    </div>
-                                    <p style="text-align: center; font-size: 10px; font-weight: 700; opacity: 0.9;">${statusText}</p>
-                                </div>`;
+                            const remainingMs = m.end - now;
+                            const remMins = Math.ceil(remainingMs / 60000);
+                            const h = Math.floor(remMins / 60);
+                            const mTime = remMins % 60;
+                            
+                            if(remMins <= 15) {
+                                statusText = "Ending Soon";
+                                isEndingSoon = true;
                             } else {
-                                // Simple Footer for inactive items
-                                footerHtml = `
-                                <div class="simple-footer">
-                                    <span style="font-size: 14px; font-weight: 700;">${startStr}</span>
-                                    <div class="flex items-center gap-1 opacity-60">
-                                        <span class="badge ${pillClass} text-[9px] px-2 py-0.5 rounded-full">${m.duration}</span>
-                                    </div>
-                                    <span style="font-size: 14px; font-weight: 700;">${endStr}</span>
-                                </div>`;
+                                statusText = `ENDS IN ${h}H ${mTime}M`;
                             }
+                        } else if (isUpcoming) {
+                            const waitMs = m.start - now;
+                            const waitMins = Math.ceil(waitMs / 60000);
+                            const h = Math.floor(waitMins / 60);
+                            const mTime = waitMins % 60;
+                            statusText = `UPCOMING IN ${h}H ${mTime}M`;
+                            progressPct = 0;
                         } else {
-                             // Simple Footer
-                             const pillClass = `badge-${m.themeKey}`;
-                             footerHtml = `
-                                <div class="simple-footer">
-                                    <span style="font-size: 14px; font-weight: 700;">${startStr}</span>
-                                    <div class="flex items-center gap-1 opacity-60">
-                                        <span class="badge ${pillClass} text-[9px] px-2 py-0.5 rounded-full">${m.duration}</span>
-                                    </div>
-                                    <span style="font-size: 14px; font-weight: 700;">${endStr}</span>
-                                </div>`;
+                            progressPct = 100;
+                            statusText = "Completed";
                         }
+
+                        const pillClass = `badge-${m.themeKey}`;
+                        const footerClass = `footer-${m.themeKey}`;
+                        const badgeClass = isEndingSoon ? 'badge-ending-soon' : '';
+                        
+                        // Unified Footer HTML (Compatible with Live Updates)
+                        footerHtml = `
+                        <div class="card-footer ${footerClass}" style="display: block;">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="glass-time-box">
+                                        <span class="label">Start</span>
+                                        <span class="time">${startTime}</span>
+                                        <span class="period">${startPeriod}</span>
+                                </div>
+                                
+                                <div class="flex-1 mx-3">
+                                    <div class="progress-track h-1.5 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm">
+                                        <div class="progress-fill bg-white h-full rounded-full shadow-[0_0_10px_rgba(255,255,255,0.7)]" style="width: ${progressPct}%"></div>
+                                    </div>
+                                        <div class="text-center mt-2">
+                                        <span class="progress-badge ${pillClass} ${badgeClass} relative top-0 transform-none inline-block shadow-lg border border-white/20 backdrop-blur-md">${statusText}</span>
+                                        </div>
+                                </div>
+
+                                <div class="glass-time-box">
+                                        <span class="label">End</span>
+                                        <span class="time">${endTime}</span>
+                                        <span class="period">${endPeriod}</span>
+                                </div>
+                            </div>
+                        </div>`;
 
                         // Icon Logic
                         
@@ -6124,13 +6340,13 @@ function renderCalendarGrid(data) {
                                     <div class="timeline-dot ${m.iconColor}"></div>
                                     <span class="time-txt am-pm">${tPeriod || ''}</span>
                                 </div>
-                                <div class="timeline-card ${m.gradientClass}">
+                                <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''}" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
                                     <div class="card-content">
                                         <div class="card-header">
                                             <div class="glass-pill">
                                                 <span>${m.type === 'good' ? 'Auspicious' : (m.type === 'bad' ? 'Inauspicious' : 'Neutral')}</span>
                                             </div>
-                                            ${isActive ? '<span class="pulse-text">Active Now</span>' : ''}
+                                            <span class="pulse-text" style="display: ${isActive ? 'inline-block' : 'none'}">Active Now</span>
                                         </div>
                                         <div class="card-text-area">
                                             <h2 class="card-title">${m.name}</h2>
@@ -6434,10 +6650,10 @@ function renderCalendarGrid(data) {
                 else if (symbols.includes('^')) symbol = '^';
                 else if (symbols.includes('*')) symbol = '*';
                 
-                let badgeClass = "bg-gray-600";
-                if (symbol === '!') badgeClass = "bg-red-600"; 
-                else if (symbol === '^') badgeClass = "bg-green-600"; 
-                else if (symbol === '*') badgeClass = "bg-blue-600";
+                let badgeClass = "badge-glass-gray";
+                if (symbol === '!') badgeClass = "badge-glass-red"; 
+                else if (symbol === '^') badgeClass = "badge-glass-green"; 
+                else if (symbol === '*') badgeClass = "badge-glass-blue";
                 
                 const monthName = shortMonths[group.monthIndex];
                 
