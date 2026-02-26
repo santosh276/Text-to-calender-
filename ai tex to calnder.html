@@ -784,6 +784,23 @@
         }
 
         /* --- New Panchang Styles --- */
+        /* --- Ending Soon Pulse (Live Timers) --- */
+        @keyframes ending-soon-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .badge-ending-soon {
+            background-color: rgba(220, 38, 38, 0.85) !important;
+            color: #ffffff !important;
+            border-color: rgba(254, 202, 202, 0.5) !important;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            animation: ending-soon-pulse 1.5s infinite ease-in-out;
+            font-weight: 800;
+        }
+
         /* --- Glass Time Box (Timings Card Footer) --- */
         .glass-time-box {
             background: rgba(255, 255, 255, 0.2); /* Frosted Glass */
@@ -1416,12 +1433,12 @@
         .footer-crimson { background: rgba(136, 19, 55, 0.3); border: 1px solid rgba(225, 29, 72, 0.3); }
         .footer-slate { background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(71, 85, 105, 0.3); }
 
-        .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .badge-skyblue { background-color: rgba(12, 74, 110, 0.25); border-color: rgba(56, 189, 248, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .badge-rust { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(253, 186, 116, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .badge-crimson { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(252, 165, 165, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+        .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-skyblue { background-color: rgba(12, 74, 110, 0.25); border-color: rgba(56, 189, 248, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-rust { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(253, 186, 116, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-crimson { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(252, 165, 165, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
         .dot-emerald { border-color: #10b981; }
         .dot-gold { border-color: #f59e0b; }
@@ -1444,7 +1461,7 @@
             background: var(--glass-bg); border: 1px solid var(--glass-border); 
             padding: 4px 10px; border-radius: 999px; 
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
         .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
         .timeline-icon { width: 12px; height: 12px; fill: currentColor; }
@@ -1454,7 +1471,7 @@
             font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; 
             text-transform: uppercase; letter-spacing: 0.05em; 
             animation: pulse-opacity 2.5s ease-in-out infinite; 
-            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
@@ -1514,10 +1531,10 @@
         }
 
         /* Themed Badges */
-        .badge-green { background-color: rgba(6, 78, 59, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .badge-orange { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(251, 146, 60, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .badge-red { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(244, 63, 94, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .badge-neutral { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+        .badge-green { background-color: rgba(6, 78, 59, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-orange { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(251, 146, 60, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-red { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(244, 63, 94, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-neutral { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
         /* Glassmorphic Badges for Festival List */
         .badge-glass-red {
@@ -1553,8 +1570,8 @@
         .badge-glass-orange-light {
             background-color: rgba(249, 115, 22, 0.1);
             color: rgb(194, 65, 12);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(249, 115, 22, 0.2);
         }
         
@@ -1855,7 +1872,7 @@ The word "Nua" means new and "Khai" means food.
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-orange-50 to-transparent pointer-events-none"></div>
-                    <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
+                    <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 backdrop-blur-md px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
                         <i class="fa-solid fa-arrow-left"></i> Back
                     </button>
                     
@@ -6050,6 +6067,66 @@ function renderCalendarGrid(data) {
             }
         }
 
+        function updateLiveTimers() {
+            const cards = document.querySelectorAll('.timeline-card[data-start][data-end]');
+            const now = new Date();
+
+            cards.forEach(card => {
+                const start = parseInt(card.getAttribute('data-start'));
+                const end = parseInt(card.getAttribute('data-end'));
+
+                const badge = card.querySelector('.progress-badge');
+                const fill = card.querySelector('.progress-fill');
+                const pulseText = card.querySelector('.pulse-text');
+
+                if (!badge || !fill) return;
+
+                if (now < start) {
+                    // FUTURE
+                    const waitMs = start - now;
+                    const waitMins = Math.ceil(waitMs / 60000);
+                    const h = Math.floor(waitMins / 60);
+                    const m = waitMins % 60;
+
+                    badge.innerText = `UPCOMING IN ${h}H ${m}M`;
+                    fill.style.width = '0%';
+                    badge.classList.remove('badge-ending-soon');
+                    if (pulseText) pulseText.style.display = 'none';
+
+                } else if (now >= start && now <= end) {
+                    // ACTIVE
+                    const total = end - start;
+                    const elapsed = now - start;
+                    const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+
+                    const remainingMs = end - now;
+                    const remMins = Math.ceil(remainingMs / 60000);
+                    const h = Math.floor(remMins / 60);
+                    const m = remMins % 60;
+
+                    fill.style.width = `${pct}%`;
+
+                    // "Ending Soon" Logic (less than 15 mins)
+                    if (remMins <= 15) {
+                        badge.innerText = "Ending Soon";
+                        badge.classList.add('badge-ending-soon');
+                    } else {
+                        badge.innerText = `ENDS IN ${h}H ${m}M`;
+                        badge.classList.remove('badge-ending-soon');
+                    }
+
+                    if (pulseText) pulseText.style.display = 'inline-block';
+
+                } else {
+                    // COMPLETED
+                    badge.innerText = "Completed";
+                    fill.style.width = '100%';
+                    badge.classList.remove('badge-ending-soon');
+                    if (pulseText) pulseText.style.display = 'none';
+                }
+            });
+        }
+
         function startLiveClock() {
             stopLiveClock();
             
@@ -6064,6 +6141,9 @@ function renderCalendarGrid(data) {
                 if (el2) {
                     el2.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
+
+                // Dynamic Timers Hook
+                updateLiveTimers();
             };
             
             updateTime();
@@ -6168,18 +6248,31 @@ function renderCalendarGrid(data) {
                         // Determine status text for active/upcoming
                         let progressPct = 0;
                         let statusText = '';
+                        let isEndingSoon = false;
 
                         if (isActive) {
                             const total = m.end - m.start;
                             const elapsed = now - m.start;
                             progressPct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+
                             const remainingMs = m.end - now;
                             const remMins = Math.ceil(remainingMs / 60000);
-                            statusText = `Ends in ${Math.floor(remMins/60)}h ${remMins%60}m`;
+                            const h = Math.floor(remMins / 60);
+                            const mTime = remMins % 60;
+
+                            if(remMins <= 15) {
+                                statusText = "Ending Soon";
+                                isEndingSoon = true;
+                            } else {
+                                statusText = `ENDS IN ${h}H ${mTime}M`;
+                            }
                         } else if (isUpcoming) {
                             const waitMs = m.start - now;
                             const waitMins = Math.ceil(waitMs / 60000);
-                            statusText = `Upcoming in ${Math.floor(waitMins/60)}h ${waitMins%60}m`;
+                            const h = Math.floor(waitMins / 60);
+                            const mTime = waitMins % 60;
+                            statusText = `UPCOMING IN ${h}H ${mTime}M`;
+                            progressPct = 0;
                         } else {
                             progressPct = 100;
                             statusText = "Completed";
@@ -6187,56 +6280,34 @@ function renderCalendarGrid(data) {
 
                         const pillClass = `badge-${m.themeKey}`;
                         const footerClass = `footer-${m.themeKey}`;
+                        const badgeClass = isEndingSoon ? 'badge-ending-soon' : '';
 
-                        if (isActive) {
-                            // Active State with Progress Bar + Glass Boxes
-                            footerHtml = `
-                            <div class="card-footer ${footerClass}" style="display: block;">
-                                <div class="flex justify-between items-center mb-3">
-                                    <div class="glass-time-box">
-                                         <span class="label">Start</span>
-                                         <span class="time">${startTime}</span>
-                                         <span class="period">${startPeriod}</span>
-                                    </div>
-
-                                    <div class="flex-1 mx-3">
-                                        <div class="progress-track h-1.5 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm">
-                                            <div class="progress-fill bg-white h-full rounded-full shadow-[0_0_10px_rgba(255,255,255,0.7)]" style="width: ${progressPct}%"></div>
-                                        </div>
-                                         <div class="text-center mt-2">
-                                            <span class="progress-badge ${pillClass} relative top-0 transform-none inline-block shadow-lg border border-white/20 backdrop-blur-md">${statusText}</span>
-                                         </div>
-                                    </div>
-
-                                    <div class="glass-time-box">
-                                         <span class="label">End</span>
-                                         <span class="time">${endTime}</span>
-                                         <span class="period">${endPeriod}</span>
-                                    </div>
-                                </div>
-                            </div>`;
-                        } else {
-                            // Inactive State: Glass Boxes + Arrow (Gulika Style)
-                             footerHtml = `
-                                <div class="simple-footer-modern">
-                                    <div class="glass-time-box">
+                        // Unified Footer HTML (Compatible with Live Updates)
+                        footerHtml = `
+                        <div class="card-footer ${footerClass}" style="display: block;">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="glass-time-box">
                                         <span class="label">Start</span>
                                         <span class="time">${startTime}</span>
                                         <span class="period">${startPeriod}</span>
-                                    </div>
+                                </div>
 
-                                    <div class="flex flex-col items-center opacity-70 pb-1">
-                                        <span class="arrow-separator mb-1">&rarr;</span>
-                                        <span class="badge ${pillClass} text-[9px] px-2 py-0.5 rounded-full border border-white/20 shadow-sm">${m.duration}</span>
+                                <div class="flex-1 mx-3">
+                                    <div class="progress-track h-1.5 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm">
+                                        <div class="progress-fill bg-white h-full rounded-full shadow-[0_0_10px_rgba(255,255,255,0.7)]" style="width: ${progressPct}%"></div>
                                     </div>
+                                        <div class="text-center mt-2">
+                                        <span class="progress-badge ${pillClass} ${badgeClass} relative top-0 transform-none inline-block shadow-lg border border-white/20 backdrop-blur-md">${statusText}</span>
+                                        </div>
+                                </div>
 
-                                    <div class="glass-time-box">
+                                <div class="glass-time-box">
                                         <span class="label">End</span>
                                         <span class="time">${endTime}</span>
                                         <span class="period">${endPeriod}</span>
-                                    </div>
-                                </div>`;
-                        }
+                                </div>
+                            </div>
+                        </div>`;
 
                         // Icon Logic
                         
@@ -6247,13 +6318,13 @@ function renderCalendarGrid(data) {
                                     <div class="timeline-dot ${m.iconColor}"></div>
                                     <span class="time-txt am-pm">${tPeriod || ''}</span>
                                 </div>
-                                <div class="timeline-card ${m.gradientClass}">
+                                <div class="timeline-card ${m.gradientClass}" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
                                     <div class="card-content">
                                         <div class="card-header">
                                             <div class="glass-pill">
                                                 <span>${m.type === 'good' ? 'Auspicious' : (m.type === 'bad' ? 'Inauspicious' : 'Neutral')}</span>
                                             </div>
-                                            ${isActive ? '<span class="pulse-text">Active Now</span>' : ''}
+                                            <span class="pulse-text" style="display: ${isActive ? 'inline-block' : 'none'}">Active Now</span>
                                         </div>
                                         <div class="card-text-area">
                                             <h2 class="card-title">${m.name}</h2>
