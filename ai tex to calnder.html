@@ -1370,8 +1370,8 @@
         }
         .timeline-card.completed .progress-badge {
             position: absolute !important;
-            top: 16px !important;
-            right: 16px !important;
+            top: 8px !important;
+            right: 8px !important;
             left: auto !important;
             transform: none !important;
             margin: 0 !important;
@@ -6258,8 +6258,8 @@ function renderCalendarGrid(data) {
                         const isUpcoming = (now < m.start);
                         const isCompleted = (!isActive && !isUpcoming);
                         
-                        const startStr = m.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        const endStr = m.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const startStr = m.start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                        const endStr = m.end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
                         const [tTime, tPeriod] = startStr.split(' ');
 
                         // Pill Footer Logic
