@@ -1403,45 +1403,55 @@
         /* TAB UI STYLES */
         .timings-tab-container {
             display: flex;
-            background: rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 999px;
-            padding: 4px;
-            margin-bottom: 20px;
+            padding: 5px;
+            margin-bottom: 24px;
             position: relative;
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.08);
         }
         .timings-tab-btn {
             flex: 1;
-            padding: 8px 16px;
+            padding: 10px 20px;
             text-align: center;
             border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 13px;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
+            letter-spacing: 0.08em;
+            color: #475569;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             position: relative;
             z-index: 2;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+        }
+        .timings-tab-btn:hover {
+            color: #1e293b;
+            background: rgba(255, 255, 255, 0.3);
         }
         .timings-tab-btn.active {
             color: #ffffff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            background: transparent;
         }
         /* Active Pill Background */
         .tab-indicator {
             position: absolute;
-            top: 4px;
-            bottom: 4px;
-            left: 4px;
-            width: calc(50% - 4px);
+            top: 5px;
+            bottom: 5px;
+            left: 5px;
+            width: calc(50% - 5px);
             border-radius: 999px;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 1;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15), inset 0 1px 1px rgba(255,255,255,0.4);
         }
-        .tab-indicator.auspicious { background: linear-gradient(90deg, #10b981, #059669); transform: translateX(0); }
-        .tab-indicator.inauspicious { background: linear-gradient(90deg, #ef4444, #b91c1c); transform: translateX(100%); width: calc(50% - 4px); } /* Adjust based on count */
+        .tab-indicator.auspicious { background: linear-gradient(135deg, #34d399 0%, #059669 100%); transform: translateX(0); }
+        .tab-indicator.inauspicious { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); transform: translateX(100%); width: calc(50% - 5px); }
 
         /* FOOTER THEMES */
         .footer-emerald { background: rgba(6, 78, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); }
