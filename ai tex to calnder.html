@@ -5865,7 +5865,7 @@ function renderCalendarGrid(data) {
             // Update buttons
             document.querySelectorAll('.timings-tab-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.innerText.toLowerCase().includes(tab)) btn.classList.add('active');
+                if (btn.innerText.trim().toLowerCase() === tab.trim().toLowerCase()) btn.classList.add('active');
             });
             
             // Move Indicator
