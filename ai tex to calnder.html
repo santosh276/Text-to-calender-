@@ -1363,6 +1363,24 @@
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             border: 1px solid rgba(255, 255, 255, 0.15); /* Glass edge */
         }
+
+        /* Completed Card Styling */
+        .timeline-card.completed .progress-track {
+            display: none !important;
+        }
+        .timeline-card.completed .progress-badge {
+            position: absolute !important;
+            top: 16px !important;
+            right: 16px !important;
+            left: auto !important;
+            transform: none !important;
+            margin: 0 !important;
+            z-index: 50;
+        }
+        .timeline-card.completed .pulse-text {
+            display: none !important;
+        }
+
         /* Hover "lift" effect */
         .timeline-card:hover { 
             transform: translateY(-4px) scale(1.01); 
@@ -6092,6 +6110,7 @@ function renderCalendarGrid(data) {
                     fill.style.width = '0%';
                     badge.classList.remove('badge-ending-soon');
                     if (pulseText) pulseText.style.display = 'none';
+                    card.classList.remove('completed');
 
                 } else if (now >= start && now <= end) {
                     // ACTIVE
@@ -6116,6 +6135,7 @@ function renderCalendarGrid(data) {
                     }
 
                     if (pulseText) pulseText.style.display = 'inline-block';
+                    card.classList.remove('completed');
 
                 } else {
                     // COMPLETED
@@ -6123,6 +6143,7 @@ function renderCalendarGrid(data) {
                     fill.style.width = '100%';
                     badge.classList.remove('badge-ending-soon');
                     if (pulseText) pulseText.style.display = 'none';
+                    card.classList.add('completed');
                 }
             });
         }
@@ -6235,6 +6256,7 @@ function renderCalendarGrid(data) {
                     list.forEach(m => {
                         const isActive = (now >= m.start && now <= m.end);
                         const isUpcoming = (now < m.start);
+                        const isCompleted = (!isActive && !isUpcoming);
                         
                         const startStr = m.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         const endStr = m.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -6318,7 +6340,7 @@ function renderCalendarGrid(data) {
                                     <div class="timeline-dot ${m.iconColor}"></div>
                                     <span class="time-txt am-pm">${tPeriod || ''}</span>
                                 </div>
-                                <div class="timeline-card ${m.gradientClass}" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
+                                <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''}" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
                                     <div class="card-content">
                                         <div class="card-header">
                                             <div class="glass-pill">
