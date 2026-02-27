@@ -998,6 +998,32 @@
     }
     @media (min-width: 768px) { .today-badge { display: block; } }
 
+    /* --- TIMING BADGES (Mirrors Today Badge) --- */
+    .timing-badge-base {
+        position: absolute;
+        top: 0;
+        z-index: 20;
+        color: white;
+        font-size: 9px;
+        font-weight: 800;
+        padding: 2px 8px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .timing-badge-left {
+        left: 0;
+        border-right: 1px solid rgba(255, 255, 255, 0.3);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        border-bottom-right-radius: 8px;
+    }
+    .timing-badge-right {
+        right: 0;
+        border-left: 1px solid rgba(255, 255, 255, 0.3);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        border-bottom-left-radius: 8px;
+    }
+
     .event-pill {
         font-size: 10px;
         padding: 2px 6px;
@@ -6333,15 +6359,13 @@ function renderCalendarGrid(data) {
                                 <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''}" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
                                     
                                     <!-- Status Badge (Top Left) -->
-                                    <div class="absolute top-0 left-0 z-20">
-                                        <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-4 py-1.5 text-[10px] font-bold block" style="border-radius: 0 0 16px 0; border-width: 0px 1px 1px 0px;">${statusText}</span>
+                                    <div class="timing-badge-base timing-badge-left badge-${m.themeKey} ${badgeClass}">
+                                        ${statusText}
                                     </div>
 
                                     <!-- Category Badge (Top Right) -->
-                                    <div class="absolute top-0 right-0 z-20">
-                                         <div class="glass-pill shadow-lg border-white/20 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider" style="border-radius: 0 0 0 16px; border-width: 0px 0px 1px 1px;">
-                                            <span>${m.type === 'good' ? 'Auspicious' : (m.type === 'bad' ? 'Inauspicious' : 'Neutral')}</span>
-                                        </div>
+                                    <div class="timing-badge-base timing-badge-right badge-${m.themeKey}">
+                                        ${m.type === 'good' ? 'Auspicious' : (m.type === 'bad' ? 'Inauspicious' : 'Neutral')}
                                     </div>
 
                                     <div class="card-content relative pt-8">
