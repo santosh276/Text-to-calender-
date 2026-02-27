@@ -1498,7 +1498,7 @@
         }
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        .card-text-area { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .card-text-area { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         .card-title { 
             font-size: 18px; 
             font-weight: 900; 
@@ -6334,12 +6334,12 @@ function renderCalendarGrid(data) {
                                     
                                     <!-- Status Badge (Top Left) -->
                                     <div class="absolute top-0 left-0 z-20" style="top: -5px; left: -1px;">
-                                        <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-4 py-1.5 text-[10px] font-bold block" style="border-radius: 20px 0 20px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
+                                        <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-widest px-4 py-1.5 text-[10px] font-bold block" style="border-radius: 20px 0 20px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                     </div>
 
                                     <!-- Category Badge (Top Right) -->
                                     <div class="absolute top-0 right-0 z-20" style="top: -5px; right: -1px;">
-                                         <div class="glass-pill shadow-lg border-white/20 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider" style="border-radius: 0 20px 0 20px; border-width: 1px 0px 1px 1px;">
+                                         <div class="glass-pill shadow-lg border-white/20 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest" style="border-radius: 0 20px 0 20px; border-width: 1px 0px 1px 1px;">
                                             <span>${m.type === 'good' ? 'Auspicious' : (m.type === 'bad' ? 'Inauspicious' : 'Neutral')}</span>
                                         </div>
                                     </div>
