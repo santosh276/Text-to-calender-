@@ -6330,35 +6330,34 @@ function renderCalendarGrid(data) {
                                     <div class="timeline-dot ${m.iconColor}"></div>
                                     <span class="time-txt am-pm">${tPeriod || ''}</span>
                                 </div>
-                                <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''}" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
+                                <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''} overflow-visible" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
                                     
                                     <!-- Status Badge (Top Left) -->
-                                    <div class="absolute top-0 left-0 z-20">
-                                        <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-4 py-1.5 text-[10px] font-bold block" style="border-radius: 0 0 16px 0; border-width: 0px 1px 1px 0px;">${statusText}</span>
+                                    <div class="absolute top-0 left-0 z-20" style="top: -5px; left: -1px;">
+                                        <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-4 py-1.5 text-[10px] font-bold block" style="border-radius: 20px 0 20px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                     </div>
 
                                     <!-- Category Badge (Top Right) -->
-                                    <div class="absolute top-0 right-0 z-20">
-                                         <div class="glass-pill shadow-lg border-white/20 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider" style="border-radius: 0 0 0 16px; border-width: 0px 0px 1px 1px;">
+                                    <div class="absolute top-0 right-0 z-20" style="top: -5px; right: -1px;">
+                                         <div class="glass-pill shadow-lg border-white/20 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider" style="border-radius: 0 20px 0 20px; border-width: 1px 0px 1px 1px;">
                                             <span>${m.type === 'good' ? 'Auspicious' : (m.type === 'bad' ? 'Inauspicious' : 'Neutral')}</span>
                                         </div>
                                     </div>
 
-                                    <div class="card-content relative pt-8">
-                                        <div class="card-header min-h-[24px]">
-                                            <!-- pulse-text was here, moved to footer -->
-                                        </div>
-                                        <div class="card-text-area mt-1">
-                                            <h2 class="card-title">${m.name}</h2>
-                                            <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
-                                        </div>
-                                        
-                                        <!-- Footer Wrapper to allow relative positioning for Active Badge -->
-                                        <div class="relative mt-auto pt-4">
-                                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
-                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-4 py-1 text-[10px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
+                                    <div class="relative w-full h-full overflow-hidden rounded-[20px]">
+                                        <div class="card-content relative pt-5">
+                                            <div class="card-text-area mt-1">
+                                                <h2 class="card-title">${m.name}</h2>
+                                                <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
                                             </div>
-                                            ${footerHtml}
+                                            
+                                            <!-- Footer Wrapper to allow relative positioning for Active Badge -->
+                                            <div class="relative mt-auto pt-4">
+                                                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
+                                                    <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-4 py-1 text-[10px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
+                                                </div>
+                                                ${footerHtml}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
