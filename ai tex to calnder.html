@@ -6346,13 +6346,20 @@ function renderCalendarGrid(data) {
 
                                     <div class="card-content relative pt-8">
                                         <div class="card-header min-h-[24px]">
-                                            <span class="pulse-text" style="display: ${isActive ? 'inline-block' : 'none'}">Active Now</span>
+                                            <!-- pulse-text was here, moved to footer -->
                                         </div>
                                         <div class="card-text-area mt-1">
                                             <h2 class="card-title">${m.name}</h2>
                                             <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
                                         </div>
-                                        ${footerHtml}
+
+                                        <!-- Footer Wrapper to allow relative positioning for Active Badge -->
+                                        <div class="relative mt-auto pt-4">
+                                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
+                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-4 py-1 text-[10px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
+                                            </div>
+                                            ${footerHtml}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
