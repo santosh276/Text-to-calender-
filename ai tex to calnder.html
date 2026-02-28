@@ -1034,7 +1034,6 @@
             position: relative;
             overflow: hidden;
             color: white;
-            margin-bottom: 1.25rem !important;
         }
 
         .astro-timeline-modern::before {
@@ -1918,7 +1917,7 @@ The word "Nua" means new and "Khai" means food.
 
             <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
                 <!-- Calendar Grid Section -->
-                <div class="flex-grow lg:w-3/4 space-y-2 w-full mobile-contents">
+                <div class="flex-grow lg:w-3/4 space-y-1 w-full mobile-contents">
                     
                     <!-- Wrapper for Header & Grid to reduce gap on mobile -->
                     <div class="flex flex-col gap-2 order-1 w-full">
@@ -5962,7 +5961,7 @@ function renderCalendarGrid(data) {
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
                 const timelineDiv = document.createElement('div');
-                timelineDiv.className = "astro-timeline-modern";
+                timelineDiv.className = "astro-timeline-modern mb-3"; // Very slightly decreased from 1rem (mb-4)
                 timelineDiv.innerHTML = `
                     <div class="astro-time-item">
                         <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
