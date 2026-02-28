@@ -6396,17 +6396,45 @@ function renderCalendarGrid(data) {
             const upNextEvents = listEvents.filter(e => e.symbol !== '>');
             
             let upNextEvent = null;
+            let upNextData = data;
             const realToday = new Date();
+            const viewingMonthDate = new Date(data.year, data.month, 1);
             const isCurrentMonth = (data.month === realToday.getMonth() && data.year === realToday.getFullYear());
+            const realTodayMonthDate = new Date(realToday.getFullYear(), realToday.getMonth(), 1);
+            const isFutureMonth = viewingMonthDate > realTodayMonthDate;
             
-            if (isCurrentMonth) {
-                upNextEvent = upNextEvents.find(e => e.date >= realToday.getDate());
-            } else if (new Date(data.year, data.month, 1) > realToday) {
-                upNextEvent = upNextEvents[0];
+            if (isCurrentMonth || isFutureMonth) {
+                if (isCurrentMonth) {
+                    upNextEvent = upNextEvents.find(e => e.date >= realToday.getDate());
+                } else {
+                    upNextEvent = upNextEvents[0];
+                }
+
+                // Look ahead to future months if no event remains in the current/viewed month
+                if (!upNextEvent) {
+                    const allData = window.exportedData || (window.appState && window.appState.monthlyData);
+                    if (allData) {
+                        let currentMonthIndex = allData.findIndex(d => d.year === data.year && d.month === data.month);
+                        if (currentMonthIndex !== -1) {
+                            for (let i = currentMonthIndex + 1; i < allData.length; i++) {
+                                const futureData = allData[i];
+                                const futureEvents = futureData.events
+                                    .filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*'))
+                                    .sort((a, b) => a.date - b.date);
+
+                                if (futureEvents.length > 0) {
+                                    upNextEvent = futureEvents[0];
+                                    upNextData = futureData;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
             
             if (upNextEvent) {
-                const eventDate = new Date(data.year, data.month, upNextEvent.date);
+                const eventDate = new Date(upNextData.year, upNextData.month, upNextEvent.date);
                 
                 // Diff days
                 const t1 = new Date(realToday.getFullYear(), realToday.getMonth(), realToday.getDate());
@@ -6418,12 +6446,12 @@ function renderCalendarGrid(data) {
                 if (diffDays === 0) badgeText = "Today";
                 else if (diffDays === 1) badgeText = "Tomorrow";
                 else if (diffDays < 7) badgeText = `In ${diffDays} days`;
-                else badgeText = `${upNextEvent.date} ${shortMonths[data.month]}`;
+                else badgeText = `${upNextEvent.date} ${shortMonths[upNextData.month]}`;
 
                 // --- CARD 1: Event Details ---
                 const eventCard = document.createElement('div');
                 eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
-                eventCard.onclick = () => openDayModal(upNextEvent.date, data);
+                eventCard.onclick = () => openDayModal(upNextEvent.date, upNextData);
                 eventCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)";
                 eventCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
                 
