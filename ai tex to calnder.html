@@ -869,7 +869,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
         @media (min-width: 1024px) {
             .panchang-grid {
@@ -1034,7 +1034,7 @@
             position: relative;
             overflow: hidden;
             color: white;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
         }
 
         .astro-timeline-modern::before {
@@ -1087,6 +1087,7 @@
             .astro-timeline-modern {
                 padding: 0.75rem; /* Even more compact padding */
                 gap: 0.25rem;
+                margin-bottom: 1.5rem; /* slightly less spacing than desktop, but increased from default */
             }
             .astro-time {
                 font-size: 0.75rem; /* Smaller font for mobile to prevent wrapping */
@@ -6344,7 +6345,7 @@ function renderCalendarGrid(data) {
                                     </div>
 
                                     <div class="relative w-full h-full overflow-hidden rounded-[20px]">
-                                        <div class="card-content relative pt-5">
+                                        <div class="card-content relative pt-8">
                                             <div class="card-text-area mt-1">
                                                 <h2 class="card-title">${m.name}</h2>
                                                 <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
