@@ -786,19 +786,18 @@
         /* --- New Panchang Styles --- */
         /* --- Ending Soon Pulse (Live Timers) --- */
         @keyframes ending-soon-pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.9; }
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.05); filter: brightness(1.5); }
         }
         
         .badge-ending-soon {
-            background-color: rgba(220, 38, 38, 0.85) !important; 
+            /* Remove hardcoded red to inherit theme badge colors dynamically */
             color: #ffffff !important;
-            border-color: rgba(254, 202, 202, 0.5) !important;
-            box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
             backdrop-filter: blur(8px) !important;
             -webkit-backdrop-filter: blur(8px) !important;
             animation: ending-soon-pulse 1.5s infinite ease-in-out;
             font-weight: 800;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
 
         /* --- Glass Time Box (Timings Card Footer) --- */
