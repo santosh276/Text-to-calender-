@@ -6177,16 +6177,22 @@ function renderCalendarGrid(data) {
             const w = card.offsetWidth;
             const h = card.offsetHeight;
             
-            // Algorithm: Scale icon based on container dimensions
-            // Target: Icon should be bounded to not overrun the entire card on wide screens (tablets/PCs).
-            // We use the height as a major constraint to prevent it getting too massive on long wide cards.
-            let size = Math.max(140, Math.min(w * 0.4, h * 1.8, 240));
+            // Default constraints for mobile and desktop
+            let maxSize = 240;
+            let size = Math.max(140, Math.min(w * 0.4, h * 1.8, maxSize));
+            let bottomOffset = -size * 0.15;
+            let rightOffset = -size * 0.05;
             
-            // Position: "slightly below side" implies pushing it down and right.
-            const bottomOffset = -size * 0.15; 
-            const rightOffset = -size * 0.05;
+            // On wide-screen tablets, the icon was getting cut off, slightly decrease the size
+            if (window.innerWidth >= 768 && window.innerWidth < 1024) {
+                maxSize = 140;
+                size = Math.max(100, Math.min(w * 0.28, h * 1.5, maxSize));
+                bottomOffset = -size * 0.20; // shift slightly up from previous iteration
+                rightOffset = -size * 0.05; // use same right proportional shift
+            }
 
             icon.style.fontSize = `${size}px`;
+            icon.style.lineHeight = `${size}px`;
             wrapper.style.bottom = `${bottomOffset}px`;
             wrapper.style.right = `${rightOffset}px`;
         }
