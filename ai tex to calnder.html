@@ -2017,11 +2017,7 @@ The word "Nua" means new and "Khai" means food.
                 <!-- Sidebar Section -->
                 <div class="lg:w-1/4 space-y-6 mobile-contents">
                     <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden order-2">
-                        <svg class="absolute -top-8 -right-8 w-40 h-40 text-orange-500 opacity-10 pointer-events-none" viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M50 0C50 20 70 30 100 50C70 70 50 80 50 100C50 80 30 70 0 50C30 30 50 20 50 0Z" />
-                            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="2" />
-                            <circle cx="50" cy="50" r="10" fill="currentColor" />
-                        </svg>
+                        <div class="absolute top-0 right-0 -mr-4 -mt-4 pointer-events-none" style="width: 6rem; height: 6rem; background: linear-gradient(to right bottom, rgba(239, 68, 68, 0.1), transparent); border-bottom-left-radius: 100%;"></div>
                         <h3 class="font-bold text-saffron mb-3 border-b pb-1"><i class="fa-solid fa-bell text-deepred mr-2"></i>Festivals</h3>
                         <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
                         <ul id="festival-list" class="space-y-2 text-sm"></ul>
@@ -6415,17 +6411,18 @@ function renderCalendarGrid(data) {
             const section = document.getElementById('sec-festivals');
             section.innerHTML = '';
 
-            // 1. Decoration SVG
-            const decorationHTML = `
-                <svg class="absolute -top-8 -right-8 w-40 h-40 text-orange-500 opacity-10 pointer-events-none" viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M50 0C50 20 70 30 100 50C70 70 50 80 50 100C50 80 30 70 0 50C30 30 50 20 50 0Z" />
-                    <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="2" />
-                    <circle cx="50" cy="50" r="10" fill="currentColor" />
-                </svg>
-            `;
-            section.insertAdjacentHTML('beforeend', decorationHTML);
+            // 0. Decoration (Quarter-Circle)
+            const deco = document.createElement('div');
+            deco.className = "absolute top-0 right-0 -mr-4 -mt-4 pointer-events-none";
+            Object.assign(deco.style, {
+                width: '6rem', // w-24
+                height: '6rem', // h-24
+                background: 'linear-gradient(to right bottom, rgba(239, 68, 68, 0.1), transparent)', // bg-gradient-to-br from-red-500/10
+                borderBottomLeftRadius: '100%' // rounded-bl-full
+            });
+            section.appendChild(deco);
 
-            // 2. Header
+            // 1. Header
             const header = document.createElement('h3');
             header.className = "font-bold text-gray-900 mb-4 text-base flex items-center gap-2";
             header.innerHTML = `<i class="fa-solid fa-bell text-red-600 text-lg"></i> Festivals`;
