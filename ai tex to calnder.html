@@ -262,6 +262,23 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             animation-delay: 0.6s;
         }
 
+        /* Layer 3: Shadow Style Ripple Wave */
+        .ripple-shadow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+            will-change: transform, opacity;
+            box-shadow: 0 0 15px 5px rgba(252, 211, 77, 0.4);
+            transform: translate(-50%, -50%) scale(0.9) translateZ(0);
+            animation: ripple-wave 2s ease-out infinite;
+            animation-delay: 1.6s; /* Offset from the first ripple wave */
+        }
+
         @keyframes pulse-wave {
             0%, 100% {
                 opacity: 0.4;
@@ -4972,6 +4989,7 @@ return SunCalc;
                 logoContainer.innerHTML = `
     <!-- COMPONENT START -->
     <div class="coin-wrapper ripple-effect">
+        <div class="ripple-shadow"></div>
         <div class="coin">
             <svg class="om-symbol" version="1.1" id="Layer_1" xmlns:svg="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="465.9997 -33.2869 1628.0002 1666.5739" enable-background="new 465.9997 -33.2869 1628.0002 1666.5739" xml:space="preserve" fill="currentColor">
                 <g id="layer1_1_" transform="translate(-210.63 -364.11)">
