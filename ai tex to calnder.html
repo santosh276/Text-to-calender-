@@ -245,15 +245,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             will-change: transform, opacity;
         }
 
-        /* Layer 1: Soft Golden Glow */
+        /* Layer 1: Plus/Pulse Wave */
         .ripple-effect::before {
             background: radial-gradient(circle, rgba(252, 211, 77, 0.4) 0%, rgba(252, 211, 77, 0) 70%);
             /* Start from center */
             transform: translate(-50%, -50%) scale(1) translateZ(0);
-            animation: ripple-aura 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+            animation: pulse-wave 3s ease-in-out infinite;
         }
 
-        /* Layer 2: Sharp Energy Ring */
+        /* Layer 2: Sharp Energy Ring (Ripple Wave) */
         .ripple-effect::after {
             border: 1px solid rgba(252, 211, 77, 0.6);
             /* Start from center */
@@ -262,31 +262,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             animation-delay: 0.6s;
         }
 
-        /* Layer 3: Second Energy Ring (Double Ripple) */
-        .ripple-effect-2 {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            z-index: -1;
-            pointer-events: none;
-            will-change: transform, opacity;
-            border: 1px solid rgba(252, 211, 77, 0.6);
-            transform: translate(-50%, -50%) scale(0.9) translateZ(0);
-            animation: ripple-wave 2s ease-out infinite;
-            animation-delay: 1.6s; /* Offset from the first wave */
-        }
-
-        @keyframes ripple-aura {
-            0% { 
-                opacity: 0.6; 
+        @keyframes pulse-wave {
+            0%, 100% {
+                opacity: 0.4;
                 transform: translate(-50%, -50%) scale(1) translateZ(0);
             }
-            100% { 
-                opacity: 0; 
-                transform: translate(-50%, -50%) scale(3) translateZ(0);
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.3) translateZ(0);
             }
         }
 
@@ -4989,7 +4972,6 @@ return SunCalc;
                 logoContainer.innerHTML = `
     <!-- COMPONENT START -->
     <div class="coin-wrapper ripple-effect">
-        <div class="ripple-effect-2"></div>
         <div class="coin">
             <svg class="om-symbol" version="1.1" id="Layer_1" xmlns:svg="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="465.9997 -33.2869 1628.0002 1666.5739" enable-background="new 465.9997 -33.2869 1628.0002 1666.5739" xml:space="preserve" fill="currentColor">
                 <g id="layer1_1_" transform="translate(-210.63 -364.11)">
