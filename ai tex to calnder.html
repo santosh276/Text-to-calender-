@@ -3304,6 +3304,7 @@ return SunCalc;
             manualTithis: {}, // New storage for dedicated Tithi overrides
             customSeasonDescriptions: {},
             images: {}, 
+            activeMonthDetails: {}, // Cache for pre-rendered Day Detail HTML
             view: 'month',
             config: { 
                 title: 'Vaidik Calendar', 
@@ -5044,6 +5045,16 @@ return SunCalc;
             if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
             if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
             
+            // --- NEW LOGIC: Pre-Render Day Details HTML ---
+            if (!appState.activeMonthDetails) {
+                appState.activeMonthDetails = {};
+            }
+            const daysInMonth = new Date(currentData.year, currentData.month + 1, 0).getDate();
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${currentData.year}-${currentData.month}-${d}`;
+                appState.activeMonthDetails[dateKey] = generateDayModalHTML(d, currentData);
+            }
+
             // Step 1: Cache the state
             saveStateToCache();
         }
@@ -6934,9 +6945,7 @@ function renderCalendarGrid(data) {
             return html;
         }
 
-        function openDayModal(day, monthData) {
-            lockScroll();
-            const modal = document.getElementById('day-modal');
+        function generateDayModalHTML(day, monthData) {
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
             
@@ -7229,6 +7238,21 @@ function renderCalendarGrid(data) {
                     </div>
                 </div>
             `;
+
+            return contentHtml;
+        }
+
+        function openDayModal(day, monthData) {
+            lockScroll();
+            const modal = document.getElementById('day-modal');
+            const dateKey = `${monthData.year}-${monthData.month}-${day}`;
+
+            let contentHtml = "";
+            if (appState.activeMonthDetails && appState.activeMonthDetails[dateKey]) {
+                contentHtml = appState.activeMonthDetails[dateKey];
+            } else {
+                contentHtml = generateDayModalHTML(day, monthData);
+            }
 
             const modalContent = modal.querySelector('.modal-content');
             modalContent.innerHTML = contentHtml;
