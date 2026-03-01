@@ -167,13 +167,16 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             z-index: 10;
             top: 4px;
             left: -4px;
+            width: 3rem;  /* Structural dimension */
+            height: 3rem; /* Structural dimension */
             /* Animation: Levitation */
-            animation: float-gentle 3s ease-in-out infinite;
+            animation: float-gentle 4s ease-in-out infinite;
+            will-change: transform;
         }
 
         .coin {
-            width: 3rem;  /* w-12 (approx 48px) */
-            height: 3rem; /* h-12 */
+            width: 100%;  /* Inherit from wrapper */
+            height: 100%; /* Inherit from wrapper */
             border-radius: 50%;
             
             /* Gradient: roughly Tailwind from-amber-300 to-amber-600 */
@@ -204,7 +207,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             /* Removed padding-top, as SVGs center themselves naturally in flexboxes */
             
             /* Animation: Improved Breathing with Drop Shadow */
-            animation: om-breathe-glow 3s ease-in-out infinite;
+            animation: om-breathe-glow 4s ease-in-out infinite;
             
             /* Ensure smooth rendering for the graphics card */
             will-change: transform, filter;
@@ -221,12 +224,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         /* --- NEW: Enhanced Breathing with Aura for SVG --- */
         @keyframes om-breathe-glow {
             0%, 100% { 
-                transform: scale(1); 
+                transform: scale(1) translateZ(0);
                 /* Using drop-shadow instead of text-shadow for SVGs */
                 filter: drop-shadow(0 2px 4px rgba(185, 28, 28, 0.1)) brightness(1);
             }
             50% { 
-                transform: scale(1.15); 
+                transform: scale(1.15) translateZ(0);
                 /* Complex Drop Shadow for "Divine" effect */
                 filter: 
                     drop-shadow(0 5px 10px rgba(185, 28, 28, 0.3))
@@ -248,46 +251,41 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             height: 100%;
             z-index: -1;
             pointer-events: none;
+            will-change: transform, opacity;
         }
 
         /* Layer 1: Soft Golden Glow */
         .ripple-effect::before {
             background: radial-gradient(circle, rgba(252, 211, 77, 0.4) 0%, rgba(252, 211, 77, 0) 70%);
-            animation: ripple-aura 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+            animation: ripple-aura 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
         }
 
         /* Layer 2: Sharp Energy Ring */
         .ripple-effect::after {
-            border: 1px solid rgba(252, 211, 77, 0.6);
-            animation: ripple-wave 2s ease-out infinite;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            animation: ripple-wave 4s ease-out infinite;
             animation-delay: 0.6s;
         }
 
         @keyframes ripple-aura {
             0% { 
-                width: 100%; height: 100%;
+                transform: translate(-50%, -50%) scale(1);
                 opacity: 0.6; 
-                box-shadow: 0 0 0 0 rgba(252, 211, 77, 0.5); 
             }
             100% { 
-                width: 300%; height: 300%; /* Grows outward */
+                transform: translate(-50%, -50%) scale(3);
                 opacity: 0; 
-                box-shadow: 0 0 30px 30px rgba(252, 211, 77, 0); 
             }
         }
 
         @keyframes ripple-wave {
             0% { 
-                width: 90%; height: 90%;
+                transform: translate(-50%, -50%) scale(0.9);
                 opacity: 0.9; 
-                border-width: 2px;
-                border-color: rgba(255, 255, 255, 0.8);
             }
             100% { 
-                width: 200%; height: 200%;
+                transform: translate(-50%, -50%) scale(2);
                 opacity: 0; 
-                border-width: 0px;
-                border-color: rgba(255, 255, 255, 0);
             }
         }
 
