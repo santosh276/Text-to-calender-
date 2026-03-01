@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Sans+Oriya:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Sans+Oriya:wght@400;700&family=Playfair+Display:wght@700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -182,8 +182,9 @@
             /* SIZE: 2rem (Maintained) */
             font-size: 2rem; 
             
-            font-weight: bold;
+            font-weight: 600;
             line-height: 1;
+            display: inline-block;
             
             /* POSITIONING: 0.3rem (Maintained) */
             padding-top: 0.3rem; 
@@ -191,7 +192,11 @@
             user-select: none;
             
             /* Offline Font Stack */
-            font-family: "Georgia", "Times New Roman", Times, serif;
+            font-family: "Noto Sans Devanagari", sans-serif !important;
+
+            /* Mobile Rendering Fix */
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
             
             /* Animation: Improved Breathing with Glow */
             animation: om-breathe-glow 3s ease-in-out infinite;
@@ -6478,7 +6483,7 @@ function renderCalendarGrid(data) {
                     <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
                     <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-black/5 blur-xl pointer-events-none"></div>
                     <div class="absolute bottom-0 right-0 opacity-12 pointer-events-none up-next-om-wrapper">
-                        <span class="text-[8rem] leading-none font-serif select-none text-white up-next-om-icon" style="font-family: Georgia, serif;">ॐ</span>
+                        <span class="text-[8rem] leading-none select-none text-white up-next-om-icon om-symbol">ॐ</span>
                     </div>
                 `;
                 section.appendChild(eventCard);
@@ -6534,7 +6539,7 @@ function renderCalendarGrid(data) {
             
             const filters = [ 
                 { id: '!', label: localizedFilters[0], icon: TEMPLE_ICON_SVG.replace('width="24" height="24"', 'width="14" height="14"').replace('fill="currentColor"', 'fill="currentColor"'), color: 'red' }, 
-                { id: '^', label: localizedFilters[1], icon: '<span class="font-serif text-sm leading-none" style="font-family: Georgia, serif; transform: translateY(-1px);">ॐ</span>', color: 'green' }, 
+                { id: '^', label: localizedFilters[1], icon: '<span class="text-sm leading-none om-symbol" style="transform: translateY(-1px);">ॐ</span>', color: 'green' },
                 { id: '*', label: localizedFilters[2], icon: HOLIDAY_ICON_SVG.replace('width="24" height="24"', 'width="14" height="14"').replace('fill="currentColor"', 'fill="currentColor"'), color: 'blue' },
                 { id: '>', label: localizedFilters[3] || "Other Events", icon: CALENDAR_ICON_SVG.replace('width="24" height="24"', 'width="14" height="14"').replace('fill="currentColor"', 'fill="currentColor"'), color: 'gray' }
             ];
