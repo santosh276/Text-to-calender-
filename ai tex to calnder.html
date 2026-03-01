@@ -203,11 +203,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             
             /* Removed padding-top, as SVGs center themselves naturally in flexboxes */
             
-            /* Animation: Improved Breathing with Drop Shadow */
+            /* Static drop shadow to replace animated glow */
+            filter: drop-shadow(0 2px 4px rgba(185, 28, 28, 0.1));
+
+            /* Animation: Improved Breathing without glow */
             animation: om-breathe-glow 3s ease-in-out infinite;
             
             /* Ensure smooth rendering for the graphics card */
-            will-change: transform, filter;
+            will-change: transform;
         }
 
         /* --- 3. ANIMATIONS (Keyframes) --- */
@@ -218,20 +221,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             50% { transform: translateY(-8px); }
         }
 
-        /* --- NEW: Enhanced Breathing with Aura for SVG --- */
+        /* --- NEW: Enhanced Breathing without glow for SVG --- */
         @keyframes om-breathe-glow {
             0%, 100% { 
-                transform: scale(1); 
-                /* Using drop-shadow instead of text-shadow for SVGs */
-                filter: drop-shadow(0 2px 4px rgba(185, 28, 28, 0.1)) brightness(1);
+                transform: scale(1) translateZ(0);
             }
             50% { 
-                transform: scale(1.15); 
-                /* Complex Drop Shadow for "Divine" effect */
-                filter: 
-                    drop-shadow(0 5px 10px rgba(185, 28, 28, 0.3))
-                    drop-shadow(0 0 15px rgba(255, 215, 0, 0.5)) 
-                    brightness(1.15); 
+                transform: scale(1.15) translateZ(0);
             }
         }
 
