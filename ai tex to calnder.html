@@ -3293,6 +3293,12 @@ return SunCalc;
             }
         };
 
+        // Background Pre-rendering State
+        let preRenderQueue = [];
+        let isPreRenderRunning = false;
+        // Polyfill for requestIdleCallback
+        const reqIdleCallback = window.requestIdleCallback || function(cb) { return setTimeout(function() { cb({ timeRemaining: function() { return 50; } }); }, 1); };
+
         let appState = {
             activeMonthIndex: 0,
             monthsData: [],
@@ -4939,6 +4945,31 @@ return SunCalc;
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
+        function processPreRenderQueue(deadline) {
+            while (preRenderQueue.length > 0 && deadline.timeRemaining() > 5) {
+                const task = preRenderQueue.shift();
+                if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
+
+                const dateKey = `${task.monthData.year}-${task.monthData.month}-${task.day}`;
+                if (!appState.activeMonthDetails[dateKey]) {
+                    appState.activeMonthDetails[dateKey] = generateDayModalHTML(task.day, task.monthData);
+                }
+            }
+
+            if (preRenderQueue.length > 0) {
+                reqIdleCallback(processPreRenderQueue);
+            } else {
+                isPreRenderRunning = false;
+            }
+        }
+
+        function startBackgroundPreRender() {
+            if (!isPreRenderRunning && preRenderQueue.length > 0) {
+                isPreRenderRunning = true;
+                reqIdleCallback(processPreRenderQueue);
+            }
+        }
+
         function render() {
             // Use viewDate to generate data on the fly (Infinite Navigation)
             // Fallback to activeMonthIndex if viewDate is missing (Legacy safety)
@@ -5046,14 +5077,30 @@ return SunCalc;
             if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
             
             // --- NEW LOGIC: Pre-Render Day Details HTML ---
-            if (!appState.activeMonthDetails) {
-                appState.activeMonthDetails = {};
-            }
+            // Clear cache entirely on every render to ensure user edits are reflected immediately
+            appState.activeMonthDetails = {};
+
+            // Clear the queue for the new view
+            preRenderQueue = [];
+            isPreRenderRunning = false;
+
             const daysInMonth = new Date(currentData.year, currentData.month + 1, 0).getDate();
+            const realTodayDate = new Date();
+
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateKey = `${currentData.year}-${currentData.month}-${d}`;
-                appState.activeMonthDetails[dateKey] = generateDayModalHTML(d, currentData);
+
+                // 1. Instant Render for "Today" if we are viewing the current month
+                if (d === realTodayDate.getDate() && currentData.month === realTodayDate.getMonth() && currentData.year === realTodayDate.getFullYear()) {
+                    appState.activeMonthDetails[dateKey] = generateDayModalHTML(d, currentData);
+                } else {
+                    // 2. Queue the rest for background processing
+                    preRenderQueue.push({ day: d, monthData: currentData });
+                }
             }
+
+            // Start the background idle task
+            startBackgroundPreRender();
 
             // Step 1: Cache the state
             saveStateToCache();
@@ -7252,6 +7299,9 @@ function renderCalendarGrid(data) {
                 contentHtml = appState.activeMonthDetails[dateKey];
             } else {
                 contentHtml = generateDayModalHTML(day, monthData);
+                // Cache it for next time to ensure instant open on subsequent clicks
+                if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
+                appState.activeMonthDetails[dateKey] = contentHtml;
             }
 
             const modalContent = modal.querySelector('.modal-content');
