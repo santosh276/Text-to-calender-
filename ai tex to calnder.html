@@ -6175,15 +6175,16 @@ function renderCalendarGrid(data) {
             if (!wrapper || !icon) return;
 
             const w = card.offsetWidth;
+            const h = card.offsetHeight;
             
-            // Algorithm: Scale icon based on container width
-            // Target: Icon should be roughly 50% of container width, but min 140px.
-            // Old was fixed 8rem (~128px)
-            let size = Math.max(140, w * 0.5);
+            // Algorithm: Scale icon based on container dimensions
+            // Target: Icon should be bounded to not overrun the entire card on wide screens (tablets/PCs).
+            // We use the height as a major constraint to prevent it getting too massive on long wide cards.
+            let size = Math.max(140, Math.min(w * 0.4, h * 1.8, 240));
             
             // Position: "slightly below side" implies pushing it down and right.
-            const bottomOffset = -size * 0.20; 
-            const rightOffset = -size * 0.10;
+            const bottomOffset = -size * 0.15; 
+            const rightOffset = -size * 0.05;
 
             icon.style.fontSize = `${size}px`;
             wrapper.style.bottom = `${bottomOffset}px`;
@@ -6396,17 +6397,42 @@ function renderCalendarGrid(data) {
             const upNextEvents = listEvents.filter(e => e.symbol !== '>');
             
             let upNextEvent = null;
+            let upNextMonthData = data;
             const realToday = new Date();
             const isCurrentMonth = (data.month === realToday.getMonth() && data.year === realToday.getFullYear());
+            const isFutureMonth = new Date(data.year, data.month, 1) > realToday;
             
             if (isCurrentMonth) {
                 upNextEvent = upNextEvents.find(e => e.date >= realToday.getDate());
-            } else if (new Date(data.year, data.month, 1) > realToday) {
+            } else if (isFutureMonth) {
                 upNextEvent = upNextEvents[0];
+            }
+
+            // If no upcoming festival found in the viewed month (but we are in current or future month), look ahead globally
+            if (!upNextEvent && (isCurrentMonth || isFutureMonth)) {
+                if (appState.monthsData) {
+                    const futureMonths = appState.monthsData.filter(m => {
+                        return (m.year > data.year) || (m.year === data.year && m.month > data.month);
+                    }).sort((a, b) => {
+                        if (a.year !== b.year) return a.year - b.year;
+                        return a.month - b.month;
+                    });
+
+                    for (const m of futureMonths) {
+                        const mEvents = m.events
+                            .filter(e => (e.symbol === '!' || e.symbol === '^' || e.symbol === '*'))
+                            .sort((a, b) => a.date - b.date);
+                        if (mEvents.length > 0) {
+                            upNextEvent = mEvents[0];
+                            upNextMonthData = m;
+                            break;
+                        }
+                    }
+                }
             }
             
             if (upNextEvent) {
-                const eventDate = new Date(data.year, data.month, upNextEvent.date);
+                const eventDate = new Date(upNextMonthData.year, upNextMonthData.month, upNextEvent.date);
                 
                 // Diff days
                 const t1 = new Date(realToday.getFullYear(), realToday.getMonth(), realToday.getDate());
@@ -6418,12 +6444,12 @@ function renderCalendarGrid(data) {
                 if (diffDays === 0) badgeText = "Today";
                 else if (diffDays === 1) badgeText = "Tomorrow";
                 else if (diffDays < 7) badgeText = `In ${diffDays} days`;
-                else badgeText = `${upNextEvent.date} ${shortMonths[data.month]}`;
+                else badgeText = `${upNextEvent.date} ${shortMonths[upNextMonthData.month]}`;
 
                 // --- CARD 1: Event Details ---
                 const eventCard = document.createElement('div');
                 eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
-                eventCard.onclick = () => openDayModal(upNextEvent.date, data);
+                eventCard.onclick = () => openDayModal(upNextEvent.date, upNextMonthData);
                 eventCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)";
                 eventCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
                 
