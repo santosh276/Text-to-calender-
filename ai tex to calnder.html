@@ -207,7 +207,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             animation: om-breathe-glow 3s ease-in-out infinite;
             
             /* Ensure smooth rendering for the graphics card */
-            will-change: transform, filter;
+            will-change: transform;
+            filter: drop-shadow(0 2px 4px rgba(185, 28, 28, 0.1));
         }
 
         /* --- 3. ANIMATIONS (Keyframes) --- */
@@ -221,17 +222,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         /* --- NEW: Enhanced Breathing with Aura for SVG --- */
         @keyframes om-breathe-glow {
             0%, 100% { 
-                transform: scale(1); 
-                /* Using drop-shadow instead of text-shadow for SVGs */
-                filter: drop-shadow(0 2px 4px rgba(185, 28, 28, 0.1)) brightness(1);
+                transform: scale(1) translateZ(0);
             }
             50% { 
-                transform: scale(1.15); 
-                /* Complex Drop Shadow for "Divine" effect */
-                filter: 
-                    drop-shadow(0 5px 10px rgba(185, 28, 28, 0.3))
-                    drop-shadow(0 0 15px rgba(255, 215, 0, 0.5)) 
-                    brightness(1.15); 
+                transform: scale(1.15) translateZ(0);
             }
         }
 
@@ -242,52 +236,51 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%); /* Center strictly */
-            border-radius: 50%;
+            /* Use a fixed starting size to avoid recalculating width/height */
             width: 100%;
             height: 100%;
+            border-radius: 50%;
             z-index: -1;
             pointer-events: none;
+            will-change: transform, opacity;
         }
 
         /* Layer 1: Soft Golden Glow */
         .ripple-effect::before {
             background: radial-gradient(circle, rgba(252, 211, 77, 0.4) 0%, rgba(252, 211, 77, 0) 70%);
+            /* Start from center */
+            transform: translate(-50%, -50%) scale(1) translateZ(0);
             animation: ripple-aura 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
         }
 
         /* Layer 2: Sharp Energy Ring */
         .ripple-effect::after {
             border: 1px solid rgba(252, 211, 77, 0.6);
+            /* Start from center */
+            transform: translate(-50%, -50%) scale(0.9) translateZ(0);
             animation: ripple-wave 2s ease-out infinite;
             animation-delay: 0.6s;
         }
 
         @keyframes ripple-aura {
             0% { 
-                width: 100%; height: 100%;
                 opacity: 0.6; 
-                box-shadow: 0 0 0 0 rgba(252, 211, 77, 0.5); 
+                transform: translate(-50%, -50%) scale(1) translateZ(0);
             }
             100% { 
-                width: 300%; height: 300%; /* Grows outward */
                 opacity: 0; 
-                box-shadow: 0 0 30px 30px rgba(252, 211, 77, 0); 
+                transform: translate(-50%, -50%) scale(3) translateZ(0);
             }
         }
 
         @keyframes ripple-wave {
             0% { 
-                width: 90%; height: 90%;
                 opacity: 0.9; 
-                border-width: 2px;
-                border-color: rgba(255, 255, 255, 0.8);
+                transform: translate(-50%, -50%) scale(0.9) translateZ(0);
             }
             100% { 
-                width: 200%; height: 200%;
                 opacity: 0; 
-                border-width: 0px;
-                border-color: rgba(255, 255, 255, 0);
+                transform: translate(-50%, -50%) scale(2) translateZ(0);
             }
         }
 
