@@ -6554,7 +6554,7 @@ function renderCalendarGrid(data) {
             // --- SMART-LINE FILTER BUTTONS ---
             const filterContainer = document.createElement('div');
             filterContainer.id = "festival-filters";
-            filterContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
+            filterContainer.className = "grid grid-cols-2 gap-3 mb-4";
             
             const currentLang = appState.config.language || 'en';
             const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
@@ -6572,26 +6572,25 @@ function renderCalendarGrid(data) {
                 
                 // RESPONSIVE LOGIC: flex-1 on mobile, sm:flex-none on desktop
                 let className = `
-                    filter-btn relative px-4 py-2 rounded-full 
-                    text-xs font-bold whitespace-nowrap outline-none
+                    filter-btn relative px-2 py-2.5 rounded-full
+                    text-[13px] sm:text-sm font-bold whitespace-nowrap outline-none
                     flex items-center justify-center gap-2
-                    flex-1 sm:flex-none min-w-[fit-content]
                     transition-all duration-200
                 `;
 
                 let colorClass = "";
                 // SOLID GLOW LOGIC (Both Active & Inactive are solid)
                 if (f.color === 'red') {
-                    colorClass = "bg-red-600 text-white shadow-lg shadow-red-200 hover:bg-red-700";
+                    colorClass = "bg-[#d92c28] text-white shadow-[0_8px_16px_-4px_rgba(217,44,40,0.4)] hover:bg-[#b92522]";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 ring-red-600";
                 } else if (f.color === 'green') {
-                    colorClass = "bg-green-600 text-white shadow-lg shadow-green-200 hover:bg-green-700";
+                    colorClass = "bg-[#18a042] text-white shadow-[0_8px_16px_-4px_rgba(24,160,66,0.4)] hover:bg-[#148536]";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 ring-green-600";
                 } else if (f.color === 'blue') {
-                    colorClass = "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700";
+                    colorClass = "bg-[#2863ec] text-white shadow-[0_8px_16px_-4px_rgba(40,99,236,0.4)] hover:bg-[#1d4ed8]";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 ring-blue-600";
                 } else if (f.color === 'gray') {
-                    colorClass = "bg-gray-600 text-white shadow-lg shadow-gray-200 hover:bg-gray-700";
+                    colorClass = "bg-[#4a5463] text-white shadow-[0_8px_16px_-4px_rgba(74,84,99,0.4)] hover:bg-[#374151]";
                     if (isSelected) colorClass += " ring-2 ring-offset-2 ring-gray-600";
                 }
                 
