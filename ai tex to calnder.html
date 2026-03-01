@@ -175,29 +175,21 @@
             z-index: 20;
         }
 
-        /* --- 2. THE SYMBOL (OM) --- */
+        /* --- 2. THE SYMBOL (OM SVG) --- */
         .om-symbol {
-            color: #B91C1C;
+            color: #B91C1C; /* The SVG 'currentColor' will inherit this beautiful red */
             
-            /* SIZE: 2rem (Maintained) */
-            font-size: 2rem; 
+            /* Using width/height instead of font-size for exact control */
+            width: 2.2rem;
+            height: 2.2rem;
             
-            font-weight: bold;
-            line-height: 1;
+            /* Removed padding-top, as SVGs center themselves naturally in flexboxes */
             
-            /* POSITIONING: 0.3rem (Maintained) */
-            padding-top: 0.3rem; 
-            
-            user-select: none;
-            
-            /* Offline Font Stack */
-            font-family: "Georgia", "Times New Roman", Times, serif;
-            
-            /* Animation: Improved Breathing with Glow */
+            /* Animation: Improved Breathing with Drop Shadow */
             animation: om-breathe-glow 3s ease-in-out infinite;
             
-            /* Ensure smooth rendering */
-            will-change: transform, text-shadow, filter;
+            /* Ensure smooth rendering for the graphics card */
+            will-change: transform, filter;
         }
 
         /* --- 3. ANIMATIONS (Keyframes) --- */
@@ -208,26 +200,20 @@
             50% { transform: translateY(-8px); }
         }
 
-        /* NEW: Enhanced Breathing with Aura */
+        /* --- NEW: Enhanced Breathing with Aura for SVG --- */
         @keyframes om-breathe-glow {
             0%, 100% { 
                 transform: scale(1); 
-                /* Subtle shadow when exhaled */
-                text-shadow: 0 2px 4px rgba(185, 28, 28, 0.1);
-                filter: brightness(1);
+                /* Using drop-shadow instead of text-shadow for SVGs */
+                filter: drop-shadow(0 2px 4px rgba(185, 28, 28, 0.1)) brightness(1);
             }
             50% { 
                 transform: scale(1.15); 
-                /* Complex Shadow for "Divine" effect:
-                   1. Deep red shadow for distance (0 5px 10px)
-                   2. Golden Glow (0 0 20px) 
-                */
-                text-shadow: 
-                    0 5px 10px rgba(185, 28, 28, 0.3),
-                    0 0 20px rgba(255, 215, 0, 0.5); 
-                
-                /* Light up slightly */
-                filter: brightness(1.15); 
+                /* Complex Drop Shadow for "Divine" effect */
+                filter:
+                    drop-shadow(0 5px 10px rgba(185, 28, 28, 0.3))
+                    drop-shadow(0 0 15px rgba(255, 215, 0, 0.5))
+                    brightness(1.15);
             }
         }
 
@@ -4976,7 +4962,9 @@ return SunCalc;
     <!-- COMPONENT START -->
     <div class="coin-wrapper ripple-effect">
         <div class="coin">
-            <span class="om-symbol">ॐ</span>
+            <svg class="om-symbol" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <path fill="currentColor" d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8zM281 66.7c-2.2-1.5-4.9-2.5-7.7-2.7c-.6 0-1.3-.1-1.9 0c-3.9 .2-7.4 1.7-10.1 4.2c-.9 .8-1.6 1.7-2.3 2.6c-1.7 2.4-2.7 5.3-2.9 8.5c0 .7 0 1.4 0 2.1c.2 2.2 .9 4.3 1.9 6.2l.3 .6c.3 .6 .8 1.4 1.4 2.4c1.2 2 2.9 4.8 5.1 8.2c4.4 6.7 11.1 15.5 20 24.4C302.4 141.1 330.3 160 368 160c31.2 0 56.6-10.4 73.9-20.2c8.7-5 15.6-9.9 20.4-13.8c2.4-1.9 4.3-3.6 5.7-4.9c.7-.6 1.3-1.2 1.7-1.6l.6-.5 .1-.1 .1-.1s0 0 0 0s0 0 0 0c5.9-5.8 9.5-13.9 9.5-22.8c0-17.7-14.3-32-32-32c-8.7 0-16.7 3.5-22.4 9.2c-.1 .1-.2 .2-.5 .4c-.5 .5-1.5 1.3-2.8 2.4c-2.7 2.2-6.8 5.2-12.1 8.2C399.4 90.4 384.8 96 368 96c-20.8 0-42.4-7-59.5-14.6c-8.4-3.7-15.4-7.5-20.3-10.3c-2.4-1.4-4.3-2.5-5.6-3.3c-.6-.4-1.1-.7-1.4-.9l-.3-.2z"/>
+            </svg>
         </div>
     </div>
     <!-- COMPONENT END -->`;
