@@ -6187,7 +6187,7 @@ function renderCalendarGrid(data) {
             if (window.innerWidth >= 768 && window.innerWidth < 1024) {
                 maxSize = 140;
                 size = Math.max(100, Math.min(w * 0.28, h * 1.5, maxSize));
-                bottomOffset = -size * 0.25; // shift it further down on tablet
+                bottomOffset = -size * 0.20; // shift slightly up from previous iteration
                 rightOffset = -size * 0.05; // use same right proportional shift
             }
 
