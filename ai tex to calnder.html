@@ -339,6 +339,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(185, 28, 28, 0.2); border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(185, 28, 28, 0.4); }
 
+        .scroll-smooth-fast {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            transform: translateZ(0);
+            will-change: transform, scroll-position;
+        }
+
         /* Glassmorphism Utilities */
         .glass {
             background: rgba(255, 255, 255, 0.85);
@@ -417,12 +424,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
         /* Modal Animation */
         .modal-backdrop { 
-            transition: opacity 0.4s ease-out; 
+            transition: opacity 0.25s ease-out;
             will-change: opacity;
             transform: translateZ(0); /* Hardware accelerate */
         }
         .modal-content { 
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease-out; 
+            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out;
             will-change: transform, opacity; 
             transform: translateZ(0);
             backface-visibility: hidden;
@@ -430,15 +437,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .modal-hidden .modal-backdrop { 
             opacity: 0; 
             pointer-events: none; 
-            transition: opacity 0.3s ease-in;
+            transition: opacity 0.15s ease-in;
         }
         .modal-hidden .modal-content { 
             opacity: 0; 
             /* Subtle scale down only, no translation to avoid movement clutter */
-            transform: scale(0.98); 
+            transform: scale(0.96);
             pointer-events: none; 
             /* Faster opacity fade, simpler transform to reduce repaints */
-            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+            transition: opacity 0.15s ease-in, transform 0.15s ease-in;
         }
 
         /* Default (Desktop) - Keep slide from right */
@@ -1164,6 +1171,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.5);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        contain: content;
+        transform: translateZ(0);
     }
     
     #day-modal .bg-gray-50 {
@@ -1177,6 +1186,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         border-radius: 1rem;
         padding: 1rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        contain: content;
+        transform: translateZ(0);
     }
 
     /* Custom Paksha Badges */
@@ -7137,7 +7148,7 @@ function renderCalendarGrid(data) {
                     </div>
 
                     <!-- Scrollable Body -->
-                    <div class="flex-grow overflow-y-auto scrollbar-aurora pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full">
+                    <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full">
                         
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
@@ -7310,7 +7321,12 @@ function renderCalendarGrid(data) {
             // Remove legacy listeners (simplified view now)
             
             modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
+            // Use double rAF to ensure layout is calculated before animating opacity/transform
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    modal.classList.remove('modal-hidden');
+                });
+            });
         }
 
         // Placeholder for legacy call (if any)
@@ -7334,7 +7350,8 @@ function renderCalendarGrid(data) {
             const modal = document.getElementById('day-modal');
             modal.classList.add('modal-hidden');
             unlockScroll();
-            setTimeout(() => { modal.style.display = 'none'; }, 300); 
+            // Match the 0.25s CSS animation duration
+            setTimeout(() => { modal.style.display = 'none'; }, 250);
         }
 
 
