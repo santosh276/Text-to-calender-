@@ -3305,8 +3305,6 @@ return SunCalc;
         };
 
         // Background Pre-rendering State
-        let preRenderQueue = [];
-        let isPreRenderRunning = false;
         // Polyfill for requestIdleCallback
         const reqIdleCallback = window.requestIdleCallback || function(cb) { return setTimeout(function() { cb({ timeRemaining: function() { return 50; } }); }, 1); };
 
@@ -4954,31 +4952,6 @@ return SunCalc;
         }
         function resolveImageUrls(text) {
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
-        }
-
-        function processPreRenderQueue(deadline) {
-            while (preRenderQueue.length > 0 && deadline.timeRemaining() > 5) {
-                const task = preRenderQueue.shift();
-                if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
-                
-                const dateKey = `${task.monthData.year}-${task.monthData.month}-${task.day}`;
-                if (!appState.activeMonthDetails[dateKey]) {
-                    appState.activeMonthDetails[dateKey] = generateDayModalHTML(task.day, task.monthData);
-                }
-            }
-
-            if (preRenderQueue.length > 0) {
-                reqIdleCallback(processPreRenderQueue);
-            } else {
-                isPreRenderRunning = false;
-            }
-        }
-
-        function startBackgroundPreRender() {
-            if (!isPreRenderRunning && preRenderQueue.length > 0) {
-                isPreRenderRunning = true;
-                reqIdleCallback(processPreRenderQueue);
-            }
         }
 
         function render() {
@@ -7003,6 +6976,43 @@ function renderCalendarGrid(data) {
             return html;
         }
 
+        function generateSkeletonHTML(day, monthData) {
+            const dateObj = new Date(monthData.year, monthData.month, day);
+            const shortMonth = dateObj.toLocaleDateString([], { month: 'short' }).toUpperCase();
+
+            return `
+            <div id="modal-header-background" class="premium-header-bg p-6 relative shrink-0 animate-pulse">
+                <button onclick="closeDayModal()" class="absolute top-4 right-4 bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md z-20"><i class="fa-solid fa-times text-sm"></i></button>
+                <div class="flex gap-5 items-center relative z-10">
+                    <div class="bg-white/20 backdrop-blur-md border border-white/20 rounded-xl w-20 h-20 flex flex-col items-center justify-center shrink-0 shadow-lg text-white">
+                        <span class="text-[11px] font-bold uppercase tracking-widest opacity-80">${shortMonth}</span>
+                        <span class="text-4xl font-bold leading-none mt-0.5">${day}</span>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="h-3 w-32 bg-white/30 rounded mb-2"></div>
+                        <div class="h-6 w-48 bg-white/30 rounded mb-3"></div>
+                        <div class="h-5 w-24 bg-white/30 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="modal-rich-body" class="rich-content overflow-y-auto p-6 flex-grow animate-pulse">
+                <div class="space-y-4">
+                    <div class="h-4 bg-gray-200 rounded w-full"></div>
+                    <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                    <div class="h-4 bg-gray-200 rounded w-4/6"></div>
+                    <div class="h-32 bg-gray-200 rounded-xl w-full mt-6"></div>
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <div class="h-16 bg-gray-200 rounded-xl w-full"></div>
+                        <div class="h-16 bg-gray-200 rounded-xl w-full"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-100 flex justify-end items-center bg-gray-50 shrink-0">
+                <div class="bg-gray-200 w-28 h-9 rounded-full animate-pulse"></div>
+            </div>
+            `;
+        }
+
         function generateDayModalHTML(day, monthData) {
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
@@ -7304,29 +7314,36 @@ function renderCalendarGrid(data) {
             lockScroll();
             const modal = document.getElementById('day-modal');
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
-            
-            let contentHtml = "";
-            if (appState.activeMonthDetails && appState.activeMonthDetails[dateKey]) {
-                contentHtml = appState.activeMonthDetails[dateKey];
-            } else {
-                contentHtml = generateDayModalHTML(day, monthData);
-                // Cache it for next time to ensure instant open on subsequent clicks
-                if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
-                appState.activeMonthDetails[dateKey] = contentHtml;
-            }
-
             const modalContent = modal.querySelector('.modal-content');
-            modalContent.innerHTML = contentHtml;
-
-            // Remove legacy listeners (simplified view now)
             
+            // 1. Instant UI Opening: Inject skeleton loader immediately
+            modalContent.innerHTML = generateSkeletonHTML(day, monthData);
+
+            // Show modal and trigger CSS animation instantly
             modal.style.display = 'flex';
-            // Use double rAF to ensure layout is calculated before animating opacity/transform
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     modal.classList.remove('modal-hidden');
                 });
             });
+
+            // 2. Defer Heavy Processing
+            setTimeout(() => {
+                requestAnimationFrame(() => {
+                    let contentHtml = "";
+                    if (appState.activeMonthDetails && appState.activeMonthDetails[dateKey]) {
+                        contentHtml = appState.activeMonthDetails[dateKey];
+                    } else {
+                        contentHtml = generateDayModalHTML(day, monthData);
+                        if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
+                        appState.activeMonthDetails[dateKey] = contentHtml;
+                    }
+
+                    // 3. Seamless Data Injection
+                    // Instead of fading the element, directly set innerHTML. Fading can cause visual glitches during the setTimeout when a user clicks extremely fast.
+                    modalContent.innerHTML = contentHtml;
+                });
+            }, 50);
         }
 
         // Placeholder for legacy call (if any)
