@@ -2074,7 +2074,7 @@ The word "Nua" means new and "Khai" means food.
                 </button>
             </div>
 
-            <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
+            <div class="overflow-y-auto p-6 md:p-10 custom-scroll scroll-smooth-fast flex-grow">
                 
                 <!-- SECTION 1: Quick Settings (Preserved) -->
                 <div class="mb-8">
@@ -6691,7 +6691,7 @@ function renderCalendarGrid(data) {
             // 5. Festival List Container
             const list = document.createElement('ul');
             list.id = 'festival-list';
-            list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll"; 
+            list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll scroll-smooth-fast";
             section.appendChild(list);
 
             const input = searchWrapper.querySelector('input');
