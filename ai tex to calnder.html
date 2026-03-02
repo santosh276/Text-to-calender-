@@ -338,6 +338,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(185, 28, 28, 0.2); border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(185, 28, 28, 0.4); }
+        
+        .scroll-smooth-fast {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            transform: translateZ(0);
+            will-change: transform, scroll-position;
+        }
 
         /* Glassmorphism Utilities */
         .glass {
@@ -417,12 +424,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
         /* Modal Animation */
         .modal-backdrop { 
-            transition: opacity 0.4s ease-out; 
+            transition: opacity 0.25s ease-out; 
             will-change: opacity;
             transform: translateZ(0); /* Hardware accelerate */
         }
         .modal-content { 
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease-out; 
+            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out; 
             will-change: transform, opacity; 
             transform: translateZ(0);
             backface-visibility: hidden;
@@ -430,15 +437,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .modal-hidden .modal-backdrop { 
             opacity: 0; 
             pointer-events: none; 
-            transition: opacity 0.3s ease-in;
+            transition: opacity 0.15s ease-in;
         }
         .modal-hidden .modal-content { 
             opacity: 0; 
             /* Subtle scale down only, no translation to avoid movement clutter */
-            transform: scale(0.98); 
+            transform: scale(0.96); 
             pointer-events: none; 
             /* Faster opacity fade, simpler transform to reduce repaints */
-            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+            transition: opacity 0.15s ease-in, transform 0.15s ease-in;
         }
 
         /* Default (Desktop) - Keep slide from right */
@@ -1164,6 +1171,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.5);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        contain: content;
+        transform: translateZ(0);
     }
     
     #day-modal .bg-gray-50 {
@@ -1177,6 +1186,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         border-radius: 1rem;
         padding: 1rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        contain: content;
+        transform: translateZ(0);
     }
 
     /* Custom Paksha Badges */
@@ -3293,6 +3304,12 @@ return SunCalc;
             }
         };
 
+        // Background Pre-rendering State
+        let preRenderQueue = [];
+        let isPreRenderRunning = false;
+        // Polyfill for requestIdleCallback
+        const reqIdleCallback = window.requestIdleCallback || function(cb) { return setTimeout(function() { cb({ timeRemaining: function() { return 50; } }); }, 1); };
+
         let appState = {
             activeMonthIndex: 0,
             monthsData: [],
@@ -3304,6 +3321,7 @@ return SunCalc;
             manualTithis: {}, // New storage for dedicated Tithi overrides
             customSeasonDescriptions: {},
             images: {}, 
+            activeMonthDetails: {}, // Cache for pre-rendered Day Detail HTML
             view: 'month',
             config: { 
                 title: 'Vaidik Calendar', 
@@ -4938,6 +4956,31 @@ return SunCalc;
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
+        function processPreRenderQueue(deadline) {
+            while (preRenderQueue.length > 0 && deadline.timeRemaining() > 5) {
+                const task = preRenderQueue.shift();
+                if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
+                
+                const dateKey = `${task.monthData.year}-${task.monthData.month}-${task.day}`;
+                if (!appState.activeMonthDetails[dateKey]) {
+                    appState.activeMonthDetails[dateKey] = generateDayModalHTML(task.day, task.monthData);
+                }
+            }
+
+            if (preRenderQueue.length > 0) {
+                reqIdleCallback(processPreRenderQueue);
+            } else {
+                isPreRenderRunning = false;
+            }
+        }
+
+        function startBackgroundPreRender() {
+            if (!isPreRenderRunning && preRenderQueue.length > 0) {
+                isPreRenderRunning = true;
+                reqIdleCallback(processPreRenderQueue);
+            }
+        }
+
         function render() {
             // Use viewDate to generate data on the fly (Infinite Navigation)
             // Fallback to activeMonthIndex if viewDate is missing (Legacy safety)
@@ -5044,6 +5087,32 @@ return SunCalc;
             if (secFest) secFest.style.display = secs.festivals ? 'block' : 'none';
             if (secPan) secPan.style.display = secs.panchang ? 'block' : 'none';
             
+            // --- NEW LOGIC: Pre-Render Day Details HTML ---
+            // Clear cache entirely on every render to ensure user edits are reflected immediately
+            appState.activeMonthDetails = {};
+            
+            // Clear the queue for the new view
+            preRenderQueue = [];
+            isPreRenderRunning = false;
+
+            const daysInMonth = new Date(currentData.year, currentData.month + 1, 0).getDate();
+            const realTodayDate = new Date();
+            
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${currentData.year}-${currentData.month}-${d}`;
+                
+                // 1. Instant Render for "Today" if we are viewing the current month
+                if (d === realTodayDate.getDate() && currentData.month === realTodayDate.getMonth() && currentData.year === realTodayDate.getFullYear()) {
+                    appState.activeMonthDetails[dateKey] = generateDayModalHTML(d, currentData);
+                } else {
+                    // 2. Queue the rest for background processing
+                    preRenderQueue.push({ day: d, monthData: currentData });
+                }
+            }
+
+            // Start the background idle task
+            startBackgroundPreRender();
+
             // Step 1: Cache the state
             saveStateToCache();
         }
@@ -6934,9 +7003,7 @@ function renderCalendarGrid(data) {
             return html;
         }
 
-        function openDayModal(day, monthData) {
-            lockScroll();
-            const modal = document.getElementById('day-modal');
+        function generateDayModalHTML(day, monthData) {
             const dateObj = new Date(monthData.year, monthData.month, day);
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
             
@@ -7081,7 +7148,7 @@ function renderCalendarGrid(data) {
                     </div>
 
                     <!-- Scrollable Body -->
-                    <div class="flex-grow overflow-y-auto scrollbar-aurora pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full">
+                    <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full">
                         
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
@@ -7230,13 +7297,36 @@ function renderCalendarGrid(data) {
                 </div>
             `;
 
+            return contentHtml;
+        }
+
+        function openDayModal(day, monthData) {
+            lockScroll();
+            const modal = document.getElementById('day-modal');
+            const dateKey = `${monthData.year}-${monthData.month}-${day}`;
+            
+            let contentHtml = "";
+            if (appState.activeMonthDetails && appState.activeMonthDetails[dateKey]) {
+                contentHtml = appState.activeMonthDetails[dateKey];
+            } else {
+                contentHtml = generateDayModalHTML(day, monthData);
+                // Cache it for next time to ensure instant open on subsequent clicks
+                if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
+                appState.activeMonthDetails[dateKey] = contentHtml;
+            }
+
             const modalContent = modal.querySelector('.modal-content');
             modalContent.innerHTML = contentHtml;
 
             // Remove legacy listeners (simplified view now)
             
             modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.remove('modal-hidden'); }, 10);
+            // Use double rAF to ensure layout is calculated before animating opacity/transform
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    modal.classList.remove('modal-hidden');
+                });
+            });
         }
 
         // Placeholder for legacy call (if any)
@@ -7260,7 +7350,8 @@ function renderCalendarGrid(data) {
             const modal = document.getElementById('day-modal');
             modal.classList.add('modal-hidden');
             unlockScroll();
-            setTimeout(() => { modal.style.display = 'none'; }, 300); 
+            // Match the 0.25s CSS animation duration
+            setTimeout(() => { modal.style.display = 'none'; }, 250); 
         }
 
 
