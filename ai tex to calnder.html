@@ -322,10 +322,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .z-\[300\] { z-index: 300; }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(75, 85, 99, 0.5); border-radius: 6px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(107, 114, 128, 0.8); }
 
         /* Aurora Scrollbar (Day Detail Modal) */
         .scrollbar-aurora::-webkit-scrollbar { width: 6px; }
@@ -354,7 +354,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
+            overscroll-behavior-y: none;
             background-color: #fdfbf7;
             background-image: 
               radial-gradient(at 0% 0%, hsla(25,95%,92%,1) 0, transparent 50%), 
@@ -5228,16 +5233,16 @@ return SunCalc;
             let touchStartX = 0;
             let touchEndX = 0;
             
-            container.ontouchstart = (e) => {
+            container.addEventListener('touchstart', (e) => {
                 touchStartX = e.changedTouches[0].screenX;
                 stopBannerAutoPlay();
-            };
+            }, { passive: true });
             
-            container.ontouchend = (e) => {
+            container.addEventListener('touchend', (e) => {
                 touchEndX = e.changedTouches[0].screenX;
                 handleBannerSwipe(banners.length, touchStartX, touchEndX);
                 startBannerAutoPlay(banners.length);
-            };
+            }, { passive: true });
 
             // Arrow Listeners
             const prevBtn = document.getElementById('banner-prev');
