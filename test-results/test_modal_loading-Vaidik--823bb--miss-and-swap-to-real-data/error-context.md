@@ -1,0 +1,621 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - img [ref=e7]
+      - generic [ref=e12]:
+        - heading "Vaidik Calendar" [level=1] [ref=e13]
+        - paragraph [ref=e14]: The Heart of Sanatan Dharma...
+    - generic [ref=e15]:
+      - button "" [ref=e16] [cursor=pointer]:
+        - generic [ref=e17]: 
+      - button "menu" [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: menu
+  - generic [ref=e20]:
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - button " Open File" [ref=e24] [cursor=pointer]:
+            - generic [ref=e25]: 
+            - text: Open File
+          - button " Import Drive" [ref=e26] [cursor=pointer]:
+            - generic [ref=e27]: 
+            - text: Import Drive
+          - button " Live Sync Docs" [ref=e28] [cursor=pointer]:
+            - generic [ref=e29]: 
+            - text: Live Sync Docs
+          - button " Live Sync GitHub" [ref=e30] [cursor=pointer]:
+            - generic [ref=e31]: 
+            - text: Live Sync GitHub
+          - button " Insert Link" [ref=e32] [cursor=pointer]:
+            - generic [ref=e33]: 
+            - text: Insert Link
+        - generic [ref=e34]:
+          - button " Download app" [ref=e35] [cursor=pointer]:
+            - generic [ref=e36]: 
+            - text: Download app
+          - button " Download TXT" [ref=e37] [cursor=pointer]:
+            - generic [ref=e38]: 
+            - text: Download TXT
+        - generic [ref=e39]:
+          - button " Settings" [ref=e40] [cursor=pointer]:
+            - generic [ref=e41]: 
+            - text: Settings
+          - button " Clear Input" [ref=e42] [cursor=pointer]:
+            - generic [ref=e43]: 
+            - text: Clear Input
+        - button " Formatting Guide Click to Expand" [ref=e45] [cursor=pointer]:
+          - generic [ref=e46]:
+            - generic [ref=e47]: 
+            - text: Formatting Guide
+          - generic [ref=e48]: Click to Expand
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - generic [ref=e53]: 
+            - text: Quick Start Tutorial
+          - list [ref=e54]:
+            - listitem [ref=e55]:
+              - strong [ref=e56]: "Set Title:"
+              - text: Start with a
+              - code [ref=e57]: "::: config"
+              - text: block to set your App Title.
+            - listitem [ref=e58]:
+              - strong [ref=e59]: "Define Month:"
+              - text: Use
+              - code [ref=e60]: "::: calendar"
+              - text: and
+              - code [ref=e61]: ++ Month Year ++
+              - text: to start a month.
+            - listitem [ref=e62]:
+              - strong [ref=e63]: "Add Events:"
+              - text: List dates like
+              - code [ref=e64]: 01 * New Year
+              - text: . Use symbols for colors!
+            - listitem [ref=e65]:
+              - strong [ref=e66]: "Add Details:"
+              - text: Use
+              - code [ref=e67]: "::: details"
+              - text: and
+              - code [ref=e68]: ">> Date"
+              - text: to add stories, images, and rituals.
+            - listitem [ref=e69]:
+              - strong [ref=e70]: "Customize:"
+              - text: Add Panchang and Seasons to make it professional.
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]: 
+            - text: 1. App Configuration
+          - generic [ref=e74]: "::: config @ Title : My Calendar 2026 @ Logo : ![Logo](https://example.com/logo.png) @ Live Sync GitHub trigger in every : 24 hours :::"
+          - paragraph [ref=e75]:
+            - text: "-"
+            - strong [ref=e76]: "Title:"
+            - text: Appears in the top header.
+            - text: "-"
+            - strong [ref=e77]: "Logo:"
+            - text: URL or uploaded image path.
+            - text: "-"
+            - strong [ref=e78]: "Live Sync:"
+            - text: Auto-update interval (minutes/hours/days).
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - generic [ref=e81]: 
+            - text: 2. Calendar Grid Events
+          - generic [ref=e82]: "::: calendar ++ January 2026 ++ 01 * New Year's Day [ନୂତନ ବର୍ଷ] 14 ! Makar Sankranti 23 ! Saraswati Puja / Netaji Jayanti 26 ^ Republic Day 05 > Office Meeting :::"
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - generic [ref=e85]: "! Festival (Red)"
+              - generic [ref=e86]: "* Holiday (Blue)"
+              - generic [ref=e87]: ^ Auspicious (Green)
+              - generic [ref=e88]: "> Event (Gray)"
+            - paragraph [ref=e89]:
+              - strong [ref=e90]: "Bilingual Support:"
+              - text: Use
+              - code [ref=e91]: "[Local Text]"
+              - text: brackets to show regional text below the English name.
+            - paragraph [ref=e92]:
+              - strong [ref=e93]: "Multiple Events:"
+              - text: Use
+              - code [ref=e94]: /
+              - text: to separate multiple events on the same line (e.g.
+              - code [ref=e95]: Event 1 / Event 2
+              - text: ).
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - generic [ref=e98]: 
+            - text: 2a. Recurring Events
+          - generic [ref=e99]: "::: recurring 01-01 * New Year 26-01 ^ Republic Day 15-08 ! Independence Day :::"
+          - paragraph [ref=e100]: "Events that repeat every year on the same Gregorian date. Format: DD-MM."
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - generic [ref=e103]: 
+            - text: 3. Tithi Overrides (Hybrid Mode)
+          - paragraph [ref=e104]: Manually force a Tithi for specific dates (overrides calculation).
+          - generic [ref=e105]: "::: tithi 14-01-2026 : Purnima 25-01-2026 : 10 29-01 : Amavasya # Applies every year :::"
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - generic [ref=e108]: 
+            - text: 4. Detailed Day View
+          - paragraph [ref=e109]: Add rich content and banners for any date.
+          - generic [ref=e110]: "::: details >> 14-01-2026 ![Banner](https://image.url/banner.jpg) @ Tag : Major Festival # Significance **Makar Sankranti** is a major harvest festival. It marks the sun's transit into *Makara* (Capricorn). # Rituals - Holy dip in river - Flying kites :::"
+          - generic [ref=e111]:
+            - paragraph [ref=e112]:
+              - strong [ref=e113]: "Syntax Features:"
+            - list [ref=e114]:
+              - listitem [ref=e115]:
+                - code [ref=e116]: ">> DD-MM-YYYY"
+                - text: ": Target a specific date."
+              - listitem [ref=e117]:
+                - code [ref=e118]: "![Banner](url)"
+                - text: ": Add a top banner image."
+              - listitem [ref=e119]:
+                - code [ref=e120]: "# Header"
+                - text: ": Section titles."
+              - listitem [ref=e121]:
+                - code [ref=e122]: "**Bold**"
+                - text: ","
+                - code [ref=e123]: "*Italic*"
+                - text: ": Text styling."
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - generic [ref=e126]: 
+            - text: 5. Monthly Panchang
+          - generic [ref=e127]: "::: panchang @ Tithi : Shukla Paksha @ Nakshatra : Rohini @ Yoga : Indra @ Karana : Bava @ Sunrise : 06:20 AM :::"
+          - paragraph [ref=e128]:
+            - text: Data appears in the "Month's Panchang" card.
+            - text: "Note: Tithi/Nakshatra are also auto-calculated if omitted!"
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e131]: 
+            - text: 6. Seasons (Ritu)
+          - generic [ref=e132]: "::: seasons @ Spring : Flowers blooming everywhere. @ Summer : Scorching sun, mango season. :::"
+          - paragraph [ref=e133]: "Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir)."
+      - textbox [ref=e134]: "::: config @ Title : Vaidik Calendar ::: ::: calendar ++ January 2026 ++ 01 * New Year's Day [ନୂତନ ବର୍ଷ] 14 ! Makar Sankranti [ମକର ସଂକ୍ରାନ୍ତି] 23 ! Saraswati Puja / Netaji Jayanti [ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ] 26 * Republic Day [ଗଣତନ୍ତ୍ର ଦିବସ] 31 ! Monthly Closing [ମାସାନ୍ତ] ::: ::: panchang @ Tithi : Shukla Paksha @ Nakshatra : Rohini 3 Yoga: Indral @ Karana : Bava @ Sunrise : 06:20 AM @ Sunset : 05:30 PM @ Month : Pausha / Magha ::: ----------------------------------- ::: calendar ++ November 2026 ++ 02 > Daily Meeting [ଦୈନିକ ବୈଠକ] 20 ^ Special Community Setup 21 ! Nuakhai [ନୂଆଖାଇ] 25 * Office Closed ::: ::: details >> 21-11-2026 @ Tag : Major Agricultural Festival Nuakhai is the most important social festival of Western Odisha and Sambalpur region. # Significance The word \"Nua\" means new and \"Khai\" means food. # Rituals - People offer new rice to the presiding deity - Family members gather for a feast - Traditional songs and dances are performed ::: ::: panchang @ Tithi : Krishna Paksha @ Nakshatra : Uttara Phalguni @ Yoga : Brahma @ Karana : Kaulava @ Sunrise : 06:00 AM @ Sunset : 05:15 PM @ Month : Kartika / Margashirsha :::"
+    - generic [ref=e135]:
+      - text:   
+      - generic [ref=e136]:
+        - generic [ref=e137]:
+          - generic [ref=e138]:
+            - generic [ref=e140]:
+              - button "Previous Month" [ref=e141] [cursor=pointer]:
+                - img [ref=e142]
+              - generic [ref=e144]:
+                - generic [ref=e145]:
+                  - generic [ref=e146]: January
+                  - generic [ref=e147]: "2026"
+                - paragraph [ref=e148]: Pausha / Magha
+                - button " Today" [ref=e149] [cursor=pointer]:
+                  - generic [ref=e150]: 
+                  - text: Today
+              - button "Next Month" [ref=e151] [cursor=pointer]:
+                - img [ref=e152]
+            - text: 
+            - generic [ref=e154]:
+              - generic [ref=e155]:
+                - generic [ref=e157]: SUN
+                - generic [ref=e159]: MON
+                - generic [ref=e161]: TUE
+                - generic [ref=e163]: WED
+                - generic [ref=e165]: THU
+                - generic [ref=e167]: FRI
+                - generic [ref=e169]: SAT
+              - generic [ref=e170]:
+                - generic [ref=e176] [cursor=pointer]:
+                  - generic [ref=e177]:
+                    - generic [ref=e178]: "1"
+                    - img [ref=e180]
+                  - generic [ref=e183]:
+                    - generic [ref=e185]:
+                      - generic [ref=e186]: 
+                      - text: Shukla
+                    - generic [ref=e189]: Trayodashi
+                    - generic [ref=e190]: Rohini
+                    - generic [ref=e192]: New Year's Day
+                - generic [ref=e194] [cursor=pointer]:
+                  - generic [ref=e195]:
+                    - generic [ref=e196]: "2"
+                    - img [ref=e198]
+                  - generic [ref=e201]:
+                    - generic [ref=e203]:
+                      - generic [ref=e204]: 
+                      - text: Shukla
+                    - generic [ref=e207]: Chaturdashi
+                    - generic [ref=e208]: Mrigashirsha
+                - generic [ref=e210] [cursor=pointer]:
+                  - generic [ref=e211]:
+                    - generic [ref=e212]: "3"
+                    - img [ref=e214]
+                  - generic [ref=e216]:
+                    - generic [ref=e218]:
+                      - generic [ref=e219]: 
+                      - text: Shukla
+                    - generic [ref=e222]: Purnima
+                    - generic [ref=e223]: Ardra
+                - generic [ref=e225] [cursor=pointer]:
+                  - generic [ref=e226]:
+                    - generic [ref=e227]: "4"
+                    - img [ref=e229]
+                  - generic [ref=e232]:
+                    - generic [ref=e234]:
+                      - generic [ref=e235]: 
+                      - text: Krishna
+                    - generic [ref=e238]: Pratipada
+                    - generic [ref=e239]: Punarvasu
+                - generic [ref=e241] [cursor=pointer]:
+                  - generic [ref=e242]:
+                    - generic [ref=e243]: "5"
+                    - img [ref=e245]
+                  - generic [ref=e248]:
+                    - generic [ref=e250]:
+                      - generic [ref=e251]: 
+                      - text: Krishna
+                    - generic [ref=e254]: Dwitiya
+                    - generic [ref=e255]: Pushya
+                - generic [ref=e257] [cursor=pointer]:
+                  - generic [ref=e258]:
+                    - generic [ref=e259]: "6"
+                    - img [ref=e261]
+                  - generic [ref=e264]:
+                    - generic [ref=e266]:
+                      - generic [ref=e267]: 
+                      - text: Krishna
+                    - generic [ref=e270]: Tritiya
+                    - generic [ref=e271]: Ashlesha
+                - generic [ref=e273] [cursor=pointer]:
+                  - generic [ref=e274]:
+                    - generic [ref=e275]: "7"
+                    - img [ref=e277]
+                  - generic [ref=e280]:
+                    - generic [ref=e282]:
+                      - generic [ref=e283]: 
+                      - text: Krishna
+                    - generic [ref=e286]: Chaturthi
+                    - generic [ref=e287]: Magha
+                - generic [ref=e289] [cursor=pointer]:
+                  - generic [ref=e290]:
+                    - generic [ref=e291]: "8"
+                    - img [ref=e293]
+                  - generic [ref=e296]:
+                    - generic [ref=e298]:
+                      - generic [ref=e299]: 
+                      - text: Krishna
+                    - generic [ref=e302]: Panchami
+                    - generic [ref=e303]: Purva Phalguni
+                - generic [ref=e305] [cursor=pointer]:
+                  - generic [ref=e306]:
+                    - generic [ref=e307]: "9"
+                    - img [ref=e309]
+                  - generic [ref=e312]:
+                    - generic [ref=e314]:
+                      - generic [ref=e315]: 
+                      - text: Krishna
+                    - generic [ref=e318]: Shashthi
+                    - generic [ref=e319]: Uttara Phalguni
+                - generic [ref=e321] [cursor=pointer]:
+                  - generic [ref=e322]:
+                    - generic [ref=e323]: "10"
+                    - img [ref=e325]
+                  - generic [ref=e328]:
+                    - generic [ref=e330]:
+                      - generic [ref=e331]: 
+                      - text: Krishna
+                    - generic [ref=e334]: Saptami
+                    - generic [ref=e335]: Hasta
+                - generic [ref=e337] [cursor=pointer]:
+                  - generic [ref=e338]:
+                    - generic [ref=e339]: "11"
+                    - img [ref=e341]
+                  - generic [ref=e344]:
+                    - generic [ref=e346]:
+                      - generic [ref=e347]: 
+                      - text: Krishna
+                    - generic [ref=e350]: Ashtami
+                    - generic [ref=e351]: Chitra
+                - generic [ref=e353] [cursor=pointer]:
+                  - generic [ref=e354]:
+                    - generic [ref=e355]: "12"
+                    - img [ref=e357]
+                  - generic [ref=e360]:
+                    - generic [ref=e362]:
+                      - generic [ref=e363]: 
+                      - text: Krishna
+                    - generic [ref=e366]: Navami
+                    - generic [ref=e367]: Swati
+                - generic [ref=e369] [cursor=pointer]:
+                  - generic [ref=e370]:
+                    - generic [ref=e371]: "13"
+                    - img [ref=e373]
+                  - generic [ref=e376]:
+                    - generic [ref=e378]:
+                      - generic [ref=e379]: 
+                      - text: Krishna
+                    - generic [ref=e382]: Dashami
+                    - generic [ref=e383]: Vishakha
+                - generic [ref=e385] [cursor=pointer]:
+                  - generic [ref=e386]:
+                    - generic [ref=e387]: "14"
+                    - img [ref=e389]
+                  - generic [ref=e392]:
+                    - generic [ref=e394]:
+                      - generic [ref=e395]: 
+                      - text: Krishna
+                    - generic [ref=e398]: Ekadashi
+                    - generic [ref=e399]: Anuradha
+                    - generic [ref=e401]: Makar Sankranti
+                - generic [ref=e403] [cursor=pointer]:
+                  - generic [ref=e404]:
+                    - generic [ref=e405]: "15"
+                    - img [ref=e407]
+                  - generic [ref=e410]:
+                    - generic [ref=e412]:
+                      - generic [ref=e413]: 
+                      - text: Krishna
+                    - generic [ref=e416]: Dwadashi
+                    - generic [ref=e417]: Jyeshtha
+                - generic [ref=e419] [cursor=pointer]:
+                  - generic [ref=e420]:
+                    - generic [ref=e421]: "16"
+                    - img [ref=e423]
+                  - generic [ref=e426]:
+                    - generic [ref=e428]:
+                      - generic [ref=e429]: 
+                      - text: Krishna
+                    - generic [ref=e432]: Trayodashi
+                    - generic [ref=e433]: Mula
+                - generic [ref=e435] [cursor=pointer]:
+                  - generic [ref=e436]:
+                    - generic [ref=e437]: "17"
+                    - img [ref=e439]
+                  - generic [ref=e442]:
+                    - generic [ref=e444]:
+                      - generic [ref=e445]: 
+                      - text: Krishna
+                    - generic [ref=e448]: Chaturdashi
+                    - generic [ref=e449]: Mula
+                - generic [ref=e451] [cursor=pointer]:
+                  - generic [ref=e452]:
+                    - generic [ref=e453]: "18"
+                    - img [ref=e455]
+                  - generic [ref=e457]:
+                    - generic [ref=e459]:
+                      - generic [ref=e460]: 
+                      - text: Krishna
+                    - generic [ref=e463]: Amavasya
+                    - generic [ref=e464]: Purva Ashadha
+                - generic [ref=e466] [cursor=pointer]:
+                  - generic [ref=e467]:
+                    - generic [ref=e468]: "19"
+                    - img [ref=e470]
+                  - generic [ref=e473]:
+                    - generic [ref=e475]:
+                      - generic [ref=e476]: 
+                      - text: Shukla
+                    - generic [ref=e479]: Pratipada
+                    - generic [ref=e480]: Uttara Ashadha
+                - generic [ref=e482] [cursor=pointer]:
+                  - generic [ref=e483]:
+                    - generic [ref=e484]: "20"
+                    - img [ref=e486]
+                  - generic [ref=e489]:
+                    - generic [ref=e491]:
+                      - generic [ref=e492]: 
+                      - text: Shukla
+                    - generic [ref=e495]: Dwitiya
+                    - generic [ref=e496]: Shravana
+                - generic [ref=e498] [cursor=pointer]:
+                  - generic [ref=e499]:
+                    - generic [ref=e500]: "21"
+                    - img [ref=e502]
+                  - generic [ref=e505]:
+                    - generic [ref=e507]:
+                      - generic [ref=e508]: 
+                      - text: Shukla
+                    - generic [ref=e511]: Tritiya
+                    - generic [ref=e512]: Dhanishta
+                - generic [ref=e514] [cursor=pointer]:
+                  - generic [ref=e515]:
+                    - generic [ref=e516]: "22"
+                    - img [ref=e518]
+                  - generic [ref=e521]:
+                    - generic [ref=e523]:
+                      - generic [ref=e524]: 
+                      - text: Shukla
+                    - generic [ref=e527]: Chaturthi
+                    - generic [ref=e528]: Shatabhisha
+                - generic [ref=e530] [cursor=pointer]:
+                  - generic [ref=e531]:
+                    - generic [ref=e532]: "23"
+                    - img [ref=e534]
+                  - generic [ref=e537]:
+                    - generic [ref=e539]:
+                      - generic [ref=e540]: 
+                      - text: Shukla
+                    - generic [ref=e543]: Panchami
+                    - generic [ref=e544]: Purva Bhadrapada
+                    - generic [ref=e546]: Saraswati Puja / Netaji Jayanti
+                - generic [ref=e548] [cursor=pointer]:
+                  - generic [ref=e549]:
+                    - generic [ref=e550]: "24"
+                    - img [ref=e552]
+                  - generic [ref=e555]:
+                    - generic [ref=e557]:
+                      - generic [ref=e558]: 
+                      - text: Shukla
+                    - generic [ref=e561]: Shashthi
+                    - generic [ref=e562]: Uttara Bhadrapada
+                - generic [ref=e564] [cursor=pointer]:
+                  - generic [ref=e565]:
+                    - generic [ref=e566]: "25"
+                    - img [ref=e568]
+                  - generic [ref=e571]:
+                    - generic [ref=e573]:
+                      - generic [ref=e574]: 
+                      - text: Shukla
+                    - generic [ref=e577]: Saptami
+                    - generic [ref=e578]: Revati
+                - generic [ref=e580] [cursor=pointer]:
+                  - generic [ref=e581]:
+                    - generic [ref=e582]: "26"
+                    - img [ref=e584]
+                  - generic [ref=e587]:
+                    - generic [ref=e589]:
+                      - generic [ref=e590]: 
+                      - text: Shukla
+                    - generic [ref=e593]: Ashtami
+                    - generic [ref=e594]: Ashwini
+                    - generic [ref=e596]: Republic Day
+                - generic [ref=e598] [cursor=pointer]:
+                  - generic [ref=e599]:
+                    - generic [ref=e600]: "27"
+                    - img [ref=e602]
+                  - generic [ref=e605]:
+                    - generic [ref=e607]:
+                      - generic [ref=e608]: 
+                      - text: Shukla
+                    - generic [ref=e611]: Navami
+                    - generic [ref=e612]: Bharani
+                - generic [ref=e614] [cursor=pointer]:
+                  - generic [ref=e615]:
+                    - generic [ref=e616]: "28"
+                    - img [ref=e618]
+                  - generic [ref=e621]:
+                    - generic [ref=e623]:
+                      - generic [ref=e624]: 
+                      - text: Shukla
+                    - generic [ref=e627]: Dashami
+                    - generic [ref=e628]: Krittika
+                - generic [ref=e630] [cursor=pointer]:
+                  - generic [ref=e631]:
+                    - generic [ref=e632]: "29"
+                    - img [ref=e634]
+                  - generic [ref=e637]:
+                    - generic [ref=e639]:
+                      - generic [ref=e640]: 
+                      - text: Shukla
+                    - generic [ref=e643]: Ekadashi
+                    - generic [ref=e644]: Rohini
+                - generic [ref=e646] [cursor=pointer]:
+                  - generic [ref=e647]:
+                    - generic [ref=e648]: "30"
+                    - img [ref=e650]
+                  - generic [ref=e653]:
+                    - generic [ref=e655]:
+                      - generic [ref=e656]: 
+                      - text: Shukla
+                    - generic [ref=e659]: Dwadashi
+                    - generic [ref=e660]: Ardra
+                - generic [ref=e662] [cursor=pointer]:
+                  - generic [ref=e663]:
+                    - generic [ref=e664]: "31"
+                    - img [ref=e666]
+                  - generic [ref=e669]:
+                    - generic [ref=e671]:
+                      - generic [ref=e672]: 
+                      - text: Shukla
+                    - generic [ref=e675]: Trayodashi
+                    - generic [ref=e676]: Punarvasu
+                    - generic [ref=e678]: Monthly Closing
+              - generic [ref=e679] [cursor=pointer]:
+                - heading "Year View" [level=3] [ref=e680]
+                - generic [ref=e681]:
+                  - text: Go
+                  - generic [ref=e682]: 
+          - generic [ref=e683]:
+            - heading " Month's Panchang" [level=3] [ref=e684]:
+              - generic [ref=e685]: 
+              - text: Month's Panchang
+            - list [ref=e686]:
+              - generic [ref=e688] [cursor=pointer]:
+                - img [ref=e690]
+                - generic [ref=e703]:
+                  - generic [ref=e704]: Current Ritu
+                  - generic [ref=e705]: Shishir (Winter)
+              - generic [ref=e707]:
+                - generic [ref=e708]:
+                  - generic [ref=e709]:
+                    - generic [ref=e710]: 
+                    - text: Tithi
+                  - generic "Shukla Paksha" [ref=e711]
+                - generic [ref=e712]:
+                  - generic [ref=e713]:
+                    - generic [ref=e714]: 
+                    - text: Nakshatra
+                  - generic "Rohini" [ref=e715]
+                - generic [ref=e716]:
+                  - generic [ref=e717]:
+                    - generic [ref=e718]: 
+                    - text: Yoga
+                  - generic "Shubha" [ref=e719]
+                - generic [ref=e720]:
+                  - generic [ref=e721]:
+                    - generic [ref=e722]: 
+                    - text: Karana
+                  - generic "Bava" [ref=e723]
+              - button " Set Location for Timings" [ref=e725] [cursor=pointer]:
+                - generic [ref=e726]: 
+                - text: Set Location for Timings
+        - generic [ref=e729]:
+          - heading " Festivals" [level=3] [ref=e730]:
+            - generic [ref=e731]: 
+            - text: Festivals
+          - generic [ref=e733]:
+            - generic [ref=e734]: 07:45:18 AM
+            - generic [ref=e735]: Current Time
+          - generic [ref=e736]:
+            - generic:
+              - img
+            - textbox "Search..." [ref=e737]
+            - text: 
+          - generic [ref=e738]:
+            - button "Festivals" [ref=e739] [cursor=pointer]:
+              - img [ref=e740]
+              - generic [ref=e742]: Festivals
+            - button "Auspicious" [ref=e743] [cursor=pointer]:
+              - img [ref=e744]
+              - generic [ref=e749]: Auspicious
+            - button "Holidays" [ref=e750] [cursor=pointer]:
+              - img [ref=e751]
+              - generic [ref=e753]: Holidays
+            - button "Other festivals" [ref=e754] [cursor=pointer]:
+              - img [ref=e755]
+              - generic [ref=e757]: Other festivals
+          - list [ref=e758]:
+            - listitem [ref=e759] [cursor=pointer]:
+              - generic [ref=e760]:
+                - generic [ref=e761]: JAN
+                - generic [ref=e762]: "1"
+              - generic [ref=e764]:
+                - generic [ref=e765]: New Year's Day
+                - generic [ref=e766]: ନୂତନ ବର୍ଷ
+            - listitem [ref=e767] [cursor=pointer]:
+              - generic [ref=e768]:
+                - generic [ref=e769]: JAN
+                - generic [ref=e770]: "14"
+              - generic [ref=e772]:
+                - generic [ref=e773]: Makar Sankranti
+                - generic [ref=e774]: ମକର ସଂକ୍ରାନ୍ତି
+            - listitem [ref=e775] [cursor=pointer]:
+              - generic [ref=e776]:
+                - generic [ref=e777]: JAN
+                - generic [ref=e778]: "23"
+              - generic [ref=e780]:
+                - generic [ref=e781]: Saraswati Puja / Netaji Jayanti
+                - generic [ref=e782]: ସରସ୍ୱତୀ ପୂଜା / ନେତାଜୀ ଜୟନ୍ତୀ
+            - listitem [ref=e783] [cursor=pointer]:
+              - generic [ref=e784]:
+                - generic [ref=e785]: JAN
+                - generic [ref=e786]: "26"
+              - generic [ref=e788]:
+                - generic [ref=e789]: Republic Day
+                - generic [ref=e790]: ଗଣତନ୍ତ୍ର ଦିବସ
+            - listitem [ref=e791] [cursor=pointer]:
+              - generic [ref=e792]:
+                - generic [ref=e793]: JAN
+                - generic [ref=e794]: "31"
+              - generic [ref=e796]:
+                - generic [ref=e797]: Monthly Closing
+                - generic [ref=e798]: ମାସାନ୍ତ
+  - text:                       + 
+```
