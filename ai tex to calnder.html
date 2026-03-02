@@ -4956,14 +4956,15 @@ return SunCalc;
             return text.replace(/local-image:\/\/[^\)]+/g, (match) => appState.images[match] || match);
         }
 
+        var preRenderedCache = {};
+
         function processPreRenderQueue(deadline) {
             while (preRenderQueue.length > 0 && deadline.timeRemaining() > 5) {
                 const task = preRenderQueue.shift();
-                if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
                 
                 const dateKey = `${task.monthData.year}-${task.monthData.month}-${task.day}`;
-                if (!appState.activeMonthDetails[dateKey]) {
-                    appState.activeMonthDetails[dateKey] = generateDayModalHTML(task.day, task.monthData);
+                if (!preRenderedCache[dateKey]) {
+                    preRenderedCache[dateKey] = generateDayModalHTML(task.day, task.monthData);
                 }
             }
 
@@ -5089,7 +5090,7 @@ return SunCalc;
             
             // --- NEW LOGIC: Pre-Render Day Details HTML ---
             // Clear cache entirely on every render to ensure user edits are reflected immediately
-            appState.activeMonthDetails = {};
+            preRenderedCache = {};
             
             // Clear the queue for the new view
             preRenderQueue = [];
@@ -5103,7 +5104,7 @@ return SunCalc;
                 
                 // 1. Instant Render for "Today" if we are viewing the current month
                 if (d === realTodayDate.getDate() && currentData.month === realTodayDate.getMonth() && currentData.year === realTodayDate.getFullYear()) {
-                    appState.activeMonthDetails[dateKey] = generateDayModalHTML(d, currentData);
+                    preRenderedCache[dateKey] = generateDayModalHTML(d, currentData);
                 } else {
                     // 2. Queue the rest for background processing
                     preRenderQueue.push({ day: d, monthData: currentData });
@@ -7304,29 +7305,98 @@ function renderCalendarGrid(data) {
             lockScroll();
             const modal = document.getElementById('day-modal');
             const dateKey = `${monthData.year}-${monthData.month}-${day}`;
-            
-            let contentHtml = "";
-            if (appState.activeMonthDetails && appState.activeMonthDetails[dateKey]) {
-                contentHtml = appState.activeMonthDetails[dateKey];
-            } else {
-                contentHtml = generateDayModalHTML(day, monthData);
-                // Cache it for next time to ensure instant open on subsequent clicks
-                if (!appState.activeMonthDetails) appState.activeMonthDetails = {};
-                appState.activeMonthDetails[dateKey] = contentHtml;
-            }
-
             const modalContent = modal.querySelector('.modal-content');
-            modalContent.innerHTML = contentHtml;
-
-            // Remove legacy listeners (simplified view now)
             
-            modal.style.display = 'flex';
-            // Use double rAF to ensure layout is calculated before animating opacity/transform
-            requestAnimationFrame(() => {
+            // Check cache
+            if (preRenderedCache && preRenderedCache[dateKey]) {
+                // Scenario A: Cache Hit - Instant Open
+                modalContent.innerHTML = preRenderedCache[dateKey];
+                
+                modal.style.display = 'flex';
                 requestAnimationFrame(() => {
-                    modal.classList.remove('modal-hidden');
+                    requestAnimationFrame(() => {
+                        modal.classList.remove('modal-hidden');
+                    });
                 });
-            });
+            } else {
+                // Scenario B: Cache Miss - Skeleton Fallback
+                const skeletonHtml = `
+                    <div class="flex flex-col h-full relative overflow-hidden animate-pulse">
+                        <!-- Persistent Header Skeleton -->
+                        <div class="shrink-0 z-10 relative backdrop-blur-md bg-white/30 text-center pt-16 pb-4 border-b border-white/20 shadow-sm flex flex-col items-center">
+                            <div class="absolute top-4 right-4 bg-gray-200 w-10 h-10 rounded-full"></div>
+                            <div class="w-16 h-16 rounded-full bg-gray-300 mb-2"></div>
+                            <div class="w-48 h-6 bg-gray-300 rounded mb-3"></div>
+                            <div class="w-32 h-6 bg-gray-200 rounded-full"></div>
+                        </div>
+
+                        <!-- Scrollable Body Skeleton -->
+                        <div class="flex-grow overflow-hidden pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full">
+                            <!-- 1. Current Tithi -->
+                            <div class="modal-card">
+                                <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
+                                    <div class="w-7 h-7 rounded-full bg-gray-200"></div>
+                                    <div class="w-24 h-4 bg-gray-200 rounded"></div>
+                                </div>
+                                <div class="w-32 h-8 bg-gray-300 rounded mb-1"></div>
+                                <div class="w-20 h-4 bg-gray-200 rounded mb-4"></div>
+                                
+                                <div class="mt-5 p-4 bg-gray-50 rounded-2xl border border-gray-200">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="w-24 h-4 bg-gray-200 rounded"></div>
+                                        <div class="w-12 h-6 bg-gray-300 rounded"></div>
+                                    </div>
+                                    <div class="h-3 w-full bg-gray-200 rounded-full mb-3"></div>
+                                    <div class="flex justify-between">
+                                        <div class="w-16 h-8 bg-gray-200 rounded"></div>
+                                        <div class="w-16 h-8 bg-gray-200 rounded"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Panchang Details -->
+                            <div class="modal-card">
+                                <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
+                                    <div class="w-7 h-7 rounded-full bg-gray-200"></div>
+                                    <div class="w-32 h-4 bg-gray-200 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 mb-2">
+                                    <div class="bg-gray-50 rounded-lg p-3 h-12"></div>
+                                    <div class="bg-gray-50 rounded-lg p-3 h-12"></div>
+                                    <div class="bg-gray-50 rounded-lg p-3 h-12"></div>
+                                    <div class="bg-gray-50 rounded-lg p-3 h-12"></div>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3 h-12 mb-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                modalContent.innerHTML = skeletonHtml;
+                modal.style.display = 'flex';
+                
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        modal.classList.remove('modal-hidden');
+                    });
+                });
+                
+                // Defer the heavy calculation
+                setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        const realHtml = generateDayModalHTML(day, monthData);
+                        preRenderedCache[dateKey] = realHtml;
+                        
+                        // Smoothly swap in the real HTML
+                        modalContent.style.transition = 'opacity 0.15s ease';
+                        modalContent.style.opacity = '0';
+                        setTimeout(() => {
+                            modalContent.innerHTML = realHtml;
+                            modalContent.style.opacity = '1';
+                        }, 150);
+                    });
+                }, 50);
+            }
         }
 
         // Placeholder for legacy call (if any)
