@@ -723,11 +723,11 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
 
         /* --- SVG ANIMATIONS (Subtle & Clean) --- */
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes rain { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-        @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        @keyframes slowSpin { 100% { transform: rotate(360deg); } }
+        @keyframes gentleRain { 0% { transform: translateY(-5px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(15px); opacity: 0; } }
+        @keyframes subtleFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+        @keyframes gentleSway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+        @keyframes gentlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
         /* --- MENU CARD GRID STYLES (Typing Tutor Aesthetic) --- */
         .menu-overlay .modal-backdrop {
@@ -3023,38 +3023,21 @@ return SunCalc;
             hemant: `
                 <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <linearGradient id="sunGradH" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#FFD54F;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#FFB300;stop-opacity:1" />
-                        </linearGradient>
-                        <filter id="cloudShadow" x="-10%" y="-10%" width="130%" height="130%">
-                            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.15" />
+                        <filter id="cloudShadowH" x="-10%" y="-10%" width="130%" height="130%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-opacity="0.1" />
                         </filter>
                     </defs>
-                    <!-- Sun (Spinning slowly) -->
-                    <g style="transform-origin: 32px 32px; animation: spin 15s linear infinite;">
-                        <circle cx="32" cy="32" r="14" fill="url(#sunGradH)" />
-                        <!-- Gentle Sun rays -->
-                        <g stroke="#FFB300" stroke-width="3" stroke-linecap="round">
-                            <line x1="32" y1="8" x2="32" y2="12" />
-                            <line x1="32" y1="52" x2="32" y2="56" />
-                            <line x1="56" y1="32" x2="52" y2="32" />
-                            <line x1="12" y1="32" x2="8" y2="32" />
-                            <line x1="49" y1="15" x2="46" y2="18" />
-                            <line x1="18" y1="46" x2="15" y2="49" />
-                            <line x1="49" y1="49" x2="46" y2="46" />
-                            <line x1="18" y1="18" x2="15" y2="15" />
-                        </g>
+                    <!-- Sun/Moon behind cloud -->
+                    <circle cx="38" cy="24" r="10" fill="#FFB74D" style="animation: gentlePulse 6s ease-in-out infinite alternate;" />
+                    <!-- Mist -->
+                    <g stroke="#90CAF9" stroke-width="2" stroke-linecap="round" opacity="0.4" style="animation: gentleSway 5s ease-in-out infinite alternate;">
+                        <line x1="18" y1="50" x2="30" y2="50" />
+                        <line x1="40" y1="50" x2="52" y2="50" />
+                        <line x1="22" y1="55" x2="48" y2="55" />
                     </g>
-                    <!-- Small mist/fog lines indicating Pre-Winter chill -->
-                    <g stroke="#90CAF9" stroke-width="2" stroke-linecap="round" opacity="0.6" style="animation: sway 4s ease-in-out infinite alternate;">
-                        <line x1="15" y1="52" x2="25" y2="52" />
-                        <line x1="45" y1="52" x2="55" y2="52" />
-                        <line x1="20" y1="56" x2="40" y2="56" />
-                    </g>
-                    <!-- Cloud (Floating) -->
-                    <g style="animation: float 4s ease-in-out infinite;">
-                        <path transform="translate(-6, 6)" d="M44 44H20C15.58 44 12 40.42 12 36C12 31.58 15.58 28 20 28C20.6 28 21.18 28.08 21.74 28.22C22.82 24.32 26.4 21.5 30.6 21.5C35.75 21.5 40 25.4 40.5 30.3C44.92 30.3 48.5 33.88 48.5 38.3C48.5 41.5 46.5 44 44 44Z" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1.5" filter="url(#cloudShadow)"/>
+                    <!-- Main Cloud -->
+                    <g style="animation: subtleFloat 5s ease-in-out infinite;">
+                        <path d="M42 42H22C18.134 42 15 38.866 15 35C15 31.134 18.134 28 22 28C22.645 28 23.27 28.087 23.87 28.25C25.26 24.36 29 21.5 33.5 21.5C39 21.5 43.5 25.5 44 30.5C48 30.5 51 33.5 51 37.5C51 40 49 42 42 42Z" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1.5" filter="url(#cloudShadowH)"/>
                     </g>
                 </svg>`,
             
@@ -3062,66 +3045,50 @@ return SunCalc;
             shishir: `
                 <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <!-- Snowflake Arm Definition -->
-                        <g id="snowflake-arm">
-                            <!-- Main Stem -->
-                            <line x1="0" y1="0" x2="0" y2="-22" />
-                            <!-- Inner Branch -->
-                            <path d="M-5 -8 L0 -4 L5 -8" />
-                            <!-- Outer Branch -->
-                            <path d="M-5 -16 L0 -12 L5 -16" />
-                        </g>
+                        <filter id="snowGlow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#4FC3F7" flood-opacity="0.4" />
+                        </filter>
                     </defs>
-                    <!-- Snowflake Group -->
-                    <g transform="translate(32, 32)" style="animation: spin 20s linear infinite;">
-                        <g stroke="#1E88E5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
-                            <use href="#snowflake-arm" />
-                            <use href="#snowflake-arm" transform="rotate(60)" />
-                            <use href="#snowflake-arm" transform="rotate(120)" />
-                            <use href="#snowflake-arm" transform="rotate(180)" />
-                            <use href="#snowflake-arm" transform="rotate(240)" />
-                            <use href="#snowflake-arm" transform="rotate(300)" />
-                        </g>
+                    <!-- Main Snowflake -->
+                    <g stroke="#29B6F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" filter="url(#snowGlow)" style="transform-origin: 32px 32px; animation: slowSpin 15s linear infinite;">
+                        <!-- Core Crosses -->
+                        <line x1="32" y1="8" x2="32" y2="56" />
+                        <line x1="8" y1="32" x2="56" y2="32" />
+                        <line x1="15" y1="15" x2="49" y2="49" />
+                        <line x1="15" y1="49" x2="49" y2="15" />
+                        <!-- Branch details -->
+                        <path d="M32 16 L26 10 M32 16 L38 10 M32 48 L26 54 M32 48 L38 54" />
+                        <path d="M16 32 L10 26 M16 32 L10 38 M48 32 L54 26 M48 32 L54 38" />
+                        <circle cx="32" cy="32" r="3" fill="#E1F5FE" stroke-width="1.5" />
                     </g>
-                    <!-- Sparkles/Snow dots -->
-                    <circle cx="16" cy="16" r="1.5" fill="#64B5F6" style="animation: pulse 2s infinite alternate;" />
-                    <circle cx="48" cy="16" r="1" fill="#64B5F6" style="animation: pulse 2.5s infinite alternate-reverse;" />
-                    <circle cx="12" cy="48" r="1" fill="#64B5F6" style="animation: pulse 3s infinite alternate;" />
-                    <circle cx="50" cy="45" r="1.5" fill="#64B5F6" style="animation: pulse 2s infinite alternate-reverse;" />
                 </svg>`,
             
             // Flower with leaves
             vasant: `
                 <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <!-- Stem -->
-                    <path d="M32 55V35" stroke="#4CAF50" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M32 54V38" stroke="#66BB6A" stroke-width="2.5" stroke-linecap="round"/>
 
-                    <!-- Leaves (Swaying) -->
-                    <g style="animation: sway 3s ease-in-out infinite alternate; transform-origin: 32px 45px;">
-                        <path d="M32 45Q42 40 42 30Q37 32 32 45Z" fill="#81C784" stroke="#4CAF50" stroke-width="1.5" stroke-linejoin="round"/>
+                    <!-- Leaves -->
+                    <g style="animation: gentleSway 4s ease-in-out infinite alternate; transform-origin: 32px 48px;">
+                        <path d="M32 48 Q 42 45 42 36 Q 37 38 32 48" fill="#A5D6A7" stroke="#66BB6A" stroke-width="1.5"/>
                     </g>
-                    <g style="animation: sway 2.5s ease-in-out infinite alternate-reverse; transform-origin: 32px 50px;">
-                        <path d="M32 50Q20 45 20 35Q25 37 32 50Z" fill="#81C784" stroke="#4CAF50" stroke-width="1.5" stroke-linejoin="round"/>
+                    <g style="animation: gentleSway 3.5s ease-in-out infinite alternate-reverse; transform-origin: 32px 52px;">
+                        <path d="M32 52 Q 22 49 22 40 Q 27 42 32 52" fill="#A5D6A7" stroke="#66BB6A" stroke-width="1.5"/>
                     </g>
 
                     <!-- Flower Head -->
-                    <g style="animation: pulse 4s ease-in-out infinite alternate; transform-origin: 32px 23px;">
-                        <!-- Petals Layer 1 -->
-                        <g fill="#FF8A80" stroke="#FF5252" stroke-width="1">
-                            <circle cx="32" cy="11" r="5" />
-                            <circle cx="32" cy="35" r="5" />
-                            <circle cx="44" cy="23" r="5" />
-                            <circle cx="20" cy="23" r="5" />
-                        </g>
-                        <!-- Petals Layer 2 -->
-                        <g fill="#FFCDD2" stroke="#FF8A80" stroke-width="1">
-                            <circle cx="40" cy="15" r="4.5" />
-                            <circle cx="24" cy="15" r="4.5" />
-                            <circle cx="40" cy="31" r="4.5" />
-                            <circle cx="24" cy="31" r="4.5" />
-                        </g>
+                    <g style="animation: gentlePulse 4s ease-in-out infinite alternate; transform-origin: 32px 26px;">
+                        <circle cx="32" cy="16" r="5" fill="#FFCDD2" stroke="#EF9A9A" stroke-width="1"/>
+                        <circle cx="32" cy="36" r="5" fill="#FFCDD2" stroke="#EF9A9A" stroke-width="1"/>
+                        <circle cx="42" cy="26" r="5" fill="#FFCDD2" stroke="#EF9A9A" stroke-width="1"/>
+                        <circle cx="22" cy="26" r="5" fill="#FFCDD2" stroke="#EF9A9A" stroke-width="1"/>
+                        <circle cx="39" cy="19" r="5" fill="#FFCDD2" stroke="#EF9A9A" stroke-width="1"/>
+                        <circle cx="25" cy="19" r="5" fill="#FFCDD2" stroke="#EF9A9A" stroke-width="1"/>
+                        <circle cx="39" cy="33" r="5" fill="#FFCDD2" stroke="#EF9A9A" stroke-width="1"/>
+                        <circle cx="25" cy="33" r="5" fill="#FFCDD2" stroke="#EF9A9A" stroke-width="1"/>
                         <!-- Center -->
-                        <circle cx="32" cy="23" r="6" fill="#FFD54F" stroke="#FFA000" stroke-width="1.5"/>
+                        <circle cx="32" cy="26" r="6" fill="#FFF59D" stroke="#FBC02D" stroke-width="1"/>
                     </g>
                 </svg>`,
             
@@ -3129,463 +3096,57 @@ return SunCalc;
             grishma: `
                 <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <radialGradient id="sunGradientGrishma" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(32 32) rotate(90) scale(14)">
-                            <stop offset="0%" stop-color="#FFF59D"/>
-                            <stop offset="40%" stop-color="#FFEB3B"/>
-                            <stop offset="100%" stop-color="#FF9800"/>
+                        <radialGradient id="sunGradG" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(32 32) rotate(90) scale(14)">
+                            <stop offset="0%" stop-color="#FFF176"/>
+                            <stop offset="100%" stop-color="#FFB74D"/>
                         </radialGradient>
                     </defs>
-                    <g style="transform-origin: 32px 32px; animation: spin 10s linear infinite;">
-                        <circle cx="32" cy="32" r="14" fill="url(#sunGradientGrishma)"/>
-                        <!-- Dynamic Sun Rays -->
-                        <g stroke="#FF9800" stroke-width="3" stroke-linecap="round">
-                            <!-- Long rays -->
-                            <line x1="32" y1="4" x2="32" y2="12" />
-                            <line x1="32" y1="60" x2="32" y2="52" />
-                            <line x1="60" y1="32" x2="52" y2="32" />
-                            <line x1="4" y1="32" x2="12" y2="32" />
-                            <!-- Short angled rays -->
-                            <line x1="52" y1="12" x2="46" y2="18" />
-                            <line x1="12" y1="52" x2="18" y2="46" />
-                            <line x1="52" y1="52" x2="46" y2="46" />
-                            <line x1="12" y1="12" x2="18" y2="18" />
-                        </g>
+                    <g style="transform-origin: 32px 32px; animation: slowSpin 12s linear infinite;">
+                        <circle cx="32" cy="32" r="14" fill="url(#sunGradG)"/>
+                        <path d="M32 10 L32 6 M32 58 L32 54 M58 32 L54 32 M10 32 L6 32 M50.5 13.5 L48 16 M13.5 50.5 L16 48 M50.5 50.5 L48 48 M13.5 13.5 L16 16" stroke="#FFA726" stroke-width="3" stroke-linecap="round"/>
                     </g>
-                    <!-- Heat waves at the bottom -->
-                    <g stroke="#FFB74D" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.6" style="animation: sway 2s ease-in-out infinite alternate;">
-                        <path d="M20 58 Q 23 55 26 58 T 32 58 T 38 58 T 44 58" />
-                        <path d="M24 62 Q 27 59 30 62 T 36 62 T 42 62" />
+                    <!-- Heat waves -->
+                    <g stroke="#FFCC80" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5" style="animation: gentleSway 3s ease-in-out infinite alternate;">
+                        <path d="M22 58 Q 24 56 26 58 T 30 58 T 34 58 T 38 58 T 42 58" />
                     </g>
                 </svg>`,
             
             // Cloud with Rain Drops
             varsha: `
                 <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <filter id="darkCloudShadow" x="-10%" y="-10%" width="130%" height="130%">
-                            <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.3" />
-                        </filter>
-                    </defs>
                     <!-- Rain Drops -->
-                    <g stroke="#4FC3F7" stroke-width="2.5" stroke-linecap="round">
-                        <line x1="22" y1="42" x2="20" y2="52" style="animation: rain 0.7s infinite linear;" />
-                        <line x1="32" y1="42" x2="30" y2="52" style="animation: rain 0.7s infinite linear 0.2s;" />
-                        <line x1="42" y1="42" x2="40" y2="52" style="animation: rain 0.7s infinite linear 0.4s;" />
-
-                        <line x1="27" y1="45" x2="25" y2="55" style="animation: rain 0.7s infinite linear 0.1s;" />
-                        <line x1="37" y1="45" x2="35" y2="55" style="animation: rain 0.7s infinite linear 0.3s;" />
+                    <g stroke="#64B5F6" stroke-width="2" stroke-linecap="round">
+                        <line x1="26" y1="42" x2="24" y2="48" style="animation: gentleRain 1.2s infinite linear;"/>
+                        <line x1="34" y1="42" x2="32" y2="48" style="animation: gentleRain 1.2s infinite linear 0.3s;"/>
+                        <line x1="42" y1="42" x2="40" y2="48" style="animation: gentleRain 1.2s infinite linear 0.6s;"/>
                     </g>
 
-                    <!-- Thunder Lightning -->
-                    <path d="M34 26 L26 38 H32 L30 50 L42 34 H36 L34 26 Z" fill="#FFEB3B" style="animation: pulse 1.5s infinite alternate;" />
+                    <!-- Lightning -->
+                    <path d="M34 26 L26 38 H32 L30 50 L42 34 H36 L34 26 Z" fill="#FFF176" style="animation: gentlePulse 2s infinite alternate;" />
 
-                    <!-- Dark Monsoon Cloud -->
-                    <g style="animation: sway 5s ease-in-out infinite alternate; transform-origin: 32px 25px;">
-                        <path d="M48 38H16C11.58 38 8 34.42 8 30C8 25.58 11.58 22 16 22C16.6 22 17.18 22.08 17.74 22.22C18.82 18.32 22.4 15.5 26.6 15.5C31.75 15.5 36 19.4 36.5 24.3C40.92 24.3 44.5 27.88 44.5 32.3C44.5 35.5 46.5 38 48 38Z" fill="#5E35B1" filter="url(#darkCloudShadow)"/>
-                        <!-- Cloud highlight -->
-                        <path d="M26.6 17.5C23.4 17.5 20.6 19.7 19.4 22.8C18.8 22.6 18.2 22.5 17.5 22.5C14.5 22.5 12 25 12 28C12 29 12.3 30 12.8 30.8C13.6 27.5 16.5 25 20 25H42C44.8 25 47.1 27 47.8 29.6C48.2 28.7 48.5 27.6 48.5 26.5C48.5 23.5 46 21 43 21C42.8 21 42.6 21 42.4 21.1C41.2 18.2 38.2 16 34.5 16C31.2 16 28.4 17.9 26.6 20.4" fill="#7E57C2" opacity="0.6"/>
+                    <!-- Dark Cloud -->
+                    <g style="animation: subtleFloat 4s ease-in-out infinite;">
+                        <path d="M46 38H18C14.134 38 11 34.866 11 31C11 27.134 14.134 24 18 24C18.645 24 19.27 24.087 19.87 24.25C21.26 20.36 25 17.5 29.5 17.5C35 17.5 39.5 21.5 40 26.5C44 26.5 47 29.5 47 33.5C47 36 45 38 46 38Z" fill="#7E57C2"/>
                     </g>
                 </svg>`,
             
             // Autumn Leaf
             sharad: `
                 <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <filter id="leafShadow" x="-10%" y="-10%" width="130%" height="130%">
-                            <feDropShadow dx="0" dy="2" stdDeviation="1" flood-opacity="0.2" />
-                        </filter>
-                    </defs>
-                    <!-- Small floating leaf top right -->
-                    <g style="animation: sway 3s ease-in-out infinite alternate; transform-origin: 45px 15px;">
-                        <path d="M45 15C45 15 40 18 40 23C40 28 45 30 45 30C45 30 50 28 50 23C50 18 45 15 45 15Z" fill="#FFA726" stroke="#EF6C00" stroke-width="0.5"/>
-                    </g>
-                    <!-- Small floating leaf bottom left -->
-                    <g style="animation: sway 2.5s ease-in-out infinite alternate-reverse; transform-origin: 15px 45px;">
-                        <path d="M15 45C15 45 10 42 10 37C10 32 15 30 15 30C15 30 20 32 20 37C20 42 15 45 15 45Z" fill="#FFCA28" stroke="#F57C00" stroke-width="0.5"/>
-                    </g>
                     <!-- Main Leaf -->
-                    <g style="transform-origin: 32px 32px; animation: float 4s ease-in-out infinite;" filter="url(#leafShadow)">
-                        <path d="M32 8C32 8 14 18 14 36C14 46 20 54 32 60C44 54 50 46 50 36C50 18 32 8 32 8Z" fill="#FF7043" stroke="#D84315" stroke-width="1"/>
+                    <g style="transform-origin: 32px 32px; animation: subtleFloat 5s ease-in-out infinite;">
+                        <path d="M32 12C32 12 18 20 18 36C18 44 24 50 32 56C40 50 46 44 46 36C46 20 32 12 32 12Z" fill="#FF8A65"/>
                         <!-- Veins -->
-                        <path d="M32 10V58" stroke="#D84315" stroke-width="2.5" stroke-linecap="round"/>
-
-                        <path d="M32 26L19 16" stroke="#D84315" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M32 26L45 16" stroke="#D84315" stroke-width="1.5" stroke-linecap="round"/>
-
-                        <path d="M32 36L18 28" stroke="#D84315" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M32 36L46 28" stroke="#D84315" stroke-width="1.5" stroke-linecap="round"/>
-
-                        <path d="M32 46L22 40" stroke="#D84315" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M32 46L42 40" stroke="#D84315" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M32 14V54 M32 26L22 18 M32 26L42 18 M32 36L22 30 M32 36L42 30 M32 46L24 42 M32 46L40 42" stroke="#E64A19" stroke-width="1.5" stroke-linecap="round"/>
                     </g>
-                </svg>`
-        };
-
-        const seasonUIConfig = [
-            { name: "Vasant (Spring)", color: "#388E3C", icon: SeasonIcons.vasant },   // 0
-            { name: "Grishma (Summer)", color: "#E65100", icon: SeasonIcons.grishma },  // 1
-            { name: "Varsha (Monsoon)", color: "#4527A0", icon: SeasonIcons.varsha },   // 2
-            { name: "Sharad (Autumn)", color: "#BF360C", icon: SeasonIcons.sharad },    // 3
-            { name: "Hemant (Pre-Winter)", color: "#D60000", icon: SeasonIcons.hemant },// 4
-            { name: "Shishir (Winter)", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
-        ];
-
-        
-        
-        function saveConfigToStorage() {
-            try {
-                localStorage.setItem('panchangConfig', JSON.stringify(appState.config));
-            } catch (e) {
-                console.error("Failed to save config to localStorage", e);
-            }
-        }
-
-        function toggleSection(section, isVisible) {
-            if (!appState.config.sections) appState.config.sections = { festivals: true, panchang: true };
-            appState.config.sections[section] = isVisible;
-            saveConfigToStorage();
-            render();
-        }
-
-        function getUserLocation() {
-            const btn = document.getElementById('btn-location');
-            const originalContent = btn ? btn.innerHTML : '';
-
-            if (!navigator.geolocation) {
-                fallbackToSavedLocation(btn, originalContent);
-                return;
-            }
-            
-            if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Locating...';
-            
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                let locName = `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
-                
-                // Optimistic update
-                appState.config.location = { lat: lat, lng: lng, name: locName };
-                saveConfigToStorage();
-                render();
-                
-                // Try reverse geocoding
-                try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data && data.address) {
-                            // Construct a friendly name
-                            const city = data.address.city || data.address.town || data.address.village || data.address.county;
-                            const state = data.address.state || data.address.country;
-                            if (city) locName = `${city}, ${state}`;
-                            else if (state) locName = state;
-                        } else if (data && data.display_name) {
-                             locName = data.display_name.split(',')[0];
-                        }
-                        appState.config.location.name = locName;
-                        saveConfigToStorage();
-                        render();
-                    }
-                } catch (e) {
-                    console.log("Reverse geocoding failed, using coordinates", e);
-                }
-                
-                if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
-                showToast("Location updated: " + locName);
-            }, (error) => {
-                console.error(error);
-                fallbackToSavedLocation(btn, originalContent);
-            });
-        }
-
-        function fallbackToSavedLocation(btn, originalContent) {
-            try {
-                const savedConfig = localStorage.getItem('panchangConfig');
-                if (savedConfig) {
-                    const parsed = JSON.parse(savedConfig);
-                    if (parsed.location) {
-                        appState.config.location = parsed.location;
-                        render();
-                        showToast(`Using saved location: ${parsed.location.name || 'Coordinates'}`);
-                        if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
-                        return;
-                    }
-                }
-            } catch(e) { console.error("Backup location load failed", e); }
-            
-            showToast("Location unavailable. Please enable GPS.");
-            if(btn) btn.innerHTML = originalContent || '📍 Use My Location';
-        }
-
-        function getSeasonIndex(month) {
-             return Math.floor((month + 10) % 12 / 2);
-        }
-
-        function cycleSeasonCard() {
-            if (!appState.monthsData || appState.monthsData.length === 0) return;
-            
-            const currentMonthData = appState.monthsData[appState.activeMonthIndex];
-            const currentSeason = getSeasonIndex(currentMonthData.month);
-            
-            for (let i = 1; i <= 6; i++) {
-                const targetSeason = (currentSeason + i) % 6;
-                
-                // Find a month with this season, preferring the "next" one in the list
-                let foundIndex = -1;
-                for (let j = 1; j <= appState.monthsData.length; j++) {
-                    const checkIndex = (appState.activeMonthIndex + j) % appState.monthsData.length;
-                    const mData = appState.monthsData[checkIndex];
-                    if (getSeasonIndex(mData.month) === targetSeason) {
-                        foundIndex = checkIndex;
-                        break;
-                    }
-                }
-                
-                if (foundIndex !== -1) {
-                    appState.activeMonthIndex = foundIndex;
-                    render();
-                    return;
-                }
-            }
-        }
-
-        function updateSeasonCardUI(index) {
-            const config = seasonUIConfig[index]; 
-            const currentLang = appState.config.language || 'en';
-            const langObj = langData[currentLang] || langData['en'];
-            const name = langObj.indianSeasons[index];
-
-            const titleEl = document.getElementById('seasonTitle');
-            const iconEl = document.getElementById('seasonIcon');
-            
-            if(titleEl) {
-                titleEl.textContent = name;
-                titleEl.style.color = config.color;
-                // Animation Reset
-                titleEl.classList.remove('fade-enter-active');
-                void titleEl.offsetWidth; 
-                titleEl.classList.add('fade-enter-active');
-            }
-            if(iconEl) {
-                iconEl.innerHTML = config.icon;
-                iconEl.style.transform = "scale(0.8) rotate(-10deg)";
-                iconEl.style.opacity = "0";
-                setTimeout(() => {
-                    iconEl.style.transform = "scale(1) rotate(0deg)";
-                    iconEl.style.opacity = "1";
-                }, 50);
-            }
-        }
-
-        const editor = document.getElementById('editor');
-        
-        const DEFAULT_SYNC_LINKS = { 
-            en: "", hi: "", or: "", bn: "", mr: "", gu: "", 
-            pa: "", ta: "", te: "", kn: "", ml: "", as: "" 
-        };
-
-        const LinkSecurity = {
-            encrypt: (s) => {
-                if (!s) return "";
-                try { return btoa(s).split('').reverse().join(''); } catch(e) { return s; }
-            },
-            decrypt: (s) => {
-                if (!s) return "";
-                try { return atob(s.split('').reverse().join('')); } catch(e) { return s; }
-            }
-        };
-
-        // Background Pre-rendering State
-        let preRenderQueue = [];
-        let isPreRenderRunning = false;
-        // Polyfill for requestIdleCallback
-        const reqIdleCallback = window.requestIdleCallback || function(cb) { return setTimeout(function() { cb({ timeRemaining: function() { return 50; } }); }, 1); };
-
-        let appState = {
-            activeMonthIndex: 0,
-            monthsData: [],
-            recurringEvents: [],
-            recurringDetails: {},
-            viewDate: { month: new Date().getMonth(), year: new Date().getFullYear() },
-            todayIndex: -1,
-            details: {}, 
-            manualTithis: {}, // New storage for dedicated Tithi overrides
-            customSeasonDescriptions: {},
-            images: {}, 
-            activeMonthDetails: {}, // Cache for pre-rendered Day Detail HTML
-            view: 'month',
-            config: { 
-                title: 'Vaidik Calendar', 
-                logoUrl: null, 
-                language: 'en', 
-                location: null,
-                sections: { festivals: true, panchang: true },
-                syncLinks: { ...DEFAULT_SYNC_LINKS }
-            }
-        };
-        
-        let bannerInterval;
-        let liveClockInterval = null;
-        let bannerCurrentIndex = 0;
-        let currentBannerDataHash = "";
-        let isBannerDismissed = false;
-
-        const langData = {
-    en: { 
-        days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
-        nums: ["0","1","2","3","4","5","6","7","8","9"], 
-        filters: ["Festivals", "Auspicious", "Holidays", "Other festivals"], 
-        indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
-        indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
-        seasonDescriptions: [],
-        paksha: ["Shukla Paksha", "Krishna Paksha"],
-        tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
-    },
-    hi: { 
-        days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], 
-        nums: ["०","१","२","३","४","५","६","७","८","९"], 
-        filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ", "अन्य त्यौहार"], 
-        indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ़", "आषाढ़ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
-        indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
-        seasonDescriptions: [],
-        paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
-        tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
-    },
-    or: { 
-        days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], 
-        nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], 
-        filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ", "ଅନ୍ୟାନ୍ୟ ପର୍ବ"], 
-        indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫାଲଗୁନ / ଚୈତ୍ର", "ଚୈତ୍ର / ବୈଶାଖ", "ବୈଶାଖ / ଜ୍ୟୈଷ୍ଠ", "ଜ୍ୟୈଷ୍ଠ / ଆଷାଢ଼", "ଆଷାଢ଼ / ଶ୍ରାବଣ", "ଶ୍ରାବଣ / ଭାଦ୍ରବ", "ଭାଦ୍ରବ / ଆଶ୍ୱିନ", "ଆଶ୍ୱିନ / କାର୍ତ୍ତିକ", "କାର୍ତ୍ତିକ / ମାର୍ଗଶୀର", "ମାର୍ଗଶୀର / ପୌଷ"],
-        indianSeasons: ["ବସନ୍ତ", "ଗ୍ରୀଷ୍ମ", "ବର୍ଷା", "ଶରତ", "ହେମନ୍ତ", "ଶିଶିର"],
-        seasonDescriptions: [],
-        paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
-        tithis: ["ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ଅମାବାସ୍ୟା"]
-    },
-    bn: { 
-        days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], 
-        nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
-        filters: ["উৎসব", "শুভ দিন", "ছুটি", "অন্যান্য উৎসব"], 
-        indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
-        indianSeasons: ["বসন্ত", "গ্রীষ্ম", "বর্ষা", "শরৎ", "হেমন্ত", "শিশির"],
-        seasonDescriptions: [],
-        paksha: ["শুক্ল পক্ষ", "कृष्ण পক্ষ"],
-        tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
-    },
-    mr: { 
-        days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], 
-        nums: ["०","१","२","३","४","५","६","७","८","९"], 
-        filters: ["सण", "शुभ दिवस", "सुट्ट्या", "इतर सण"], 
-        indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "फाल्गुन / चैत्र", "चैत्र / वैशाख", "वैशाख / ज्येष्ठ", "ज्येष्ठ / आषाढ", "आषाढ / श्रावण", "श्रावण / भाद्रपद", "भाद्रपद / आश्विन", "आश्विन / कार्तिक", "कार्तिक / मार्गशीर्ष", "मार्गशीर्ष / पौष"],
-        indianSeasons: ["वसंत", "ग्रीष्म", "वर्षा", "शरद", "हेमंत", "शिशिर"],
-        seasonDescriptions: [],
-        paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
-        tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
-    },
-    gu: { 
-        days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], 
-        nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], 
-        filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ", "અન્ય તહેવારો"], 
-        indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગણ / ચૈત્ર", "ચૈત્ર / વૈશાખ", "વૈશાખ / જેઠ", "જેઠ / અષાઢ", "અષાઢ / શ્રાવણ", "શ્રાવણ / ભાદરવો", "ભાદરવો / આસો", "આસો / કારતક", "કારતક / માગશર", "માગશર / પોષ"],
-        indianSeasons: ["વસંત", "ગ્રીષ્મ", "વર્ષા", "શરદ", "હેમંત", "શિશિર"],
-        seasonDescriptions: [],
-        paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
-        tithis: ["પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "પૂનમ", "પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "અમાસ"]
-    },
-    pa: { 
-        days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], 
-        nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], 
-        filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ", "ਹੋਰ ਤਿਉਹਾਰ"], 
-        indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗਣ / ਚੇਤ", "ਚੇਤ / ਵੈਸਾਖ", "ਵੈਸਾਖ / ਜੇਠ", "ਜੇਠ / ਹਾੜ", "ਹਾੜ / ਸਾਵਣ", "ਸਾਵਣ / ਭਾਦੋਂ", "ਭਾਦੋਂ / ਅੱਸੂ", "ਅੱਸੂ / ਕੱਤਕ", "ਕੱਤਕ / ਮੱਘਰ", "ਮੱਘਰ / ਪੋਹ"],
-        indianSeasons: ["ਬਸੰਤ", "ਗ੍ਰੀਸ਼ਮ", "ਵਰਖਾ", "ਸ਼ਰਦ", "ਹੇਮੰਤ", "ਸ਼ਿਸ਼ਿਰ"],
-        seasonDescriptions: [],
-        paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
-        tithis: ["ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਮਾਸ਼ੀ", "ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਮੱਸਿਆ"]
-    },
-    ta: { 
-        days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], 
-        nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], 
-        filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை", "மற்ற பண்டிகைகள்"], 
-        indianMonths: ["மார்கழி / தை", "தை / மாசி", "மாசி / பங்குனி", "பங்குனி / சித்திரை", "சித்திரை / வைகாசி", "வைகாசி / ஆனி", "ஆனி / ஆடி", "ஆடி / ஆவணி", "ஆவணி / புரட்டாசி", "புரட்டாசி / ஐப்பசி", "ஐப்பசி / கார்த்திகை", "கார்த்திகை / மார்கழி"],
-        indianSeasons: ["இளவேனில்", "முதுவேனில்", "கார்", "குளிர்", "முன்பனி", "பின்பனி"],
-        seasonDescriptions: [],
-        paksha: ["வளர்பிறை", "தேய்பிறை"],
-        tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "அமாவாசை"]
-    },
-    te: { 
-        days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], 
-        nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], 
-        filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు", "ఇతర పండుగలు"], 
-        indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్గుణం", "ఫాల్గుణం / చైత్రం", "చైత్రం / వైశాఖం", "వైశాఖం / జ్యేష్ఠం", "జ్యేష్ఠం / ఆషాఢం", "ఆషాఢం / శ్రావణం", "శ్రావణం / భాద్రపదం", "భాద్రపదం / ఆశ్వయుజం", "ఆశ్వయుజం / కార్తీకం", "కార్తీకం / మార్గశిరం", "మార్గశిరం / పుష్యం"],
-        indianSeasons: ["వసంత", "గ్రీష్మ", "వర్ష", "శరత్", "హేమంత", "శిశిర"],
-        seasonDescriptions: [],
-        paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
-        tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "అమావాస్య"]
-    },
-    kn: { 
-        days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], 
-        nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], 
-        filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು", "ಇತರ ಹಬ್ಬಗಳು"], 
-        indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ", "ಫಾಲ್ಗುಣ / ಚೈತ್ರ", "ಚೈತ್ರ / ವೈಶಾಖ", "ವೈಶಾಖ / ಜ್ಯೇಷ್ಠ", "ಜ್ಯೇಷ್ಠ / ಆಷಾಢ", "ಆಷಾಢ / ಶ್ರಾವಣ", "ಶ್ರಾವಣ / ಭಾದ್ರಪದ", "ಭಾದ್ರಪದ / ಆಶ್ವಯುಜ", "ಆಶ್ವಯುಜ / ಕಾರ್ತಿಕ", "ಕಾರ್ತಿಕ / ಮಾರ್ಗಶಿರ", "ಮಾರ್ಗಶಿರ / ಪುಷ್ಯ"],
-        indianSeasons: ["ವಸಂತ", "ಗ್ರೀಷ್ಮ", "ವರ್ಷ", "ಶರತ್", "ಹೇಮಂತ", "ಶಿಶಿರ"],
-        seasonDescriptions: [],
-        paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
-        tithis: ["ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಅಮಾವಾಸ್ಯೆ"]
-    },
-    ml: { 
-        days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], 
-        nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], 
-        filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി", "മറ്റ് ഉത്സവങ്ങൾ"], 
-        indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "കുംഭം / മീനം", "മീനം / മേടം", "മേടം / ഇടവം", "ഇടവം / മിഥുനം", "മിഥുനം / കർക്കടകം", "കർക്കടകം / ചിങ്ങം", "ചിങ്ങം / കന്നി", "കന്നി / തുലാം", "തുലാം / വൃശ്ചികം", "വൃശ്ചികം / ധനു"],
-        indianSeasons: ["വസന്തം", "ഗ്രീഷ്മം", "വർഷം", "ശരത്", "ഹേമന്തം", "ശിശിരം"],
-        seasonDescriptions: [],
-        paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
-        tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "പൗർണ്ണമി", "പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "അമാവാസി"]
-    },
-    as: { 
-        days: ["ৰবি", "সোম", "মঙল", "বুধ", "বৃহ", "শুক্ৰ", "শনি"], 
-        nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
-        filters: ["উৎসৱ", "শুভ দিন", "বন্ধ", "অন্যান্য উৎসৱ"], 
-        indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফাগুন / চ'ত", "চ'ত / বহাগ", "বহাগ / জেঠ", "জেঠ / আহাৰ", "আহাৰ / শাওন", "শাওন / ভাদ", "ভাদ / আহিন", "আহিন / কাতি", "কাতি / আঘোণ", "আঘোণ / পুহ"],
-        indianSeasons: ["বসন্ত", "গ্ৰীষ্ম", "বৰ্ষা", "শৰৎ", "হেমন্ত", "শীত"],
-        seasonDescriptions: [],
-        paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
-        tithis: ["প্ৰতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুৰ্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নৱমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্ৰয়োদশী", "চতুৰ্দশী", "পূৰ্ণিমা", "প্ৰতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুৰ্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নৱমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্ৰয়োদশী", "চতুৰ্দশী", "অমাৱস্যা"]
-    }
-};
-
-        function calculateTithi(dateObj) {
-            const day = String(dateObj.getDate()).padStart(2, '0');
-            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const year = dateObj.getFullYear();
-            
-            const fullDateKey = `${day}-${month}-${year}`; // e.g., 14-01-2026
-            const recDateKey = `${day}-${month}`;        // e.g., 14-01
-
-            // 1. Check for Manual Overrides first
-            let manualIndex = null;
-            if (appState.manualTithis && appState.manualTithis[fullDateKey] !== undefined) {
-                manualIndex = appState.manualTithis[fullDateKey];
-            } else if (appState.manualTithis && appState.manualTithis[recDateKey] !== undefined) {
-                manualIndex = appState.manualTithis[recDateKey];
-            }
-
-            let astro;
-            if (manualIndex !== null) {
-                // Hybrid: Use manual Tithi but keep math-based Nakshatra/Yoga
-                const mathData = VedicAstro.calculate(dateObj);
-                astro = { ...mathData, tithiIndex: manualIndex };
-            } else {
-                // Default: Pure mathematical calculation
-                astro = VedicAstro.getTithiAtSunrise(dateObj);
-            }
-
-            // 2. Localization & Rendering
-            const currentLang = appState.config.language || 'en';
-            const langObj = langData[currentLang] || langData['en'];
-            const safeIndex = astro.tithiIndex;
-            
-            return {
-                tithi: langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`,
+                    <!-- Small floating leaves -->
+                    <g style="animation: gentleSway 4s ease-in-out infinite alternate; transform-origin: 46px 20px;">
+                        <path d="M46 20 C46 20 42 22 42 26 C42 30 46 32 46 32 C46 32 50 30 50 26 C50 22 46 20 46 20 Z" fill="#FFB74D"/>
+                    </g>
+                    <g style="animation: gentleSway 3s ease-in-out infinite alternate-reverse; transform-origin: 16px 42px;">
+                        <path d="M16 42 C16 42 12 40 12 36 C12 32 16 30 16 30 C16 30 20 32 20 36 C20 40 16 42 16 42 Z" fill="#FFD54F"/>
+                    </g>
+                </svg>`,
                 paksha: langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna"),
                 index: safeIndex,
                 nakshatra: astro.nakshatra,
