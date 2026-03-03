@@ -4958,30 +4958,6 @@ return SunCalc;
 
         var preRenderedCache = {};
 
-        function processPreRenderQueue(deadline) {
-            while (preRenderQueue.length > 0 && deadline.timeRemaining() > 5) {
-                const task = preRenderQueue.shift();
-                
-                const dateKey = `${task.monthData.year}-${task.monthData.month}-${task.day}`;
-                if (!preRenderedCache[dateKey]) {
-                    preRenderedCache[dateKey] = generateDayModalHTML(task.day, task.monthData);
-                }
-            }
-
-            if (preRenderQueue.length > 0) {
-                reqIdleCallback(processPreRenderQueue);
-            } else {
-                isPreRenderRunning = false;
-            }
-        }
-
-        function startBackgroundPreRender() {
-            if (!isPreRenderRunning && preRenderQueue.length > 0) {
-                isPreRenderRunning = true;
-                reqIdleCallback(processPreRenderQueue);
-            }
-        }
-
         function render() {
             // Use viewDate to generate data on the fly (Infinite Navigation)
             // Fallback to activeMonthIndex if viewDate is missing (Legacy safety)
@@ -5091,28 +5067,15 @@ return SunCalc;
             // --- NEW LOGIC: Pre-Render Day Details HTML ---
             // Clear cache entirely on every render to ensure user edits are reflected immediately
             preRenderedCache = {};
-            
-            // Clear the queue for the new view
-            preRenderQueue = [];
-            isPreRenderRunning = false;
 
             const daysInMonth = new Date(currentData.year, currentData.month + 1, 0).getDate();
-            const realTodayDate = new Date();
             
+            // Pre-calculate HTML synchronously for all days in the current month
+            // so the modal opens instantly and acts only as a fast display component.
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateKey = `${currentData.year}-${currentData.month}-${d}`;
-                
-                // 1. Instant Render for "Today" if we are viewing the current month
-                if (d === realTodayDate.getDate() && currentData.month === realTodayDate.getMonth() && currentData.year === realTodayDate.getFullYear()) {
-                    preRenderedCache[dateKey] = generateDayModalHTML(d, currentData);
-                } else {
-                    // 2. Queue the rest for background processing
-                    preRenderQueue.push({ day: d, monthData: currentData });
-                }
+                preRenderedCache[dateKey] = generateDayModalHTML(d, currentData);
             }
-
-            // Start the background idle task
-            startBackgroundPreRender();
 
             // Step 1: Cache the state
             saveStateToCache();
