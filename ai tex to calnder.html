@@ -836,12 +836,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3); /* Glass Edge */
             border-radius: 12px;
-            padding: 6px 10px;
+            padding: 4px 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-width: 70px; /* Consistent width */
+            min-width: 45px; /* Consistent width */
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             transition: transform 0.2s ease, background 0.2s ease;
         }
@@ -852,17 +852,17 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
 
         .glass-time-box .label {
-            font-size: 8px;
+            font-size: 6px;
             text-transform: uppercase;
             font-weight: 800;
             opacity: 0.7;
             letter-spacing: 0.05em;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
             color: rgba(255, 255, 255, 0.9);
         }
 
         .glass-time-box .time {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 800;
             line-height: 1;
             color: #ffffff;
@@ -870,7 +870,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
 
         .glass-time-box .period {
-            font-size: 8px;
+            font-size: 6px;
             font-weight: 700;
             opacity: 0.8;
             margin-top: 1px;
@@ -1490,30 +1490,30 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        .card-text-area { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .card-text-area { display: flex; flex-direction: column; gap: 4px; width: 100%; }
         .card-title { 
-            font-size: 18px; 
+            font-size: 13px;
             font-weight: 900; 
             letter-spacing: -0.02em; 
-            line-height: 1.2; 
+            line-height: 1.1;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis;
         }
-        .card-title.large { font-size: 22px; }
+        .card-title.large { font-size: 16px; }
         .card-desc { 
-            font-size: 13px; 
+            font-size: 10px;
             font-weight: 600; 
             opacity: 1; 
-            line-height: 1.4; 
+            line-height: 1.2;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2); 
         }
 
         /* Improved Card Footers (The data blocks) */
         .card-footer { 
-            border-radius: 12px; padding: 12px; 
-            display: flex; justify-content: space-between; align-items: center; 
+            border-radius: 10px; padding: 6px;
+            display: flex; justify-content: center; align-items: center;
         }
         
         /* Themed Footer Backgrounds */
@@ -6400,16 +6400,14 @@ function renderCalendarGrid(data) {
                     // Unified Footer HTML (Compatible with Live Updates)
                     footerHtml = `
                     <div class="card-footer ${footerClass}" style="display: block;">
-                        <div class="flex justify-between items-center px-4">
-                            <div class="glass-time-box">
+                        <div class="flex justify-center items-center">
+                            <div class="glass-time-box border-r-0" style="border-radius: 12px 0 0 12px;">
                                     <span class="label">Start</span>
                                     <span class="time">${startTime}</span>
                                     <span class="period">${startPeriod}</span>
                             </div>
 
-                            <div class="h-px bg-white/30 flex-1 mx-4"></div>
-
-                            <div class="glass-time-box">
+                            <div class="glass-time-box" style="border-radius: 0 12px 12px 0;">
                                     <span class="label">End</span>
                                     <span class="time">${endTime}</span>
                                     <span class="period">${endPeriod}</span>
@@ -6423,20 +6421,20 @@ function renderCalendarGrid(data) {
 
                                 <!-- Status Badge (Top Left) -->
                                 <div class="absolute top-0 left-0 z-20" style="top: -5px; left: -1px;">
-                                    <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-3 py-1 text-[9px] font-bold block" style="border-radius: 12px 0 12px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
+                                    <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-2 py-0.5 text-[8px] font-bold block" style="border-radius: 10px 0 10px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                 </div>
 
                                 <div class="relative w-full h-full overflow-hidden rounded-xl">
                                     <div class="card-content relative pt-4">
                                         <div class="card-text-area mt-1">
-                                            <h2 class="card-title text-base">${m.name}</h2>
-                                            <p class="card-desc text-xs" style="color: rgba(255,255,255,0.9);">${m.description}</p>
+                                            <h2 class="card-title">${m.name}</h2>
+                                            <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
                                         </div>
 
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
                                         <div class="relative mt-auto pt-3">
                                             <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
-                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-3 py-0.5 text-[9px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
+                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-2 py-0.5 text-[8px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
                                             </div>
                                             ${footerHtml}
                                         </div>
