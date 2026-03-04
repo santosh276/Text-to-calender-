@@ -1324,69 +1324,64 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .current-time .time { font-size: 12px; font-weight: 800; color: var(--text-muted); }
 
         /* --- Timeline Structure --- */
-        .timeline-container { position: relative; display: flex; flex-direction: column; gap: 24px; }
+        .timeline-container {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 16px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .timeline-container::-webkit-scrollbar { display: none; }
         
         /* The central string */
-        .timeline-spine {
-            position: absolute; left: 28px; top: 10px; bottom: 20px; width: 2px;
-            background-color: rgba(0, 0, 0, 0.06); border-radius: 2px;
-        }
+        .timeline-spine { display: none; }
 
         .timeline-item { 
-            display: flex; align-items: stretch; gap: 12px; position: relative;
+            display: flex; flex-direction: column; align-items: stretch; gap: 8px; position: relative;
+            flex: 0 0 300px;
+            max-width: 85vw;
+            scroll-snap-align: center;
             /* Animation for floating in */
             opacity: 0;
-            transform: translateY(20px);
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform: translateX(20px);
+            animation: slideLeftFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         
-        /* Delays so they cascade down the screen nicely */
+        /* Delays so they cascade in nicely */
         .timeline-item:nth-child(2) { animation-delay: 0.1s; }
         .timeline-item:nth-child(3) { animation-delay: 0.2s; }
         .timeline-item:nth-child(4) { animation-delay: 0.3s; }
         .timeline-item:nth-child(5) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(6) { animation-delay: 0.5s; }
+        .timeline-item:nth-child(7) { animation-delay: 0.6s; }
+        .timeline-item:nth-child(n+8) { animation-delay: 0.7s; }
 
-        @keyframes slideUpFade {
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideLeftFade {
+            to { opacity: 1; transform: translateX(0); }
         }
         
-        /* Left side times */
+        /* Top side times for horizontal scroll */
         .time-dot-col {
-            width: 48px; display: flex; flex-direction: column; align-items: flex-end; padding-top: 14px;
+            width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 8px; margin-bottom: 4px;
         }
-        .time-txt { font-size: 11px; font-weight: 800; color: var(--text-muted); line-height: 1; }
-        .time-txt.am-pm { font-size: 9px; font-weight: 600; opacity: 0.7; margin-top: 2px; }
+        .time-txt { font-size: 13px; font-weight: 800; color: var(--text-muted); line-height: 1; }
+        .time-txt.am-pm { font-size: 11px; font-weight: 600; opacity: 0.7; margin-top: 0; }
         
         .timeline-dot {
-            width: 10px; height: 10px; border-radius: 50%; background-color: var(--bg-app);
-            border: 2px solid; margin-top: 6px; margin-bottom: 6px; margin-right: -21px; z-index: 10;
-            box-shadow: 0 0 0 3px var(--bg-app); /* Gives breathing room around the dot */
+            width: 12px; height: 12px; border-radius: 50%; background-color: var(--bg-app);
+            border: 3px solid; margin: 0; z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
 
-        /* --- Updated Dot Style (Thumbtack) --- */
         @media (max-width: 1023px) {
             .timeline-spine { display: none; }
-            
-            .time-dot-col {
-                position: relative;
-                overflow: visible;
-                margin-right: 0;
-                /* Remove old padding if needed, but keeping it safe */
-            }
-
-            .timeline-dot {
-                position: absolute;
-                right: -19px; /* Pinned to the card edge */
-                top: 22px;    /* Align with card title area */
-                width: 14px;
-                height: 14px;
-                border-width: 3px;
-                background-color: white !important; /* Ensure it looks like a pin head */
-                box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Drop shadow for depth */
-                z-index: 20;
-                margin: 0;
-            }
+            /* In mobile, 3 containers showing in horizontal line context => ensure it flows nicely */
+            .timeline-item { flex: 0 0 calc(33.333% - 11px); min-width: 240px; }
         }
 
         /* --- Premium Cards --- */
@@ -1427,52 +1422,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         /* NEW PREMIUM THEMES (Lavender & Royal) */
         .bg-lavender-gradient { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.3); }
         .bg-royal-gradient { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.3); }
-
-        /* TAB UI STYLES */
-        .timings-tab-container {
-            display: flex;
-            background: rgba(0,0,0,0.05);
-            border-radius: 999px;
-            padding: 4px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .timings-tab-btn {
-            flex: 1;
-            padding: 8px 16px;
-            text-align: center;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #475569;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 2;
-        }
-        .timings-tab-btn:hover {
-            color: #1e293b;
-        }
-        .timings-tab-btn.active {
-            color: #ffffff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        /* Active Pill Background */
-        .tab-indicator {
-            position: absolute;
-            top: 4px;
-            bottom: 4px;
-            left: 4px;
-            width: calc(50% - 4px);
-            border-radius: 999px;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-        }
-        .tab-indicator.auspicious { background: linear-gradient(90deg, #10b981, #059669); transform: translateX(0); }
-        .tab-indicator.inauspicious { background: linear-gradient(90deg, #ef4444, #b91c1c); transform: translateX(100%); width: calc(50% - 4px); } /* Adjust based on count */
 
         /* FOOTER THEMES */
         .footer-emerald { background: rgba(6, 78, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); }
@@ -1640,11 +1589,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
            DESKTOP LAYOUT (The Dashboard Grid)
            ========================================= */
         @media (min-width: 1024px) {
-            /* Turn the list into a Grid */
-            .timeline-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+            /* Desktop Layout for horizontal line (3 items per view) */
+            .timeline-container {
+                display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory;
+                gap: 20px; padding-bottom: 24px;
+            }
             .timeline-spine { display: none; }
             
-            .timeline-item { flex-direction: column; gap: 16px; }
+            .timeline-item { flex: 0 0 calc(33.333% - 14px); gap: 16px; }
             .time-dot-col {
                 width: 100%; flex-direction: row; align-items: center; justify-content: flex-start; padding-top: 0; gap: 12px;
             }
@@ -5962,32 +5914,6 @@ function renderCalendarGrid(data) {
             return { auspicious, inauspicious };
         }
 
-        function switchTimingTab(tab) {
-            // Update buttons
-            document.querySelectorAll('.timings-tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.innerText.trim().toLowerCase() === tab.trim().toLowerCase()) btn.classList.add('active');
-            });
-            
-            // Move Indicator
-            const indicator = document.getElementById('tab-indicator');
-            if(indicator) {
-                if(tab === 'auspicious') {
-                    indicator.classList.remove('inauspicious');
-                    indicator.classList.add('auspicious');
-                } else {
-                    indicator.classList.remove('auspicious');
-                    indicator.classList.add('inauspicious');
-                }
-            }
-
-            // Toggle Lists
-            const listAus = document.getElementById('list-auspicious');
-            const listInaus = document.getElementById('list-inauspicious');
-            if(listAus) listAus.style.display = (tab === 'auspicious' ? 'flex' : 'none');
-            if(listInaus) listInaus.style.display = (tab === 'inauspicious' ? 'flex' : 'none');
-        }
-
         // --- UPDATED MAIN RENDER FUNCTION ---
         function renderPanchang(data) {
             const section = document.getElementById('sec-panchang');
@@ -6391,20 +6317,17 @@ function renderCalendarGrid(data) {
                     <div class="time" id="timings-clock">${timeStr}</div>
                 </div>
 
-                <!-- TABS -->
-                <div class="timings-tab-container">
-                    <div id="tab-indicator" class="tab-indicator auspicious"></div>
-                    <div class="timings-tab-btn active" onclick="switchTimingTab('auspicious')">Auspicious</div>
-                    <div class="timings-tab-btn" onclick="switchTimingTab('inauspicious')">Inauspicious</div>
-                </div>
             `;
 
-            // Helper to render a list
-            const renderList = (list, id, isVisible) => {
-                let listHtml = `<div id="${id}" class="timeline-container" style="display: ${isVisible ? 'flex' : 'none'}; flex-direction: column; gap: 16px;">`;
+            // Combine and sort both lists chronologically
+            const combinedList = [...result.auspicious, ...result.inauspicious].sort((a, b) => a.start - b.start);
+
+            // Render a single horizontal list
+            const renderList = (list, id) => {
+                let listHtml = `<div id="${id}" class="timeline-container">`;
                 
                 if (list.length === 0) {
-                    listHtml += `<div class="text-center text-gray-400 text-xs py-4">No timings available</div>`;
+                    listHtml += `<div class="text-center text-gray-400 text-xs py-4 w-full">No timings available</div>`;
                 } else {
                     listHtml += `<div class="timeline-spine"></div>`; 
                     
@@ -6527,8 +6450,7 @@ function renderCalendarGrid(data) {
                 return listHtml;
             };
 
-            html += renderList(result.auspicious, 'list-auspicious', true);
-            html += renderList(result.inauspicious, 'list-inauspicious', false);
+            html += renderList(combinedList, 'list-combined');
 
             container.innerHTML = html;
             startLiveClock(); // Ensure clock restarts
