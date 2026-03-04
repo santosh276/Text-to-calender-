@@ -1324,16 +1324,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .current-time .time { font-size: 12px; font-weight: 800; color: var(--text-muted); }
 
         /* --- Timeline Structure --- */
-        .timeline-container { position: relative; display: flex; flex-direction: column; gap: 24px; }
-        
-        /* The central string */
-        .timeline-spine {
-            position: absolute; left: 28px; top: 10px; bottom: 20px; width: 2px;
-            background-color: rgba(0, 0, 0, 0.06); border-radius: 2px;
+        .timeline-container {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
 
         .timeline-item { 
-            display: flex; align-items: stretch; gap: 12px; position: relative;
+            display: flex; align-items: stretch; position: relative;
             /* Animation for floating in */
             opacity: 0;
             transform: translateY(20px);
@@ -1349,49 +1348,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         @keyframes slideUpFade {
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        /* Left side times */
-        .time-dot-col {
-            width: 48px; display: flex; flex-direction: column; align-items: flex-end; padding-top: 14px;
-        }
-        .time-txt { font-size: 11px; font-weight: 800; color: var(--text-muted); line-height: 1; }
-        .time-txt.am-pm { font-size: 9px; font-weight: 600; opacity: 0.7; margin-top: 2px; }
-        
-        .timeline-dot {
-            width: 10px; height: 10px; border-radius: 50%; background-color: var(--bg-app);
-            border: 2px solid; margin-top: 6px; margin-bottom: 6px; margin-right: -21px; z-index: 10;
-            box-shadow: 0 0 0 3px var(--bg-app); /* Gives breathing room around the dot */
-        }
-        .dot-red { border-color: #ef4444; } .dot-green { border-color: #10b981; } .dot-slate { border-color: #64748b; } .dot-orange { border-color: #f97316; }
-
-        /* --- Updated Dot Style (Thumbtack) --- */
-        @media (max-width: 1023px) {
-            .timeline-spine { display: none; }
-            
-            .time-dot-col {
-                position: relative;
-                overflow: visible;
-                margin-right: 0;
-                /* Remove old padding if needed, but keeping it safe */
-            }
-
-            .timeline-dot {
-                position: absolute;
-                right: -19px; /* Pinned to the card edge */
-                top: 22px;    /* Align with card title area */
-                width: 14px;
-                height: 14px;
-                border-width: 3px;
-                background-color: white !important; /* Ensure it looks like a pin head */
-                box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Drop shadow for depth */
-                z-index: 20;
-                margin: 0;
-            }
-        }
 
         /* --- Premium Cards --- */
         .timeline-card {
-            flex: 1; border-radius: 20px; padding: 16px; color: white; position: relative; overflow: hidden;
+            flex: 1; border-radius: 12px; padding: 10px; color: white; position: relative; overflow: hidden;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             border: 1px solid rgba(255, 255, 255, 0.15); /* Glass edge */
         }
@@ -1640,21 +1600,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
            DESKTOP LAYOUT (The Dashboard Grid)
            ========================================= */
         @media (min-width: 1024px) {
-            /* Turn the list into a Grid */
-            .timeline-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
-            .timeline-spine { display: none; }
-            
-            .timeline-item { flex-direction: column; gap: 16px; }
-            .time-dot-col {
-                width: 100%; flex-direction: row; align-items: center; justify-content: flex-start; padding-top: 0; gap: 12px;
-            }
-            .time-txt { font-size: 15px; }
-            .time-txt.am-pm { font-size: 13px; margin-top: 0; }
-            .timeline-dot { margin: 0; }
+            /* Turn the list into a 3-Column Grid */
+            .timeline-container { grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-            .card-title { font-size: 24px; }
-            .card-title.large { font-size: 32px; }
-            .card-desc { font-size: 15px; }
+            .card-title { font-size: 18px; }
+            .card-title.large { font-size: 20px; }
+            .card-desc { font-size: 13px; }
         }
 </style>
 </head>
@@ -6391,144 +6342,116 @@ function renderCalendarGrid(data) {
                     <div class="time" id="timings-clock">${timeStr}</div>
                 </div>
 
-                <!-- TABS -->
-                <div class="timings-tab-container">
-                    <div id="tab-indicator" class="tab-indicator auspicious"></div>
-                    <div class="timings-tab-btn active" onclick="switchTimingTab('auspicious')">Auspicious</div>
-                    <div class="timings-tab-btn" onclick="switchTimingTab('inauspicious')">Inauspicious</div>
-                </div>
             `;
 
             // Helper to render a list
-            const renderList = (list, id, isVisible) => {
-                let listHtml = `<div id="${id}" class="timeline-container" style="display: ${isVisible ? 'flex' : 'none'}; flex-direction: column; gap: 16px;">`;
+            const renderList = (list, title, titleColorClass) => {
+                if (list.length === 0) return '';
                 
-                if (list.length === 0) {
-                    listHtml += `<div class="text-center text-gray-400 text-xs py-4">No timings available</div>`;
-                } else {
-                    listHtml += `<div class="timeline-spine"></div>`; 
+                let listHtml = `
+                <div class="mt-6 mb-3">
+                    <h4 class="font-bold ${titleColorClass} text-sm uppercase tracking-widest border-b border-gray-100 pb-2">${title}</h4>
+                </div>
+                <div class="timeline-container">`;
+
+                list.forEach(m => {
+                    const isActive = (now >= m.start && now <= m.end);
+                    const isUpcoming = (now < m.start);
+                    const isCompleted = (!isActive && !isUpcoming);
                     
-                    list.forEach(m => {
-                        const isActive = (now >= m.start && now <= m.end);
-                        const isUpcoming = (now < m.start);
-                        const isCompleted = (!isActive && !isUpcoming);
-                        
-                        const startStr = m.start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-                        const endStr = m.end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-                        const [tTime, tPeriod] = startStr.split(' ');
+                    const startStr = m.start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                    const endStr = m.end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
-                        // Pill Footer Logic
-                        let footerHtml = '';
-                        const [startTime, startPeriod] = startStr.split(' ');
-                        const [endTime, endPeriod] = endStr.split(' ');
+                    // Pill Footer Logic
+                    let footerHtml = '';
+                    const [startTime, startPeriod] = startStr.split(' ');
+                    const [endTime, endPeriod] = endStr.split(' ');
 
-                        // Determine status text for active/upcoming
-                        let progressPct = 0;
-                        let statusText = '';
-                        let isEndingSoon = false;
+                    // Determine status text for active/upcoming
+                    let statusText = '';
+                    let isEndingSoon = false;
+
+                    if (isActive) {
+                        const remainingMs = m.end - now;
+                        const remMins = Math.ceil(remainingMs / 60000);
+                        const h = Math.floor(remMins / 60);
+                        const mTime = remMins % 60;
                         
-                        if (isActive) {
-                            const total = m.end - m.start;
-                            const elapsed = now - m.start;
-                            progressPct = Math.min(100, Math.max(0, (elapsed / total) * 100));
-                            
-                            const remainingMs = m.end - now;
-                            const remMins = Math.ceil(remainingMs / 60000);
-                            const h = Math.floor(remMins / 60);
-                            const mTime = remMins % 60;
-                            
-                            if(remMins <= 15) {
-                                statusText = "Ending Soon";
-                                isEndingSoon = true;
-                            } else {
-                                statusText = `ENDS IN ${h}H ${mTime}M`;
-                            }
-                        } else if (isUpcoming) {
-                            const waitMs = m.start - now;
-                            const waitMins = Math.ceil(waitMs / 60000);
-                            const h = Math.floor(waitMins / 60);
-                            const mTime = waitMins % 60;
-                            statusText = `UPCOMING IN ${h}H ${mTime}M`;
-                            progressPct = 0;
+                        if(remMins <= 15) {
+                            statusText = "Ending Soon";
+                            isEndingSoon = true;
                         } else {
-                            progressPct = 100;
-                            statusText = "Completed";
+                            statusText = `ENDS IN ${h}H ${mTime}M`;
                         }
+                    } else if (isUpcoming) {
+                        const waitMs = m.start - now;
+                        const waitMins = Math.ceil(waitMs / 60000);
+                        const h = Math.floor(waitMins / 60);
+                        const mTime = waitMins % 60;
+                        statusText = `UPCOMING IN ${h}H ${mTime}M`;
+                    } else {
+                        statusText = "Completed";
+                    }
 
-                        const pillClass = `badge-${m.themeKey}`;
-                        const footerClass = `footer-${m.themeKey}`;
-                        const badgeClass = isEndingSoon ? 'badge-ending-soon' : '';
-                        
-                        // Unified Footer HTML (Compatible with Live Updates)
-                        footerHtml = `
-                        <div class="card-footer ${footerClass}" style="display: block;">
-                            <div class="flex justify-between items-center px-4">
-                                <div class="glass-time-box">
-                                        <span class="label">Start</span>
-                                        <span class="time">${startTime}</span>
-                                        <span class="period">${startPeriod}</span>
-                                </div>
-                                
-                                <div class="h-px bg-white/30 flex-1 mx-4"></div>
+                    const pillClass = `badge-${m.themeKey}`;
+                    const footerClass = `footer-${m.themeKey}`;
+                    const badgeClass = isEndingSoon ? 'badge-ending-soon' : '';
 
-                                <div class="glass-time-box">
-                                        <span class="label">End</span>
-                                        <span class="time">${endTime}</span>
-                                        <span class="period">${endPeriod}</span>
-                                </div>
+                    // Unified Footer HTML (Compatible with Live Updates)
+                    footerHtml = `
+                    <div class="card-footer ${footerClass}" style="display: block;">
+                        <div class="flex justify-between items-center px-4">
+                            <div class="glass-time-box">
+                                    <span class="label">Start</span>
+                                    <span class="time">${startTime}</span>
+                                    <span class="period">${startPeriod}</span>
                             </div>
-                        </div>`;
 
-                        // Icon Logic
-                        
-                        listHtml += `
-                            <div class="timeline-item">
-                                <div class="time-dot-col">
-                                    <span class="time-txt">${tTime}</span>
-                                    <div class="timeline-dot ${m.iconColor}"></div>
-                                    <span class="time-txt am-pm">${tPeriod || ''}</span>
+                            <div class="h-px bg-white/30 flex-1 mx-4"></div>
+
+                            <div class="glass-time-box">
+                                    <span class="label">End</span>
+                                    <span class="time">${endTime}</span>
+                                    <span class="period">${endPeriod}</span>
+                            </div>
+                        </div>
+                    </div>`;
+
+                    listHtml += `
+                        <div class="timeline-item">
+                            <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''} overflow-visible" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
+
+                                <!-- Status Badge (Top Left) -->
+                                <div class="absolute top-0 left-0 z-20" style="top: -5px; left: -1px;">
+                                    <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-3 py-1 text-[9px] font-bold block" style="border-radius: 12px 0 12px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                 </div>
-                                <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''} overflow-visible" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
-                                    
-                                    <!-- Status Badge (Top Left) -->
-                                    <div class="absolute top-0 left-0 z-20" style="top: -5px; left: -1px;">
-                                        <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-4 py-1.5 text-[10px] font-bold block" style="border-radius: 20px 0 20px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
-                                    </div>
 
-                                    <!-- Category Badge (Top Right) -->
-                                    <div class="absolute top-0 right-0 z-20" style="top: -5px; right: -1px;">
-                                         <div class="glass-pill shadow-lg border-white/20 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider" style="border-radius: 0 20px 0 20px; border-width: 1px 0px 1px 1px;">
-                                            <span>${m.type === 'good' ? 'Auspicious' : (m.type === 'bad' ? 'Inauspicious' : 'Neutral')}</span>
+                                <div class="relative w-full h-full overflow-hidden rounded-xl">
+                                    <div class="card-content relative pt-4">
+                                        <div class="card-text-area mt-1">
+                                            <h2 class="card-title text-base">${m.name}</h2>
+                                            <p class="card-desc text-xs" style="color: rgba(255,255,255,0.9);">${m.description}</p>
                                         </div>
-                                    </div>
 
-                                    <div class="relative w-full h-full overflow-hidden rounded-[20px]">
-                                        <div class="card-content relative pt-5">
-                                            <div class="card-text-area mt-1">
-                                                <h2 class="card-title">${m.name}</h2>
-                                                <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
+                                        <!-- Footer Wrapper to allow relative positioning for Active Badge -->
+                                        <div class="relative mt-auto pt-3">
+                                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
+                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-3 py-0.5 text-[9px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
                                             </div>
-                                            
-                                            <!-- Footer Wrapper to allow relative positioning for Active Badge -->
-                                            <div class="relative mt-auto pt-4">
-                                                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
-                                                    <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-4 py-1 text-[10px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
-                                                </div>
-                                                ${footerHtml}
-                                            </div>
+                                            ${footerHtml}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        `;
-                    });
-                }
+                        </div>
+                    `;
+                });
                 listHtml += `</div>`;
                 return listHtml;
             };
 
-            html += renderList(result.auspicious, 'list-auspicious', true);
-            html += renderList(result.inauspicious, 'list-inauspicious', false);
+            html += renderList(result.auspicious, 'Auspicious Timings', 'text-green-700');
+            html += renderList(result.inauspicious, 'Inauspicious Timings', 'text-red-700');
 
             container.innerHTML = html;
             startLiveClock(); // Ensure clock restarts
