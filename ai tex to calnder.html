@@ -7148,12 +7148,17 @@ function renderCalendarGrid(data) {
 
                         <!-- 5. Rich Details (Notes/Events) -->
                         <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
-                            ${dayEvents.map(ev => `
-                                <div class="bg-gray-50 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} rounded-r-xl p-4 shadow-sm">
-                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName}</h4>
-                                    ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName}</p>` : ''}
+                            ${dayEvents.map(ev => {
+                                const cleanEng = ev.engName ? ev.engName.replace(/[\(\)\[\]]/g, '').trim() : '';
+                                const cleanLoc = ev.locName ? ev.locName.replace(/[\(\)\[\]]/g, '').trim() : '';
+                                return `
+                                <div class="modal-card relative overflow-hidden p-4 pl-5">
+                                    <div class="absolute left-0 top-0 bottom-0 w-1.5 ${ev.symbol==='!'?'bg-red-500':(ev.symbol==='*'?'bg-blue-500':'bg-gray-500')}"></div>
+                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${cleanEng}</h4>
+                                    ${cleanLoc ? `<p class="text-sm text-gray-600 font-oriya">${cleanLoc}</p>` : ''}
                                 </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                             
                             ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">${details.map(d => formatBodyLines(d.bodyLines)).join('<hr class="border-gray-200 my-4">')}</div>` : ''}
                         </div>
