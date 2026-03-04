@@ -6898,13 +6898,22 @@ function renderCalendarGrid(data) {
             let html = '';
             let inList = false;
             lines.forEach(line => {
-                const trimmed = line.trim();
-                if (trimmed.startsWith('-')) {
+                let trimmed = line.trim();
+                const isListItem = trimmed.startsWith('-');
+
+                // Process brackets and parentheses for localized text styling
+                // We use 'ml-1' for space before the translation but omit 'mr-1' so trailing punctuation isn't pushed away
+                trimmed = trimmed.replace(/\[([^\]]+)\]/g, '<span class="text-sm text-gray-500 font-oriya ml-1">$1</span>');
+                trimmed = trimmed.replace(/\(([^)]+)\)/g, '<span class="text-sm text-gray-500 font-oriya ml-1">$1</span>');
+
+                if (isListItem) {
                     if (!inList) {
                         html += '<ul class="list-disc pl-6 mb-2">';
                         inList = true;
                     }
-                    html += `<li class="mb-1 text-gray-600">${trimmed.replace('-','').trim()}</li>`;
+                    // Strip the leading hyphen (which might have space after it) from the transformed text
+                    let liContent = trimmed.replace(/^-/, '').trim();
+                    html += `<li class="mb-1 text-gray-600">${liContent}</li>`;
                 } else {
                     if (inList) {
                         html += '</ul>';
