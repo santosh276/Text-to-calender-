@@ -7147,15 +7147,29 @@ function renderCalendarGrid(data) {
                         </div>` : ''}
 
                         <!-- 5. Rich Details (Notes/Events) -->
-                        <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
-                            ${dayEvents.map(ev => `
-                                <div class="bg-gray-50 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} rounded-r-xl p-4 shadow-sm">
-                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName}</h4>
-                                    ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName}</p>` : ''}
+                        <div id="new-modal-rich-body" class="space-y-4 pb-8 pt-2">
+                            ${dayEvents.map(ev => {
+                                let borderColor = 'border-gray-200';
+                                let badgeColor = 'bg-gray-100 text-gray-600';
+                                let badgeText = 'Event';
+                                if (ev.symbol === '!') { borderColor = 'border-red-200'; badgeColor = 'bg-red-50 text-red-600'; badgeText = 'Festival'; }
+                                else if (ev.symbol === '*') { borderColor = 'border-blue-200'; badgeColor = 'bg-blue-50 text-blue-600'; badgeText = 'Holiday'; }
+                                else if (ev.symbol === '^') { borderColor = 'border-green-200'; badgeColor = 'bg-green-50 text-green-600'; badgeText = 'Auspicious'; }
+
+                                let cleanLocName = ev.locName ? ev.locName.replace(/^[\\[\\(]|[\]\\)]$/g, '').trim() : '';
+
+                                return \`
+                                <div class="bg-white border \${borderColor} rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden text-center flex flex-col items-center justify-center">
+                                    <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider \${badgeColor} mb-4">\${badgeText}</span>
+                                    <div class="flex flex-col items-center justify-center gap-1.5 w-full">
+                                        <h4 class="font-extrabold text-gray-900 text-2xl md:text-3xl leading-tight whitespace-normal break-words">\${ev.engName}</h4>
+                                        \${cleanLocName ? \`<p class="text-xl md:text-2xl text-orange-600 font-oriya leading-snug whitespace-normal break-words">\${cleanLocName}</p>\` : ''}
+                                    </div>
                                 </div>
-                            `).join('')}
+                                \`;
+                            }).join('')}
                             
-                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">${details.map(d => formatBodyLines(d.bodyLines)).join('<hr class="border-gray-200 my-4">')}</div>` : ''}
+                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content mt-4">${details.map(d => formatBodyLines(d.bodyLines)).join('<hr class="border-gray-200 my-4">')}</div>` : ''}
                         </div>
 
                     </div>
