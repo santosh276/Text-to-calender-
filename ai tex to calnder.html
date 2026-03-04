@@ -5805,16 +5805,14 @@ function renderCalendarGrid(data) {
                 "bg-lavender-gradient", "dot-lavender", "lavender"
             ));
 
-            // Abhijit Muhurat (8th Muhurta) - Skip on Wednesday (3)
-            if (dayOfWeek !== 3) {
-                const abhijitStart = sunrise.getTime() + (7 * muhurta);
-                const abhijitEnd = sunrise.getTime() + (8 * muhurta);
-                auspicious.push(createTimeObj(
-                    "Abhijit Muhurat", abhijitStart, abhijitEnd, 
-                    "good", "Victory over obstacles. Best for new beginnings.", 
-                    "bg-emerald-gradient", "dot-emerald", "emerald"
-                ));
-            }
+            // Abhijit Muhurat (8th Muhurta) - Usually skipped on Wednesday (3), but requested to always show.
+            const abhijitStart = sunrise.getTime() + (7 * muhurta);
+            const abhijitEnd = sunrise.getTime() + (8 * muhurta);
+            auspicious.push(createTimeObj(
+                "Abhijit Muhurat", abhijitStart, abhijitEnd,
+                "good", "Victory over obstacles. Best for new beginnings.",
+                "bg-emerald-gradient", "dot-emerald", "emerald"
+            ));
 
             // Vijaya Muhurta (11th Muhurta)
             const vijayaStart = sunrise.getTime() + (10 * muhurta);
@@ -6277,14 +6275,14 @@ function renderCalendarGrid(data) {
                 if (list.length === 0) return '';
                 
                 let listHtml = `
-                <div class="mt-6 mb-4 flex items-center gap-3">
+                <div class="mt-6 mb-4 flex items-center gap-3 relative z-30">
                     <div class="w-8 h-8 rounded-full ${bgIconClass} flex items-center justify-center ${titleColorClass} shadow-sm">
                         ${iconHtml}
                     </div>
                     <h4 class="font-bold ${titleColorClass} text-sm uppercase tracking-widest m-0">${title}</h4>
                     <div class="flex-grow h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
                 </div>
-                <div class="timeline-container">`;
+                <div class="timeline-container mt-2">`;
 
                 list.forEach(m => {
                     const isActive = (now >= m.start && now <= m.end);
@@ -6349,10 +6347,10 @@ function renderCalendarGrid(data) {
 
                     listHtml += `
                         <div class="timeline-item">
-                            <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''} overflow-visible" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
+                            <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''} overflow-visible mt-1" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
 
                                 <!-- Status Badge (Top Left) -->
-                                <div class="absolute top-0 left-0 z-20" style="top: -5px; left: -1px;">
+                                <div class="absolute top-0 left-0 z-20" style="top: -6px; left: -1px;">
                                     <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-2 py-0.5 text-[8px] font-bold block" style="border-radius: 10px 0 10px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                 </div>
 
