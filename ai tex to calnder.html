@@ -4698,13 +4698,14 @@ return SunCalc;
                         }
                         
                         // Support single line multi-tag like "## tag : Major Festival, Public Holiday" or just multiple lines.
+                        // Implemented requested new tag syntax parsing, splitting comma-separated items
                         const tagMatch = line.match(/^##\s*tag\s*:\s*(.+)/i);
                         const bannerMatch = line.match(/^!\[Banner\]\((.*?)\)/i);
                         const gridBgMatch = line.match(/^!\[GridBg\]\((.*?)\)/i);
                         const tithiMatch = line.match(/^@\s*Tithi\s*:\s*(.+)/i);
 
                         if (tagMatch) {
-                            // Split by comma in case user specifies multiple tags on one line
+                            // Split by comma for multiple tags on one line and push as distinct items
                             const tags = tagMatch[1].split(',').map(t => t.trim()).filter(t => t.length > 0);
                             currentDetail.tags.push(...tags);
                         }
@@ -6924,8 +6925,11 @@ function renderCalendarGrid(data) {
                         html += '</ul>';
                         inList = false;
                     }
+                    // Dynamic section headings starting with '#'
                     if (trimmed.startsWith('#')) {
-                        html += `<h4 class="text-deepred font-bold mt-3 mb-1 text-base">${trimmed.replace(/#/g,'').trim()}</h4>`;
+                        // Extract heading text and render as dynamic sub-heading
+                        const headingText = trimmed.replace(/#/g, '').trim();
+                        html += `<h4 class="text-deepred font-bold mt-3 mb-1 text-base">${headingText}</h4>`;
                     } else if (trimmed !== "") {
                         html += `<p class="mb-2 text-gray-700">${trimmed}</p>`;
                     }
@@ -7163,15 +7167,14 @@ function renderCalendarGrid(data) {
                         <!-- 5. Rich Details (Notes/Events) -->
                         <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
                             ${dayEvents.map(ev => `
-                                <div class="bg-gray-50 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} rounded-r-xl p-4 shadow-sm">
-                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName}</h4>
-                                    ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName}</p>` : ''}
+                                <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
+                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
+                                    ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
                                 </div>
                             `).join('')}
                             
-                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">
-                                ${details.map(d => {
-                                    let content = '';
+                            ${details.length > 0 ? details.map(d => {
+                                    let content = '<div class="modal-card relative overflow-hidden p-4 pl-5 text-gray-700 text-sm leading-relaxed rich-content mb-3">';
                                     
                                     // Render tags if present
                                     if (d.tags && d.tags.length > 0) {
@@ -7188,9 +7191,9 @@ function renderCalendarGrid(data) {
                                     }
                                     
                                     content += formatBodyLines(d.bodyLines);
+                                    content += '</div>';
                                     return content;
-                                }).join('<hr class="border-gray-200 my-4">')}
-                            </div>` : ''}
+                                }).join('') : ''}
                         </div>
 
                     </div>
