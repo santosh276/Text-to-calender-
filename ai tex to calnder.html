@@ -7163,34 +7163,34 @@ function renderCalendarGrid(data) {
                         <!-- 5. Rich Details (Notes/Events) -->
                         <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
                             ${dayEvents.map(ev => `
-                                <div class="bg-gray-50 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} rounded-r-xl p-4 shadow-sm">
+                                <div class="bg-gray-50 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} rounded-r-xl p-4 mb-4 shadow-sm">
                                     <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName}</h4>
                                     ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName}</p>` : ''}
                                 </div>
                             `).join('')}
                             
-                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">
-                                ${details.map(d => {
-                                    let content = '';
+                            ${details.length > 0 ? details.map(d => {
+                                let content = '';
 
-                                    // Render tags if present
-                                    if (d.tags && d.tags.length > 0) {
-                                        content += `<div class="flex flex-wrap gap-2 mb-3">`;
-                                        d.tags.forEach(tag => {
-                                            // Format the tag for display (e.g. #scripture)
-                                            const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
-                                            // Using classes to match the image reference. The image showed an orange-tinted dark background with orange text,
-                                            // but since our app is light themed in this modal, we will use a soft orange/gold theme that fits.
-                                            // Soft bg, dark golden text, distinct thin border
-                                            content += `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase" style="background-color: #fdf5e6; color: #b45309; border: 1px solid #fed7aa;">${displayTag}</span>`;
-                                        });
-                                        content += `</div>`;
-                                    }
+                                // Each separate detail block gets its own distinct card
+                                content += `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content mb-4 shadow-sm">`;
 
-                                    content += formatBodyLines(d.bodyLines);
-                                    return content;
-                                }).join('<hr class="border-gray-200 my-4">')}
-                            </div>` : ''}
+                                // Render tags if present
+                                if (d.tags && d.tags.length > 0) {
+                                    content += `<div class="flex flex-wrap gap-2 mb-3">`;
+                                    d.tags.forEach(tag => {
+                                        // Format the tag for display (e.g. #scripture)
+                                        const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
+                                        // Soft bg, dark golden text, distinct thin border
+                                        content += `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase" style="background-color: #fdf5e6; color: #b45309; border: 1px solid #fed7aa;">${displayTag}</span>`;
+                                    });
+                                    content += `</div>`;
+                                }
+
+                                content += formatBodyLines(d.bodyLines);
+                                content += `</div>`;
+                                return content;
+                            }).join('') : ''}
                         </div>
 
                     </div>
