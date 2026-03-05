@@ -1721,7 +1721,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 ::: details
 <span class="hl-keyword">>> 14-01-2026</span>
 <span class="hl-tag">![Banner](https://image.url/banner.jpg)</span>
-<span class="hl-tag">@ Tag : Major Festival</span>
+<span class="hl-tag">## tag : Major Festival, Public Holiday</span>
 
 # Significance
 **Makar Sankranti** is a major harvest festival.
@@ -1809,7 +1809,7 @@ It marks the sun's transit into *Makara* (Capricorn).
 
 ::: details
 >> 21-11-2026
-@ Tag : Major Agricultural Festival
+## tag : Major Agricultural Festival
 
 Nuakhai is the most important social festival of Western Odisha and Sambalpur region.
 
@@ -3734,7 +3734,7 @@ return SunCalc;
                 const dateHeaderRegex = new RegExp(`(>>\\s+${date})`);
                 const tagLine = type === 'banner' ? `![Banner](${url})` : `![GridBg](${url})`;
                 if(newText.match(dateHeaderRegex)) { newText = newText.replace(dateHeaderRegex, `$1\n${tagLine}`); } 
-                else { newText += `\n\n::: details\n>> ${date}\n${tagLine}\n@ Tag : New Event\n:::`; }
+                else { newText += `\n\n::: details\n>> ${date}\n${tagLine}\n## tag : New Event\n:::`; }
             }
             editor.value = newText;
             parseInput(newText);
@@ -4697,12 +4697,17 @@ return SunCalc;
                             currentDetail = list[list.length - 1];
                         }
                         
-                        const tagMatch = line.match(/^@\s*Tag\s*:\s*(.+)/i);
+                        // Support single line multi-tag like "## tag : Major Festival, Public Holiday" or just multiple lines.
+                        const tagMatch = line.match(/^##\s*tag\s*:\s*(.+)/i);
                         const bannerMatch = line.match(/^!\[Banner\]\((.*?)\)/i);
                         const gridBgMatch = line.match(/^!\[GridBg\]\((.*?)\)/i);
                         const tithiMatch = line.match(/^@\s*Tithi\s*:\s*(.+)/i);
 
-                        if (tagMatch) currentDetail.tags.push(tagMatch[1]);
+                        if (tagMatch) {
+                            // Split by comma in case user specifies multiple tags on one line
+                            const tags = tagMatch[1].split(',').map(t => t.trim()).filter(t => t.length > 0);
+                            currentDetail.tags.push(...tags);
+                        }
                         else if (bannerMatch) currentDetail.bannerUrl = bannerMatch[1];
                         else if (gridBgMatch) currentDetail.gridBgUrl = gridBgMatch[1];
                         else if (tithiMatch) {
@@ -7164,7 +7169,28 @@ function renderCalendarGrid(data) {
                                 </div>
                             `).join('')}
                             
-                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">${details.map(d => formatBodyLines(d.bodyLines)).join('<hr class="border-gray-200 my-4">')}</div>` : ''}
+                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">
+                                ${details.map(d => {
+                                    let content = '';
+
+                                    // Render tags if present
+                                    if (d.tags && d.tags.length > 0) {
+                                        content += `<div class="flex flex-wrap gap-2 mb-3">`;
+                                        d.tags.forEach(tag => {
+                                            // Format the tag for display (e.g. #scripture)
+                                            const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
+                                            // Using classes to match the image reference. The image showed an orange-tinted dark background with orange text,
+                                            // but since our app is light themed in this modal, we will use a soft orange/gold theme that fits.
+                                            // Soft bg, dark golden text, distinct thin border
+                                            content += `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase" style="background-color: #fdf5e6; color: #b45309; border: 1px solid #fed7aa;">${displayTag}</span>`;
+                                        });
+                                        content += `</div>`;
+                                    }
+
+                                    content += formatBodyLines(d.bodyLines);
+                                    return content;
+                                }).join('<hr class="border-gray-200 my-4">')}
+                            </div>` : ''}
                         </div>
 
                     </div>
