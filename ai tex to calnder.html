@@ -3684,6 +3684,27 @@ return SunCalc;
 
         let tempLinkState = { selectedType: 'logo' };
         let currentIsolationFilter = null; // null = Show All
+        let currentTagFilter = null; // null = Show All Tags
+
+        const TAG_STYLES = [
+            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Blue
+            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Green
+            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Brown/Orange
+            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Purple
+            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Deep Orange/Red
+            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"  // Deep Purple
+        ];
+
+        function getTagStyle(tagName) {
+            if (!tagName) return TAG_STYLES[0];
+            const normalized = tagName.trim().toLowerCase();
+            let hash = 0;
+            for (let i = 0; i < normalized.length; i++) {
+                hash = normalized.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return TAG_STYLES[Math.abs(hash) % TAG_STYLES.length];
+        }
+
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -6607,6 +6628,38 @@ function renderCalendarGrid(data) {
             });
             section.appendChild(filterContainer);
 
+            // --- TAG FILTER BUTTONS ---
+            const allTags = new Set();
+            Object.values(appState.details).forEach(dArray => {
+                dArray.forEach(d => {
+                    if (d.tags) d.tags.forEach(t => allTags.add(t));
+                });
+            });
+            Object.values(appState.recurringDetails).forEach(dArray => {
+                dArray.forEach(d => {
+                    if (d.tags) d.tags.forEach(t => allTags.add(t));
+                });
+            });
+
+            if (allTags.size > 0) {
+                const tagContainer = document.createElement('div');
+                tagContainer.id = "festival-tag-filters";
+                tagContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
+
+                const sortedTags = Array.from(allTags).sort();
+                sortedTags.forEach(tag => {
+                    const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
+                    const isSelected = (currentTagFilter === displayTag);
+                    const tagBtn = document.createElement('button');
+                    tagBtn.className = `inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide uppercase shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 ${isSelected ? 'ring-2 ring-offset-2 ring-gray-400 scale-105' : 'opacity-80 hover:opacity-100'}`;
+                    tagBtn.style.cssText = getTagStyle(displayTag);
+                    tagBtn.innerText = displayTag;
+                    tagBtn.onclick = () => toggleTagFilter(displayTag);
+                    tagContainer.appendChild(tagBtn);
+                });
+                section.appendChild(tagContainer);
+            }
+
             // 5. Festival List Container
             const list = document.createElement('ul');
             list.id = 'festival-list';
@@ -6662,7 +6715,28 @@ function renderCalendarGrid(data) {
                 const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
                 // ISOLATION LOGIC: Show if filter is null OR matches specific symbol
                 const matchesFilter = (currentIsolationFilter === null) || (e.symbol === currentIsolationFilter);
-                return matchesQuery && matchesFilter;
+
+                let matchesTag = true;
+                if (currentTagFilter !== null) {
+                    const monthInfo = monthData || appState.monthsData.find(m => m.month === e.monthIndex && m.year === e.year);
+                    const dateKey = `${monthInfo.year}-${monthInfo.month}-${e.date}`;
+                    const detailsObj = appState.details[dateKey] || [];
+                    const recurringObj = appState.recurringDetails[`${monthInfo.month}-${e.date}`] || [];
+                    const allDayDetails = [...detailsObj, ...recurringObj];
+
+                    let hasTag = false;
+                    allDayDetails.forEach(d => {
+                        if (d.tags) {
+                            d.tags.forEach(t => {
+                                const dt = t.startsWith('#') ? t.toLowerCase() : '#' + t.toLowerCase();
+                                if (dt === currentTagFilter) hasTag = true;
+                            });
+                        }
+                    });
+                    matchesTag = hasTag;
+                }
+
+                return matchesQuery && matchesFilter && matchesTag;
             });
 
             if (filtered.length === 0) {
@@ -6745,8 +6819,19 @@ function renderCalendarGrid(data) {
                 currentIsolationFilter = null; 
             } else {
                 currentIsolationFilter = symbol; 
+                currentTagFilter = null; // Mutually exclusive
             }
             render(); 
+        }
+
+        function toggleTagFilter(tag) {
+            if (currentTagFilter === tag) {
+                currentTagFilter = null;
+            } else {
+                currentTagFilter = tag;
+                currentIsolationFilter = null; // Mutually exclusive
+            }
+            render();
         }
 
 
@@ -7179,21 +7264,12 @@ function renderCalendarGrid(data) {
                                     // Render tags if present
                                     if (d.tags && d.tags.length > 0) {
                                         content += `<div class="flex flex-wrap gap-2 mb-3">`;
-                                        // Array of glassmorphism color styles extracted from uploaded references
-                                        const tagStyles = [
-                                            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Blue
-                                            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Green
-                                            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Brown/Orange
-                                            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Purple
-                                            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Deep Orange/Red
-                                            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"  // Deep Purple
-                                        ];
                                         
                                         d.tags.forEach((tag, idx) => {
                                             // Format the tag for display (e.g. #scripture)
                                             const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
-                                            // Cycle through the predefined glassmorphic styles
-                                            const style = tagStyles[idx % tagStyles.length];
+                                            // Use deterministic global tag style
+                                            const style = getTagStyle(displayTag);
                                             
                                             content += `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-sm" style="${style}">${displayTag}</span>`;
                                         });
