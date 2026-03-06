@@ -3684,6 +3684,7 @@ return SunCalc;
 
         let tempLinkState = { selectedType: 'logo' };
         let currentIsolationFilter = null; // null = Show All
+        let currentTagFilter = null; // null = Show All tags
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -6627,10 +6628,65 @@ function renderCalendarGrid(data) {
             });
             section.appendChild(filterContainer);
 
+            // --- TAG FILTER BUTTONS ---
+            const tagContainer = document.createElement('div');
+            tagContainer.id = "tag-filters-container";
+            tagContainer.className = "flex flex-wrap gap-2 mb-4 justify-start max-h-[120px] overflow-y-auto custom-scroll";
+            section.appendChild(tagContainer);
+
+            // Extract unique tags from current month's details
+            const uniqueTags = new Set();
+            listEvents.forEach(ev => {
+                const dateKey = `${data.year}-${data.month}-${ev.date}`;
+                const recKey = `rec-${data.month}-${ev.date}`;
+                let details = appState.details[dateKey] || appState.recurringDetails[recKey];
+
+                if (details) {
+                    const detailArray = Array.isArray(details) ? details : [details];
+                    detailArray.forEach(d => {
+                        if (d.tags && d.tags.length > 0) {
+                            d.tags.forEach(tag => {
+                                // Keep the raw original text with # if present, just normalize it
+                                const normalizedTag = tag.trim().toLowerCase();
+                                const displayTag = normalizedTag.startsWith('#') ? normalizedTag : '#' + normalizedTag;
+                                uniqueTags.add(displayTag);
+                            });
+                        }
+                    });
+                }
+            });
+
+            if (uniqueTags.size > 0) {
+                // Add a small sub-header for tags
+                const tagsHeader = document.createElement('div');
+                tagsHeader.className = 'w-full text-xs font-bold text-gray-400 mb-1 uppercase tracking-widest';
+                tagsHeader.innerText = 'Tags';
+                tagContainer.appendChild(tagsHeader);
+
+                Array.from(uniqueTags).sort().forEach(tag => {
+                    const isSelected = (currentTagFilter === tag);
+                    const btn = document.createElement('button');
+
+                    const baseStyle = getTagStyle(tag);
+                    // If selected, we add a solid white ring, otherwise normal
+                    const ringStyle = isSelected ? 'box-shadow: 0 0 0 2px rgba(255,255,255,0.8), 0 4px 6px -1px rgba(0,0,0,0.1); transform: scale(1.05);' : '';
+
+                    btn.className = `inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase transition-all duration-200 active:scale-95 cursor-pointer outline-none hover:-translate-y-0.5 hover:shadow-md ${isSelected ? 'z-10' : ''}`;
+                    // We append the ring style to the base inline style
+                    btn.style.cssText = `${baseStyle} ${ringStyle}`;
+                    btn.innerText = tag;
+
+                    btn.onclick = () => toggleTagFilter(tag);
+                    tagContainer.appendChild(btn);
+                });
+            } else {
+                tagContainer.classList.add('hidden');
+            }
+
             // 5. Festival List Container
             const list = document.createElement('ul');
             list.id = 'festival-list';
-            list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll"; 
+            list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll border-t border-gray-100 pt-3 mt-2";
             section.appendChild(list);
 
             const input = searchWrapper.querySelector('input');
@@ -6682,7 +6738,38 @@ function renderCalendarGrid(data) {
                 const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
                 // ISOLATION LOGIC: Show if filter is null OR matches specific symbol
                 const matchesFilter = (currentIsolationFilter === null) || (e.symbol === currentIsolationFilter);
-                return matchesQuery && matchesFilter;
+
+                // TAG LOGIC: Show if tag filter is null OR the event has the tag
+                let matchesTag = true;
+                if (currentTagFilter !== null) {
+                    // monthData might be undefined if called globally or with certain scopes, use appState's active data as fallback
+                    const mData = monthData || e._monthData || (window.appState.monthsData && window.appState.monthsData.find(m => m.month === e.monthIndex && m.year === e.year));
+                    const mIndex = mData ? mData.month : (e.monthIndex !== undefined ? e.monthIndex : (window.appState.viewDate ? window.appState.viewDate.month : new Date().getMonth()));
+                    const year = mData ? mData.year : (e.year !== undefined ? e.year : (window.appState.viewDate ? window.appState.viewDate.year : new Date().getFullYear()));
+                    const dateKey = `${year}-${mIndex}-${e.date}`;
+                    const recKey = `rec-${mIndex}-${e.date}`;
+
+                    let details = appState.details[dateKey] || appState.recurringDetails[recKey];
+                    let eventHasTag = false;
+
+                    if (details) {
+                        const detailArray = Array.isArray(details) ? details : [details];
+                        detailArray.forEach(d => {
+                            if (d.tags && d.tags.length > 0) {
+                                d.tags.forEach(t => {
+                                    const normalizedTag = t.trim().toLowerCase();
+                                    const displayTag = normalizedTag.startsWith('#') ? normalizedTag : '#' + normalizedTag;
+                                    if (displayTag === currentTagFilter) {
+                                        eventHasTag = true;
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    matchesTag = eventHasTag;
+                }
+
+                return matchesQuery && matchesFilter && matchesTag;
             });
 
             if (filtered.length === 0) {
@@ -6766,7 +6853,20 @@ function renderCalendarGrid(data) {
             } else {
                 currentIsolationFilter = symbol; 
             }
+            // Reset tag filter when category filter changes
+            currentTagFilter = null;
             render(); 
+        }
+
+        function toggleTagFilter(tag) {
+            if (currentTagFilter === tag) {
+                currentTagFilter = null;
+            } else {
+                currentTagFilter = tag;
+            }
+            // Reset category filter when tag filter changes to avoid over-constraining
+            currentIsolationFilter = null;
+            render();
         }
 
 
@@ -7203,7 +7303,7 @@ function renderCalendarGrid(data) {
                                             // Format the tag for display (e.g. #scripture)
                                             const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
                                             // Consistently apply the same color for the same tag text across the app
-                                            const style = getTagStyle(tag.trim().toLowerCase());
+                                            const style = getTagStyle(displayTag.trim().toLowerCase());
 
                                             content += `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-sm" style="${style}">${displayTag}</span>`;
                                         });
