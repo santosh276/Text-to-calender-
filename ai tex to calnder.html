@@ -4698,13 +4698,14 @@ return SunCalc;
                         }
                         
                         // Support single line multi-tag like "## tag : Major Festival, Public Holiday" or just multiple lines.
+                        // Implemented requested new tag syntax parsing, splitting comma-separated items
                         const tagMatch = line.match(/^##\s*tag\s*:\s*(.+)/i);
                         const bannerMatch = line.match(/^!\[Banner\]\((.*?)\)/i);
                         const gridBgMatch = line.match(/^!\[GridBg\]\((.*?)\)/i);
                         const tithiMatch = line.match(/^@\s*Tithi\s*:\s*(.+)/i);
 
                         if (tagMatch) {
-                            // Split by comma in case user specifies multiple tags on one line
+                            // Split by comma for multiple tags on one line and push as distinct items
                             const tags = tagMatch[1].split(',').map(t => t.trim()).filter(t => t.length > 0);
                             currentDetail.tags.push(...tags);
                         }
@@ -6924,8 +6925,11 @@ function renderCalendarGrid(data) {
                         html += '</ul>';
                         inList = false;
                     }
+                    // Dynamic section headings starting with '#'
                     if (trimmed.startsWith('#')) {
-                        html += `<h4 class="text-deepred font-bold mt-3 mb-1 text-base">${trimmed.replace(/#/g,'').trim()}</h4>`;
+                        // Extract heading text and render as dynamic sub-heading
+                        const headingText = trimmed.replace(/#/g, '').trim();
+                        html += `<h4 class="text-deepred font-bold mt-3 mb-1 text-base">${headingText}</h4>`;
                     } else if (trimmed !== "") {
                         html += `<p class="mb-2 text-gray-700">${trimmed}</p>`;
                     }
@@ -7163,34 +7167,43 @@ function renderCalendarGrid(data) {
                         <!-- 5. Rich Details (Notes/Events) -->
                         <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
                             ${dayEvents.map(ev => `
-                                <div class="bg-gray-50 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} rounded-r-xl p-4 shadow-sm">
-                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName}</h4>
-                                    ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName}</p>` : ''}
+                                <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
+                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
+                                    ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
                                 </div>
                             `).join('')}
                             
-                            ${details.length > 0 ? `<div class="modal-card p-4 text-gray-700 text-sm leading-relaxed rich-content">
-                                ${details.map(d => {
-                                    let content = '';
+                            ${details.length > 0 ? details.map(d => {
+                                    let content = '<div class="modal-card relative overflow-hidden p-4 pl-5 text-gray-700 text-sm leading-relaxed rich-content mb-3">';
                                     
                                     // Render tags if present
                                     if (d.tags && d.tags.length > 0) {
                                         content += `<div class="flex flex-wrap gap-2 mb-3">`;
-                                        d.tags.forEach(tag => {
+                                        // Array of glassmorphism color styles extracted from uploaded references
+                                        const tagStyles = [
+                                            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Blue
+                                            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Green
+                                            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Brown/Orange
+                                            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Purple
+                                            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Deep Orange/Red
+                                            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"  // Deep Purple
+                                        ];
+                                        
+                                        d.tags.forEach((tag, idx) => {
                                             // Format the tag for display (e.g. #scripture)
                                             const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
-                                            // Using classes to match the image reference. The image showed an orange-tinted dark background with orange text, 
-                                            // but since our app is light themed in this modal, we will use a soft orange/gold theme that fits.
-                                            // Soft bg, dark golden text, distinct thin border
-                                            content += `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase" style="background-color: #fdf5e6; color: #b45309; border: 1px solid #fed7aa;">${displayTag}</span>`;
+                                            // Cycle through the predefined glassmorphic styles
+                                            const style = tagStyles[idx % tagStyles.length];
+                                            
+                                            content += `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-sm" style="${style}">${displayTag}</span>`;
                                         });
                                         content += `</div>`;
                                     }
                                     
                                     content += formatBodyLines(d.bodyLines);
+                                    content += '</div>';
                                     return content;
-                                }).join('<hr class="border-gray-200 my-4">')}
-                            </div>` : ''}
+                                }).join('') : ''}
                         </div>
 
                     </div>
