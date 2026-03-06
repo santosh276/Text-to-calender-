@@ -3684,6 +3684,28 @@ return SunCalc;
 
         let tempLinkState = { selectedType: 'logo' };
         let currentIsolationFilter = null; // null = Show All
+        let currentTagFilter = null;
+
+        const TAG_STYLES = [
+            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Blue
+            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Green
+            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Brown/Orange
+            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Purple
+            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Deep Orange/Red
+            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"  // Deep Purple
+        ];
+
+        function getTagStyle(tagName) {
+            if (!tagName) return TAG_STYLES[0];
+            const str = tagName.trim().toLowerCase();
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return TAG_STYLES[Math.abs(hash) % TAG_STYLES.length];
+        }
+
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -6607,6 +6629,56 @@ function renderCalendarGrid(data) {
             });
             section.appendChild(filterContainer);
 
+            // --- TAG FILTERS PANEL ---
+            const allTags = new Set();
+            listEvents.forEach(e => {
+                const dateKey = `${e.year}-${e.monthIndex}-${e.date}`;
+                const recKey = `rec-${e.monthIndex}-${e.date}`;
+                const detailArr = (appState.details && appState.details[dateKey]) || (appState.recurringDetails && appState.recurringDetails[recKey]);
+                if (detailArr) {
+                    detailArr.forEach(d => {
+                        if (d.tags) {
+                            d.tags.forEach(t => {
+                                const tagStr = t.startsWith('#') ? t.toLowerCase() : '#' + t.toLowerCase();
+                                allTags.add(tagStr);
+                            });
+                        }
+                    });
+                }
+            });
+
+            if (allTags.size > 0) {
+                const tagFiltersContainer = document.createElement('div');
+                tagFiltersContainer.id = "festival-tag-filters";
+                tagFiltersContainer.className = "relative overflow-hidden bg-[#9A1B1B] rounded-xl shadow-inner mb-4 flex items-center group";
+
+                tagFiltersContainer.innerHTML = `
+                    <div class="absolute inset-0 pointer-events-none opacity-20 transition-transform duration-700 group-hover:scale-110" style="background-image: url('data:image/svg+xml,%3Csvg width=\\'20\\' height=\\'20\\' viewBox=\\'0 0 20 20\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cpath d=\\'M10 0L20 10L10 20L0 10L10 0Z\\' fill=\\'%23ffffff\\' fill-opacity=\\'1\\' fill-rule=\\'evenodd\\'/%3E%3C/svg%3E'); background-size: 24px 24px; mix-blend-mode: overlay;"></div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none"></div>
+                    <div class="relative z-10 p-3 w-full">
+                        <div class="flex flex-wrap gap-2 justify-center" id="tag-buttons-container">
+                        </div>
+                    </div>
+                `;
+
+                const tagsListContainer = tagFiltersContainer.querySelector('#tag-buttons-container');
+                const sortedTags = Array.from(allTags).sort();
+
+                sortedTags.forEach(tag => {
+                    const btn = document.createElement('button');
+                    const isSelected = (currentTagFilter === tag);
+                    const baseStyle = getTagStyle(tag);
+
+                    btn.className = `inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 ${isSelected ? 'ring-2 ring-white ring-offset-1 ring-offset-[#9A1B1B] scale-105' : 'opacity-90 hover:opacity-100'}`;
+                    btn.style.cssText = baseStyle;
+                    btn.innerText = tag;
+                    btn.onclick = () => toggleTagFilter(tag);
+                    tagsListContainer.appendChild(btn);
+                });
+
+                section.appendChild(tagFiltersContainer);
+            }
+
             // 5. Festival List Container
             const list = document.createElement('ul');
             list.id = 'festival-list';
@@ -6662,7 +6734,33 @@ function renderCalendarGrid(data) {
                 const matchesQuery = (e.engName.toLowerCase().includes(query) || (e.locName && e.locName.toLowerCase().includes(query)));
                 // ISOLATION LOGIC: Show if filter is null OR matches specific symbol
                 const matchesFilter = (currentIsolationFilter === null) || (e.symbol === currentIsolationFilter);
-                return matchesQuery && matchesFilter;
+
+                let matchesTag = true;
+                if (currentTagFilter) {
+                    matchesTag = false;
+                    const eMonthData = monthData || e._monthData || (window.appState && window.appState.monthsData && window.appState.monthsData.find(m => m.month === e.monthIndex && m.year === e.year));
+                    if (eMonthData) {
+                        const dateKey = `${e.year}-${e.monthIndex}-${e.date}`;
+                        const recKey = `rec-${e.monthIndex}-${e.date}`;
+                        const detailArr = (appState.details && appState.details[dateKey]) || (appState.recurringDetails && appState.recurringDetails[recKey]);
+                        if (detailArr) {
+                            for (const d of detailArr) {
+                                if (d.tags) {
+                                    for (const t of d.tags) {
+                                        const tagStr = t.startsWith('#') ? t.toLowerCase() : '#' + t.toLowerCase();
+                                        if (tagStr === currentTagFilter) {
+                                            matchesTag = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (matchesTag) break;
+                            }
+                        }
+                    }
+                }
+
+                return matchesQuery && matchesFilter && matchesTag;
             });
 
             if (filtered.length === 0) {
@@ -6746,7 +6844,18 @@ function renderCalendarGrid(data) {
             } else {
                 currentIsolationFilter = symbol; 
             }
+            currentTagFilter = null;
             render(); 
+        }
+
+        function toggleTagFilter(tag) {
+            if (currentTagFilter === tag) {
+                currentTagFilter = null;
+            } else {
+                currentTagFilter = tag;
+            }
+            currentIsolationFilter = null;
+            render();
         }
 
 
@@ -7179,21 +7288,12 @@ function renderCalendarGrid(data) {
                                     // Render tags if present
                                     if (d.tags && d.tags.length > 0) {
                                         content += `<div class="flex flex-wrap gap-2 mb-3">`;
-                                        // Array of glassmorphism color styles extracted from uploaded references
-                                        const tagStyles = [
-                                            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Blue
-                                            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Green
-                                            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Brown/Orange
-                                            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Purple
-                                            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Deep Orange/Red
-                                            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"  // Deep Purple
-                                        ];
                                         
                                         d.tags.forEach((tag, idx) => {
                                             // Format the tag for display (e.g. #scripture)
                                             const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
                                             // Cycle through the predefined glassmorphic styles
-                                            const style = tagStyles[idx % tagStyles.length];
+                                            const style = getTagStyle(displayTag);
                                             
                                             content += `<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-sm" style="${style}">${displayTag}</span>`;
                                         });
