@@ -6642,22 +6642,38 @@ function renderCalendarGrid(data) {
             });
 
             if (allTags.size > 0) {
+                // Wrapper for the red texture background
+                const textureWrapper = document.createElement('div');
+                textureWrapper.className = "relative w-full rounded-[2rem] overflow-hidden bg-[#9A1B1B] shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)] group mb-4 p-5 cursor-default";
+
+                const textureLayer = document.createElement('div');
+                textureLayer.className = "absolute inset-0 opacity-10 mix-blend-overlay transition-transform duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-110 pointer-events-none";
+                textureLayer.style.backgroundImage = "url('data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M20 0L40 20L20 40L0 20L20 0Z\' fill=\'none\' stroke=\'%23ffffff\' stroke-width=\'1\'/%3E%3C/svg%3E')";
+                textureLayer.style.backgroundSize = "40px 40px";
+                textureWrapper.appendChild(textureLayer);
+
+                const depthGradient = document.createElement('div');
+                depthGradient.className = "absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none";
+                textureWrapper.appendChild(depthGradient);
+
                 const tagContainer = document.createElement('div');
                 tagContainer.id = "festival-tag-filters";
-                tagContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
+                tagContainer.className = "relative z-10 flex flex-wrap gap-2 justify-center";
 
                 const sortedTags = Array.from(allTags).sort();
                 sortedTags.forEach(tag => {
                     const displayTag = tag.startsWith('#') ? tag.toLowerCase() : '#' + tag.toLowerCase();
                     const isSelected = (currentTagFilter === displayTag);
                     const tagBtn = document.createElement('button');
-                    tagBtn.className = `inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide uppercase shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 ${isSelected ? 'ring-2 ring-offset-2 ring-gray-400 scale-105' : 'opacity-80 hover:opacity-100'}`;
+                    tagBtn.className = `inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide uppercase shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 ${isSelected ? 'ring-2 ring-offset-2 ring-white scale-105' : 'opacity-90 hover:opacity-100'}`;
                     tagBtn.style.cssText = getTagStyle(displayTag);
                     tagBtn.innerText = displayTag;
                     tagBtn.onclick = () => toggleTagFilter(displayTag);
                     tagContainer.appendChild(tagBtn);
                 });
-                section.appendChild(tagContainer);
+
+                textureWrapper.appendChild(tagContainer);
+                section.appendChild(textureWrapper);
             }
 
             // 5. Festival List Container
