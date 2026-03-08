@@ -846,6 +846,28 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .timing-analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .timing-analysis-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: white;
+            font-family: monospace;
+        }
+        .timing-analysis-live {
+            color: #22c55e;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-family: monospace;
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+        }
+
         .timing-track-container {
             position: relative;
             height: 44px; /* To fit the thumb */
@@ -882,6 +904,23 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             background-color: #f7bccc; /* Soft pink/red */
         }
 
+        .timing-event-label {
+            position: absolute;
+            top: 40px; /* Positioned below the track */
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+            font-family: monospace;
+            z-index: 5;
+        }
+        .timing-event-label.auspicious-text {
+            color: #22c55e;
+        }
+        .timing-event-label.inauspicious-text {
+            color: #ef4444;
+        }
+
         .timing-now-thumb {
             position: absolute;
             top: 50%;
@@ -902,7 +941,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .timing-labels {
             display: flex;
             justify-content: space-between;
-            margin-top: 24px;
+            margin-top: 36px;
             padding: 0 5px;
             font-weight: 700;
             font-size: 12px;
@@ -6389,6 +6428,7 @@ function renderCalendarGrid(data) {
 
                 // Generate events
                 let eventsHtml = '';
+                let labelsHtml = '';
 
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
@@ -6407,6 +6447,14 @@ function renderCalendarGrid(data) {
                             eventsHtml += `
                                 <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%;"></div>
                             `;
+
+                            let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
+                            let labelPos = startPercent + (width / 2); // Center the label under the segment
+                            let textClass = cssClass === 'auspicious' ? 'auspicious-text' : 'inauspicious-text';
+
+                            labelsHtml += `
+                                <div class="timing-event-label ${textClass}" style="left: ${labelPos}%;">${displayName}</div>
+                            `;
                         }
                     }
                 };
@@ -6416,10 +6464,17 @@ function renderCalendarGrid(data) {
 
                 timingAnalysisHtml = `
                 <div class="timing-analysis-wrapper">
+                    <div class="timing-analysis-header">
+                        <div class="timing-analysis-title">TIMING ANALYSIS</div>
+                        <div class="timing-analysis-live">LIVE</div>
+                    </div>
+
                     <div class="timing-track-container">
                         <div class="timing-track-base">
                             ${eventsHtml}
                         </div>
+
+                        ${labelsHtml}
 
                         <!-- NOW Indicator Thumb -->
                         <div class="timing-now-thumb" style="left: ${nowPercent}%;">
