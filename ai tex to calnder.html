@@ -6833,16 +6833,29 @@ function renderCalendarGrid(data) {
 
             // --- TAG FILTER BUTTONS ---
             const allTags = new Set();
-            Object.values(appState.details).forEach(dArray => {
-                dArray.forEach(d => {
-                    if (d.tags) d.tags.forEach(t => allTags.add(t));
+            if (data && data.year !== undefined && data.month !== undefined) {
+                const detailsPrefix = `${data.year}-${data.month}-`;
+                const recurringPrefix1 = `${data.month}-`;
+                const recurringPrefix2 = `rec-${data.month}-`;
+
+                Object.keys(appState.details).forEach(key => {
+                    if (key.startsWith(detailsPrefix)) {
+                        const dArray = appState.details[key] || [];
+                        dArray.forEach(d => {
+                            if (d.tags) d.tags.forEach(t => allTags.add(t));
+                        });
+                    }
                 });
-            });
-            Object.values(appState.recurringDetails).forEach(dArray => {
-                dArray.forEach(d => {
-                    if (d.tags) d.tags.forEach(t => allTags.add(t));
+
+                Object.keys(appState.recurringDetails).forEach(key => {
+                    if (key.startsWith(recurringPrefix1) || key.startsWith(recurringPrefix2)) {
+                        const dArray = appState.recurringDetails[key] || [];
+                        dArray.forEach(d => {
+                            if (d.tags) d.tags.forEach(t => allTags.add(t));
+                        });
+                    }
                 });
-            });
+            }
 
             if (allTags.size > 0) {
                 const tagContainer = document.createElement('div');
