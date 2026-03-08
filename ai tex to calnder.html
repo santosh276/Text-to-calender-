@@ -892,6 +892,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             font-size: 0.65rem;
             color: rgba(255, 255, 255, 0.5);
             line-height: 1.2;
+            white-space: nowrap;
         }
         .timing-event {
             position: absolute;
@@ -6469,13 +6470,13 @@ function renderCalendarGrid(data) {
                         
                         <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
                         <div class="timing-marker" style="left: 0%;">
-                            <div class="timing-marker-label text-center">6:00<br><span style="font-size: 0.55rem;">AM</span></div>
+                            <div class="timing-marker-label text-center">6:00 AM</div>
                         </div>
                         <div class="timing-marker" style="left: 50%;">
-                            <div class="timing-marker-label text-center">12:00<br><span style="font-size: 0.55rem;">PM</span></div>
+                            <div class="timing-marker-label text-center">12:00 PM</div>
                         </div>
                         <div class="timing-marker" style="left: 100%;">
-                            <div class="timing-marker-label text-center">6:00<br><span style="font-size: 0.55rem;">PM</span></div>
+                            <div class="timing-marker-label text-center">6:00 PM</div>
                         </div>
 
                         ${eventsHtml}
