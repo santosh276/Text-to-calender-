@@ -6466,12 +6466,15 @@ function renderCalendarGrid(data) {
                     <div class="timing-track-container">
                         <div class="timing-baseline"></div>
                         
-                        <!-- Timeline Markers (09:00 and 15:00 as requested in image) -->
-                        <div class="timing-marker" style="left: 25%;">
-                            <div class="timing-marker-label">09:00</div>
+                        <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
+                        <div class="timing-marker" style="left: 0%;">
+                            <div class="timing-marker-label">6:00 AM</div>
                         </div>
-                        <div class="timing-marker" style="left: 75%;">
-                            <div class="timing-marker-label">15:00</div>
+                        <div class="timing-marker" style="left: 50%;">
+                            <div class="timing-marker-label">12:00 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 100%;">
+                            <div class="timing-marker-label">6:00 PM</div>
                         </div>
 
                         ${eventsHtml}
