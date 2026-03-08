@@ -702,6 +702,26 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .shadow-glow-green { box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4); }
         .shadow-glow-blue { box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); }
         .shadow-glow-gold { box-shadow: 0 4px 15px rgba(251, 146, 60, 0.4); }
+
+        @keyframes border-pulse {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+        .heartbeat-border {
+            position: relative;
+        }
+        .heartbeat-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            border: 1.5px solid #9A1B1B; /* Deep Red */
+            animation: border-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            pointer-events: none;
+            will-change: transform, opacity;
+            z-index: 1;
+        }
         
         /* Utility for Tablet Flex behavior if missing */
         @media (min-width: 640px) {
@@ -7024,8 +7044,8 @@ function renderCalendarGrid(data) {
                 }
 
                 if (isToday) {
-                    liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group bg-orange-50 border border-orange-200 hover:bg-orange-100 shadow-sm";
-                    badgeClass += " shadow-glow-gold ring-2 ring-orange-400 ring-offset-1";
+                    liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group bg-white heartbeat-border shadow-md hover:bg-red-50";
+                    badgeClass += " shadow-glow-red ring-2 ring-red-700 ring-offset-1";
                 }
                 
                 li.className = liClass;
@@ -7035,11 +7055,13 @@ function renderCalendarGrid(data) {
                 // Render Multiple Events Stacked
                 const eventsHtml = group.events.map((ev, idx) => {
                     const mt = idx > 0 ? 'mt-1 pt-1 border-t border-gray-100' : '';
-                    let titleClass = isToday ? 'font-extrabold text-orange-900 text-base' : 'font-bold text-gray-900 text-sm';
-                    let locClass = isToday ? 'text-xs text-orange-700 opacity-90' : 'text-[11px] text-gray-500';
+                    let titleClass = isToday ? 'font-extrabold text-[#9A1B1B] text-base drop-shadow-sm' : 'font-bold text-gray-900 text-sm';
+                    let locClass = isToday ? 'text-xs text-gray-700 opacity-90' : 'text-[11px] text-gray-500';
+                    let groupHoverTitleClass = isToday ? 'group-hover:text-red-900' : 'group-hover:text-orange-700';
+
                     return `
-                    <div class="${mt}">
-                        <div class="${titleClass} whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
+                    <div class="${mt} relative z-10">
+                        <div class="${titleClass} whitespace-normal leading-tight ${groupHoverTitleClass} transition-colors">${ev.engName}</div>
                         <div class="${locClass} font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
                     </div>
                     `;
