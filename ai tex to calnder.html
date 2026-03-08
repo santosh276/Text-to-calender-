@@ -6833,16 +6833,23 @@ function renderCalendarGrid(data) {
 
             // --- TAG FILTER BUTTONS ---
             const allTags = new Set();
-            Object.values(appState.details).forEach(dArray => {
-                dArray.forEach(d => {
-                    if (d.tags) d.tags.forEach(t => allTags.add(t));
+            if (data && data.days) {
+                data.days.forEach(day => {
+                    const dateStr = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
+                    const detailsStr = `${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
+
+                    if (appState.details[dateStr]) {
+                        appState.details[dateStr].forEach(d => {
+                            if (d.tags) d.tags.forEach(t => allTags.add(t));
+                        });
+                    }
+                    if (appState.recurringDetails[detailsStr]) {
+                        appState.recurringDetails[detailsStr].forEach(d => {
+                            if (d.tags) d.tags.forEach(t => allTags.add(t));
+                        });
+                    }
                 });
-            });
-            Object.values(appState.recurringDetails).forEach(dArray => {
-                dArray.forEach(d => {
-                    if (d.tags) d.tags.forEach(t => allTags.add(t));
-                });
-            });
+            }
 
             if (allTags.size > 0) {
                 const tagContainer = document.createElement('div');
