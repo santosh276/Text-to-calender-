@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { padding: 50px; background: #eee; }
+  .list {
+    width: 300px;
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .li {
+    width: 100%; height: 60px;
+    background: white;
+    position: relative;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  @keyframes border-pulse {
+      0% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.03); }
+      100% { opacity: 0.3; transform: scale(1); }
+  }
+  .heartbeat-border {
+      position: relative;
+      /* Using outline with outline-offset is another approach */
+      outline: 1.5px solid #9A1B1B;
+      animation: outline-pulse 2s infinite ease-in-out;
+  }
+  @keyframes outline-pulse {
+      0% { outline-color: rgba(154, 27, 27, 0.3); outline-offset: 0px; }
+      50% { outline-color: rgba(154, 27, 27, 0.8); outline-offset: 2px; }
+      100% { outline-color: rgba(154, 27, 27, 0.3); outline-offset: 0px; }
+  }
+</style>
+</head>
+<body>
+  <div class="list" style="overflow: hidden;">
+      <div class="li heartbeat-border">Hello world (outline)</div>
+  </div>
+</body>
+</html>

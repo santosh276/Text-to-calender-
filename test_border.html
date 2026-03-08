@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { padding: 50px; background: #eee; }
+  .li {
+    width: 300px; height: 60px;
+    background: white;
+    position: relative;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  @keyframes border-pulse {
+      0% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.02); }
+      100% { opacity: 0.3; transform: scale(1); }
+  }
+  .heartbeat-border {
+      position: relative;
+  }
+  .heartbeat-border::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1.5px solid #9A1B1B;
+      pointer-events: none;
+      animation: border-pulse 2s infinite ease-in-out;
+      will-change: transform, opacity;
+  }
+</style>
+</head>
+<body>
+  <div class="li heartbeat-border">Hello world</div>
+</body>
+</html>
