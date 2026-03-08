@@ -889,8 +889,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             position: absolute;
             top: 50%;
             transform: translate(-50%, 15px);
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             color: rgba(255, 255, 255, 0.5);
+            line-height: 1.2;
+            white-space: nowrap;
         }
         .timing-event {
             position: absolute;
@@ -905,10 +907,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .timing-event-label {
             position: absolute;
             top: 50%;
-            transform: translate(-50%, 20px);
-            font-size: 0.7rem;
+            transform: translate(-50%, 28px);
+            font-size: 0.6rem;
             font-weight: 600;
-            white-space: nowrap;
+            text-align: center;
         }
         .timing-event.auspicious {
             background-color: rgba(34, 197, 94, 0.2);
@@ -927,7 +929,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .timing-now-indicator {
             position: absolute;
             top: 0;
-            bottom: 0;
+            height: 38px;
             width: 2px;
             background-color: #22c55e;
             transform: translateX(-50%);
@@ -6466,12 +6468,15 @@ function renderCalendarGrid(data) {
                     <div class="timing-track-container">
                         <div class="timing-baseline"></div>
                         
-                        <!-- Timeline Markers (09:00 and 15:00 as requested in image) -->
-                        <div class="timing-marker" style="left: 25%;">
-                            <div class="timing-marker-label">09:00</div>
+                        <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
+                        <div class="timing-marker" style="left: 0%;">
+                            <div class="timing-marker-label text-center">6:00 AM</div>
                         </div>
-                        <div class="timing-marker" style="left: 75%;">
-                            <div class="timing-marker-label">15:00</div>
+                        <div class="timing-marker" style="left: 50%;">
+                            <div class="timing-marker-label text-center">12:00 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 100%;">
+                            <div class="timing-marker-label text-center">6:00 PM</div>
                         </div>
 
                         ${eventsHtml}
