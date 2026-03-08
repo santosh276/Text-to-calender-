@@ -832,6 +832,123 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
 
+        /* --- Timing Analysis Component --- */
+        .timing-analysis-wrapper {
+            background: linear-gradient(135deg, #120e22 0%, #1b172d 100%);
+            border-radius: 12px;
+            padding: 24px 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .timing-analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .timing-analysis-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: white;
+            font-family: monospace;
+        }
+        .timing-analysis-live {
+            color: #22c55e;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-family: monospace;
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+        }
+
+        .timing-track-container {
+            position: relative;
+            height: 44px; /* To fit the thumb */
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .timing-track-base {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 28px;
+            background-color: #f3e5db; /* Light peach base color */
+            border-radius: 14px;
+            transform: translateY(-50%);
+            overflow: hidden; /* To clip inner segments if they go to edges */
+        }
+        
+        .timing-event {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            height: 100%;
+        }
+        
+        /* Pastel colors to match the image */
+        .timing-event.auspicious {
+            background-color: #a3e4c8; /* Soft green */
+        }
+        
+        .timing-event.inauspicious {
+            background-color: #f7bccc; /* Soft pink/red */
+        }
+
+        .timing-event-label {
+            position: absolute;
+            top: 40px; /* Positioned below the track */
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+            font-family: monospace;
+            z-index: 5;
+        }
+        .timing-event-label.auspicious-text {
+            color: #22c55e;
+        }
+        .timing-event-label.inauspicious-text {
+            color: #ef4444;
+        }
+
+        .timing-now-thumb {
+            position: absolute;
+            top: 50%;
+            width: 44px;
+            height: 44px;
+            background-color: #f46a20; /* Bright orange */
+            border-radius: 12px;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(244, 106, 32, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .timing-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 36px;
+            padding: 0 5px;
+            font-weight: 700;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.5px;
+        }
+
         /* --- Glass Time Box (Timings Card Footer) --- */
         .glass-time-box {
             background: rgba(255, 255, 255, 0.2); /* Frosted Glass */
@@ -6296,6 +6413,86 @@ function renderCalendarGrid(data) {
             const now = new Date();
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+            // Timing Analysis Visualization logic
+            let timingAnalysisHtml = '';
+            const dayStart = new Date(calcDate);
+            dayStart.setHours(6, 0, 0, 0); // View window start (e.g., 06:00)
+            const dayEnd = new Date(calcDate);
+            dayEnd.setHours(18, 0, 0, 0);   // View window end (e.g., 18:00)
+            const totalMs = dayEnd - dayStart;
+
+            if (totalMs > 0) {
+                // Calculate "NOW" position
+                let nowPercent = ((now - dayStart) / totalMs) * 100;
+                nowPercent = Math.max(0, Math.min(100, nowPercent)); // Clamp between 0 and 100
+
+                // Generate events
+                let eventsHtml = '';
+                let labelsHtml = '';
+                
+                // Helper to add events
+                const addEventToTimeline = (eventItem, cssClass) => {
+                    // Only show specific major ones for cleanliness or all if preferred. Let's do Abhijit and Rahu Kalam as requested, or generally filter.
+                    const name = eventItem.name.toUpperCase();
+                    if (name.includes("ABHIJIT") || name.includes("RAHU")) {
+                        let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
+                        let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
+                        
+                        // Only render if it falls within our view window
+                        if (endPercent > 0 && startPercent < 100) {
+                            startPercent = Math.max(0, startPercent);
+                            endPercent = Math.min(100, endPercent);
+                            const width = endPercent - startPercent;
+                            
+                            eventsHtml += `
+                                <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%;"></div>
+                            `;
+
+                            let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
+                            let labelPos = startPercent + (width / 2); // Center the label under the segment
+                            let textClass = cssClass === 'auspicious' ? 'auspicious-text' : 'inauspicious-text';
+
+                            labelsHtml += `
+                                <div class="timing-event-label ${textClass}" style="left: ${labelPos}%;">${displayName}</div>
+                            `;
+                        }
+                    }
+                };
+
+                result.auspicious.forEach(item => addEventToTimeline(item, 'auspicious'));
+                result.inauspicious.forEach(item => addEventToTimeline(item, 'inauspicious'));
+
+                timingAnalysisHtml = `
+                <div class="timing-analysis-wrapper">
+                    <div class="timing-analysis-header">
+                        <div class="timing-analysis-title">TIMING ANALYSIS</div>
+                        <div class="timing-analysis-live">LIVE</div>
+                    </div>
+                    
+                    <div class="timing-track-container">
+                        <div class="timing-track-base">
+                            ${eventsHtml}
+                        </div>
+                        
+                        ${labelsHtml}
+                        
+                        <!-- NOW Indicator Thumb -->
+                        <div class="timing-now-thumb" style="left: ${nowPercent}%;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="timing-labels">
+                        <span>6:00 AM</span>
+                        <span>12:00 PM</span>
+                        <span>6:00 PM</span>
+                    </div>
+                </div>
+                `;
+            }
+
             let html = `
                 <div class="section-title">
                     <h3 class="font-bold text-green-700 mb-0"><i class="fa-solid fa-clock text-orange-600 mr-2"></i>Timings</h3>
@@ -6311,6 +6508,7 @@ function renderCalendarGrid(data) {
                     <div class="time" id="timings-clock">${timeStr}</div>
                 </div>
 
+                ${timingAnalysisHtml}
             `;
 
             // Helper to render a list
@@ -6778,9 +6976,14 @@ function renderCalendarGrid(data) {
                  }
             });
 
+            const today = new Date();
+            // If viewing a specific month, consider the 'active' date to be today if it's the current month, otherwise the 1st of that month, to match Timings logic
+            const activeDateObj = (monthData && monthData.month === today.getMonth() && monthData.year === today.getFullYear()) 
+                           ? new Date() 
+                           : (monthData ? new Date(monthData.year, monthData.month, 1) : new Date());
+
             groups.forEach(group => {
                 const li = document.createElement('li');
-                li.className = "flex gap-3 items-center p-2 rounded-lg hover:bg-gray-50 border border-transparent transition-all cursor-pointer group";
                 
                 li.onclick = () => openDayModal(group.date, group.mData);
                 
@@ -6791,10 +6994,25 @@ function renderCalendarGrid(data) {
                 else if (symbols.includes('^')) symbol = '^';
                 else if (symbols.includes('*')) symbol = '*';
                 
+                const isToday = (group.date === activeDateObj.getDate() && group.monthIndex === activeDateObj.getMonth() && group.year === activeDateObj.getFullYear());
+
                 let badgeClass = "badge-glass-gray";
-                if (symbol === '!') badgeClass = "badge-glass-red"; 
-                else if (symbol === '^') badgeClass = "badge-glass-green"; 
-                else if (symbol === '*') badgeClass = "badge-glass-blue";
+                let liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group ";
+
+                if (symbol === '!') {
+                    badgeClass = "badge-glass-red"; 
+                    liClass += isToday ? "bg-red-50 border border-red-100 hover:bg-red-100" : "hover:bg-gray-50 border border-transparent";
+                } else if (symbol === '^') {
+                    badgeClass = "badge-glass-green"; 
+                    liClass += isToday ? "bg-green-50 border border-green-100 hover:bg-green-100" : "hover:bg-gray-50 border border-transparent";
+                } else if (symbol === '*') {
+                    badgeClass = "badge-glass-blue";
+                    liClass += isToday ? "bg-blue-50 border border-blue-100 hover:bg-blue-100" : "hover:bg-gray-50 border border-transparent";
+                } else {
+                    liClass += isToday ? "bg-gray-100 border border-gray-200 hover:bg-gray-200" : "hover:bg-gray-50 border border-transparent";
+                }
+                
+                li.className = liClass;
                 
                 const monthName = shortMonths[group.monthIndex];
                 
