@@ -701,7 +701,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .shadow-glow-red { box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4); }
         .shadow-glow-green { box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4); }
         .shadow-glow-blue { box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); }
-        .shadow-glow-gold { box-shadow: 0 4px 15px rgba(251, 146, 60, 0.4); }
         
         /* Utility for Tablet Flex behavior if missing */
         @media (min-width: 640px) {
@@ -7012,21 +7011,15 @@ function renderCalendarGrid(data) {
 
                 if (symbol === '!') {
                     badgeClass = "badge-glass-red"; 
-                    liClass += "hover:bg-gray-50 border border-transparent";
+                    liClass += isToday ? "bg-red-50 border border-red-100 hover:bg-red-100" : "hover:bg-gray-50 border border-transparent";
                 } else if (symbol === '^') {
                     badgeClass = "badge-glass-green"; 
-                    liClass += "hover:bg-gray-50 border border-transparent";
+                    liClass += isToday ? "bg-green-50 border border-green-100 hover:bg-green-100" : "hover:bg-gray-50 border border-transparent";
                 } else if (symbol === '*') {
                     badgeClass = "badge-glass-blue";
-                    liClass += "hover:bg-gray-50 border border-transparent";
+                    liClass += isToday ? "bg-blue-50 border border-blue-100 hover:bg-blue-100" : "hover:bg-gray-50 border border-transparent";
                 } else {
-                    liClass += "hover:bg-gray-50 border border-transparent";
-                }
-
-                if (isToday) {
-                    liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group bg-red-50 border-2 border-red-500 hover:bg-red-100 shadow-sm";
-                    badgeClass = badgeClass.replace(/badge-glass-[a-z]+/, "bg-deepred");
-                    badgeClass += " shadow-glow-red ring-2 ring-red-400 ring-offset-1";
+                    liClass += isToday ? "bg-gray-100 border border-gray-200 hover:bg-gray-200" : "hover:bg-gray-50 border border-transparent";
                 }
                 
                 li.className = liClass;
@@ -7036,12 +7029,10 @@ function renderCalendarGrid(data) {
                 // Render Multiple Events Stacked
                 const eventsHtml = group.events.map((ev, idx) => {
                     const mt = idx > 0 ? 'mt-1 pt-1 border-t border-gray-100' : '';
-                    let titleClass = isToday ? 'font-extrabold text-black text-base' : 'font-bold text-gray-900 text-sm';
-                    let locClass = isToday ? 'text-xs text-black opacity-90' : 'text-[11px] text-gray-500';
                     return `
                     <div class="${mt}">
-                        <div class="${titleClass} whitespace-normal leading-tight transition-colors">${ev.engName}</div>
-                        <div class="${locClass} font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
+                        <div class="font-bold text-gray-900 text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
+                        <div class="text-[11px] text-gray-500 font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
                     </div>
                     `;
                 }).join('');
