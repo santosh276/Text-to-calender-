@@ -7025,7 +7025,8 @@ function renderCalendarGrid(data) {
 
                 if (isToday) {
                     liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group bg-orange-50 border border-orange-200 hover:bg-orange-100 shadow-sm";
-                    badgeClass += " shadow-glow-gold ring-2 ring-orange-400 ring-offset-1";
+                    badgeClass = badgeClass.replace(/badge-glass-[a-z]+/, "bg-deepred");
+                    badgeClass += " shadow-glow-red ring-2 ring-red-400 ring-offset-1";
                 }
                 
                 li.className = liClass;
