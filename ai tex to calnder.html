@@ -702,6 +702,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .shadow-glow-green { box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4); }
         .shadow-glow-blue { box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); }
         .shadow-glow-gold { box-shadow: 0 4px 15px rgba(251, 146, 60, 0.4); }
+        .shadow-glow-gray { box-shadow: 0 4px 10px rgba(107, 114, 128, 0.4); }
         
         /* Utility for Tablet Flex behavior if missing */
         @media (min-width: 640px) {
@@ -7025,8 +7026,23 @@ function renderCalendarGrid(data) {
 
                 if (isToday) {
                     liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group bg-red-50 border-2 border-red-500 hover:bg-red-100 shadow-sm";
-                    badgeClass = badgeClass.replace(/badge-glass-[a-z]+/, "bg-deepred");
-                    badgeClass += " shadow-glow-red ring-2 ring-red-400 ring-offset-1";
+
+                    let activeBg = "bg-gray-500";
+                    let activeGlow = "shadow-glow-gray ring-gray-400";
+
+                    if (symbol === '!') {
+                        activeBg = "bg-red-600";
+                        activeGlow = "shadow-glow-red ring-red-400";
+                    } else if (symbol === '^') {
+                        activeBg = "bg-green-600";
+                        activeGlow = "shadow-glow-green ring-green-400";
+                    } else if (symbol === '*') {
+                        activeBg = "bg-blue-600";
+                        activeGlow = "shadow-glow-blue ring-blue-400";
+                    }
+
+                    badgeClass = badgeClass.replace(/badge-glass-[a-z]+/, activeBg);
+                    badgeClass += ` ${activeGlow} ring-2 ring-offset-1`;
                 }
                 
                 li.className = liClass;
