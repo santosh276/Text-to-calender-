@@ -3652,9 +3652,29 @@ return SunCalc;
             // Timeout matches the 0.3s CSS transition + slight buffer
             setTimeout(() => modal.style.display = 'none', 300);
         }
+        // Secure mapping of short codes to full URL names
+        const langCodeToFullMap = {
+            'en': 'english', 'hi': 'hindi', 'or': 'odia', 'bn': 'bengali',
+            'mr': 'marathi', 'gu': 'gujarati', 'pa': 'punjabi', 'ta': 'tamil',
+            'te': 'telugu', 'kn': 'kannada', 'ml': 'malayalam', 'as': 'assamese'
+        };
+
+        // Secure mapping of full URL names to short codes
+        const fullToLangCodeMap = Object.fromEntries(
+            Object.entries(langCodeToFullMap).map(([short, full]) => [full, short])
+        );
+
         function changeLanguage(langCode) {
             appState.config.language = langCode;
             
+            // --- NEW: Update the URL seamlessly ---
+            const fullLangName = langCodeToFullMap[langCode] || 'english';
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('lang', fullLangName);
+            // replaceState updates the URL without reloading the page on Blogger
+            window.history.replaceState({ path: newUrl.href }, '', newUrl.href);
+            // --------------------------------------
+
             // 1. Clear Data State
             appState.monthsData = [];
             appState.recurringEvents = [];
@@ -4486,6 +4506,33 @@ return SunCalc;
         }
 
         function initApp() {
+            // --- NEW: Secure URL Language Reader ---
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const langParam = urlParams.get('lang');
+
+                if (langParam) {
+                    // Strict allowlist validation via map lookup (case-insensitive)
+                    const sanitizedInput = langParam.toLowerCase().trim();
+                    const matchedShortCode = fullToLangCodeMap[sanitizedInput];
+
+                    if (matchedShortCode) {
+                        // Apply the valid language from URL
+                        if (!appState.config) appState.config = {};
+                        appState.config.language = matchedShortCode;
+
+                        // Update the dropdown menu visually if it exists
+                        setTimeout(() => {
+                            const langSelect = document.getElementById('language-select');
+                            if (langSelect) langSelect.value = matchedShortCode;
+                        }, 100);
+                    }
+                }
+            } catch (e) {
+                console.error("Error reading URL language parameter", e);
+            }
+            // ---------------------------------------
+
             // 1. Attempt Cache Load
             let dataFound = false;
             
