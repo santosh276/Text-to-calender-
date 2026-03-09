@@ -7024,7 +7024,7 @@ function renderCalendarGrid(data) {
                 }
 
                 if (isToday) {
-                    liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group bg-orange-50 border border-orange-200 hover:bg-orange-100 shadow-sm";
+                    liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group bg-red-50 border border-red-200 hover:bg-red-100 shadow-sm";
                     badgeClass = badgeClass.replace(/badge-glass-[a-z]+/, "bg-deepred");
                     badgeClass += " shadow-glow-red ring-2 ring-red-400 ring-offset-1";
                 }
@@ -7036,11 +7036,11 @@ function renderCalendarGrid(data) {
                 // Render Multiple Events Stacked
                 const eventsHtml = group.events.map((ev, idx) => {
                     const mt = idx > 0 ? 'mt-1 pt-1 border-t border-gray-100' : '';
-                    let titleClass = isToday ? 'font-extrabold text-orange-900 text-base' : 'font-bold text-gray-900 text-sm';
-                    let locClass = isToday ? 'text-xs text-orange-700 opacity-90' : 'text-[11px] text-gray-500';
+                    let titleClass = isToday ? 'font-extrabold text-red-800 text-base' : 'font-bold text-gray-900 text-sm';
+                    let locClass = isToday ? 'text-xs text-red-700 opacity-90' : 'text-[11px] text-gray-500';
                     return `
                     <div class="${mt}">
-                        <div class="${titleClass} whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
+                        <div class="${titleClass} whitespace-normal leading-tight group-hover:text-red-700 transition-colors">${ev.engName}</div>
                         <div class="${locClass} font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
                     </div>
                     `;
