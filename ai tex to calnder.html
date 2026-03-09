@@ -709,15 +709,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
     /* Missing Tablet/Desktop Utilities */
     @media (min-width: 768px) {
-        .md\:bg-white { --tw-bg-opacity: 1; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)); }
-                .md\:bg-red-50 { --tw-bg-opacity: 1; background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-green-50 { --tw-bg-opacity: 1; background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-blue-50 { --tw-bg-opacity: 1; background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-gray-50 { --tw-bg-opacity: 1; background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-red-100 { --tw-bg-opacity: 1; background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-green-100 { --tw-bg-opacity: 1; background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-blue-100 { --tw-bg-opacity: 1; background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-gray-100 { --tw-bg-opacity: 1; background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-white { background-color: #ffffff !important; }
+                .md\:bg-red-50 { background-color: #fef2f2 !important; }
+        .md\:bg-green-50 { background-color: #f0fdf4 !important; }
+        .md\:bg-blue-50 { background-color: #eff6ff !important; }
+        .md\:bg-gray-50 { background-color: #f9fafb !important; }
+        .md\:bg-red-100 { background-color: #fee2e2 !important; }
+        .md\:bg-green-100 { background-color: #dcfce7 !important; }
+        .md\:bg-blue-100 { background-color: #dbeafe !important; }
+        .md\:bg-gray-100 { background-color: #f3f4f6 !important; }
         .md\:bg-deep-red { background-color: #B91C1C; }
         .md\:rounded-xl { border-radius: 0.75rem; }
         .md\:p-3 { padding: 0.75rem; }
@@ -1697,7 +1697,23 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .mt-10 { margin-top: 2.5rem; }
         .mb-6 { margin-bottom: 1.5rem; }
 </style>
+
+<style id="blogger-desktop-bg-fixes">
+/* High Specificity overrides for Blogger Desktop View */
+@media (min-width: 768px) {
+    body #calendar-grid .grid-cell.md\:bg-white { background-color: #ffffff !important; }
+    body #calendar-grid .grid-cell.md\:bg-red-50 { background-color: #fef2f2 !important; }
+    body #calendar-grid .grid-cell.md\:bg-green-50 { background-color: #f0fdf4 !important; }
+    body #calendar-grid .grid-cell.md\:bg-blue-50 { background-color: #eff6ff !important; }
+    body #calendar-grid .grid-cell.md\:bg-gray-50 { background-color: #f9fafb !important; }
+    body #calendar-grid .grid-cell.md\:bg-red-100 { background-color: #fee2e2 !important; }
+    body #calendar-grid .grid-cell.md\:bg-green-100 { background-color: #dcfce7 !important; }
+    body #calendar-grid .grid-cell.md\:bg-blue-100 { background-color: #dbeafe !important; }
+    body #calendar-grid .grid-cell.md\:bg-gray-100 { background-color: #f3f4f6 !important; }
+}
+</style>
 </head>
+
 <body class="h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
@@ -5823,7 +5839,17 @@ function renderCalendarGrid(data) {
         // CONTAINER CLASSES MERGE:
         // Mobile: Uses 'mobileBgClass', 'min-h-[4rem]', 'p-1' (Compact)
         // Desktop: Uses 'md:bg-white', 'md:min-h-[140px]', 'md:p-3' (Spacious)
-        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:${mobileBgClass}`;
+        let desktopBgClass = 'md:bg-white';
+        if (isSunday) desktopBgClass = 'md:bg-red-50';
+
+        if (dayEvents.length > 0) {
+            if (dayEvents.some(e => e.symbol === '!')) desktopBgClass = 'md:bg-red-50';
+            else if (dayEvents.some(e => e.symbol === '^')) desktopBgClass = 'md:bg-green-50';
+            else if (dayEvents.some(e => e.symbol === '*')) desktopBgClass = 'md:bg-blue-50';
+            else if (dayEvents.some(e => e.symbol === '>')) desktopBgClass = 'md:bg-gray-50';
+        }
+
+        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} ${desktopBgClass}`;
         
         // BORDER COLOR MERGE:
         // Mobile: Orange Border (Original)
