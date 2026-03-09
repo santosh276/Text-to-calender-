@@ -1634,34 +1634,34 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .badge-neutral { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
         /* Glassmorphic Badges for Festival List */
-        .badge-glass-red {
+        /* .badge-glass-red {
             background-color: rgba(220, 38, 38, 0.85);
             color: white;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .badge-glass-green {
+        } */
+        /* .badge-glass-green {
             background-color: rgba(22, 163, 74, 0.85);
             color: white;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .badge-glass-blue {
+        } */
+        /* .badge-glass-blue {
             background-color: rgba(37, 99, 235, 0.85);
             color: white;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .badge-glass-gray {
+        } */
+        /* .badge-glass-gray {
             background-color: rgba(75, 85, 99, 0.85);
             color: white;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+        } */
 
         /* Light Theme Glass Badges (Year View) */
         .badge-glass-orange-light {
@@ -6885,7 +6885,7 @@ function renderCalendarGrid(data) {
             // 5. Festival List Container
             const list = document.createElement('ul');
             list.id = 'festival-list';
-            list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll"; 
+            list.className = "space-y-3 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll";
             section.appendChild(list);
 
             const input = searchWrapper.querySelector('input');
@@ -7012,41 +7012,41 @@ function renderCalendarGrid(data) {
                 
                 const isToday = (group.date === activeDateObj.getDate() && group.monthIndex === activeDateObj.getMonth() && group.year === activeDateObj.getFullYear());
 
-                let badgeClass = "badge-glass-gray";
-                let liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group ";
+                let badgeColor = "#4a5463";
+                let liClass = "flex gap-3 items-center p-3 rounded-xl transition-all cursor-pointer group bg-white border border-gray-200 shadow-sm hover:shadow-md ";
 
                 if (symbol === '!') {
-                    badgeClass = "badge-glass-red"; 
-                    liClass += isToday ? "bg-red-50 border border-red-100 hover:bg-red-100" : "hover:bg-gray-50 border border-transparent";
+                    badgeColor = "#d92c28";
+                    if (isToday) liClass += "bg-red-50 border-red-200 shadow-glow-red ";
                 } else if (symbol === '^') {
-                    badgeClass = "badge-glass-green"; 
-                    liClass += isToday ? "bg-green-50 border border-green-100 hover:bg-green-100" : "hover:bg-gray-50 border border-transparent";
+                    badgeColor = "#18a042";
+                    if (isToday) liClass += "bg-green-50 border-green-200 shadow-glow-green ";
                 } else if (symbol === '*') {
-                    badgeClass = "badge-glass-blue";
-                    liClass += isToday ? "bg-blue-50 border border-blue-100 hover:bg-blue-100" : "hover:bg-gray-50 border border-transparent";
+                    badgeColor = "#2863ec";
+                    if (isToday) liClass += "bg-blue-50 border-blue-200 shadow-glow-blue ";
                 } else {
-                    liClass += isToday ? "bg-gray-100 border border-gray-200 hover:bg-gray-200" : "hover:bg-gray-50 border border-transparent";
+                    if (isToday) liClass += "bg-gray-50 border-gray-300 ";
                 }
                 
                 li.className = liClass;
                 
                 const monthName = shortMonths[group.monthIndex];
                 
-                // Render Multiple Events Stacked
-                const eventsHtml = group.events.map((ev, idx) => {
-                    const mt = idx > 0 ? 'mt-1 pt-1 border-t border-gray-100' : '';
-                    return `
-                    <div class="${mt}">
-                        <div class="font-bold text-gray-900 text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
-                        <div class="text-[11px] text-gray-500 font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
+                // Render Multiple Events Stacked into a single string
+                const engNames = group.events.map(ev => ev.engName).filter(Boolean).join(" / ");
+                const locNames = group.events.map(ev => ev.locName).filter(Boolean).join(" / ");
+
+                const eventsHtml = `
+                    <div>
+                        <div class="font-bold text-gray-900 text-base whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${engNames}</div>
+                        ${locNames ? `<div class="text-[13px] text-gray-500 font-oriya whitespace-normal leading-snug mt-1">${locNames}</div>` : ''}
                     </div>
-                    `;
-                }).join('');
+                `;
 
                 li.innerHTML = `
-                    <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
-                        <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
-                        <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${group.date}</span>
+                    <div style="background-color: ${badgeColor};" class="w-12 h-12 md:w-14 md:h-14 rounded-xl flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
+                        <span class="text-[10px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
+                        <span class="text-xl font-bold leading-none mt-0.5 shadow-sm">${group.date}</span>
                     </div>
                     <div class="flex-grow min-w-0 flex flex-col justify-center">
                         ${eventsHtml}
