@@ -3668,11 +3668,16 @@ return SunCalc;
             appState.config.language = langCode;
             
             // --- NEW: Update the URL seamlessly ---
-            const fullLangName = langCodeToFullMap[langCode] || 'english';
-            const newUrl = new URL(window.location);
-            newUrl.searchParams.set('lang', fullLangName);
-            // replaceState updates the URL without reloading the page on Blogger
-            window.history.replaceState({ path: newUrl.href }, '', newUrl.href);
+            try {
+                const fullLangName = langCodeToFullMap[langCode] || 'english';
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('lang', fullLangName);
+                // Use relative path to avoid strict cross-origin/iframe limitations on Blogger
+                const relativeUrl = newUrl.pathname + newUrl.search + newUrl.hash;
+                window.history.replaceState(null, '', relativeUrl);
+            } catch(e) {
+                console.error("URL update failed", e);
+            }
             // --------------------------------------
 
             // 1. Clear Data State
