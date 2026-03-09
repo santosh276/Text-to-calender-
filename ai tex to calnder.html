@@ -4485,7 +4485,51 @@ return SunCalc;
             return hasEvents || hasPanchang;
         }
 
+        // Secure Language Switcher from URL
+        function applyLanguageFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const langParam = params.get('lang');
+
+            if (!langParam) return false;
+
+            // Strict Allowlist
+            const allowedLanguages = {
+                'odia': 'or',
+                'english': 'en',
+                'hindi': 'hi',
+                'bengali': 'bn',
+                'telugu': 'te',
+                'tamil': 'ta',
+                'marathi': 'mr',
+                'gujarati': 'gu',
+                'kannada': 'kn',
+                'malayalam': 'ml',
+                'punjabi': 'pa',
+                'assamese': 'as'
+            };
+
+            const normalizedInput = langParam.toLowerCase().trim();
+
+            if (allowedLanguages.hasOwnProperty(normalizedInput)) {
+                const validCode = allowedLanguages[normalizedInput];
+
+                // Allow overriding even if appState already has it set, just to be sure UI reflects it
+                console.log("Securely changing language to:", normalizedInput);
+                appState.config.language = validCode;
+
+                // Also update dropdown UI if present
+                const langSelect = document.getElementById('language-select');
+                if (langSelect) langSelect.value = validCode;
+
+                return true;
+            } else {
+                console.warn("Invalid language requested in URL. Safely ignoring and falling back to default/English.");
+            }
+            return false;
+        }
+
         function initApp() {
+
             // 1. Attempt Cache Load
             let dataFound = false;
             
@@ -4553,6 +4597,21 @@ return SunCalc;
                     // Safety Patch: Ensure recurringDetails exists (Fix for older exports)
                     if (!appState.recurringDetails) appState.recurringDetails = {};
                     if (!appState.details) appState.details = {};
+                }
+            }
+
+            // Apply language from URL BEFORE final render
+            // if it returns true, it means it overrode the config, and we must parse again if editor exists
+            // Force apply language from URL and re-render if necessary
+            if (applyLanguageFromURL()) {
+                const editor = document.getElementById('editor');
+                if (editor) {
+                    appState.monthsData = [];
+                    appState.recurringEvents = [];
+                    appState.details = {};
+                    parseInput(editor.value);
+                } else {
+                    render();
                 }
             }
 
@@ -4662,19 +4721,21 @@ return SunCalc;
                 }
             } else {
                 // Case B: First Time User (Set Default EN & Fetch)
-                console.log("First time user detected. Setting default to English.");
+                console.log("First time user detected.");
                 
                 if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
                 
-                // 1. Force English
-                appState.config.language = 'en';
+                // 1. Default to English ONLY if no language is currently set in config (e.g. from URL)
+                if (!appState.config.language) {
+                    appState.config.language = 'en';
+                }
                 
                 // 2. Initial Save
                 saveConfigToStorage();
                 
                 // 3. Update UI (Language Dropdown)
                 const langSelect = document.getElementById('language-select');
-                if (langSelect) langSelect.value = 'en';
+                if (langSelect) langSelect.value = appState.config.language;
 
                 // 4. Auto-Fetch English Data
                 if (appState.config.syncLinks && appState.config.syncLinks['en']) {
