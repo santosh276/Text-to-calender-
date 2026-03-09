@@ -701,6 +701,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .shadow-glow-red { box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4); }
         .shadow-glow-green { box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4); }
         .shadow-glow-blue { box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); }
+        .shadow-glow-gray { box-shadow: 0 4px 10px rgba(75, 85, 99, 0.4); }
         
         /* Utility for Tablet Flex behavior if missing */
         @media (min-width: 640px) {
@@ -7016,16 +7017,17 @@ function renderCalendarGrid(data) {
                 let liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group ";
 
                 if (symbol === '!') {
-                    badgeClass = "badge-glass-red"; 
-                    liClass += isToday ? "bg-red-50 border border-red-100 hover:bg-red-100" : "hover:bg-gray-50 border border-transparent";
+                    badgeClass = isToday ? "bg-red-600 shadow-glow-red" : "badge-glass-red";
+                    liClass += isToday ? "bg-red-50 border-2 border-red-200 shadow-glow-red hover:bg-red-100" : "hover:bg-gray-50 border-2 border-transparent";
                 } else if (symbol === '^') {
-                    badgeClass = "badge-glass-green"; 
-                    liClass += isToday ? "bg-green-50 border border-green-100 hover:bg-green-100" : "hover:bg-gray-50 border border-transparent";
+                    badgeClass = isToday ? "bg-green-600 shadow-glow-green" : "badge-glass-green";
+                    liClass += isToday ? "bg-green-50 border-2 border-green-200 shadow-glow-green hover:bg-green-100" : "hover:bg-gray-50 border-2 border-transparent";
                 } else if (symbol === '*') {
-                    badgeClass = "badge-glass-blue";
-                    liClass += isToday ? "bg-blue-50 border border-blue-100 hover:bg-blue-100" : "hover:bg-gray-50 border border-transparent";
+                    badgeClass = isToday ? "bg-blue-600 shadow-glow-blue" : "badge-glass-blue";
+                    liClass += isToday ? "bg-blue-50 border-2 border-blue-200 shadow-glow-blue hover:bg-blue-100" : "hover:bg-gray-50 border-2 border-transparent";
                 } else {
-                    liClass += isToday ? "bg-gray-100 border border-gray-200 hover:bg-gray-200" : "hover:bg-gray-50 border border-transparent";
+                    badgeClass = isToday ? "bg-gray-600 shadow-glow-gray" : "badge-glass-gray";
+                    liClass += isToday ? "bg-gray-50 border-2 border-gray-200 shadow-glow-gray hover:bg-gray-100" : "hover:bg-gray-50 border-2 border-transparent";
                 }
                 
                 li.className = liClass;
@@ -7035,16 +7037,17 @@ function renderCalendarGrid(data) {
                 // Render Multiple Events Stacked
                 const eventsHtml = group.events.map((ev, idx) => {
                     const mt = idx > 0 ? 'mt-1 pt-1 border-t border-gray-100' : '';
+                    const titleClass = isToday ? 'font-extrabold text-black text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors' : 'font-bold text-gray-900 text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors';
                     return `
                     <div class="${mt}">
-                        <div class="font-bold text-gray-900 text-sm whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
+                        <div class="${titleClass}">${ev.engName}</div>
                         <div class="text-[11px] text-gray-500 font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
                     </div>
                     `;
                 }).join('');
 
                 li.innerHTML = `
-                    <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
+                    <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shrink-0 transition-transform group-hover:scale-105">
                         <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
                         <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${group.date}</span>
                     </div>
