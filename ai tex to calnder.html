@@ -4506,33 +4506,6 @@ return SunCalc;
         }
 
         function initApp() {
-            // --- NEW: Secure URL Language Reader ---
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const langParam = urlParams.get('lang');
-
-                if (langParam) {
-                    // Strict allowlist validation via map lookup (case-insensitive)
-                    const sanitizedInput = langParam.toLowerCase().trim();
-                    const matchedShortCode = fullToLangCodeMap[sanitizedInput];
-
-                    if (matchedShortCode) {
-                        // Apply the valid language from URL
-                        if (!appState.config) appState.config = {};
-                        appState.config.language = matchedShortCode;
-
-                        // Update the dropdown menu visually if it exists
-                        setTimeout(() => {
-                            const langSelect = document.getElementById('language-select');
-                            if (langSelect) langSelect.value = matchedShortCode;
-                        }, 100);
-                    }
-                }
-            } catch (e) {
-                console.error("Error reading URL language parameter", e);
-            }
-            // ---------------------------------------
-
             // 1. Attempt Cache Load
             let dataFound = false;
             
@@ -4754,6 +4727,37 @@ return SunCalc;
         } catch (e) {
             console.error("Failed to load config from localStorage", e);
         }
+
+        // --- NEW: Secure URL Language Reader ---
+        function applyLanguageFromURL() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const langParam = urlParams.get('lang');
+
+                if (langParam) {
+                    // Strict allowlist validation via map lookup (case-insensitive)
+                    const sanitizedInput = langParam.toLowerCase().trim();
+                    const matchedShortCode = fullToLangCodeMap[sanitizedInput];
+
+                    if (matchedShortCode && appState.config.language !== matchedShortCode) {
+                        console.log(`Language from URL differs from cached/default. Switching to ${matchedShortCode}...`);
+
+                        // Update the dropdown menu visually if it exists
+                        const langSelect = document.getElementById('language-select');
+                        if (langSelect) langSelect.value = matchedShortCode;
+
+                        // Trigger the full language change process
+                        changeLanguage(matchedShortCode);
+                    }
+                }
+            } catch (e) {
+                console.error("Error applying language from URL", e);
+            }
+        }
+
+        // Execute URL language check AFTER config is loaded
+        applyLanguageFromURL();
+        // ---------------------------------------
 
         // Initialization logic moved to initAutoSync()
 
