@@ -710,7 +710,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
     /* Missing Tablet/Desktop Utilities */
     @media (min-width: 768px) {
-        .md\:bg-white { --tw-bg-opacity: 1; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-white { --tw-bg-opacity: 1; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-red-50 { --tw-bg-opacity: 1; background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-red-100 { --tw-bg-opacity: 1; background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-green-100 { --tw-bg-opacity: 1; background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-blue-100 { --tw-bg-opacity: 1; background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-gray-100 { --tw-bg-opacity: 1; background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1)) !important; }
         .md\:rounded-xl { border-radius: 0.75rem; }
         .md\:p-3 { padding: 0.75rem; }
         .md\:border-green-500 { --tw-border-opacity: 1; border-color: rgb(34 197 94 / var(--tw-border-opacity, 1)); }
@@ -5736,19 +5741,33 @@ function renderCalendarGrid(data) {
         
         // 1. Mobile Background Logic (Exact Original Priority)
         let mobileBgClass = 'bg-white';
-        if (isSunday) mobileBgClass = 'bg-red-50'; // Base Sunday color
+        let desktopBgClass = 'md:bg-white';
+        if (isSunday) {
+            mobileBgClass = 'bg-red-50'; // Base Sunday color
+            desktopBgClass = 'md:bg-red-50';
+        }
 
         if (dayEvents.length > 0) {
             // Override Sunday if event exists
-            if (dayEvents.some(e => e.symbol === '!')) mobileBgClass = 'bg-red-100';      // Festival
-            else if (dayEvents.some(e => e.symbol === '^')) mobileBgClass = 'bg-green-100'; // Auspicious
-            else if (dayEvents.some(e => e.symbol === '*')) mobileBgClass = 'bg-blue-100';  // Holiday
-            else if (dayEvents.some(e => e.symbol === '>')) mobileBgClass = 'bg-gray-100';  // Other
+            if (dayEvents.some(e => e.symbol === '!')) {
+                mobileBgClass = 'bg-red-100';      // Festival
+                desktopBgClass = 'md:bg-red-100';
+            } else if (dayEvents.some(e => e.symbol === '^')) {
+                mobileBgClass = 'bg-green-100'; // Auspicious
+                desktopBgClass = 'md:bg-green-100';
+            } else if (dayEvents.some(e => e.symbol === '*')) {
+                mobileBgClass = 'bg-blue-100';  // Holiday
+                desktopBgClass = 'md:bg-blue-100';
+            } else if (dayEvents.some(e => e.symbol === '>')) {
+                mobileBgClass = 'bg-gray-100';  // Other
+                desktopBgClass = 'md:bg-gray-100';
+            }
         }
         
         // Today overrides everything on Mobile
         if (isToday) {
             mobileBgClass = 'bg-deep-red';
+            // Note: Desktop relies on the today-glow class overriding styles for today, keeping desktopBgClass to its calculated color or white.
         }
 
         // 2. Mobile Tithi Icons (Exact Original SVGs)
@@ -5814,8 +5833,8 @@ function renderCalendarGrid(data) {
         
         // CONTAINER CLASSES MERGE:
         // Mobile: Uses 'mobileBgClass', 'min-h-[4rem]', 'p-1' (Compact)
-        // Desktop: Uses 'md:bg-white', 'md:min-h-[140px]', 'md:p-3' (Spacious)
-        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:bg-white`;
+        // Desktop: Uses 'desktopBgClass', 'md:min-h-[140px]', 'md:p-3' (Spacious)
+        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} ${desktopBgClass}`;
         
         // BORDER COLOR MERGE:
         // Mobile: Orange Border (Original)
