@@ -6158,7 +6158,14 @@ function renderCalendarGrid(data) {
 
             // 3. Render Astro Timeline (Sun/Moon Visual Strip)
             if (sunTimes.sunrise && sunTimes.sunset) {
-                const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+                const fmt = (d) => {
+                    if (!d) return '--:--';
+                    const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                    if (d.getDate() !== calcDate.getDate() || d.getMonth() !== calcDate.getMonth() || d.getFullYear() !== calcDate.getFullYear()) {
+                        return `${timeStr}, ${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})}`;
+                    }
+                    return timeStr;
+                };
                 
                 const timelineDiv = document.createElement('div');
                 timelineDiv.className = "astro-timeline-modern";
@@ -7354,7 +7361,14 @@ function renderCalendarGrid(data) {
                 }
             }
 
-            const fmtAstroTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+            const fmtAstroTime = (d) => {
+                if (!d) return '--:--';
+                const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                if (d.getDate() !== dateObj.getDate() || d.getMonth() !== dateObj.getMonth() || d.getFullYear() !== dateObj.getFullYear()) {
+                    return `${timeStr}, ${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})}`;
+                }
+                return timeStr;
+            };
             
             // Astro Data
             const jd = tithiInfo.jd || 0;
