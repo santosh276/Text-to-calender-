@@ -701,7 +701,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .shadow-glow-red { box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4); }
         .shadow-glow-green { box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4); }
         .shadow-glow-blue { box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); }
-        .shadow-glow-gold { box-shadow: 0 4px 15px rgba(251, 146, 60, 0.4); }
         
         /* Utility for Tablet Flex behavior if missing */
         @media (min-width: 640px) {
@@ -711,6 +710,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     /* Missing Tablet/Desktop Utilities */
     @media (min-width: 768px) {
         .md\:bg-white { --tw-bg-opacity: 1; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)); }
+                .md\:bg-red-50 { --tw-bg-opacity: 1; background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-green-50 { --tw-bg-opacity: 1; background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-blue-50 { --tw-bg-opacity: 1; background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-gray-50 { --tw-bg-opacity: 1; background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-red-100 { --tw-bg-opacity: 1; background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-green-100 { --tw-bg-opacity: 1; background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-blue-100 { --tw-bg-opacity: 1; background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-gray-100 { --tw-bg-opacity: 1; background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1)); }
+        .md\:bg-deep-red { background-color: #B91C1C; }
         .md\:rounded-xl { border-radius: 0.75rem; }
         .md\:p-3 { padding: 0.75rem; }
         .md\:border-green-500 { --tw-border-opacity: 1; border-color: rgb(34 197 94 / var(--tw-border-opacity, 1)); }
@@ -5800,10 +5808,10 @@ function renderCalendarGrid(data) {
         // Desktop Pills
         let desktopPills = '';
         dayEvents.slice(0, 2).forEach(ev => {
-            let pillColor = "bg-gray-100 text-gray-600";
+            let pillColor = "bg-gray-50 text-gray-600";
             if(ev.symbol === '!') pillColor = "bg-red-50 text-red-800";
             else if(ev.symbol === '*') pillColor = "bg-blue-50 text-blue-700";
-            else if(ev.symbol === '^') pillColor = "bg-orange-100 text-orange-800";
+            else if(ev.symbol === '^') pillColor = "bg-green-50 text-green-800";
             desktopPills += `<span class="event-pill ${pillColor}">${ev.engName}</span>`;
         });
 
@@ -5815,7 +5823,7 @@ function renderCalendarGrid(data) {
         // CONTAINER CLASSES MERGE:
         // Mobile: Uses 'mobileBgClass', 'min-h-[4rem]', 'p-1' (Compact)
         // Desktop: Uses 'md:bg-white', 'md:min-h-[140px]', 'md:p-3' (Spacious)
-        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:bg-white`;
+        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:${mobileBgClass}`;
         
         // BORDER COLOR MERGE:
         // Mobile: Orange Border (Original)
@@ -6988,10 +6996,6 @@ function renderCalendarGrid(data) {
             });
 
             const today = new Date();
-            // If viewing a specific month, consider the 'active' date to be today if it's the current month, otherwise the 1st of that month, to match Timings logic
-            const activeDateObj = (monthData && monthData.month === today.getMonth() && monthData.year === today.getFullYear()) 
-                           ? new Date() 
-                           : (monthData ? new Date(monthData.year, monthData.month, 1) : new Date());
 
             groups.forEach(group => {
                 const li = document.createElement('li');
@@ -7005,28 +7009,40 @@ function renderCalendarGrid(data) {
                 else if (symbols.includes('^')) symbol = '^';
                 else if (symbols.includes('*')) symbol = '*';
                 
-                const isToday = (group.date === activeDateObj.getDate() && group.monthIndex === activeDateObj.getMonth() && group.year === activeDateObj.getFullYear());
+                // Highlight ONLY if it is exactly today's date
+                const isToday = (group.date === today.getDate() && group.monthIndex === today.getMonth() && group.year === today.getFullYear());
 
                 let badgeClass = "badge-glass-gray";
                 let liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group ";
+                let badgeStyle = "";
+                let shadowClass = "shadow-md";
 
                 if (symbol === '!') {
                     badgeClass = "badge-glass-red"; 
-                    liClass += "hover:bg-gray-50 border border-transparent";
+                    liClass += isToday ? "bg-red-50 border-2 border-red-200 hover:bg-red-100" : "hover:bg-gray-50 border border-transparent";
+                    if (isToday) {
+                        badgeStyle = 'style="background-color: #dc2626;"'; // Exact hex for red
+                        shadowClass = "shadow-glow-red";
+                    }
                 } else if (symbol === '^') {
                     badgeClass = "badge-glass-green"; 
-                    liClass += "hover:bg-gray-50 border border-transparent";
+                    liClass += isToday ? "bg-green-50 border-2 border-green-200 hover:bg-green-100" : "hover:bg-gray-50 border border-transparent";
+                    if (isToday) {
+                        badgeStyle = 'style="background-color: #16a34a;"'; // Exact hex for green
+                        shadowClass = "shadow-glow-green";
+                    }
                 } else if (symbol === '*') {
                     badgeClass = "badge-glass-blue";
-                    liClass += "hover:bg-gray-50 border border-transparent";
+                    liClass += isToday ? "bg-blue-50 border-2 border-blue-200 hover:bg-blue-100" : "hover:bg-gray-50 border border-transparent";
+                    if (isToday) {
+                        badgeStyle = 'style="background-color: #2563eb;"'; // Exact hex for blue
+                        shadowClass = "shadow-glow-blue";
+                    }
                 } else {
-                    liClass += "hover:bg-gray-50 border border-transparent";
-                }
-
-                if (isToday) {
-                    liClass = "flex gap-3 items-center p-2 rounded-lg transition-all cursor-pointer group bg-red-50 border-2 border-red-500 hover:bg-red-100 shadow-sm";
-                    badgeClass = badgeClass.replace(/badge-glass-[a-z]+/, "bg-deepred");
-                    badgeClass += " shadow-glow-red ring-2 ring-red-400 ring-offset-1";
+                    liClass += isToday ? "bg-gray-100 border-2 border-gray-300 hover:bg-gray-200" : "hover:bg-gray-50 border border-transparent";
+                    if (isToday) {
+                        badgeStyle = 'style="background-color: #4b5563;"'; // Exact hex for gray
+                    }
                 }
                 
                 li.className = liClass;
@@ -7036,18 +7052,17 @@ function renderCalendarGrid(data) {
                 // Render Multiple Events Stacked
                 const eventsHtml = group.events.map((ev, idx) => {
                     const mt = idx > 0 ? 'mt-1 pt-1 border-t border-gray-100' : '';
-                    let titleClass = isToday ? 'font-extrabold text-black text-base' : 'font-bold text-gray-900 text-sm';
-                    let locClass = isToday ? 'text-xs text-black opacity-90' : 'text-[11px] text-gray-500';
+                    const titleClass = isToday ? 'font-extrabold text-gray-900 text-base' : 'font-bold text-gray-900 text-sm';
                     return `
                     <div class="${mt}">
-                        <div class="${titleClass} whitespace-normal leading-tight transition-colors">${ev.engName}</div>
-                        <div class="${locClass} font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
+                        <div class="${titleClass} whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
+                        <div class="text-[11px] text-gray-500 font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
                     </div>
                     `;
                 }).join('');
 
                 li.innerHTML = `
-                    <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white shadow-md shrink-0 transition-transform group-hover:scale-105">
+                    <div class="${badgeClass} w-10 h-10 rounded-lg flex flex-col items-center justify-center text-white ${shadowClass} shrink-0 transition-transform group-hover:scale-105" ${badgeStyle}>
                         <span class="text-[9px] font-bold uppercase leading-none tracking-wide opacity-90">${monthName}</span>
                         <span class="text-lg font-bold leading-none mt-0.5 shadow-sm">${group.date}</span>
                     </div>
