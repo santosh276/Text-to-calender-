@@ -6153,6 +6153,20 @@ function renderCalendarGrid(data) {
                 // If getMoonTimes exists use it, otherwise skip.
                 if (SunCalc.getMoonTimes) {
                     moonTimes = SunCalc.getMoonTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
+
+                    // Fallback to next day if moonrise or moonset does not occur on the current day
+                    if (!moonTimes.rise) {
+                        const nextDay = new Date(calcDate);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        const nextMoonTimes = SunCalc.getMoonTimes(nextDay, appState.config.location.lat, appState.config.location.lng);
+                        moonTimes.rise = nextMoonTimes.rise;
+                    }
+                    if (!moonTimes.set) {
+                        const nextDay = new Date(calcDate);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        const nextMoonTimes = SunCalc.getMoonTimes(nextDay, appState.config.location.lat, appState.config.location.lng);
+                        moonTimes.set = nextMoonTimes.set;
+                    }
                 }
             }
 
@@ -7358,6 +7372,20 @@ function renderCalendarGrid(data) {
                 sunTimes = SunCalc.getTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
                 if (SunCalc.getMoonTimes) {
                     moonTimes = SunCalc.getMoonTimes(dateObj, appState.config.location.lat, appState.config.location.lng);
+
+                    // Fallback to next day if moonrise or moonset does not occur on the current day
+                    if (!moonTimes.rise) {
+                        const nextDay = new Date(dateObj);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        const nextMoonTimes = SunCalc.getMoonTimes(nextDay, appState.config.location.lat, appState.config.location.lng);
+                        moonTimes.rise = nextMoonTimes.rise;
+                    }
+                    if (!moonTimes.set) {
+                        const nextDay = new Date(dateObj);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        const nextMoonTimes = SunCalc.getMoonTimes(nextDay, appState.config.location.lat, appState.config.location.lng);
+                        moonTimes.set = nextMoonTimes.set;
+                    }
                 }
             }
 
