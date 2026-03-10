@@ -1,0 +1,11 @@
+--- "ai tex to calnder.html"
++++ "ai tex to calnder.html"
+@@ -5828,7 +5828,7 @@
+         // CONTAINER CLASSES MERGE:
+         // Mobile: Uses 'mobileBgClass', 'min-h-[4rem]', 'p-1' (Compact)
+         // Desktop: Uses 'md:bg-white', 'md:min-h-[140px]', 'md:p-3' (Spacious)
+-        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:bg-white`;
++        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} ${desktopBgClass}`;
+
+         // BORDER COLOR MERGE:
+         // Mobile: Orange Border (Original)
