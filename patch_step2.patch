@@ -1,0 +1,35 @@
+--- "ai tex to calnder.html"
++++ "ai tex to calnder.html"
+@@ -5738,15 +5738,28 @@
+
+         // 1. Mobile Background Logic (Exact Original Priority)
+         let mobileBgClass = 'bg-white';
+-        if (isSunday) mobileBgClass = 'bg-red-50'; // Base Sunday color
++        let desktopBgClass = 'md:bg-white';
++        if (isSunday) {
++            mobileBgClass = 'bg-red-50'; // Base Sunday color
++            desktopBgClass = 'md:bg-red-50';
++        }
+
+         if (dayEvents.length > 0) {
+             // Override Sunday if event exists
+-            if (dayEvents.some(e => e.symbol === '!')) mobileBgClass = 'bg-red-100';      // Festival
+-            else if (dayEvents.some(e => e.symbol === '^')) mobileBgClass = 'bg-green-100'; // Auspicious
+-            else if (dayEvents.some(e => e.symbol === '*')) mobileBgClass = 'bg-blue-100';  // Holiday
+-            else if (dayEvents.some(e => e.symbol === '>')) mobileBgClass = 'bg-gray-100';  // Other
++            if (dayEvents.some(e => e.symbol === '!')) {
++                mobileBgClass = 'bg-red-100';      // Festival
++                desktopBgClass = 'md:bg-red-50';
++            } else if (dayEvents.some(e => e.symbol === '^')) {
++                mobileBgClass = 'bg-green-100'; // Auspicious
++                desktopBgClass = 'md:bg-green-50';
++            } else if (dayEvents.some(e => e.symbol === '*')) {
++                mobileBgClass = 'bg-blue-100';  // Holiday
++                desktopBgClass = 'md:bg-blue-50';
++            } else if (dayEvents.some(e => e.symbol === '>')) {
++                mobileBgClass = 'bg-gray-100';  // Other
++                desktopBgClass = 'md:bg-gray-50';
++            }
+         }
+
+         // Today overrides everything on Mobile
