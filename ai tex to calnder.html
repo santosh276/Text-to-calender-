@@ -709,13 +709,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
     /* Missing Tablet/Desktop Utilities */
     @media (min-width: 768px) {
-        .md\:bg-white { --tw-bg-opacity: 1; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-red-50 { --tw-bg-opacity: 1; background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-red-100 { --tw-bg-opacity: 1; background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-green-100 { --tw-bg-opacity: 1; background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-blue-100 { --tw-bg-opacity: 1; background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-gray-100 { --tw-bg-opacity: 1; background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1)); }
-        .md\:bg-deep-red { background-color: #B91C1C; }
+        .md\:bg-white { --tw-bg-opacity: 1; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-red-50 { --tw-bg-opacity: 1; background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-red-100 { --tw-bg-opacity: 1; background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-green-100 { --tw-bg-opacity: 1; background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-blue-100 { --tw-bg-opacity: 1; background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-gray-100 { --tw-bg-opacity: 1; background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1)) !important; }
+        .md\:bg-deep-red { background-color: #B91C1C !important; }
         .md\:rounded-xl { border-radius: 0.75rem; }
         .md\:p-3 { padding: 0.75rem; }
         .md\:border-green-500 { --tw-border-opacity: 1; border-color: rgb(34 197 94 / var(--tw-border-opacity, 1)); }
@@ -5820,7 +5820,8 @@ function renderCalendarGrid(data) {
         // CONTAINER CLASSES MERGE:
         // Mobile: Uses 'mobileBgClass', 'min-h-[4rem]', 'p-1' (Compact)
         // Desktop: Uses 'md:bg-white', 'md:min-h-[140px]', 'md:p-3' (Spacious)
-        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} md:${mobileBgClass}`;
+        let desktopBgClass = (mobileBgClass === 'bg-white') ? 'md:bg-white' : `md:${mobileBgClass}`;
+        let containerClasses = `grid-cell relative border rounded-lg md:rounded-xl p-1 md:p-3 cursor-pointer transition-all hover:shadow-md ${mobileBgClass} ${desktopBgClass}`;
         
         // BORDER COLOR MERGE:
         // Mobile: Orange Border (Original)
