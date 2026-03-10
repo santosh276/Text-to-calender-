@@ -712,9 +712,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     @media (min-width: 768px) {
         .md\:bg-white { --tw-bg-opacity: 1 !important; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)) !important; }
         .md\:bg-red-50 { background-color: #fef2f2 !important; }
-        .md\:bg-green-50 { background-color: #f0fdf4 !important; }
-        .md\:bg-blue-50 { background-color: #eff6ff !important; }
-        .md\:bg-gray-50 { background-color: #f9fafb !important; }
+        .md\:bg-red-100 { background-color: #fee2e2 !important; }
+        .md\:bg-green-100 { background-color: #dcfce7 !important; }
+        .md\:bg-blue-100 { background-color: #dbeafe !important; }
+        .md\:bg-gray-100 { background-color: #f3f4f6 !important; }
         .md\:rounded-xl { border-radius: 0.75rem; }
         .md\:p-3 { padding: 0.75rem; }
         .md\:border-green-500 { --tw-border-opacity: 1; border-color: rgb(34 197 94 / var(--tw-border-opacity, 1)); }
@@ -5750,16 +5751,16 @@ function renderCalendarGrid(data) {
             // Override Sunday if event exists
             if (dayEvents.some(e => e.symbol === '!')) {
                 mobileBgClass = 'bg-red-100';      // Festival
-                desktopBgClass = 'md:bg-red-50';
+                desktopBgClass = 'md:bg-red-100';
             } else if (dayEvents.some(e => e.symbol === '^')) {
                 mobileBgClass = 'bg-green-100'; // Auspicious
-                desktopBgClass = 'md:bg-green-50';
+                desktopBgClass = 'md:bg-green-100';
             } else if (dayEvents.some(e => e.symbol === '*')) {
                 mobileBgClass = 'bg-blue-100';  // Holiday
-                desktopBgClass = 'md:bg-blue-50';
+                desktopBgClass = 'md:bg-blue-100';
             } else if (dayEvents.some(e => e.symbol === '>')) {
                 mobileBgClass = 'bg-gray-100';  // Other
-                desktopBgClass = 'md:bg-gray-50';
+                desktopBgClass = 'md:bg-gray-100';
             }
         }
         
