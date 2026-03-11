@@ -6882,16 +6882,16 @@ function renderCalendarGrid(data) {
 
             // 1. Header
             const header = document.createElement('div');
-            header.className = "flex justify-between items-center mb-4 relative z-10";
+            header.className = "flex justify-between items-center mb-4 relative z-10 min-w-0 gap-2";
             
-            const titleHtml = `<h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0"><i class="fa-solid fa-bell text-red-600 text-lg"></i> Festivals</h3>`;
+            const titleHtml = `<h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0 shrink-0"><i class="fa-solid fa-bell text-red-600 text-lg"></i> Festivals</h3>`;
             
             let locBtnHtml = '';
             if (appState.config.location) {
                  const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
                  locBtnHtml = `
-                    <button onclick="openLocationModal()" class="bg-green-50 hover:bg-green-100 text-green-700 px-2.5 py-1 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 border border-green-200 transition shadow-sm active:scale-95">
-                        <i class="fa-solid fa-location-dot"></i> <span class="max-w-[80px] md:max-w-[120px] truncate">${locName}</span>
+                    <button onclick="openLocationModal()" class="bg-green-50 hover:bg-green-100 text-green-700 px-2.5 py-1 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 border border-green-200 transition shadow-sm active:scale-95 min-w-0 max-w-[60%] sm:max-w-[70%]">
+                        <i class="fa-solid fa-location-dot shrink-0"></i> <span class="truncate max-w-[150px] sm:max-w-[250px] block">${locName}</span>
                     </button>
                  `;
             } else {
