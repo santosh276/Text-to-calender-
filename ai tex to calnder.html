@@ -8214,7 +8214,7 @@ function renderCalendarGrid(data) {
     <!-- Location Modal -->
     <div id="location-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLocationModal()"></div>
-        <div class="modal-content bg-white w-full max-w-sm rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="modal-content bg-white w-[calc(100%-2rem)] max-w-sm rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] mx-auto">
             <div class="bg-gradient-to-r from-orange-500 to-red-600 px-5 py-4 flex items-center justify-between shadow-md shrink-0">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Choose Location</h2>
                 <button onclick="closeLocationModal()" class="text-white/80 hover:text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition active:scale-95"><i class="fa-solid fa-times"></i></button>
