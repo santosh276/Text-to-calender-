@@ -2372,7 +2372,7 @@ The word "Nua" means new and "Khai" means food.
 
     <!-- DAY DETAIL MODAL -->
     <div id="day-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-hidden" style="display: none;">
-        <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDayModal()"></div>
+        <div class="modal-backdrop absolute inset-0 bg-black/70" onclick="closeDayModal()"></div>
         <div class="modal-content bg-aurora rounded-3xl shadow-2xl w-full max-w-[500px] relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
             <div id="modal-header-background" class="premium-header-bg p-6 relative shrink-0">
                 <button onclick="closeDayModal()" class="absolute top-4 right-4 bg-white/20 backdrop-blur-md border border-white/20 hover:bg-white/30 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md z-20 transition active:scale-95"><i class="fa-solid fa-times text-sm"></i></button>
@@ -2388,7 +2388,7 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
             </div>
-            <div id="modal-rich-body" class="rich-content overflow-y-auto p-6 flex-grow"></div>
+            <div id="modal-rich-body" class="rich-content overflow-y-auto p-6 flex-grow transform-gpu will-change-transform overscroll-contain" style="-webkit-overflow-scrolling: touch;"></div>
             <div class="p-4 border-t border-gray-100 flex justify-end items-center bg-gray-50 shrink-0">
                 <button onclick="handleLearnMore()" class="bg-[#5D4037] hover:bg-[#4E342E] text-white px-5 py-2 rounded-full text-sm font-bold transition shadow-md active:scale-95">Learn More</button>
             </div>
@@ -7647,7 +7647,7 @@ function renderCalendarGrid(data) {
                     </div>
 
                     <!-- Scrollable Body -->
-                    <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full">
+                    <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full transform-gpu will-change-transform overscroll-contain" style="-webkit-overflow-scrolling: touch;">
                         
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
