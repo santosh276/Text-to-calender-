@@ -8215,45 +8215,45 @@ function renderCalendarGrid(data) {
     <div id="location-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLocationModal()"></div>
         <div class="modal-content bg-white w-[calc(100%-2rem)] max-w-[400px] rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] mx-auto box-border">
-            <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 sm:px-8 py-4 flex items-center justify-between shadow-md shrink-0 box-border" style="padding-left: 1.5rem; padding-right: 1.5rem;">
-                <h2 class="text-white font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Choose Location</h2>
-                <button onclick="closeLocationModal()" class="text-white/80 hover:text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition active:scale-95"><i class="fa-solid fa-times"></i></button>
+            <div class="bg-white border-b border-gray-100 px-6 sm:px-8 py-4 flex items-center justify-between shrink-0 box-border" style="padding-left: 1.5rem; padding-right: 1.5rem;">
+                <h2 class="text-gray-900 font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-location-dot text-orange-500"></i> Choose Location</h2>
+                <button onclick="closeLocationModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition active:scale-95"><i class="fa-solid fa-times"></i></button>
             </div>
             
             <div class="px-6 py-6 sm:px-8 sm:py-6 flex-1 overflow-y-auto space-y-6 box-border" style="padding-left: 1.5rem; padding-right: 1.5rem;">
                 <!-- Auto GPS Option -->
-                <div class="bg-orange-50 rounded-xl p-4 border border-orange-100 cursor-pointer hover:bg-orange-100 hover:border-orange-200 transition-colors" onclick="handleAutoLocation()">
+                <div class="bg-white rounded-xl p-4 border border-gray-200 cursor-pointer hover:border-orange-300 hover:shadow-sm transition-all" onclick="handleAutoLocation()">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-orange-600 text-lg shrink-0">
+                        <div class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 text-lg shrink-0">
                             <i class="fa-solid fa-location-crosshairs"></i>
                         </div>
                         <div>
-                            <div class="font-bold text-gray-800">Auto Detect GPS</div>
+                            <div class="font-bold text-gray-900">Auto Detect GPS</div>
                             <div class="text-xs text-gray-500">Get location automatically</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3 opacity-50">
-                    <div class="flex-1 h-px bg-gray-300"></div>
-                    <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">OR</div>
-                    <div class="flex-1 h-px bg-gray-300"></div>
+                    <div class="flex-1 h-px bg-gray-200"></div>
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">OR</div>
+                    <div class="flex-1 h-px bg-gray-200"></div>
                 </div>
 
                 <!-- Manual Selection -->
                 <div>
-                    <h3 class="font-bold text-gray-700 mb-3 text-sm"><i class="fa-solid fa-map"></i> Select Manually</h3>
+                    <h3 class="font-bold text-gray-900 mb-3 text-sm"><i class="fa-solid fa-map text-orange-500 mr-1.5"></i>Select Manually</h3>
                     
                     <div class="space-y-4">
                         <!-- State Dropdown -->
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">State / Region</label>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 pl-1">State / Region</label>
                             <div class="relative w-full">
-                                <select id="location-state-select" onchange="onStateChange()" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium box-border max-w-full truncate text-sm sm:text-base">
-                                    <option value="" disabled selected>All Select Region / State</option>
+                                <select id="location-state-select" onchange="onStateChange()" class="w-full appearance-none bg-white border border-gray-200 text-gray-900 py-3 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm font-medium box-border max-w-full truncate text-sm sm:text-base">
+                                    <option value="" disabled selected>Select Region / State</option>
                                     <!-- Populated dynamically -->
                                 </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-6 sm:pr-7 text-gray-400">
                                     <i class="fa-solid fa-chevron-down text-sm"></i>
                                 </div>
                             </div>
@@ -8261,13 +8261,13 @@ function renderCalendarGrid(data) {
 
                         <!-- City Dropdown -->
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">City</label>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 pl-1">City</label>
                             <div class="relative w-full">
-                                <select id="location-city-select" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed box-border max-w-full truncate text-sm sm:text-base">
+                                <select id="location-city-select" class="w-full appearance-none bg-white border border-gray-200 text-gray-900 py-3 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed box-border max-w-full truncate text-sm sm:text-base">
                                     <option value="" disabled selected>Select a state first</option>
                                     <!-- Populated dynamically -->
                                 </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-6 sm:pr-7 text-gray-400">
                                     <i class="fa-solid fa-chevron-down text-sm"></i>
                                 </div>
                             </div>
@@ -8277,8 +8277,8 @@ function renderCalendarGrid(data) {
             </div>
 
             <!-- Footer Action -->
-            <div class="px-6 pt-5 pb-6 sm:px-8 sm:pt-5 sm:pb-7 bg-gray-50 border-t border-gray-100 shrink-0 box-border" style="padding-left: 1.5rem; padding-right: 1.5rem; padding-bottom: 1.75rem;">
-                <button onclick="selectManualLocation()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 box-border">
+            <div class="px-6 pt-5 pb-6 sm:px-8 sm:pt-5 sm:pb-7 bg-white shrink-0 box-border" style="padding-left: 1.5rem; padding-right: 1.5rem; padding-bottom: 1.75rem;">
+                <button onclick="selectManualLocation()" class="w-full bg-white border-2 border-gray-200 hover:border-orange-500 hover:text-orange-600 text-gray-700 font-bold py-3.5 px-4 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 box-border shadow-sm">
                     <i class="fa-solid fa-check"></i> Save Location
                 </button>
             </div>
