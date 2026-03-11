@@ -6176,7 +6176,7 @@ function renderCalendarGrid(data) {
                     if (!d) return '--:--';
                     const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                     if (d.getDate() !== calcDate.getDate() || d.getMonth() !== calcDate.getMonth() || d.getFullYear() !== calcDate.getFullYear()) {
-                        return `${timeStr}, ${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})}`;
+                        return `${timeStr}<span class="block text-[8px] md:text-[10px] opacity-80 font-normal leading-none mt-1 tracking-wider uppercase">${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})}</span>`;
                     }
                     return timeStr;
                 };
@@ -7393,7 +7393,7 @@ function renderCalendarGrid(data) {
                 if (!d) return '--:--';
                 const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                 if (d.getDate() !== dateObj.getDate() || d.getMonth() !== dateObj.getMonth() || d.getFullYear() !== dateObj.getFullYear()) {
-                    return `${timeStr}, ${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})}`;
+                    return `${timeStr}<span class="block text-[8px] opacity-70 font-normal leading-none mt-0.5 tracking-wider uppercase">${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})}</span>`;
                 }
                 return timeStr;
             };
