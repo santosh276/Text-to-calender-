@@ -7635,11 +7635,11 @@ function renderCalendarGrid(data) {
 
             // --- 2. BUILD HTML STRUCTURE (Light Page Layout) ---
             const contentHtml = `
-                <div class="flex flex-col h-full relative overflow-hidden">
+                <div class="flex flex-col h-full relative overflow-hidden bg-aurora z-50">
                     
                     <!-- Persistent Header -->
-                    <div class="shrink-0 z-10 relative backdrop-blur-md bg-white/30 text-center pt-16 pb-4 border-b border-white/20 shadow-sm">
-                        <button onclick="closeDayModal()" class="absolute top-4 right-4 z-[100] bg-gray-100 hover:bg-gray-200 text-gray-600 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition shadow-lg border border-gray-200"><i class="fa-solid fa-times"></i></button>
+                    <div class="shrink-0 z-10 relative bg-white text-center pt-16 pb-4 border-b border-gray-200 shadow-sm">
+                        <button onclick="closeDayModal()" class="absolute top-4 right-4 z-[100] bg-gray-100 hover:bg-gray-200 text-gray-600 w-10 h-10 rounded-full flex items-center justify-center transition shadow-lg border border-gray-200"><i class="fa-solid fa-times"></i></button>
                         
                         <div class="w-16 h-16 mx-auto mb-2 moon-glow transform scale-90 origin-bottom">${mainIcon}</div>
                         <h2 class="text-xl font-extrabold text-deepred mb-3 tracking-tight leading-none">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
@@ -7807,8 +7807,12 @@ function renderCalendarGrid(data) {
         }
 
         let scrollPositionBeforeModal = 0;
+        let isModalOpen = false;
 
         function openDayModal(day, monthData) {
+            if (isModalOpen) return; // Prevent double rendering/firing on multiple clicks
+            isModalOpen = true;
+
             lockScroll();
 
             // Bulletproof scroll lock for mobile/iOS
@@ -7831,6 +7835,7 @@ function renderCalendarGrid(data) {
             }
 
             const modalContent = modal.querySelector('.modal-content');
+            modalContent.innerHTML = ''; // Explicitly clear previous data to prevent ghosting/bleeding
             modalContent.innerHTML = contentHtml;
 
             // Remove legacy listeners (simplified view now)
@@ -7865,6 +7870,7 @@ function renderCalendarGrid(data) {
             const modal = document.getElementById('day-modal');
             modal.classList.add('modal-hidden');
             unlockScroll();
+            isModalOpen = false; // Reset state
 
             // Restore from bulletproof scroll lock
             document.body.style.position = '';
