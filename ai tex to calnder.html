@@ -2465,22 +2465,41 @@ The word "Nua" means new and "Khai" means food.
             // Which way does the shadow edge bow out?
             let innerSweep = (phase >= 0.25 && phase < 0.5) || (phase >= 0.75) ? 1 : 0;
 
+            // 3D gradients
+            const uid = Math.random().toString(36).substring(2, 9);
+            const defs = `
+                <defs>
+                    <radialGradient id="moon-shadow-grad-${uid}" cx="50%" cy="50%" r="50%">
+                        <stop offset="60%" stop-color="rgba(0,0,0,0)" />
+                        <stop offset="100%" stop-color="rgba(0,0,0,0.4)" />
+                    </radialGradient>
+                    <radialGradient id="moon-highlight-grad-${uid}" cx="30%" cy="30%" r="70%">
+                        <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
+                        <stop offset="30%" stop-color="rgba(255,255,255,0.1)" />
+                        <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+                    </radialGradient>
+                </defs>
+            `;
+
             // Handle exact Full and New moons to prevent tiny visual glitches
             if (Math.abs(phase - 0.5) < 0.01) {
-        return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#F59E0B" /></svg>`;
+        return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">${defs}<circle cx="50" cy="50" r="50" fill="#F59E0B" /><circle cx="50" cy="50" r="50" fill="url(#moon-shadow-grad-${uid})" /><circle cx="50" cy="50" r="50" fill="url(#moon-highlight-grad-${uid})" /></svg>`;
             }
             if (phase < 0.01 || phase > 0.99) {
-                return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#0F172A" /></svg>`;
+                return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">${defs}<circle cx="50" cy="50" r="50" fill="#0F172A" /><circle cx="50" cy="50" r="50" fill="url(#moon-shadow-grad-${uid})" /><circle cx="50" cy="50" r="50" fill="url(#moon-highlight-grad-${uid})" /></svg>`;
             }
 
             // The shape of the dark shadow
             const path = `M 50 0 A 50 50 0 0 ${outerSweep} 50 100 A ${rx} 50 0 0 ${innerSweep} 50 0 Z`;
 
-            // Put the bright yellow ball and the dark shadow together
+            // Put the bright yellow ball and the dark shadow together, with 3D gradients on top
             return `
         <svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="50" fill="#F59E0B" />
+            ${defs}
+            <circle cx="50" cy="50" r="50" fill="#F59E0B" />
             <path d="${path}" fill="#0F172A" />
+            <circle cx="50" cy="50" r="50" fill="url(#moon-shadow-grad-${uid})" />
+            <circle cx="50" cy="50" r="50" fill="url(#moon-highlight-grad-${uid})" />
         </svg>`.trim();
         }
 
