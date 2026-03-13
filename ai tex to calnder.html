@@ -8222,10 +8222,19 @@ function renderCalendarGrid(data) {
         function selectSearchedLocation(state, city, lat, lng) {
             const resultsContainer = document.getElementById('location-search-results');
             const searchInput = document.getElementById('location-search-input');
+            const stateSelect = document.getElementById('location-state-select');
+            const citySelect = document.getElementById('location-city-select');
 
             // Hide dropdown
             resultsContainer.classList.add('hidden');
             searchInput.value = '';
+
+            // Update dropdowns automatically
+            if (stateSelect && citySelect) {
+                stateSelect.value = state;
+                onStateChange();
+                citySelect.value = city;
+            }
 
             // Update app state
             appState.config.location = {
