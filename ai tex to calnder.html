@@ -8172,7 +8172,100 @@ function renderCalendarGrid(data) {
         }
 
     
-        // --- LOCATION SELECTION LOGIC ---
+        // --- LOCATION SELECTION LOGIC ---        // Handle Location Search
+        function handleLocationSearch(event) {
+            const query = event.target.value.trim().toLowerCase();
+            const resultsContainer = document.getElementById('location-search-results');
+
+            if (!query) {
+                resultsContainer.classList.add('hidden');
+                return;
+            }
+
+            const results = [];
+            const MAX_RESULTS = 10;
+
+            if (typeof LOCATION_DATA !== 'undefined') {
+                const states = Object.keys(LOCATION_DATA).sort();
+                for (const state of states) {
+                    const citiesData = LOCATION_DATA[state];
+                    const cities = Object.keys(citiesData).sort();
+
+                    for (const city of cities) {
+                        if (city.toLowerCase().includes(query) || state.toLowerCase().includes(query)) {
+                            results.push({ state, city, coords: citiesData[city] });
+                        }
+                    }
+                }
+            }
+
+            if (results.length > 0) {
+                // Limit results
+                const limitedResults = results.slice(0, MAX_RESULTS);
+
+                resultsContainer.innerHTML = limitedResults.map(result => `
+                    <div class="px-4 py-3 hover:bg-orange-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors" onclick="selectSearchedLocation('${result.state.replace(/'/g, "\\'")}', '${result.city.replace(/'/g, "\\'")}', ${result.coords[0]}, ${result.coords[1]})">
+                        <div class="font-semibold text-gray-800">${result.city}</div>
+                        <div class="text-xs text-gray-500">${result.state}</div>
+                    </div>
+                `).join('');
+                resultsContainer.classList.remove('hidden');
+            } else {
+                resultsContainer.innerHTML = `
+                    <div class="px-4 py-4 text-center text-sm text-gray-500">
+                        No locations found
+                    </div>
+                `;
+                resultsContainer.classList.remove('hidden');
+            }
+        }
+        function selectSearchedLocation(state, city, lat, lng) {
+            const resultsContainer = document.getElementById('location-search-results');
+            const searchInput = document.getElementById('location-search-input');
+
+            // Hide dropdown
+            resultsContainer.classList.add('hidden');
+            searchInput.value = '';
+
+            // Update app state
+            appState.config.location = {
+                name: `${city}, ${state}`,
+                lat: lat,
+                lng: lng
+            };
+
+            saveConfig();
+
+            // Re-render location UI
+            renderLocation();
+
+            // Update URL params with new coordinates if needed
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('lat', lat);
+            urlParams.set('lng', lng);
+            urlParams.delete('loc');
+
+            const newUrl = window.location.pathname + '?' + urlParams.toString() + window.location.hash;
+            window.history.replaceState({path: newUrl}, '', newUrl);
+
+            // Re-render UI
+            render();
+            closeLocationModal();
+            showToast('Location updated via search!', 'success');
+        }
+
+        // Close search results when clicking outside
+        document.addEventListener('click', function(event) {
+            const searchContainer = document.getElementById('location-search-results');
+            const searchInput = document.getElementById('location-search-input');
+
+            if (searchContainer && searchInput) {
+                if (!searchContainer.contains(event.target) && event.target !== searchInput) {
+                    searchContainer.classList.add('hidden');
+                }
+            }
+        });
+
         function openLocationModal() {
             const modal = document.getElementById('location-modal');
             const stateSelect = document.getElementById('location-state-select');
@@ -8287,8 +8380,8 @@ function renderCalendarGrid(data) {
 </script>
 
     <!-- Location Prompt Toast Popup -->
-    <div id="location-prompt-toast" class="fixed top-20 lg:top-24 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-500 opacity-0 -translate-y-10 pointer-events-none w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-[450px]" style="display: none; width: calc(100% - 1rem); max-width: 480px; top: 85px; bottom: auto;">
-        <div class="relative bg-white rounded-2xl border p-3 sm:p-4 flex items-center gap-2 sm:gap-3 w-full mx-auto box-border" style="box-shadow: 0 8px 30px rgba(0,0,0,0.12); border-color: rgba(255, 237, 213, 0.8); padding-right: 40px;">
+    <div id="location-prompt-toast" class="fixed bottom-10 lg:bottom-12 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-500 opacity-0 translate-y-10 pointer-events-none w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-[450px]" style="display: none; width: calc(100% - 1rem); max-width: 480px;">
+        <div class="relative bg-white rounded-2xl border p-3 sm:p-4 flex items-center gap-2 sm:gap-3 w-full mx-auto box-border" style="box-shadow: 0 8px 30px rgba(0,0,0,0.12); border-color: rgba(255, 237, 213, 0.8);">
             <div class="rounded-full flex-shrink-0 flex items-center justify-center" style="background-color: #ffedd5; width: 40px; height: 40px;">
                 <i class="fa-solid fa-location-dot animate-slight-bounce text-orange-600 text-lg"></i>
             </div>
@@ -8298,7 +8391,7 @@ function renderCalendarGrid(data) {
             <button onclick="openLocationModal(); hideLocationPrompt();" class="shrink-0 text-white font-bold px-4 rounded-full transition-all cursor-pointer border-0 flex items-center justify-center" style="background: linear-gradient(to right, #f97316, #ea580c); font-size: 13px; height: 36px; line-height: normal; box-shadow: 0 2px 5px rgba(249,115,22,0.3);">
                 Set Now
             </button>
-            <button onclick="hideLocationPrompt()" class="absolute top-2 right-2 flex items-center justify-center text-gray-400 hover:text-gray-700 cursor-pointer border-0 transition-colors" style="width: 32px; height: 32px; background: transparent;">
+            <button onclick="hideLocationPrompt()" class="shrink-0 flex items-center justify-center text-gray-400 hover:text-gray-700 cursor-pointer border-0 transition-colors" style="width: 32px; height: 32px; background: transparent;">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
@@ -8331,7 +8424,23 @@ function renderCalendarGrid(data) {
                     <div class="text-sm font-bold uppercase tracking-widest" style="color: #4B5563;">OR</div>
                 </div>
 
-                <!-- Manual Selection -->
+                                <!-- Search Location -->
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Location Finder</label>
+                    <div class="relative w-full">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
+                        </div>
+                        <input type="text" id="location-search-input" oninput="handleLocationSearch(event)" placeholder="Type city or state..." style="padding-left: 40px;" class="w-full bg-white border border-gray-200 text-gray-700 py-3 md:py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium box-border max-w-full text-sm sm:text-base md:text-lg" autocomplete="off">
+
+                        <!-- Search Results Dropdown -->
+                        <div id="location-search-results" class="absolute z-50 w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto hidden">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+<!-- Manual Selection -->
                 <div>
                     <h3 class="font-bold text-gray-700 mb-3 md:mb-4 text-sm md:text-base"><i class="fa-solid fa-map"></i> Select Manually</h3>
                     
