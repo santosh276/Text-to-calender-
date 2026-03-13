@@ -2433,13 +2433,6 @@ The word "Nua" means new and "Khai" means food.
         const WIFI_ICON_SVG = `<svg viewBox="-3 -3 30 30" width="48" height="48" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="transform: translateY(3px)"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>`;
         const RETRY_ICON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>`;
 
-        const TITHI_ICONS = {
-            purnima: `<svg viewBox="0 0 24 24" class="w-full h-full text-amber-500 drop-shadow-sm" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
-            amavasya: `<svg viewBox="0 0 24 24" class="w-full h-full text-black drop-shadow-sm" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>`,
-            ekadashi: `<svg viewBox="0 0 512 512" class="w-full h-full text-indigo-500 drop-shadow-sm" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`,
-            shukla_ekadashi: `<svg viewBox="0 0 512 512" class="w-full h-full text-amber-500 drop-shadow-sm" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`
-        };
-
         /**
          * DYNAMIC MOON PHASE GENERATOR
          * This function creates an SVG image of the moon for any given point in its cycle.
@@ -2465,12 +2458,31 @@ The word "Nua" means new and "Khai" means food.
             // Which way does the shadow edge bow out?
             let innerSweep = (phase >= 0.25 && phase < 0.5) || (phase >= 0.75) ? 1 : 0;
 
+            const uniqueId = Math.random().toString(36).substring(2, 9);
+            const goldGradId = `moonGold_${uniqueId}`;
+            const darkGradId = `moonDark_${uniqueId}`;
+
+            const defs = `
+                <defs>
+                    <radialGradient id="${goldGradId}" cx="40%" cy="40%" r="70%">
+                        <stop offset="0%" stop-color="#FCD34D" />
+                        <stop offset="60%" stop-color="#F59E0B" />
+                        <stop offset="100%" stop-color="#C2410C" />
+                    </radialGradient>
+                    <radialGradient id="${darkGradId}" cx="40%" cy="40%" r="70%">
+                        <stop offset="0%" stop-color="#1E293B" />
+                        <stop offset="60%" stop-color="#0F172A" />
+                        <stop offset="100%" stop-color="#020617" />
+                    </radialGradient>
+                </defs>
+            `;
+
             // Handle exact Full and New moons to prevent tiny visual glitches
             if (Math.abs(phase - 0.5) < 0.01) {
-        return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#F59E0B" /></svg>`;
+                return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">${defs}<circle cx="50" cy="50" r="50" fill="url(#${goldGradId})" /></svg>`;
             }
             if (phase < 0.01 || phase > 0.99) {
-                return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#0F172A" /></svg>`;
+                return `<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">${defs}<circle cx="50" cy="50" r="50" fill="url(#${darkGradId})" /></svg>`;
             }
 
             // The shape of the dark shadow
@@ -2479,10 +2491,18 @@ The word "Nua" means new and "Khai" means food.
             // Put the bright yellow ball and the dark shadow together
             return `
         <svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="50" fill="#F59E0B" />
-            <path d="${path}" fill="#0F172A" />
+            ${defs}
+            <circle cx="50" cy="50" r="50" fill="url(#${goldGradId})" />
+            <path d="${path}" fill="url(#${darkGradId})" />
         </svg>`.trim();
         }
+
+        const TITHI_ICONS = {
+            purnima: getMoonPhaseIcon(0.5),
+            amavasya: getMoonPhaseIcon(0.0),
+            ekadashi: `<svg viewBox="0 0 512 512" class="w-full h-full text-indigo-500 drop-shadow-sm" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`,
+            shukla_ekadashi: `<svg viewBox="0 0 512 512" class="w-full h-full text-amber-500 drop-shadow-sm" fill="currentColor"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>`
+        };
 
         /**
          * READY-TO-USE STATIC ICONS
@@ -8228,17 +8248,17 @@ function renderCalendarGrid(data) {
     <!-- Location Modal -->
     <div id="location-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLocationModal()"></div>
-        <div class="modal-content bg-white w-[calc(100%-2rem)] max-w-[400px] rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] mx-auto box-border">
-            <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 sm:px-8 py-4 flex items-center justify-between shadow-md shrink-0 box-border" style="padding-left: 1.5rem; padding-right: 1.5rem;">
-                <h2 class="text-white font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Choose Location</h2>
-                <button onclick="closeLocationModal()" class="text-white/80 hover:text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition active:scale-95"><i class="fa-solid fa-times"></i></button>
+        <div class="modal-content bg-white w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-[440px] md:max-w-[580px] lg:max-w-[680px] rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] mx-auto box-border transition-all duration-300">
+            <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 sm:px-8 md:px-10 py-4 md:py-5 flex items-center justify-between shadow-md shrink-0 box-border">
+                <h2 class="text-white font-bold text-lg md:text-xl lg:text-2xl flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Choose Location</h2>
+                <button onclick="closeLocationModal()" class="text-white/80 hover:text-white w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition active:scale-95"><i class="fa-solid fa-times md:text-lg"></i></button>
             </div>
             
-            <div class="px-6 py-6 sm:px-8 sm:py-6 flex-1 overflow-y-auto space-y-6 box-border" style="padding-left: 1.5rem; padding-right: 1.5rem;">
+            <div class="px-6 py-6 sm:px-8 sm:py-6 md:px-10 md:py-8 flex-1 overflow-y-auto space-y-6 md:space-y-8 box-border">
                 <!-- Auto GPS Option -->
-                <div class="bg-orange-50 rounded-xl p-4 border border-orange-100 cursor-pointer hover:bg-orange-100 hover:border-orange-200 transition-colors" onclick="handleAutoLocation()">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-orange-600 text-lg shrink-0">
+                <div class="bg-orange-50 rounded-xl p-4 md:p-5 border border-orange-100 cursor-pointer hover:bg-orange-100 hover:border-orange-200 transition-colors" onclick="handleAutoLocation()">
+                    <div class="flex items-center gap-3 md:gap-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-orange-600 text-lg md:text-xl shrink-0">
                             <i class="fa-solid fa-location-crosshairs"></i>
                         </div>
                         <div>
@@ -8256,14 +8276,14 @@ function renderCalendarGrid(data) {
 
                 <!-- Manual Selection -->
                 <div>
-                    <h3 class="font-bold text-gray-700 mb-3 text-sm"><i class="fa-solid fa-map"></i> Select Manually</h3>
+                    <h3 class="font-bold text-gray-700 mb-3 md:mb-4 text-sm md:text-base"><i class="fa-solid fa-map"></i> Select Manually</h3>
                     
-                    <div class="space-y-4">
+                    <div class="space-y-4 md:space-y-5">
                         <!-- State Dropdown -->
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">State / Region</label>
                             <div class="relative w-full">
-                                <select id="location-state-select" onchange="onStateChange()" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-3 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium box-border max-w-full truncate text-sm sm:text-base">
+                                <select id="location-state-select" onchange="onStateChange()" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-3 md:py-4 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium box-border max-w-full truncate text-sm sm:text-base md:text-lg">
                                     <option value="" disabled selected>All Select Region / State</option>
                                     <!-- Populated dynamically -->
                                 </select>
@@ -8277,7 +8297,7 @@ function renderCalendarGrid(data) {
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">City</label>
                             <div class="relative w-full">
-                                <select id="location-city-select" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-3 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed box-border max-w-full truncate text-sm sm:text-base">
+                                <select id="location-city-select" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-3 md:py-4 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed box-border max-w-full truncate text-sm sm:text-base md:text-lg">
                                     <option value="" disabled selected>Select a state first</option>
                                     <!-- Populated dynamically -->
                                 </select>
@@ -8291,8 +8311,8 @@ function renderCalendarGrid(data) {
             </div>
 
             <!-- Footer Action -->
-            <div class="px-6 pt-5 pb-6 sm:px-8 sm:pt-5 sm:pb-7 bg-gray-50 border-t border-gray-100 shrink-0 box-border" style="padding-left: 1.5rem; padding-right: 1.5rem; padding-bottom: 1.75rem;">
-                <button onclick="selectManualLocation()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 box-border">
+            <div class="px-6 pt-6 pb-8 sm:px-8 sm:pt-6 sm:pb-8 md:px-10 md:pt-8 md:pb-10 bg-gray-50 border-t border-gray-100 shrink-0 box-border">
+                <button onclick="selectManualLocation()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 box-border" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
                     <i class="fa-solid fa-check"></i> Save Location
                 </button>
             </div>
