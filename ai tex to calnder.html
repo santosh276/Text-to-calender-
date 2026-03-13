@@ -8249,29 +8249,27 @@ function renderCalendarGrid(data) {
     <div id="location-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLocationModal()"></div>
         <div class="modal-content bg-white w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-[480px] md:max-w-[600px] lg:max-w-[700px] rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh] mx-auto box-border transition-all duration-300">
-            <div class="bg-white border-b border-gray-100 px-6 sm:px-8 md:px-10 py-4 md:py-5 flex items-center justify-between shadow-md shrink-0 box-border">
-                <h2 class="text-gray-900 font-bold text-lg md:text-xl lg:text-2xl flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Choose Location</h2>
-                <button onclick="closeLocationModal()" class="text-gray-500 hover:text-gray-700 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition active:scale-95"><i class="fa-solid fa-times md:text-lg"></i></button>
+            <div class="rounded-t-3xl px-6 sm:px-8 md:px-10 py-4 md:py-5 flex items-center justify-between shrink-0 box-border" style="background: linear-gradient(to right, #F97316, #EF4444);">
+                <h2 class="text-white font-bold text-xl md:text-2xl flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Choose Location</h2>
+                <button onclick="closeLocationModal()" class="text-black hover:text-gray-800 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full transition active:scale-95"><i class="fa-solid fa-times md:text-lg" style="font-weight: 900;"></i></button>
             </div>
             
             <div class="px-6 py-4 sm:px-8 sm:py-5 md:px-10 md:py-6 flex-1 overflow-y-auto space-y-5 md:space-y-6 box-border">
                 <!-- Auto GPS Option -->
-                <div class="bg-white rounded-xl p-4 md:p-5 border border-gray-200 cursor-pointer hover:bg-orange-50 hover:border-orange-200 transition-colors" onclick="handleAutoLocation()">
+                <div class="rounded-2xl p-4 md:p-5 border cursor-pointer hover:bg-orange-50 transition-colors" style="background-color: #FFF8EF; border-color: #FDECD8;" onclick="handleAutoLocation()">
                     <div class="flex items-center gap-3 md:gap-4">
-                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-orange-50 shadow-sm flex items-center justify-center text-orange-600 text-lg md:text-xl shrink-0">
+                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white shadow-sm flex items-center justify-center text-xl md:text-2xl shrink-0" style="color: #EA580C;">
                             <i class="fa-solid fa-location-crosshairs"></i>
                         </div>
                         <div>
-                            <div class="font-bold text-gray-800">Auto Detect GPS</div>
-                            <div class="text-xs text-gray-500">Get location automatically</div>
+                            <div class="font-bold text-lg md:text-xl" style="color: #1F2937;">Auto Detect GPS</div>
+                            <div class="text-sm" style="color: #6B7280;">Get location automatically</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 opacity-50">
-                    <div class="flex-1 h-px bg-gray-300"></div>
-                    <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">OR</div>
-                    <div class="flex-1 h-px bg-gray-300"></div>
+                <div class="flex items-center justify-center opacity-70 mt-6 mb-2">
+                    <div class="text-sm font-bold uppercase tracking-widest" style="color: #4B5563;">OR</div>
                 </div>
 
                 <!-- Manual Selection -->
