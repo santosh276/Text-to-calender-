@@ -8440,10 +8440,10 @@ function renderCalendarGrid(data) {
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
                         </div>
-                        <input type="text" id="location-search-input" oninput="handleLocationSearch(event)" placeholder="Type city or state..." style="padding-left: 40px;" class="w-full bg-white border border-gray-200 text-gray-700 py-3 md:py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium box-border max-w-full text-sm sm:text-base md:text-lg" autocomplete="off">
+                        <input type="text" id="location-search-input" oninput="handleLocationSearch(event)" onfocus="setTimeout(() => { this.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300)" placeholder="Type city or state..." style="padding-left: 40px;" class="w-full bg-white border border-gray-200 text-gray-700 py-3 md:py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium box-border max-w-full text-sm sm:text-base md:text-lg" autocomplete="off">
 
                         <!-- Search Results Dropdown -->
-                        <div id="location-search-results" class="absolute z-50 w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto hidden">
+                        <div id="location-search-results" class="absolute z-[100] w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl max-h-48 sm:max-h-60 overflow-y-auto hidden" style="overscroll-behavior: contain;">
                             <!-- Populated dynamically -->
                         </div>
                     </div>
