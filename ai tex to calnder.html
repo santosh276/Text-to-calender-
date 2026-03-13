@@ -8248,17 +8248,17 @@ function renderCalendarGrid(data) {
     <!-- Location Modal -->
     <div id="location-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLocationModal()"></div>
-        <div class="modal-content bg-white w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-[440px] md:max-w-[580px] lg:max-w-[680px] rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] mx-auto box-border transition-all duration-300">
-            <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 sm:px-8 md:px-10 py-4 md:py-5 flex items-center justify-between shadow-md shrink-0 box-border">
-                <h2 class="text-white font-bold text-lg md:text-xl lg:text-2xl flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Choose Location</h2>
-                <button onclick="closeLocationModal()" class="text-white/80 hover:text-white w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition active:scale-95"><i class="fa-solid fa-times md:text-lg"></i></button>
+        <div class="modal-content bg-white w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-[480px] md:max-w-[600px] lg:max-w-[700px] rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh] mx-auto box-border transition-all duration-300">
+            <div class="bg-white border-b border-gray-100 px-6 sm:px-8 md:px-10 py-4 md:py-5 flex items-center justify-between shadow-md shrink-0 box-border">
+                <h2 class="text-gray-900 font-bold text-lg md:text-xl lg:text-2xl flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> Choose Location</h2>
+                <button onclick="closeLocationModal()" class="text-gray-500 hover:text-gray-700 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition active:scale-95"><i class="fa-solid fa-times md:text-lg"></i></button>
             </div>
             
-            <div class="px-6 py-6 sm:px-8 sm:py-6 md:px-10 md:py-8 flex-1 overflow-y-auto space-y-6 md:space-y-8 box-border">
+            <div class="px-6 py-4 sm:px-8 sm:py-5 md:px-10 md:py-6 flex-1 overflow-y-auto space-y-5 md:space-y-6 box-border">
                 <!-- Auto GPS Option -->
-                <div class="bg-orange-50 rounded-xl p-4 md:p-5 border border-orange-100 cursor-pointer hover:bg-orange-100 hover:border-orange-200 transition-colors" onclick="handleAutoLocation()">
+                <div class="bg-white rounded-xl p-4 md:p-5 border border-gray-200 cursor-pointer hover:bg-orange-50 hover:border-orange-200 transition-colors" onclick="handleAutoLocation()">
                     <div class="flex items-center gap-3 md:gap-4">
-                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-orange-600 text-lg md:text-xl shrink-0">
+                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-orange-50 shadow-sm flex items-center justify-center text-orange-600 text-lg md:text-xl shrink-0">
                             <i class="fa-solid fa-location-crosshairs"></i>
                         </div>
                         <div>
@@ -8283,7 +8283,7 @@ function renderCalendarGrid(data) {
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">State / Region</label>
                             <div class="relative w-full">
-                                <select id="location-state-select" onchange="onStateChange()" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-3 md:py-4 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium box-border max-w-full truncate text-sm sm:text-base md:text-lg">
+                                <select id="location-state-select" onchange="onStateChange()" class="w-full appearance-none bg-white border border-gray-200 text-gray-700 py-2.5 md:py-3 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium box-border max-w-full truncate text-sm sm:text-base md:text-lg">
                                     <option value="" disabled selected>All Select Region / State</option>
                                     <!-- Populated dynamically -->
                                 </select>
@@ -8297,7 +8297,7 @@ function renderCalendarGrid(data) {
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">City</label>
                             <div class="relative w-full">
-                                <select id="location-city-select" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-3 md:py-4 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed box-border max-w-full truncate text-sm sm:text-base md:text-lg">
+                                <select id="location-city-select" class="w-full appearance-none bg-white border border-gray-200 text-gray-700 py-2.5 md:py-3 pl-4 pr-14 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 focus:bg-white transition-all shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed box-border max-w-full truncate text-sm sm:text-base md:text-lg">
                                     <option value="" disabled selected>Select a state first</option>
                                     <!-- Populated dynamically -->
                                 </select>
@@ -8311,8 +8311,8 @@ function renderCalendarGrid(data) {
             </div>
 
             <!-- Footer Action -->
-            <div class="px-6 pt-6 pb-8 sm:px-8 sm:pt-6 sm:pb-8 md:px-10 md:pt-8 md:pb-10 bg-gray-50 border-t border-gray-100 shrink-0 box-border">
-                <button onclick="selectManualLocation()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 box-border" style="padding-top: 1.125rem; padding-bottom: 1.125rem;">
+            <div class="px-6 py-4 sm:px-8 sm:py-5 md:px-10 md:py-5 bg-gray-50 border-t border-gray-100 shrink-0 box-border">
+                <button onclick="selectManualLocation()" class="w-full bg-white hover:bg-orange-50 border-2 border-orange-500 text-orange-600 hover:text-orange-700 font-bold py-3 md:py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 box-border">
                     <i class="fa-solid fa-check"></i> Save Location
                 </button>
             </div>
