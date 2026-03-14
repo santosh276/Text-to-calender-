@@ -6916,7 +6916,7 @@ function renderCalendarGrid(data) {
                  const locName = appState.config.location.name || `${appState.config.location.lat.toFixed(2)}, ${appState.config.location.lng.toFixed(2)}`;
                  locBtnHtml = `
                     <button onclick="openLocationModal()" class="flex items-center gap-1.5 transition active:scale-95 min-w-0 max-w-[60%] sm:max-w-[70%] cursor-pointer bg-transparent border-0 p-0 text-left">
-                        <i class="fa-solid fa-location-dot text-orange-500 text-sm shrink-0"></i>
+                        <i class="fa-solid fa-location-dot animate-slight-bounce text-orange-500 text-sm shrink-0"></i>
                         <div class="bg-green-50 hover:bg-green-100 text-green-700 py-1 rounded-lg text-[10px] font-bold border border-green-200 shadow-sm min-w-0 flex-1">
                             <span style="display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 8px; padding-right: 8px; vertical-align: middle;">${locName}</span>
                         </div>
