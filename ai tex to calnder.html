@@ -1707,14 +1707,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             right: 0;
             bottom: 0;
             border-radius: inherit;
-            border: 1px solid rgba(249, 115, 22, 0.6);
+            box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.5);
             animation: today-btn-wave 2.5s infinite ease-out;
             pointer-events: none;
             z-index: -1;
         }
         .today-btn-ripple::after {
             animation-delay: 1.25s;
-            border: 1px solid rgba(249, 115, 22, 0.4);
+            box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.3);
             background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, rgba(249, 115, 22, 0) 70%);
         }
         @keyframes today-btn-wave {
