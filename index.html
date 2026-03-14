@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline-First Embedding Generator</title>
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- localForage (via CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+    <style>
+        /* Custom spinner animation */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #3b82f6; /* Tailwind blue-500 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex items-center justify-center">
+
+    <div class="max-w-2xl w-full mx-auto p-6 bg-white rounded-xl shadow-lg">
+        <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">Embedding Generator</h1>
+        <p class="text-center text-gray-600 mb-8">
+            This app fetches data, generates vector embeddings using machine learning entirely in the browser (via Web Worker), and saves it to IndexedDB.
+        </p>
+
+        <div class="space-y-6">
+            <!-- URL Input -->
+            <div>
+                <label for="github-url" class="block text-sm font-medium text-gray-700 mb-2">GitHub Raw URL (JSON)</label>
+                <input type="url" id="github-url"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                       placeholder="https://raw.githubusercontent.com/.../data.json"
+                       value="https://raw.githubusercontent.com/mdn/learning-area/master/javascript/oojs/json/superheroes.json">
+            </div>
+
+            <!-- Controls -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="start-btn" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition shadow-md flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Start Processing
+                </button>
+                <button id="check-db-btn" class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition shadow-md flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    Check Storage
+                </button>
+                <button id="clear-db-btn" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition shadow-md flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Clear Storage
+                </button>
+            </div>
+
+            <!-- Status & Logs -->
+            <div id="status-container" class="hidden flex items-center justify-center gap-3 mt-4">
+                <div id="spinner" class="spinner"></div>
+                <span id="status-text" class="text-blue-600 font-medium">Processing...</span>
+            </div>
+
+            <div class="mt-6 bg-gray-900 rounded-lg p-4 h-64 overflow-y-auto shadow-inner">
+                <div id="log-output" class="text-green-400 font-mono text-sm whitespace-pre-wrap">App initialized. Ready to process.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT (UI, Service Worker, Web Worker) -->
+    <script>
+        const logOutput = document.getElementById('log-output');
+        const startBtn = document.getElementById('start-btn');
+        const checkDbBtn = document.getElementById('check-db-btn');
+        const clearDbBtn = document.getElementById('clear-db-btn');
+        const statusContainer = document.getElementById('status-container');
+        const statusText = document.getElementById('status-text');
+        const spinner = document.getElementById('spinner');
+        const urlInput = document.getElementById('github-url');
+
+        let worker = null;
+
+        function logMessage(msg, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            let color = 'text-gray-300';
+            if (type === 'success') color = 'text-green-400';
+            if (type === 'error') color = 'text-red-400';
+            if (type === 'warn') color = 'text-yellow-400';
+
+            const line = document.createElement('div');
+            line.className = `mb-1 ${color}`;
+            line.textContent = `[${time}] ${msg}`;
+            logOutput.appendChild(line);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        function setStatus(loading, text = '', isError = false) {
+            if (loading) {
+                statusContainer.classList.remove('hidden');
+                spinner.style.display = 'block';
+                statusText.textContent = text;
+                statusText.className = 'text-blue-600 font-medium';
+                startBtn.disabled = true;
+                startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                if (text) {
+                    statusContainer.classList.remove('hidden');
+                    spinner.style.display = 'none';
+                    statusText.textContent = text;
+                    statusText.className = isError ? 'text-red-600 font-medium' : 'text-green-600 font-medium';
+                } else {
+                    statusContainer.classList.add('hidden');
+                }
+                startBtn.disabled = false;
+                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // ==========================================
+        // 1. INLINE SERVICE WORKER
+        // ==========================================
+        function initServiceWorker() {
+            // Note: Service worker needs to be at the root scope, but since we are using createObjectURL,
+            // the scope will be restricted by default. To make it work for the whole origin,
+            // you'd normally need a real file. However, for a single HTML app served from root,
+            // it caches requests made by this document.
+            const swCode = `
+                const CACHE_NAME = 'offline-ml-cache-v1';
+                const OFFLINE_URLS = [
+                    location.href.split('#')[0].split('?')[0],
+                    'https://cdn.tailwindcss.com',
+                    'https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'
+                ];
+
+                self.addEventListener('install', event => {
+                    self.skipWaiting();
+                    event.waitUntil(
+                        caches.open(CACHE_NAME).then(cache => {
+                            // We use no-cors for CDNs if necessary, but standard fetch works for these
+                            return Promise.all(
+                                OFFLINE_URLS.map(url => {
+                                    return fetch(url).then(response => {
+                                        if (response.ok) {
+                                            return cache.put(url, response);
+                                        }
+                                    }).catch(e => console.error('SW Install Cache Error for ' + url, e));
+                                })
+                            );
+                        })
+                    );
+                });
+
+                self.addEventListener('activate', event => {
+                    event.waitUntil(self.clients.claim());
+                });
+
+                self.addEventListener('fetch', event => {
+                    if (event.request.method !== 'GET') return;
+
+                    // Don't cache the API requests for raw data or models here
+                    // Transformers.js has its own caching mechanism using Cache API natively.
+                    const url = new URL(event.request.url);
+                    if (url.hostname === 'raw.githubusercontent.com' || url.hostname.includes('huggingface')) {
+                        return; // Let the browser or transformers.js handle it
+                    }
+
+                    event.respondWith(
+                        caches.match(event.request).then(response => {
+                            return response || fetch(event.request).then(fetchRes => {
+                                return caches.open(CACHE_NAME).then(cache => {
+                                    cache.put(event.request, fetchRes.clone());
+                                    return fetchRes;
+                                });
+                            });
+                        }).catch(() => {
+                            // Offline fallback if needed
+                        })
+                    );
+                });
+            `;
+
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register(swUrl)
+                    .then(reg => {
+                        logMessage('Service Worker registered for offline use.', 'success');
+                    })
+                    .catch(err => {
+                        logMessage('Service Worker registration skipped/unsupported: ' + err.message, 'warn');
+                    });
+            } else {
+                logMessage('Service Workers not supported in this browser.', 'warn');
+            }
+        }
+
+        // ==========================================
+        // 2. INLINE WEB WORKER (Transformers.js + localForage)
+        // ==========================================
+        function createWebWorker() {
+            // The code that will run inside the Web Worker
+            const workerCode = `
+                import localforage from 'https://cdn.jsdelivr.net/npm/localforage@1.10.0/+esm';
+                import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
+
+                (async () => {
+                    try {
+                        self.postMessage({ type: 'log', msg: 'Worker environment initializing...' });
+
+                        env.allowLocalModels = false;
+
+                        self.postMessage({ type: 'log', msg: 'Transformers.js loaded.', status: 'success' });
+                        self.postMessage({ type: 'ready' });
+
+                        self.addEventListener('message', async (event) => {
+                            if (event.data.type === 'process') {
+                                const url = event.data.url;
+                                try {
+                                    self.postMessage({ type: 'progress', msg: 'Fetching JSON data from GitHub...' });
+
+                                    const response = await fetch(url);
+                                    if (!response.ok) throw new Error('Failed to fetch data: ' + response.statusText);
+                                    const rawData = await response.json();
+
+                                    self.postMessage({ type: 'log', msg: 'Data fetched successfully. Extracted ' + (rawData.length || Object.keys(rawData).length) + ' items.', status: 'success' });
+
+                                    let textsToEmbed = [];
+                                    if (Array.isArray(rawData)) {
+                                        textsToEmbed = rawData.map(item => JSON.stringify(item).substring(0, 500));
+                                    } else if (rawData.members && Array.isArray(rawData.members)) {
+                                        textsToEmbed = rawData.members.map(m => m.name + " - " + m.secretIdentity);
+                                    } else {
+                                        textsToEmbed = [JSON.stringify(rawData).substring(0, 500)];
+                                    }
+
+                                    self.postMessage({ type: 'progress', msg: 'Loading ML model (Xenova/all-MiniLM-L6-v2)...' });
+
+                                    const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+                                        progress_callback: x => {
+                                            if (x.status === 'downloading') {
+                                                self.postMessage({ type: 'log', msg: 'Downloading model chunk: ' + x.file });
+                                            }
+                                        }
+                                    });
+
+                                    self.postMessage({ type: 'progress', msg: 'Generating vector embeddings...' });
+
+                                    const output = await extractor(textsToEmbed, { pooling: 'mean', normalize: true });
+
+                                    const embeddingsArray = Array.from(output.data);
+
+                                    self.postMessage({ type: 'log', msg: 'Embeddings generated successfully. Size: ' + embeddingsArray.length, status: 'success' });
+                                    self.postMessage({ type: 'progress', msg: 'Saving to local IndexedDB...' });
+
+                                    await localforage.setItem('appData', {
+                                        sourceUrl: url,
+                                        originalData: rawData,
+                                        embeddings: embeddingsArray,
+                                        timestamp: new Date().toISOString()
+                                    });
+
+                                    self.postMessage({ type: 'complete', msg: 'Data and Embeddings saved to IndexedDB successfully!' });
+
+                                } catch (error) {
+                                    self.postMessage({ type: 'error', msg: error.message });
+                                }
+                            }
+                        });
+
+                    } catch (err) {
+                        self.postMessage({ type: 'error', msg: 'Worker init failed: ' + err.message });
+                    }
+                })();
+            `;
+
+            const blob = new Blob([workerCode], { type: 'application/javascript' });
+            const workerUrl = URL.createObjectURL(blob);
+
+            worker = new Worker(workerUrl, { type: 'module' });
+
+            worker.onmessage = (e) => {
+                const { type, msg, status } = e.data;
+                switch (type) {
+                    case 'log':
+                        logMessage(msg, status || 'info');
+                        break;
+                    case 'ready':
+                        startBtn.disabled = false;
+                        logMessage('Web Worker is ready.', 'success');
+                        break;
+                    case 'progress':
+                        setStatus(true, msg);
+                        logMessage(msg, 'info');
+                        break;
+                    case 'complete':
+                        setStatus(false, msg);
+                        logMessage(msg, 'success');
+                        break;
+                    case 'error':
+                        setStatus(false, 'Error occurred.', true);
+                        logMessage(msg, 'error');
+                        break;
+                }
+            };
+
+            worker.onerror = (e) => {
+                setStatus(false, 'Worker Error', true);
+                logMessage(e.message, 'error');
+            };
+        }
+
+        // ==========================================
+        // 3. UI EVENT LISTENERS
+        // ==========================================
+        startBtn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+            if (!url) {
+                logMessage('Please enter a valid URL.', 'warn');
+                return;
+            }
+            if (!worker) {
+                logMessage('Worker not initialized.', 'error');
+                return;
+            }
+            logMessage('Starting process for: ' + url, 'info');
+            worker.postMessage({ type: 'process', url: url });
+        });
+
+        checkDbBtn.addEventListener('click', async () => {
+            try {
+                const data = await localforage.getItem('appData');
+                if (data) {
+                    logMessage('Storage Check: Data exists.', 'success');
+                    logMessage(`- Source: ${data.sourceUrl}`);
+                    logMessage(`- Saved At: ${data.timestamp}`);
+                    logMessage(`- Original Data fields: ${Object.keys(data.originalData).join(', ')}`);
+                    logMessage(`- Embeddings generated: ${data.embeddings.length} dimensions stored.`);
+                } else {
+                    logMessage('Storage Check: No data found in IndexedDB.', 'warn');
+                }
+            } catch (err) {
+                logMessage('Error accessing IndexedDB: ' + err.message, 'error');
+            }
+        });
+
+        clearDbBtn.addEventListener('click', async () => {
+            try {
+                await localforage.clear();
+                logMessage('IndexedDB cleared successfully.', 'success');
+            } catch (err) {
+                logMessage('Error clearing IndexedDB: ' + err.message, 'error');
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            logMessage('Initializing application...');
+            // We disable start button until worker is ready
+            startBtn.disabled = true;
+            initServiceWorker();
+            createWebWorker();
+        });
+
+    </script>
+</body>
+</html>
