@@ -3960,7 +3960,16 @@ const LOCATION_DATA = {
             const lang = langEl.value;
             const input = document.getElementById('sync-link-input');
             if (appState.config.syncLinks && appState.config.syncLinks[lang]) {
-                input.value = appState.config.syncLinks[lang];
+                let link = appState.config.syncLinks[lang];
+                if (appState.config.linksEncrypted) {
+                    try {
+                        link = LinkSecurity.decrypt(link);
+                    } catch (e) {
+                        console.error("Link decryption failed in updateSyncLinkInput", e);
+                        link = '';
+                    }
+                }
+                input.value = link;
             } else {
                 input.value = '';
             }
@@ -3978,7 +3987,8 @@ const LOCATION_DATA = {
             if (!appState.config.syncLinks) appState.config.syncLinks = { ...DEFAULT_SYNC_LINKS };
             
             if (url) {
-                appState.config.syncLinks[lang] = url;
+                appState.config.linksEncrypted = true;
+                appState.config.syncLinks[lang] = LinkSecurity.encrypt(url);
                 showToast(`Link saved for ${lang.toUpperCase()}`);
             } else {
                 if (appState.config.syncLinks[lang]) {
