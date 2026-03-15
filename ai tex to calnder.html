@@ -2399,10 +2399,10 @@ The word "Nua" means new and "Khai" means food.
     <input type="file" id="bannerInput" accept="image/*" style="display: none;" onchange="handleBannerUpload(event)">
 
     <script>
-        // --- INDEXEDDB HELPER ---
-        class DBHelper {
+        // --- HYBRID STORAGE MANAGER ---
+        class StorageManager {
             static dbName = 'VaidikCalendarDB';
-            static storeName = 'store';
+            static storeName = 'heavy_data';
             static db = null;
 
             static initDB() {
@@ -2429,7 +2429,34 @@ The word "Nua" means new and "Khai" means food.
                 });
             }
 
-            static getItem(key) {
+            // --- Synchronous LocalStorage for Settings ---
+            static getSetting(key) {
+                try {
+                    return localStorage.getItem(key);
+                } catch(e) {
+                    console.error("StorageManager getSetting error:", e);
+                    return null;
+                }
+            }
+
+            static setSetting(key, value) {
+                try {
+                    localStorage.setItem(key, value);
+                } catch(e) {
+                    console.error("StorageManager setSetting error:", e);
+                }
+            }
+
+            static removeSetting(key) {
+                try {
+                    localStorage.removeItem(key);
+                } catch(e) {
+                    console.error("StorageManager removeSetting error:", e);
+                }
+            }
+
+            // --- Asynchronous IndexedDB for Heavy Data ---
+            static getHeavyData(key) {
                 return new Promise((resolve, reject) => {
                     if (!this.db) {
                         reject(new Error("Database not initialized"));
@@ -2443,7 +2470,7 @@ The word "Nua" means new and "Khai" means food.
                 });
             }
 
-            static setItem(key, value) {
+            static setHeavyData(key, value) {
                 return new Promise((resolve, reject) => {
                     if (!this.db) {
                         reject(new Error("Database not initialized"));
@@ -2457,7 +2484,7 @@ The word "Nua" means new and "Khai" means food.
                 });
             }
 
-            static removeItem(key) {
+            static removeHeavyData(key) {
                 return new Promise((resolve, reject) => {
                     if (!this.db) {
                         reject(new Error("Database not initialized"));
@@ -2471,7 +2498,7 @@ The word "Nua" means new and "Khai" means food.
                 });
             }
 
-            static clear() {
+            static clearHeavyData() {
                 return new Promise((resolve, reject) => {
                     if (!this.db) {
                         reject(new Error("Database not initialized"));
@@ -2483,6 +2510,11 @@ The word "Nua" means new and "Khai" means food.
                     request.onsuccess = () => resolve();
                     request.onerror = () => reject(request.error);
                 });
+            }
+
+            static clearAll() {
+                localStorage.clear();
+                return this.clearHeavyData();
             }
         }
 
@@ -2508,7 +2540,7 @@ The word "Nua" means new and "Khai" means food.
                         <div class="bg-gray-100 p-3 rounded text-left text-xs font-mono text-gray-700 overflow-x-auto mb-6 border border-gray-200">
                             ${message}
                         </div>
-                        <button onclick="DBHelper.clear().then(()=>window.location.reload())" class="bg-red-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-red-700 transition w-full shadow-md">
+                        <button onclick="StorageManager.clearAll().then(()=>window.location.reload())" class="bg-red-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-red-700 transition w-full shadow-md">
                             Reset App Data & Retry
                         </button>
                     </div>
@@ -3299,9 +3331,9 @@ return SunCalc;
 
         
         
-        async function saveConfigToStorage() {
+        function saveConfigToStorage() {
             try {
-                await DBHelper.setItem('panchangConfig', JSON.stringify(appState.config));
+                StorageManager.setSetting('panchangConfig', JSON.stringify(appState.config));
             } catch (e) {
                 console.error("Failed to save config to localStorage", e);
             }
@@ -3365,9 +3397,9 @@ return SunCalc;
             });
         }
 
-        async function fallbackToSavedLocation(btn, originalContent) {
+        function fallbackToSavedLocation(btn, originalContent) {
             try {
-                const savedConfig = await DBHelper.getItem('panchangConfig');
+                const savedConfig = StorageManager.getSetting('panchangConfig');
                 if (savedConfig) {
                     const parsed = JSON.parse(savedConfig);
                     if (parsed.location) {
@@ -3999,9 +4031,9 @@ const LOCATION_DATA = {
             appState.images = {};
 
             // 2. Clear Storage & Cache
-            await DBHelper.removeItem('panchang_autosave_text');
-            await DBHelper.removeItem('panchang_cached_state');
-            await DBHelper.removeItem('panchang_last_sync_ts');
+            await StorageManager.removeHeavyData('panchang_autosave_text');
+            await StorageManager.removeHeavyData('panchang_cached_state');
+            StorageManager.removeSetting('panchang_last_sync_ts');
 
             // 3. Clear Editor
             const editor = document.getElementById('editor');
@@ -4025,14 +4057,14 @@ const LOCATION_DATA = {
             if (link) {
                 appState.config.liveUrl = link;
                 appState.config.syncGitHubUrl = link;
-                await saveConfigToStorage(); // fire-and-forget // Persist new language & url
+                saveConfigToStorage(); // fire-and-forget // Persist new language & url
                 
                 showToast(`Fetching ${langCode.toUpperCase()} dataset...`);
                 await fetchGitHubData(link, true);
             } else {
                 delete appState.config.liveUrl;
                 delete appState.config.syncGitHubUrl;
-                await saveConfigToStorage(); // fire-and-forget // Persist removal
+                saveConfigToStorage(); // fire-and-forget // Persist removal
                 
                 showToast(`${langCode.toUpperCase()} selected. No data available.`);
                 render(); // Render blank state
@@ -4486,7 +4518,7 @@ const LOCATION_DATA = {
             
             // TIMER LOGIC (Only if NOT forced)
             if (!force) {
-                const lastSync = await DBHelper.getItem('panchang_last_sync_ts');
+                const lastSync = StorageManager.getSetting('panchang_last_sync_ts');
                 const interval = appState.config.syncInterval || (24 * 60 * 60 * 1000); // Default 24h
                 const now = Date.now();
                 
@@ -4519,10 +4551,10 @@ const LOCATION_DATA = {
 
                 // SMART DIFF (Only if NOT forced)
                 if (!force) {
-                    const cachedString = await DBHelper.getItem('panchang_autosave_text');
+                    const cachedString = await StorageManager.getHeavyData('panchang_autosave_text');
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff: Data is identical. Update timestamp only.");
-                         await DBHelper.setItem('panchang_last_sync_ts', Date.now());
+                         StorageManager.setSetting('panchang_last_sync_ts', Date.now());
                          // --- EDITOR LOGIC START ---
                          if(syncBtn) showToast("Sync: No changes found.");
                          // --- EDITOR LOGIC END ---
@@ -4534,7 +4566,7 @@ const LOCATION_DATA = {
                 await updateAppWithFetchedData(cleanText);
                 
                 // Update Timestamp
-                await DBHelper.setItem('panchang_last_sync_ts', Date.now());
+                StorageManager.setSetting('panchang_last_sync_ts', Date.now());
 
             } catch (e) {
                 console.error("GitHub Sync Error:", e);
@@ -4578,7 +4610,7 @@ const LOCATION_DATA = {
             
             // TIMER LOGIC (Only if NOT forced)
             if (!force) {
-                const lastSync = await DBHelper.getItem('panchang_last_sync_ts');
+                const lastSync = StorageManager.getSetting('panchang_last_sync_ts');
                 const interval = appState.config.syncInterval || (24 * 60 * 60 * 1000); // Default 24h
                 const now = Date.now();
                 
@@ -4638,10 +4670,10 @@ const LOCATION_DATA = {
 
                 // SMART DIFF (Only if NOT forced)
                 if (!force) {
-                    const cachedString = await DBHelper.getItem('panchang_autosave_text');
+                    const cachedString = await StorageManager.getHeavyData('panchang_autosave_text');
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff (Docs): Data is identical. Update timestamp only.");
-                         await DBHelper.setItem('panchang_last_sync_ts', Date.now());
+                         StorageManager.setSetting('panchang_last_sync_ts', Date.now());
                          // --- EDITOR LOGIC START ---
                          if(syncBtn) showToast("Sync: No changes found.");
                          // --- EDITOR LOGIC END ---
@@ -4653,7 +4685,7 @@ const LOCATION_DATA = {
                 await updateAppWithFetchedData(cleanText);
                 
                 // Update Timestamp
-                await DBHelper.setItem('panchang_last_sync_ts', Date.now());
+                StorageManager.setSetting('panchang_last_sync_ts', Date.now());
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
@@ -4668,14 +4700,15 @@ const LOCATION_DATA = {
         }
 
         // Shared Logic for updating app state from fetched text
-        function updateAppWithFetchedData(cleanText) {
-            return new Promise(async (resolve, reject) => {
+        async function updateAppWithFetchedData(cleanText) {
+            try {
                 // 1. Save to Local Storage (Auto-Save)
-                await DBHelper.setItem('panchang_autosave_text', cleanText);
+                await StorageManager.setHeavyData('panchang_autosave_text', cleanText);
 
-                // 2. Non-Blocking Render
-                requestAnimationFrame(() => {
-                    try {
+                return new Promise((resolve, reject) => {
+                    // 2. Non-Blocking Render
+                    requestAnimationFrame(() => {
+                        try {
                         // --- EDITOR LOGIC START ---
                         const editor = document.getElementById('editor');
                         if (editor) {
@@ -4706,19 +4739,23 @@ const LOCATION_DATA = {
                         console.log("App updated seamlessly from background cloud fetch.");
                         
                         resolve();
-                    } catch (e) {
-                        console.error("Critical Parse/Render Error:", e);
-                        reject(e);
-                    }
+                        } catch (e) {
+                            console.error("Critical Parse/Render Error:", e);
+                            reject(e);
+                        }
+                    });
                 });
-            });
+            } catch (error) {
+                console.error("Error updating app with fetched data:", error);
+                throw error;
+            }
         }
 
         async function syncAndResetApp() {
             // 1. Deep Cleanup (Data only - preserve User Config)
-            await DBHelper.removeItem('panchang_cached_state');
-            await DBHelper.removeItem('panchang_autosave_text');
-            await DBHelper.removeItem('panchang_last_sync_ts');
+            await StorageManager.removeHeavyData('panchang_cached_state');
+            await StorageManager.removeHeavyData('panchang_autosave_text');
+            StorageManager.removeSetting('panchang_last_sync_ts');
             sessionStorage.removeItem('panchang_retry_count');
             
             // 2. Identify Language & Link
@@ -4760,13 +4797,13 @@ const LOCATION_DATA = {
             const retryCount = parseInt(sessionStorage.getItem('panchang_retry_count') || '0');
             
             // Always clear data cache
-            await DBHelper.removeItem('panchang_cached_state');
-            await DBHelper.removeItem('panchang_autosave_text');
-            await DBHelper.removeItem('panchang_last_sync_ts');
+            await StorageManager.removeHeavyData('panchang_cached_state');
+            await StorageManager.removeHeavyData('panchang_autosave_text');
+            StorageManager.removeSetting('panchang_last_sync_ts');
             
             if (retryCount > 0) {
                 // 2nd Attempt: Nuclear Option (Reset Config too)
-                await DBHelper.removeItem('panchangConfig');
+                StorageManager.removeSetting('panchangConfig');
                 sessionStorage.removeItem('panchang_retry_count');
             } else {
                 // 1st Attempt: Mark for next time
@@ -4832,7 +4869,7 @@ const LOCATION_DATA = {
             } 
             // Priority 2: Text Cache
             else {
-                const cachedText = await DBHelper.getItem('panchang_autosave_text');
+                const cachedText = await StorageManager.getHeavyData('panchang_autosave_text');
                 if (cachedText) {
                     console.log("Loaded from Text Cache");
                     parseInput(cachedText); // This populates appState
@@ -4851,7 +4888,7 @@ const LOCATION_DATA = {
                 // Editor Mode
                 const editor = document.getElementById('editor');
                 if (dataFound) {
-                    const cachedText = await DBHelper.getItem('panchang_autosave_text');
+                    const cachedText = await StorageManager.getHeavyData('panchang_autosave_text');
                     if (cachedText && editor.value !== cachedText) editor.value = cachedText;
                 } else {
                     // Initial parse of default content
@@ -4865,7 +4902,7 @@ const LOCATION_DATA = {
                     const val = e.target.value;
                     parseInput(val);
                     clearTimeout(timeout);
-                    timeout = setTimeout(async () => await DBHelper.setItem('panchang_autosave_text', val), 500);
+                    timeout = setTimeout(async () => await StorageManager.setHeavyData('panchang_autosave_text', val), 500);
                 });
             }
             // --- EDITOR LOGIC END ---
@@ -4961,8 +4998,8 @@ const LOCATION_DATA = {
         
         // Start Up
         (async function() {
-            await DBHelper.initDB();
-            await loadConfig();
+            await StorageManager.initDB();
+            loadConfig();
             await initApp();
             initCalendarSwipe();
 
@@ -4988,9 +5025,9 @@ const LOCATION_DATA = {
 
         
         // Move the top-level load config block into a function so it can be awaited properly
-        async function loadConfig() {
+        function loadConfig() {
             try {
-                const savedConfig = await DBHelper.getItem('panchangConfig');
+                const savedConfig = StorageManager.getSetting('panchangConfig');
                 
                 if (savedConfig) {
                     // Case A: Returning User (Load Config)
@@ -5015,7 +5052,7 @@ const LOCATION_DATA = {
                     appState.config.language = 'en';
                     
                     // 2. Initial Save
-                    await saveConfigToStorage(); // fire-and-forget
+                    saveConfigToStorage(); // fire-and-forget
 
                     // 3. Update UI (Language Dropdown)
                     const langSelect = document.getElementById('language-select');
@@ -5039,13 +5076,13 @@ const LOCATION_DATA = {
                             console.log("Auto-fetching default English dataset...");
                             appState.config.liveUrl = link;
                             appState.config.syncGitHubUrl = link;
-                            await saveConfigToStorage(); // fire-and-forget // Save liveUrl
+                            saveConfigToStorage(); // fire-and-forget // Save liveUrl
 
                             // Show Loader Message
                             const loaderTitle = document.querySelector('#app-loader h2');
                             if (loaderTitle) loaderTitle.innerText = "Loading English Calendar...";
 
-                            await fetchGitHubData(link, true);
+                            fetchGitHubData(link, true); // Fire and forget so we don't block initialization
                         }
                     }
                 }
@@ -8001,7 +8038,7 @@ function renderCalendarGrid(data) {
                 // Include version in the saved state
                 const stateToSave = { ...appState, version: DATA_VERSION };
                 const jsonString = JSON.stringify(stateToSave);
-                await DBHelper.setItem('panchang_cached_state', jsonString);
+                await StorageManager.setHeavyData('panchang_cached_state', jsonString);
             } catch (e) {
                 console.error("Failed to cache state", e);
             }
@@ -8009,14 +8046,14 @@ function renderCalendarGrid(data) {
 
         async function loadStateFromCache() {
             try {
-                const cached = await DBHelper.getItem('panchang_cached_state');
+                const cached = await StorageManager.getHeavyData('panchang_cached_state');
                 if (cached) {
                     const parsed = JSON.parse(cached);
                     
                     // 1. Version Check
                     if (parsed.version !== DATA_VERSION) {
                         console.warn("⚠️ Cache Version Mismatch! Invalidating...");
-                        await DBHelper.removeItem('panchang_cached_state');
+                        await StorageManager.removeHeavyData('panchang_cached_state');
                         return false;
                     }
 
@@ -8029,7 +8066,7 @@ function renderCalendarGrid(data) {
             } catch (e) {
                 console.error("Failed to load state from cache", e);
                 // In case of parsing error, clear cache too
-                await DBHelper.removeItem('panchang_cached_state');
+                await StorageManager.removeHeavyData('panchang_cached_state');
             }
             return false;
         }
