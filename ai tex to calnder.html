@@ -3849,7 +3849,7 @@ const LOCATION_DATA = {
             // Update Sync Toggles
             const liveUrl = appState.config.liveUrl || "";
             const isDocs = liveUrl.includes('docs.google.com') || (appState.config.syncDocsUrl && liveUrl === appState.config.syncDocsUrl);
-            const isGitHub = liveUrl.includes('github') || (appState.config.syncGitHubUrl && liveUrl === appState.config.syncGitHubUrl);
+            const isGitHub = liveUrl.includes('github') || liveUrl.includes('jsdelivr.net') || (appState.config.syncGitHubUrl && liveUrl === appState.config.syncGitHubUrl);
             
             const docsToggle = document.getElementById('toggle-sync-docs');
             const githubToggle = document.getElementById('toggle-sync-github');
@@ -3960,7 +3960,11 @@ const LOCATION_DATA = {
             const lang = langEl.value;
             const input = document.getElementById('sync-link-input');
             if (appState.config.syncLinks && appState.config.syncLinks[lang]) {
-                input.value = appState.config.syncLinks[lang];
+                let link = appState.config.syncLinks[lang];
+                if (appState.config.linksEncrypted) {
+                    try { link = LinkSecurity.decrypt(link); } catch (e) { }
+                }
+                input.value = link;
             } else {
                 input.value = '';
             }
@@ -4052,7 +4056,7 @@ const LOCATION_DATA = {
             } else {
                 // If turning off GitHub, and it was the active one, clear liveUrl
                 const currentUrl = appState.config.liveUrl || "";
-                if (currentUrl === appState.config.syncGitHubUrl || currentUrl.includes('github')) {
+                if (currentUrl === appState.config.syncGitHubUrl || currentUrl.includes('github') || currentUrl.includes('jsdelivr.net')) {
                     delete appState.config.liveUrl;
                     saveConfigToStorage();
                     showToast("Live Sync disabled.");
@@ -4308,14 +4312,14 @@ const LOCATION_DATA = {
 
                 // Save to App State (So it persists in Downloaded File)
                 appState.config.liveUrl = url;
-                if (!url.includes('github')) {
+                if (!url.includes('github') && !url.includes('jsdelivr.net')) {
                     appState.config.syncDocsUrl = url;
                 }
                 
                 saveConfigToStorage();
                 
                 // Fetch immediately to test
-                if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                if (url.includes('github.com') || url.includes('raw.githubusercontent.com') || url.includes('jsdelivr.net')) {
                     fetchGitHubData(url);
                 } else {
                     fetchLiveDoc(url);
@@ -4324,7 +4328,7 @@ const LOCATION_DATA = {
                 // Update Settings UI if open
                 const docsToggle = document.getElementById('toggle-sync-docs');
                 const githubToggle = document.getElementById('toggle-sync-github');
-                if (docsToggle && !url.includes('github')) {
+                if (docsToggle && !url.includes('github') && !url.includes('jsdelivr.net')) {
                     docsToggle.checked = true;
                     if(githubToggle) githubToggle.checked = false;
                 }
@@ -4342,7 +4346,7 @@ const LOCATION_DATA = {
 
         // --- NEW: Configure GitHub Sync ---
         function configureGitHubSync() {
-            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'))) ? appState.config.liveUrl : "";
+            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent') || appState.config.liveUrl.includes('jsdelivr.net'))) ? appState.config.liveUrl : "";
             let url = prompt("Paste your GitHub File Link (e.g., github.com/.../data.txt):", currentUrl);
             
             if (url) {
@@ -4381,6 +4385,52 @@ const LOCATION_DATA = {
         }
         // --- EDITOR LOGIC END ---
 
+/**
+ * Smart URL Converter (ସ୍ମାର୍ଟ ଲିଙ୍କ୍ ପରିବର୍ତ୍ତକ)
+ * ଏହା ସାଧାରଣ GitHub ଲିଙ୍କ୍ କୁ ଅତି-ଦ୍ରୁତ jsDelivr CDN ଲିଙ୍କ୍ ରେ ବଦଳାଇଥାଏ।
+ */
+function getCDNUrl(originalUrl) {
+    if (!originalUrl) return originalUrl;
+    try {
+        const urlObj = new URL(originalUrl);
+
+        // ୧. ଯଦି ଲିଙ୍କ୍ ଟି GitHub Pages (ଉଦାହରଣ: username.github.io) ର ଅଟେ
+        if (urlObj.hostname.includes('.github.io')) {
+            const hostParts = urlObj.hostname.split('.');
+            const username = hostParts[0]; // ୟୁଜରନେମ୍ ବାହାର କରିବା
+            
+            const pathParts = urlObj.pathname.split('/').filter(part => part !== '');
+            if (pathParts.length >= 2) {
+                const repo = pathParts[0]; // ପ୍ରୋଜେକ୍ଟ (Repo) ନାମ ବାହାର କରିବା
+                const filePath = pathParts.slice(1).join('/'); // ଫାଇଲ୍ ର ରାସ୍ତା
+                
+                // ସୁପର୍-ଫାଷ୍ଟ jsDelivr ଲିଙ୍କ୍ ତିଆରି କରିବା (Default branch 'main' ରଖାଯାଇଛି)
+                return `https://cdn.jsdelivr.net/gh/${username}/${repo}@main/${filePath}`;
+            }
+        } 
+        
+        // ୨. ଯଦି ଲିଙ୍କ୍ ଟି Raw GitHub (ଉଦାହରଣ: raw.githubusercontent.com) ର ଅଟେ
+        else if (urlObj.hostname === 'raw.githubusercontent.com') {
+            const pathParts = urlObj.pathname.split('/').filter(part => part !== '');
+            if (pathParts.length >= 4) {
+                const username = pathParts[0];
+                const repo = pathParts[1];
+                const branch = pathParts[2]; // main କିମ୍ବା master
+                const filePath = pathParts.slice(3).join('/');
+                
+                return `https://cdn.jsdelivr.net/gh/${username}/${repo}@${branch}/${filePath}`;
+            }
+        }
+
+        // ଯଦି ଲିଙ୍କ୍ ଟି ଅଲଗା ପ୍ରକାରର, ତେବେ ମୂଳ ଲିଙ୍କ୍ ଟି ଫେରାଇଦେବ (ସୁରକ୍ଷା ପାଇଁ)
+        return originalUrl;
+
+    } catch (error) {
+        console.error("URL ବଦଳାଇବାରେ ସମସ୍ୟା ହେଲା:", error);
+        return originalUrl; // ଭୁଲ୍ ହେଲେ ପୁରୁଣା ରାସ୍ତା ବ୍ୟବହାର କରିବ
+    }
+}
+
         // --- NEW: Fetch GitHub Data (Direct) ---
         async function fetchGitHubData(url, force = false) {
             if (!url) return;
@@ -4413,17 +4463,36 @@ const LOCATION_DATA = {
             }
 
             try {
+                // Convert to ultra-fast jsDelivr CDN URL
+                const cdnUrl = getCDNUrl(url);
+                
                 // Add timestamp to bypass caching
-                const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+                let fetchUrl = cdnUrl.includes('?') ? `${cdnUrl}&t=${Date.now()}` : `${cdnUrl}?t=${Date.now()}`;
                 
                 // Add Timeout (15 seconds)
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-                const response = await fetch(fetchUrl, { signal: controller.signal });
+                let controller = new AbortController();
+                let timeoutId = setTimeout(() => controller.abort(), 15000);
+                
+                let response;
+                
+                try {
+                    // Try the CDN URL first
+                    response = await fetch(fetchUrl, { signal: controller.signal });
+                    if (!response.ok) throw new Error(`CDN Fetch Failed: ${response.status}`);
+                } catch (cdnError) {
+                    // Fallback to original URL if CDN fails
+                    console.warn("CDN failed, falling back to original URL:", cdnError);
+                    clearTimeout(timeoutId);
+                    
+                    fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+                    controller = new AbortController();
+                    timeoutId = setTimeout(() => controller.abort(), 15000);
+                    
+                    response = await fetch(fetchUrl, { signal: controller.signal });
+                    if (!response.ok) throw new Error(`Original Fetch Failed: ${response.status}`);
+                }
+                
                 clearTimeout(timeoutId);
-
-                if (!response.ok) throw new Error(`GitHub Fetch Failed: ${response.status}`);
                 
                 const cleanText = await response.text();
                 
@@ -4473,7 +4542,7 @@ const LOCATION_DATA = {
             }
             
             // Check if it's actually a GitHub URL that got routed here
-            if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+            if (url.includes('github.com') || url.includes('raw.githubusercontent.com') || url.includes('jsdelivr.net')) {
                 return fetchGitHubData(url, force);
             }
 
@@ -4801,6 +4870,17 @@ const LOCATION_DATA = {
                     if (!appState.recurringDetails) appState.recurringDetails = {};
                     if (!appState.details) appState.details = {};
                 }
+                
+                if (appState.config && appState.config.urlsEncrypted) {
+                    try {
+                        if (appState.config.liveUrl) appState.config.liveUrl = LinkSecurity.decrypt(appState.config.liveUrl);
+                        if (appState.config.syncDocsUrl) appState.config.syncDocsUrl = LinkSecurity.decrypt(appState.config.syncDocsUrl);
+                        if (appState.config.syncGitHubUrl) appState.config.syncGitHubUrl = LinkSecurity.decrypt(appState.config.syncGitHubUrl);
+                        delete appState.config.urlsEncrypted;
+                    } catch (e) {
+                        console.error("URL decryption failed during init", e);
+                    }
+                }
             }
 
             // Render whatever we have (Data or Skeleton)
@@ -4811,7 +4891,7 @@ const LOCATION_DATA = {
             // 2. Conditional Fetching Logic
             if (appState.config && appState.config.liveUrl) {
                 const url = appState.config.liveUrl;
-                const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
+                const isGitHub = url.includes('github') || url.includes('raw.githubusercontent') || url.includes('jsdelivr.net');
 
                 let allowProxy = false;
                 // --- EDITOR LOGIC START ---
@@ -8035,6 +8115,11 @@ function renderCalendarGrid(data) {
                 });
                 exportConfig.linksEncrypted = true;
             }
+
+            if (exportConfig.liveUrl) exportConfig.liveUrl = LinkSecurity.encrypt(exportConfig.liveUrl);
+            if (exportConfig.syncDocsUrl) exportConfig.syncDocsUrl = LinkSecurity.encrypt(exportConfig.syncDocsUrl);
+            if (exportConfig.syncGitHubUrl) exportConfig.syncGitHubUrl = LinkSecurity.encrypt(exportConfig.syncGitHubUrl);
+            exportConfig.urlsEncrypted = true;
 
             const stateToSave = {
                 activeMonthIndex: appState.activeMonthIndex || 0,
