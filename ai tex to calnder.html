@@ -3960,7 +3960,11 @@ const LOCATION_DATA = {
             const lang = langEl.value;
             const input = document.getElementById('sync-link-input');
             if (appState.config.syncLinks && appState.config.syncLinks[lang]) {
-                input.value = appState.config.syncLinks[lang];
+                let link = appState.config.syncLinks[lang];
+                if (appState.config.linksEncrypted) {
+                    try { link = LinkSecurity.decrypt(link); } catch (e) { }
+                }
+                input.value = link;
             } else {
                 input.value = '';
             }
