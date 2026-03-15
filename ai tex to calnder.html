@@ -2399,6 +2399,93 @@ The word "Nua" means new and "Khai" means food.
     <input type="file" id="bannerInput" accept="image/*" style="display: none;" onchange="handleBannerUpload(event)">
 
     <script>
+        // --- INDEXEDDB HELPER ---
+        class DBHelper {
+            static dbName = 'VaidikCalendarDB';
+            static storeName = 'store';
+            static db = null;
+
+            static initDB() {
+                return new Promise((resolve, reject) => {
+                    if (this.db) {
+                        resolve(this.db);
+                        return;
+                    }
+                    const request = indexedDB.open(this.dbName, 1);
+                    request.onerror = (event) => {
+                        console.error("IndexedDB error:", event.target.error);
+                        reject(event.target.error);
+                    };
+                    request.onsuccess = (event) => {
+                        this.db = event.target.result;
+                        resolve(this.db);
+                    };
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(this.storeName)) {
+                            db.createObjectStore(this.storeName);
+                        }
+                    };
+                });
+            }
+
+            static getItem(key) {
+                return new Promise((resolve, reject) => {
+                    if (!this.db) {
+                        reject(new Error("Database not initialized"));
+                        return;
+                    }
+                    const transaction = this.db.transaction([this.storeName], 'readonly');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.get(key);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            static setItem(key, value) {
+                return new Promise((resolve, reject) => {
+                    if (!this.db) {
+                        reject(new Error("Database not initialized"));
+                        return;
+                    }
+                    const transaction = this.db.transaction([this.storeName], 'readwrite');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.put(value, key);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            static removeItem(key) {
+                return new Promise((resolve, reject) => {
+                    if (!this.db) {
+                        reject(new Error("Database not initialized"));
+                        return;
+                    }
+                    const transaction = this.db.transaction([this.storeName], 'readwrite');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.delete(key);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            static clear() {
+                return new Promise((resolve, reject) => {
+                    if (!this.db) {
+                        reject(new Error("Database not initialized"));
+                        return;
+                    }
+                    const transaction = this.db.transaction([this.storeName], 'readwrite');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.clear();
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        }
+
         // --- GLOBAL ERROR HANDLER ---
         // Catches unexpected crashes (e.g. Render errors, Logic bugs) and removes the loader
         window.onerror = function(message, source, lineno, colno, error) {
@@ -2421,7 +2508,7 @@ The word "Nua" means new and "Khai" means food.
                         <div class="bg-gray-100 p-3 rounded text-left text-xs font-mono text-gray-700 overflow-x-auto mb-6 border border-gray-200">
                             ${message}
                         </div>
-                        <button onclick="localStorage.clear(); window.location.reload()" class="bg-red-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-red-700 transition w-full shadow-md">
+                        <button onclick="DBHelper.clear().then(()=>window.location.reload())" class="bg-red-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-red-700 transition w-full shadow-md">
                             Reset App Data & Retry
                         </button>
                     </div>
@@ -3212,9 +3299,9 @@ return SunCalc;
 
         
         
-        function saveConfigToStorage() {
+        async function saveConfigToStorage() {
             try {
-                localStorage.setItem('panchangConfig', JSON.stringify(appState.config));
+                await DBHelper.setItem('panchangConfig', JSON.stringify(appState.config));
             } catch (e) {
                 console.error("Failed to save config to localStorage", e);
             }
@@ -3223,7 +3310,7 @@ return SunCalc;
         function toggleSection(section, isVisible) {
             if (!appState.config.sections) appState.config.sections = { festivals: true, panchang: true };
             appState.config.sections[section] = isVisible;
-            saveConfigToStorage();
+            saveConfigToStorage(); // fire-and-forget
             render();
         }
 
@@ -3245,7 +3332,7 @@ return SunCalc;
                 
                 // Optimistic update
                 appState.config.location = { lat: lat, lng: lng, name: locName };
-                saveConfigToStorage();
+                saveConfigToStorage(); // fire-and-forget
                 render();
                 
                 // Try reverse geocoding
@@ -3263,7 +3350,7 @@ return SunCalc;
                              locName = data.display_name.split(',')[0];
                         }
                         appState.config.location.name = locName;
-                        saveConfigToStorage();
+                        saveConfigToStorage(); // fire-and-forget
                         render();
                     }
                 } catch (e) {
@@ -3278,9 +3365,9 @@ return SunCalc;
             });
         }
 
-        function fallbackToSavedLocation(btn, originalContent) {
+        async function fallbackToSavedLocation(btn, originalContent) {
             try {
-                const savedConfig = localStorage.getItem('panchangConfig');
+                const savedConfig = await DBHelper.getItem('panchangConfig');
                 if (savedConfig) {
                     const parsed = JSON.parse(savedConfig);
                     if (parsed.location) {
@@ -3886,7 +3973,7 @@ const LOCATION_DATA = {
             Object.entries(langCodeToFullMap).map(([short, full]) => [full, short])
         );
 
-        function changeLanguage(langCode) {
+        async function changeLanguage(langCode) {
             appState.config.language = langCode;
             
             // --- NEW: Update the URL seamlessly ---
@@ -3912,9 +3999,9 @@ const LOCATION_DATA = {
             appState.images = {};
 
             // 2. Clear Storage & Cache
-            localStorage.removeItem('panchang_autosave_text');
-            localStorage.removeItem('panchang_cached_state');
-            localStorage.removeItem('panchang_last_sync_ts');
+            await DBHelper.removeItem('panchang_autosave_text');
+            await DBHelper.removeItem('panchang_cached_state');
+            await DBHelper.removeItem('panchang_last_sync_ts');
 
             // 3. Clear Editor
             const editor = document.getElementById('editor');
@@ -3938,14 +4025,14 @@ const LOCATION_DATA = {
             if (link) {
                 appState.config.liveUrl = link;
                 appState.config.syncGitHubUrl = link;
-                saveConfigToStorage(); // Persist new language & url
+                await saveConfigToStorage(); // fire-and-forget // Persist new language & url
                 
                 showToast(`Fetching ${langCode.toUpperCase()} dataset...`);
-                fetchGitHubData(link, true);
+                await fetchGitHubData(link, true);
             } else {
                 delete appState.config.liveUrl;
                 delete appState.config.syncGitHubUrl;
-                saveConfigToStorage(); // Persist removal
+                await saveConfigToStorage(); // fire-and-forget // Persist removal
                 
                 showToast(`${langCode.toUpperCase()} selected. No data available.`);
                 render(); // Render blank state
@@ -4001,7 +4088,7 @@ const LOCATION_DATA = {
                 }
             }
             
-            saveConfigToStorage();
+            saveConfigToStorage(); // fire-and-forget
         }
         // --- EDITOR LOGIC END ---
 
@@ -4021,7 +4108,7 @@ const LOCATION_DATA = {
                 
                 if (appState.config.syncDocsUrl) {
                     appState.config.liveUrl = appState.config.syncDocsUrl;
-                    saveConfigToStorage();
+                    saveConfigToStorage(); // fire-and-forget
                     fetchLiveDoc(appState.config.liveUrl);
                 } else {
                     configureLiveSync(); // Will save to syncDocsUrl and liveUrl
@@ -4031,7 +4118,7 @@ const LOCATION_DATA = {
                 const currentUrl = appState.config.liveUrl || "";
                 if (currentUrl === appState.config.syncDocsUrl || currentUrl.includes('docs.google.com')) {
                     delete appState.config.liveUrl;
-                    saveConfigToStorage();
+                    saveConfigToStorage(); // fire-and-forget
                     showToast("Live Sync disabled.");
                 }
             }
@@ -4044,7 +4131,7 @@ const LOCATION_DATA = {
                 
                 if (appState.config.syncGitHubUrl) {
                     appState.config.liveUrl = appState.config.syncGitHubUrl;
-                    saveConfigToStorage();
+                    saveConfigToStorage(); // fire-and-forget
                     fetchGitHubData(appState.config.liveUrl);
                 } else {
                     configureGitHubSync(); // Will save to syncGitHubUrl and liveUrl
@@ -4054,7 +4141,7 @@ const LOCATION_DATA = {
                 const currentUrl = appState.config.liveUrl || "";
                 if (currentUrl === appState.config.syncGitHubUrl || currentUrl.includes('github')) {
                     delete appState.config.liveUrl;
-                    saveConfigToStorage();
+                    saveConfigToStorage(); // fire-and-forget
                     showToast("Live Sync disabled.");
                 }
             }
@@ -4312,7 +4399,7 @@ const LOCATION_DATA = {
                     appState.config.syncDocsUrl = url;
                 }
                 
-                saveConfigToStorage();
+                saveConfigToStorage(); // fire-and-forget
                 
                 // Fetch immediately to test
                 if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
@@ -4332,7 +4419,7 @@ const LOCATION_DATA = {
             } else if (url === "") {
                 // User cleared the input
                 delete appState.config.liveUrl;
-                saveConfigToStorage();
+                saveConfigToStorage(); // fire-and-forget
                 showToast("Live Sync removed.");
                 
                 const docsToggle = document.getElementById('toggle-sync-docs');
@@ -4357,7 +4444,7 @@ const LOCATION_DATA = {
                 appState.config.liveUrl = url;
                 appState.config.syncGitHubUrl = url;
                 
-                saveConfigToStorage();
+                saveConfigToStorage(); // fire-and-forget
                 
                 // Trigger Fetch
                 fetchGitHubData(url);
@@ -4372,7 +4459,7 @@ const LOCATION_DATA = {
                 
             } else if (url === "") {
                 delete appState.config.liveUrl;
-                saveConfigToStorage();
+                saveConfigToStorage(); // fire-and-forget
                 // showToast("GitHub Sync removed.");
                 
                 const githubToggle = document.getElementById('toggle-sync-github');
@@ -4399,7 +4486,7 @@ const LOCATION_DATA = {
             
             // TIMER LOGIC (Only if NOT forced)
             if (!force) {
-                const lastSync = localStorage.getItem('panchang_last_sync_ts');
+                const lastSync = await DBHelper.getItem('panchang_last_sync_ts');
                 const interval = appState.config.syncInterval || (24 * 60 * 60 * 1000); // Default 24h
                 const now = Date.now();
                 
@@ -4432,10 +4519,10 @@ const LOCATION_DATA = {
 
                 // SMART DIFF (Only if NOT forced)
                 if (!force) {
-                    const cachedString = localStorage.getItem('panchang_autosave_text');
+                    const cachedString = await DBHelper.getItem('panchang_autosave_text');
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff: Data is identical. Update timestamp only.");
-                         localStorage.setItem('panchang_last_sync_ts', Date.now());
+                         await DBHelper.setItem('panchang_last_sync_ts', Date.now());
                          // --- EDITOR LOGIC START ---
                          if(syncBtn) showToast("Sync: No changes found.");
                          // --- EDITOR LOGIC END ---
@@ -4447,7 +4534,7 @@ const LOCATION_DATA = {
                 await updateAppWithFetchedData(cleanText);
                 
                 // Update Timestamp
-                localStorage.setItem('panchang_last_sync_ts', Date.now());
+                await DBHelper.setItem('panchang_last_sync_ts', Date.now());
 
             } catch (e) {
                 console.error("GitHub Sync Error:", e);
@@ -4491,7 +4578,7 @@ const LOCATION_DATA = {
             
             // TIMER LOGIC (Only if NOT forced)
             if (!force) {
-                const lastSync = localStorage.getItem('panchang_last_sync_ts');
+                const lastSync = await DBHelper.getItem('panchang_last_sync_ts');
                 const interval = appState.config.syncInterval || (24 * 60 * 60 * 1000); // Default 24h
                 const now = Date.now();
                 
@@ -4551,10 +4638,10 @@ const LOCATION_DATA = {
 
                 // SMART DIFF (Only if NOT forced)
                 if (!force) {
-                    const cachedString = localStorage.getItem('panchang_autosave_text');
+                    const cachedString = await DBHelper.getItem('panchang_autosave_text');
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff (Docs): Data is identical. Update timestamp only.");
-                         localStorage.setItem('panchang_last_sync_ts', Date.now());
+                         await DBHelper.setItem('panchang_last_sync_ts', Date.now());
                          // --- EDITOR LOGIC START ---
                          if(syncBtn) showToast("Sync: No changes found.");
                          // --- EDITOR LOGIC END ---
@@ -4566,7 +4653,7 @@ const LOCATION_DATA = {
                 await updateAppWithFetchedData(cleanText);
                 
                 // Update Timestamp
-                localStorage.setItem('panchang_last_sync_ts', Date.now());
+                await DBHelper.setItem('panchang_last_sync_ts', Date.now());
 
             } catch (e) {
                 console.error("Live Sync Error:", e);
@@ -4582,9 +4669,9 @@ const LOCATION_DATA = {
 
         // Shared Logic for updating app state from fetched text
         function updateAppWithFetchedData(cleanText) {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 // 1. Save to Local Storage (Auto-Save)
-                localStorage.setItem('panchang_autosave_text', cleanText);
+                await DBHelper.setItem('panchang_autosave_text', cleanText);
 
                 // 2. Non-Blocking Render
                 requestAnimationFrame(() => {
@@ -4601,7 +4688,7 @@ const LOCATION_DATA = {
                         // Heavy lifting
                         parseInput(cleanText);
                         render();
-                        saveStateToCache(); // Update JSON Cache
+                        saveStateToCache(); // fire-and-forget // Update JSON Cache, fire-and-forget
                         
                         // Reset Retry Counter on Success
                         sessionStorage.removeItem('panchang_retry_count');
@@ -4627,11 +4714,11 @@ const LOCATION_DATA = {
             });
         }
 
-        function syncAndResetApp() {
+        async function syncAndResetApp() {
             // 1. Deep Cleanup (Data only - preserve User Config)
-            localStorage.removeItem('panchang_cached_state');
-            localStorage.removeItem('panchang_autosave_text');
-            localStorage.removeItem('panchang_last_sync_ts');
+            await DBHelper.removeItem('panchang_cached_state');
+            await DBHelper.removeItem('panchang_autosave_text');
+            await DBHelper.removeItem('panchang_last_sync_ts');
             sessionStorage.removeItem('panchang_retry_count');
             
             // 2. Identify Language & Link
@@ -4656,12 +4743,12 @@ const LOCATION_DATA = {
                 // Update Live URL to match current language source
                 appState.config.liveUrl = link;
                 appState.config.syncGitHubUrl = link;
-                saveConfigToStorage();
+                saveConfigToStorage(); // fire-and-forget
                 
                 showToast(`Resetting and syncing ${currentLang.toUpperCase()} data...`);
                 
                 // Force Fetch (bypass cache/timer)
-                fetchGitHubData(link, true);
+                await fetchGitHubData(link, true);
             } else {
                 // Fallback to standard retry (reloads page) if no source is configured
                 showToast("No sync source. Performing full reset...");
@@ -4669,17 +4756,17 @@ const LOCATION_DATA = {
             }
         }
 
-        function retryAppInitialization() {
+        async function retryAppInitialization() {
             const retryCount = parseInt(sessionStorage.getItem('panchang_retry_count') || '0');
             
             // Always clear data cache
-            localStorage.removeItem('panchang_cached_state');
-            localStorage.removeItem('panchang_autosave_text');
-            localStorage.removeItem('panchang_last_sync_ts');
+            await DBHelper.removeItem('panchang_cached_state');
+            await DBHelper.removeItem('panchang_autosave_text');
+            await DBHelper.removeItem('panchang_last_sync_ts');
             
             if (retryCount > 0) {
                 // 2nd Attempt: Nuclear Option (Reset Config too)
-                localStorage.removeItem('panchangConfig');
+                await DBHelper.removeItem('panchangConfig');
                 sessionStorage.removeItem('panchang_retry_count');
             } else {
                 // 1st Attempt: Mark for next time
@@ -4732,19 +4819,20 @@ const LOCATION_DATA = {
             return hasEvents || hasPanchang;
         }
 
-        function initApp() {
+        async function initApp() {
             // 1. Attempt Cache Load
             let dataFound = false;
             
             // Priority 1: JSON Cache
             // Updated Check: Must have VALID data, not just skeleton
-            if (loadStateFromCache() && hasValidData(appState)) {
+            const cacheLoaded = await loadStateFromCache();
+            if (cacheLoaded && hasValidData(appState)) {
                 console.log("Loaded valid data from JSON Cache");
                 dataFound = true;
             } 
             // Priority 2: Text Cache
             else {
-                const cachedText = localStorage.getItem('panchang_autosave_text');
+                const cachedText = await DBHelper.getItem('panchang_autosave_text');
                 if (cachedText) {
                     console.log("Loaded from Text Cache");
                     parseInput(cachedText); // This populates appState
@@ -4763,7 +4851,7 @@ const LOCATION_DATA = {
                 // Editor Mode
                 const editor = document.getElementById('editor');
                 if (dataFound) {
-                    const cachedText = localStorage.getItem('panchang_autosave_text');
+                    const cachedText = await DBHelper.getItem('panchang_autosave_text');
                     if (cachedText && editor.value !== cachedText) editor.value = cachedText;
                 } else {
                     // Initial parse of default content
@@ -4777,7 +4865,7 @@ const LOCATION_DATA = {
                     const val = e.target.value;
                     parseInput(val);
                     clearTimeout(timeout);
-                    timeout = setTimeout(() => localStorage.setItem('panchang_autosave_text', val), 500);
+                    timeout = setTimeout(async () => await DBHelper.setItem('panchang_autosave_text', val), 500);
                 });
             }
             // --- EDITOR LOGIC END ---
@@ -4872,13 +4960,17 @@ const LOCATION_DATA = {
         }
         
         // Start Up
-        initApp();
-        initCalendarSwipe();
-        
-        // Show location prompt after a small delay to not block initial render
-        setTimeout(() => {
-            showLocationPrompt();
-        }, 1500);
+        (async function() {
+            await DBHelper.initDB();
+            await loadConfig();
+            await initApp();
+            initCalendarSwipe();
+
+            // Show location prompt after a small delay to not block initial render
+            setTimeout(() => {
+                showLocationPrompt();
+            }, 1500);
+        })();
 
         // --- EDITOR LOGIC START ---
         function handleFileUpload(event) {
@@ -4895,69 +4987,71 @@ const LOCATION_DATA = {
         // --- EDITOR LOGIC END ---
 
         
-        // Load config from localStorage if available
-        try {
-            const savedConfig = localStorage.getItem('panchangConfig');
-            
-            if (savedConfig) {
-                // Case A: Returning User (Load Config)
-                const parsed = JSON.parse(savedConfig);
-                // Merge saved config into defaults
-                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
-                appState.config = { ...appState.config, ...parsed };
-                if (!appState.config.syncLinks) appState.config.syncLinks = { ...DEFAULT_SYNC_LINKS };
+        // Move the top-level load config block into a function so it can be awaited properly
+        async function loadConfig() {
+            try {
+                const savedConfig = await DBHelper.getItem('panchangConfig');
                 
-                // If location exists, trigger a silent update to refresh it
-                if (appState.config.location) {
-                    // Slight delay to allow render to happen first
-                    setTimeout(() => getUserLocation(), 2000);
-                }
-            } else {
-                // Case B: First Time User (Set Default EN & Fetch)
-                console.log("First time user detected. Setting default to English.");
-                
-                if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
-                
-                // 1. Force English
-                appState.config.language = 'en';
-                
-                // 2. Initial Save
-                saveConfigToStorage();
-                
-                // 3. Update UI (Language Dropdown)
-                const langSelect = document.getElementById('language-select');
-                if (langSelect) langSelect.value = 'en';
-
-                // 4. Auto-Fetch English Data
-                if (appState.config.syncLinks && appState.config.syncLinks['en']) {
-                    let link = appState.config.syncLinks['en'];
+                if (savedConfig) {
+                    // Case A: Returning User (Load Config)
+                    const parsed = JSON.parse(savedConfig);
+                    // Merge saved config into defaults
+                    if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
+                    appState.config = { ...appState.config, ...parsed };
+                    if (!appState.config.syncLinks) appState.config.syncLinks = { ...DEFAULT_SYNC_LINKS };
                     
-                    // Decrypt if needed
-                    if (appState.config.linksEncrypted) {
-                        try {
-                            link = LinkSecurity.decrypt(link);
-                        } catch (e) {
-                            console.error("Link decryption failed during init", e);
-                            link = null;
+                    // If location exists, trigger a silent update to refresh it
+                    if (appState.config.location) {
+                        // Slight delay to allow render to happen first
+                        setTimeout(() => getUserLocation(), 2000);
+                    }
+                } else {
+                    // Case B: First Time User (Set Default EN & Fetch)
+                    console.log("First time user detected. Setting default to English.");
+
+                    if (!appState.config) appState.config = { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
+
+                    // 1. Force English
+                    appState.config.language = 'en';
+                    
+                    // 2. Initial Save
+                    await saveConfigToStorage(); // fire-and-forget
+
+                    // 3. Update UI (Language Dropdown)
+                    const langSelect = document.getElementById('language-select');
+                    if (langSelect) langSelect.value = 'en';
+
+                    // 4. Auto-Fetch English Data
+                    if (appState.config.syncLinks && appState.config.syncLinks['en']) {
+                        let link = appState.config.syncLinks['en'];
+                        
+                        // Decrypt if needed
+                        if (appState.config.linksEncrypted) {
+                            try {
+                                link = LinkSecurity.decrypt(link);
+                            } catch (e) {
+                                console.error("Link decryption failed during init", e);
+                                link = null;
+                            }
+                        }
+                        
+                        if (link) {
+                            console.log("Auto-fetching default English dataset...");
+                            appState.config.liveUrl = link;
+                            appState.config.syncGitHubUrl = link;
+                            await saveConfigToStorage(); // fire-and-forget // Save liveUrl
+
+                            // Show Loader Message
+                            const loaderTitle = document.querySelector('#app-loader h2');
+                            if (loaderTitle) loaderTitle.innerText = "Loading English Calendar...";
+
+                            await fetchGitHubData(link, true);
                         }
                     }
-                    
-                    if (link) {
-                        console.log("Auto-fetching default English dataset...");
-                        appState.config.liveUrl = link;
-                        appState.config.syncGitHubUrl = link;
-                        saveConfigToStorage(); // Save liveUrl
-                        
-                        // Show Loader Message
-                        const loaderTitle = document.querySelector('#app-loader h2');
-                        if (loaderTitle) loaderTitle.innerText = "Loading English Calendar...";
-                        
-                        fetchGitHubData(link, true);
-                    }
                 }
+            } catch (e) {
+                console.error("Failed to load config from localStorage", e);
             }
-        } catch (e) {
-            console.error("Failed to load config from localStorage", e);
         }
 
         // --- NEW: Secure URL Language Reader ---
@@ -5475,7 +5569,7 @@ const LOCATION_DATA = {
             startBackgroundPreRender();
 
             // Step 1: Cache the state
-            saveStateToCache();
+            saveStateToCache(); // fire-and-forget
         }
 
         function dismissBanner(e) {
@@ -7478,7 +7572,7 @@ function renderCalendarGrid(data) {
                     // Update the FIRST detail's banner for now (simplification)
                     detailList[0].bannerUrl = base64;
                     
-                    saveStateToCache();
+                    saveStateToCache(); // fire-and-forget
                     
                     // Update global currentModalDetails if we are currently viewing this date
                     if (currentModalDetails.length > 0) {
@@ -7509,7 +7603,7 @@ function renderCalendarGrid(data) {
                         details.bannerUrl = null;
                     }
                     
-                    saveStateToCache();
+                    saveStateToCache(); // fire-and-forget
                     
                     // Update current view if open
                     if (currentModalDetails.length > 0) {
@@ -7902,27 +7996,27 @@ function renderCalendarGrid(data) {
         }
 
 
-        function saveStateToCache() {
+        async function saveStateToCache() {
             try {
                 // Include version in the saved state
                 const stateToSave = { ...appState, version: DATA_VERSION };
                 const jsonString = JSON.stringify(stateToSave);
-                localStorage.setItem('panchang_cached_state', jsonString);
+                await DBHelper.setItem('panchang_cached_state', jsonString);
             } catch (e) {
                 console.error("Failed to cache state", e);
             }
         }
 
-        function loadStateFromCache() {
+        async function loadStateFromCache() {
             try {
-                const cached = localStorage.getItem('panchang_cached_state');
+                const cached = await DBHelper.getItem('panchang_cached_state');
                 if (cached) {
                     const parsed = JSON.parse(cached);
                     
                     // 1. Version Check
                     if (parsed.version !== DATA_VERSION) {
                         console.warn("⚠️ Cache Version Mismatch! Invalidating...");
-                        localStorage.removeItem('panchang_cached_state');
+                        await DBHelper.removeItem('panchang_cached_state');
                         return false;
                     }
 
@@ -7935,7 +8029,7 @@ function renderCalendarGrid(data) {
             } catch (e) {
                 console.error("Failed to load state from cache", e);
                 // In case of parsing error, clear cache too
-                localStorage.removeItem('panchang_cached_state');
+                await DBHelper.removeItem('panchang_cached_state');
             }
             return false;
         }
@@ -8377,7 +8471,7 @@ function renderCalendarGrid(data) {
                     name: `${selectedCity}, ${selectedState}` 
                 };
                 
-                saveConfigToStorage();
+                saveConfigToStorage(); // fire-and-forget
                 render();
                 closeLocationModal();
                 showToast(`Location set to: ${selectedCity}, ${selectedState}`, "success");
