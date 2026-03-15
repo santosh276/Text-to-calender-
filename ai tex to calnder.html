@@ -2411,7 +2411,8 @@ The word "Nua" means new and "Khai" means food.
                         resolve(this.db);
                         return;
                     }
-                    const request = indexedDB.open(this.dbName, 1);
+                    // Use version 2 to trigger onupgradeneeded if the DB exists but store does not
+                    const request = indexedDB.open(this.dbName, 2);
                     request.onerror = (event) => {
                         console.error("IndexedDB error:", event.target.error);
                         reject(event.target.error);
