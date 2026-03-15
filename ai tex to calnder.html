@@ -3849,7 +3849,7 @@ const LOCATION_DATA = {
             // Update Sync Toggles
             const liveUrl = appState.config.liveUrl || "";
             const isDocs = liveUrl.includes('docs.google.com') || (appState.config.syncDocsUrl && liveUrl === appState.config.syncDocsUrl);
-            const isGitHub = liveUrl.includes('github') || (appState.config.syncGitHubUrl && liveUrl === appState.config.syncGitHubUrl);
+            const isGitHub = liveUrl.includes('github') || liveUrl.includes('jsdelivr.net') || (appState.config.syncGitHubUrl && liveUrl === appState.config.syncGitHubUrl);
             
             const docsToggle = document.getElementById('toggle-sync-docs');
             const githubToggle = document.getElementById('toggle-sync-github');
@@ -4056,7 +4056,7 @@ const LOCATION_DATA = {
             } else {
                 // If turning off GitHub, and it was the active one, clear liveUrl
                 const currentUrl = appState.config.liveUrl || "";
-                if (currentUrl === appState.config.syncGitHubUrl || currentUrl.includes('github')) {
+                if (currentUrl === appState.config.syncGitHubUrl || currentUrl.includes('github') || currentUrl.includes('jsdelivr.net')) {
                     delete appState.config.liveUrl;
                     saveConfigToStorage();
                     showToast("Live Sync disabled.");
@@ -4312,14 +4312,14 @@ const LOCATION_DATA = {
 
                 // Save to App State (So it persists in Downloaded File)
                 appState.config.liveUrl = url;
-                if (!url.includes('github')) {
+                if (!url.includes('github') && !url.includes('jsdelivr.net')) {
                     appState.config.syncDocsUrl = url;
                 }
                 
                 saveConfigToStorage();
                 
                 // Fetch immediately to test
-                if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+                if (url.includes('github.com') || url.includes('raw.githubusercontent.com') || url.includes('jsdelivr.net')) {
                     fetchGitHubData(url);
                 } else {
                     fetchLiveDoc(url);
@@ -4328,7 +4328,7 @@ const LOCATION_DATA = {
                 // Update Settings UI if open
                 const docsToggle = document.getElementById('toggle-sync-docs');
                 const githubToggle = document.getElementById('toggle-sync-github');
-                if (docsToggle && !url.includes('github')) {
+                if (docsToggle && !url.includes('github') && !url.includes('jsdelivr.net')) {
                     docsToggle.checked = true;
                     if(githubToggle) githubToggle.checked = false;
                 }
@@ -4346,7 +4346,7 @@ const LOCATION_DATA = {
 
         // --- NEW: Configure GitHub Sync ---
         function configureGitHubSync() {
-            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent'))) ? appState.config.liveUrl : "";
+            const currentUrl = (appState.config.liveUrl && (appState.config.liveUrl.includes('github') || appState.config.liveUrl.includes('raw.githubusercontent') || appState.config.liveUrl.includes('jsdelivr.net'))) ? appState.config.liveUrl : "";
             let url = prompt("Paste your GitHub File Link (e.g., github.com/.../data.txt):", currentUrl);
             
             if (url) {
@@ -4527,7 +4527,7 @@ const LOCATION_DATA = {
             }
             
             // Check if it's actually a GitHub URL that got routed here
-            if (url.includes('github.com') || url.includes('raw.githubusercontent.com')) {
+            if (url.includes('github.com') || url.includes('raw.githubusercontent.com') || url.includes('jsdelivr.net')) {
                 return fetchGitHubData(url, force);
             }
 
@@ -4876,7 +4876,7 @@ const LOCATION_DATA = {
             // 2. Conditional Fetching Logic
             if (appState.config && appState.config.liveUrl) {
                 const url = appState.config.liveUrl;
-                const isGitHub = url.includes('github') || url.includes('raw.githubusercontent');
+                const isGitHub = url.includes('github') || url.includes('raw.githubusercontent') || url.includes('jsdelivr.net');
 
                 let allowProxy = false;
                 // --- EDITOR LOGIC START ---
