@@ -4801,6 +4801,17 @@ const LOCATION_DATA = {
                     if (!appState.recurringDetails) appState.recurringDetails = {};
                     if (!appState.details) appState.details = {};
                 }
+
+                if (appState.config && appState.config.urlsEncrypted) {
+                    try {
+                        if (appState.config.liveUrl) appState.config.liveUrl = LinkSecurity.decrypt(appState.config.liveUrl);
+                        if (appState.config.syncDocsUrl) appState.config.syncDocsUrl = LinkSecurity.decrypt(appState.config.syncDocsUrl);
+                        if (appState.config.syncGitHubUrl) appState.config.syncGitHubUrl = LinkSecurity.decrypt(appState.config.syncGitHubUrl);
+                        delete appState.config.urlsEncrypted;
+                    } catch (e) {
+                        console.error("URL decryption failed during init", e);
+                    }
+                }
             }
 
             // Render whatever we have (Data or Skeleton)
@@ -8035,6 +8046,11 @@ function renderCalendarGrid(data) {
                 });
                 exportConfig.linksEncrypted = true;
             }
+
+            if (exportConfig.liveUrl) exportConfig.liveUrl = LinkSecurity.encrypt(exportConfig.liveUrl);
+            if (exportConfig.syncDocsUrl) exportConfig.syncDocsUrl = LinkSecurity.encrypt(exportConfig.syncDocsUrl);
+            if (exportConfig.syncGitHubUrl) exportConfig.syncGitHubUrl = LinkSecurity.encrypt(exportConfig.syncGitHubUrl);
+            exportConfig.urlsEncrypted = true;
 
             const stateToSave = {
                 activeMonthIndex: appState.activeMonthIndex || 0,
