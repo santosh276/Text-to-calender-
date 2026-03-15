@@ -4385,6 +4385,37 @@ const LOCATION_DATA = {
         }
         // --- EDITOR LOGIC END ---
 
+        function getCDNUrl(originalUrl) {
+            if (!originalUrl) return originalUrl;
+
+            // Handle raw.githubusercontent.com URLs
+            // Format: https://raw.githubusercontent.com/[user]/[repo]/[branch]/[path]
+            const rawMatch = originalUrl.match(/^https?:\/\/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+)$/);
+            if (rawMatch) {
+                const [, user, repo, branch, path] = rawMatch;
+                return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${path}`;
+            }
+
+            // Handle [username].github.io URLs
+            // Format: https://[user].github.io/[repo]/[path]
+            const pagesMatch = originalUrl.match(/^https?:\/\/([^\.]+)\.github\.io\/([^\/]+)\/(.+)$/);
+            if (pagesMatch) {
+                const [, user, repo, path] = pagesMatch;
+                return `https://cdn.jsdelivr.net/gh/${user}/${repo}@main/${path}`;
+            }
+
+            // Handle github.com blob URLs
+            // Format: https://github.com/[user]/[repo]/blob/[branch]/[path]
+            const blobMatch = originalUrl.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)$/);
+            if (blobMatch) {
+                const [, user, repo, branch, path] = blobMatch;
+                return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${path}`;
+            }
+
+            // Return original if no pattern matched
+            return originalUrl;
+        }
+
         // --- NEW: Fetch GitHub Data (Direct) ---
         async function fetchGitHubData(url, force = false) {
             if (!url) return;
@@ -4417,17 +4448,36 @@ const LOCATION_DATA = {
             }
 
             try {
+                // Convert to ultra-fast jsDelivr CDN URL
+                const cdnUrl = getCDNUrl(url);
+
                 // Add timestamp to bypass caching
-                const fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+                let fetchUrl = cdnUrl.includes('?') ? `${cdnUrl}&t=${Date.now()}` : `${cdnUrl}?t=${Date.now()}`;
                 
                 // Add Timeout (15 seconds)
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
+                let controller = new AbortController();
+                let timeoutId = setTimeout(() => controller.abort(), 15000);
 
-                const response = await fetch(fetchUrl, { signal: controller.signal });
+                let response;
+
+                try {
+                    // Try the CDN URL first
+                    response = await fetch(fetchUrl, { signal: controller.signal });
+                    if (!response.ok) throw new Error(`CDN Fetch Failed: ${response.status}`);
+                } catch (cdnError) {
+                    // Fallback to original URL if CDN fails
+                    console.warn("CDN failed, falling back to original URL:", cdnError);
+                    clearTimeout(timeoutId);
+
+                    fetchUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
+                    controller = new AbortController();
+                    timeoutId = setTimeout(() => controller.abort(), 15000);
+
+                    response = await fetch(fetchUrl, { signal: controller.signal });
+                    if (!response.ok) throw new Error(`Original Fetch Failed: ${response.status}`);
+                }
+
                 clearTimeout(timeoutId);
-
-                if (!response.ok) throw new Error(`GitHub Fetch Failed: ${response.status}`);
                 
                 const cleanText = await response.text();
                 
