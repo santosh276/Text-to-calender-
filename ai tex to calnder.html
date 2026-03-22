@@ -8516,27 +8516,32 @@ function renderCalendarGrid(data) {
             const customTranslateDropdown = document.getElementById('custom-google-translate');
 
             if (customTranslateDropdown) {
-                customTranslateDropdown.addEventListener('change', (e) => {
-                    const langCode = e.target.value;
-                    const googleCombo = document.querySelector('.goog-te-combo');
-
-                    if (googleCombo) {
-                        googleCombo.value = langCode;
-                        googleCombo.dispatchEvent(new Event('change'));
-                    }
-                });
-
                 // Restore translation state on page load based on googtrans cookie
                 const match = document.cookie.match(/(^|;)\s*googtrans=([^;]+)/);
                 if (match) {
                     const currentLang = match[2].split('/').pop();
                     if (currentLang && currentLang !== 'en') {
-                        // Wait a bit for the Google script to build the dropdown before attempting to select
-                        setTimeout(() => {
-                            customTranslateDropdown.value = currentLang;
-                        }, 1000);
+                        customTranslateDropdown.value = currentLang;
                     }
                 }
+
+                customTranslateDropdown.addEventListener('change', (e) => {
+                    const langCode = e.target.value;
+
+                    if (langCode === '') {
+                        // Clear translation cookies to reset to original
+                        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + location.hostname + "; path=/;";
+                    } else {
+                        // Set the exact path google translate uses (/en/langCode)
+                        const cookieValue = `/en/${langCode}`;
+                        document.cookie = `googtrans=${cookieValue}; path=/;`;
+                        document.cookie = `googtrans=${cookieValue}; domain=${location.hostname}; path=/;`;
+                    }
+
+                    // Reload to apply the new cookie
+                    window.location.reload();
+                });
             }
         });
 
@@ -8655,6 +8660,6 @@ function renderCalendarGrid(data) {
             }, 'google_translate_element');
         }
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
