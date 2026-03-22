@@ -1693,9 +1693,23 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .mt-8 { margin-top: 2rem; }
         .mt-10 { margin-top: 2.5rem; }
         .mb-6 { margin-bottom: 1.5rem; }
+
+        /* GOOGLE TRANSLATE BUG FIX & HIDE ALL FLOATING POPUPS */
+        #google_translate_element { position: absolute !important; top: -10000px !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; z-index: -999 !important; }
+        .skiptranslate iframe, #goog-gt-tt, .goog-te-balloon-frame, .VIpgJd-ZVi9od-aZ2wEe-wOHMyf, .VIpgJd-ZVi9od-aZ2wEe-wOHMyf-ti6hGc, .goog-te-gadget-icon { display: none !important; }
+        body { top: 0px !important; }
+        .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+
+        /* CUSTOM LANGUAGE MENU STYLING */
+        .lang-menu-container { position: absolute; top: 120%; right: 0; background-color: white; border-radius: 1rem; border: 1px solid rgba(229, 107, 58, 0.15); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); padding: 12px; min-width: 260px; z-index: 300; transform-origin: top right; transition: all 0.2s ease; }
+        .lang-menu-container.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        .lang-item { font-size: 14px; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; color: #4B5563; font-weight: 500; }
+        .lang-item.active { background-color: #FFF6ED; color: #E56B3A; font-weight: 800; }
+        .lang-item:hover { background-color: #FFFBF5; color: #E56B3A; }
 </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
+    <div id="google_translate_element"></div>
 
     <!-- Navbar -->
     <header class="bg-deep-red px-5 py-4 flex items-center justify-between shadow-md relative overflow-hidden shrink-0 z-50">
@@ -1704,16 +1718,28 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
              <!-- Content handled by JS -->
           </div>
           <div class="flex flex-col">
-            <h1 id="app-title" class="text-white font-sans text-[25px] font-extrabold leading-none tracking-tight whitespace-nowrap">
-              Vaidik Calendar
-            </h1>
+            <div class="notranslate">
+                <h1 id="app-title" class="text-white font-sans text-[25px] font-extrabold leading-none tracking-tight whitespace-nowrap">
+                  Vaidik Calendar
+                </h1>
+            </div>
             <p class="text-gold-light font-sans text-[10px] font-bold tracking-widest mt-0.5">
               The Heart of Sanatan Dharma...
             </p>
           </div>
         </div>
 
-        <div class="flex gap-3">
+        <div class="flex items-center gap-3">
+          <div class="relative notranslate mr-2">
+              <button onclick="toggleCustomLangMenu()" class="px-3 py-2 rounded-xl bg-white/80 text-gray-700 font-bold text-sm flex items-center gap-1.5 border border-gray-200 shadow-sm hover:bg-white transition-all">
+                  <i class="fas fa-globe-asia text-indigo-500"></i>
+                  <span id="currentLangDisplay">English</span>
+                  <i class="fas fa-chevron-down text-[10px] ml-1"></i>
+              </button>
+              <div id="customLangMenu" class="lang-menu-container hidden">
+                  <div class="grid grid-cols-2 gap-x-2 gap-y-1" id="langListContainer"></div>
+              </div>
+          </div>
           <button onclick="syncAndResetApp()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-5">
             <i class="fa-solid fa-rotate-right text-[24px]"></i>
           </button>
@@ -8479,6 +8505,108 @@ function renderCalendarGrid(data) {
             }
         }
 
+</script>
+
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,hi,bn,te,mr,ta,gu,kn,ml,pa,or,as,ur',
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+    const indianLanguages = [
+        { code: 'as', name: 'Assamese' }, { code: 'bn', name: 'Bengali' }, { code: 'en', name: 'English' },
+        { code: 'gu', name: 'Gujarati' }, { code: 'hi', name: 'Hindi' }, { code: 'kn', name: 'Kannada' },
+        { code: 'ml', name: 'Malayalam' }, { code: 'mr', name: 'Marathi' }, { code: 'or', name: 'Odia' },
+        { code: 'pa', name: 'Punjabi' }, { code: 'ta', name: 'Tamil' }, { code: 'te', name: 'Telugu' }, { code: 'ur', name: 'Urdu' }
+    ];
+
+    let currentActiveLang = 'en';
+
+    function getCookie(name) {
+        let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? match[2] : null;
+    }
+
+    let existingLangCookie = getCookie('googtrans');
+    if (existingLangCookie) {
+        let parts = existingLangCookie.split('/');
+        if(parts.length === 3) {
+            let savedLangCode = parts[2];
+            let foundLang = indianLanguages.find(l => l.code === savedLangCode);
+            if(foundLang) {
+                currentActiveLang = savedLangCode;
+                // Use setTimeout to ensure DOM is ready before updating text
+                setTimeout(() => {
+                    const langDisplay = document.getElementById('currentLangDisplay');
+                    if(langDisplay) langDisplay.textContent = foundLang.name;
+                }, 100);
+            }
+        }
+    }
+
+    function buildLanguageMenu() {
+        const container = document.getElementById('langListContainer');
+        if(!container) return;
+        container.innerHTML = indianLanguages.map(lang => `
+            <div class="lang-item ${lang.code === currentActiveLang ? 'active' : ''}"
+                 onclick="changeCustomLanguage('${lang.code}', '${lang.name}')">
+                <span>› ${lang.name}</span>
+            </div>
+        `).join('');
+    }
+
+    function toggleCustomLangMenu() {
+        const menu = document.getElementById('customLangMenu');
+        if(menu) menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', function(event) {
+        const menu = document.getElementById('customLangMenu');
+        const btn = document.querySelector('button[onclick="toggleCustomLangMenu()"]');
+        if (menu && btn && !menu.contains(event.target) && !btn.contains(event.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+
+    function changeCustomLanguage(langCode, langName) {
+        currentActiveLang = langCode;
+        document.getElementById('currentLangDisplay').textContent = langName;
+        buildLanguageMenu();
+        document.getElementById('customLangMenu').classList.add('hidden');
+
+        function triggerTranslate() {
+            var gtSelect = document.querySelector('.goog-te-combo');
+            if (gtSelect) {
+                gtSelect.value = langCode;
+                gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                return true;
+            }
+            return false;
+        }
+
+        if (!triggerTranslate()) {
+            let attempts = 0;
+            let retryTimer = setInterval(function() {
+                if (triggerTranslate() || attempts >= 20) {
+                    clearInterval(retryTimer);
+                    if (attempts >= 20) {
+                        document.cookie = 'googtrans=/en/' + langCode + '; path=/; domain=' + window.location.hostname;
+                        window.location.reload();
+                    }
+                }
+                attempts++;
+            }, 100);
+        }
+    }
+
+    // Initialize menu on load
+    window.addEventListener('DOMContentLoaded', buildLanguageMenu);
 </script>
 
     <!-- Location Prompt Toast Popup -->
