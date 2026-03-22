@@ -2146,27 +2146,6 @@ The word "Nua" means new and "Khai" means food.
                         <!-- Language -->
                         <div class="w-full">
                             <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Language</label>
-                            <div class="relative mb-4">
-                                <select id="language-select" onchange="changeLanguage(this.value)" class="w-full appearance-none p-3 pl-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none transition cursor-pointer">
-                                    <option value="en">English</option>
-                                    <option value="hi">Hindi (हिन्दी)</option>
-                                    <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                                    <option value="bn">Bengali (বাংলা)</option>
-                                    <option value="mr">Marathi (मराठी)</option>
-                                    <option value="gu">Gujarati (ગુજરાતી)</option>
-                                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                                    <option value="ta">Tamil (தமிழ்)</option>
-                                    <option value="te">Telugu (తెలుగు)</option>
-                                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                                    <option value="ml">Malayalam (മലയാളം)</option>
-                                    <option value="as">Assamese (অসমীয়া)</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-8 pointer-events-none text-gray-500">
-                                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                            
-                            <h4 class="text-xs font-bold text-gray-500 mb-2 uppercase border-t pt-2 border-gray-100">Full Page Translation (Google)</h4>
                             <div class="relative notranslate">
                                 <button onclick="toggleCustomLangMenu()" class="w-full p-3 pl-4 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold flex items-center justify-between hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400">
                                     <div class="flex items-center gap-2">
@@ -3840,7 +3819,8 @@ const LOCATION_DATA = {
         function openSettingsModal() {
             lockScroll();
 
-            document.getElementById('language-select').value = appState.config.language || 'en';
+            // document.getElementById('language-select') is removed
+            // The unified dropdown relies on `buildLanguageMenu` which sets state correctly
             
             // --- EDITOR LOGIC START ---
             // Environment Check: Hide Sync Settings in App Mode (User View)
@@ -8524,10 +8504,18 @@ function renderCalendarGrid(data) {
 
 <script>
     const indianLanguages = [
-        { code: 'as', name: 'Assamese' }, { code: 'bn', name: 'Bengali' }, { code: 'en', name: 'English' },
-        { code: 'gu', name: 'Gujarati' }, { code: 'hi', name: 'Hindi' }, { code: 'kn', name: 'Kannada' },
-        { code: 'ml', name: 'Malayalam' }, { code: 'mr', name: 'Marathi' }, { code: 'or', name: 'Odia' },
-        { code: 'pa', name: 'Punjabi' }, { code: 'ta', name: 'Tamil' }, { code: 'te', name: 'Telugu' }
+        { name: 'English', nativeCode: 'en', googleCode: 'en' },
+        { name: 'Hindi (हिन्दी)', nativeCode: 'hi', googleCode: 'hi' },
+        { name: 'Odia (ଓଡ଼ିଆ)', nativeCode: 'or', googleCode: 'or' },
+        { name: 'Bengali (বাংলা)', nativeCode: 'bn', googleCode: 'bn' },
+        { name: 'Marathi (मराठी)', nativeCode: 'mr', googleCode: 'mr' },
+        { name: 'Gujarati (ગુજરાતી)', nativeCode: 'gu', googleCode: 'gu' },
+        { name: 'Punjabi (ਪੰਜਾਬੀ)', nativeCode: 'pa', googleCode: 'pa' },
+        { name: 'Tamil (தமிழ்)', nativeCode: 'ta', googleCode: 'ta' },
+        { name: 'Telugu (తెలుగు)', nativeCode: 'te', googleCode: 'te' },
+        { name: 'Kannada (ಕನ್ನಡ)', nativeCode: 'kn', googleCode: 'kn' },
+        { name: 'Malayalam (മലയാളം)', nativeCode: 'ml', googleCode: 'ml' },
+        { name: 'Assamese (অসমীয়া)', nativeCode: 'as', googleCode: 'as' }
     ];
 
     let currentActiveLang = 'en';
@@ -8537,32 +8525,49 @@ function renderCalendarGrid(data) {
         return match ? match[2] : null;
     }
 
-    let existingLangCookie = getCookie('googtrans');
-    if (existingLangCookie) {
-        let parts = existingLangCookie.split('/');
-        if(parts.length === 3) {
-            let savedLangCode = parts[2];
-            let foundLang = indianLanguages.find(l => l.code === savedLangCode);
-            if(foundLang) {
-                currentActiveLang = savedLangCode;
-                // Use setTimeout to ensure DOM is ready before updating text
-                setTimeout(() => {
-                    const langDisplay = document.getElementById('currentLangDisplay');
-                    if(langDisplay) langDisplay.textContent = foundLang.name;
-                }, 100);
+    // Determine initial language based on existing state or cookie
+    setTimeout(() => {
+        let defaultLang = 'en';
+        let defaultName = 'English';
+
+        // 1. First check if native appState has a configured language
+        if (typeof appState !== 'undefined' && appState.config && appState.config.language) {
+            defaultLang = appState.config.language;
+        } else {
+            // 2. Fallback to Google Translate cookie
+            let existingLangCookie = getCookie('googtrans');
+            if (existingLangCookie) {
+                let parts = existingLangCookie.split('/');
+                if(parts.length === 3) {
+                    defaultLang = parts[2];
+                }
             }
         }
-    }
+
+        let foundLang = indianLanguages.find(l => l.nativeCode === defaultLang || l.googleCode === defaultLang);
+        if(foundLang) {
+            currentActiveLang = foundLang.nativeCode || foundLang.googleCode;
+            defaultName = foundLang.name;
+        }
+
+        const langDisplay = document.getElementById('currentLangDisplay');
+        if(langDisplay) langDisplay.textContent = defaultName;
+
+        // Ensure menu marks correct active state on load
+        buildLanguageMenu();
+    }, 100);
 
     function buildLanguageMenu() {
         const container = document.getElementById('langListContainer');
         if(!container) return;
-        container.innerHTML = indianLanguages.map(lang => `
-            <div class="lang-item ${lang.code === currentActiveLang ? 'active' : ''}" 
-                 onclick="changeCustomLanguage('${lang.code}', '${lang.name}')">
+        container.innerHTML = indianLanguages.map(lang => {
+            const isActive = (lang.nativeCode === currentActiveLang || lang.googleCode === currentActiveLang);
+            return `
+            <div class="lang-item ${isActive ? 'active' : ''}"
+                 onclick="applyUnifiedLanguage('${lang.nativeCode || ''}', '${lang.googleCode || ''}', '${lang.name}')">
                 <span>› ${lang.name}</span>
             </div>
-        `).join('');
+        `}).join('');
     }
 
     function toggleCustomLangMenu() {
@@ -8578,41 +8583,57 @@ function renderCalendarGrid(data) {
         }
     });
 
-    function changeCustomLanguage(langCode, langName) {
-        currentActiveLang = langCode;
-        document.getElementById('currentLangDisplay').textContent = langName;
+    function applyUnifiedLanguage(nativeCode, googleCode, langName) {
+        currentActiveLang = nativeCode || googleCode;
+
+        const langDisplay = document.getElementById('currentLangDisplay');
+        if (langDisplay) {
+            langDisplay.textContent = langName;
+        }
+
         buildLanguageMenu();
-        document.getElementById('customLangMenu').classList.add('hidden');
 
-        // Set cookie explicitly to ensure persistence, handle local file:// paths
-        let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
-        document.cookie = 'googtrans=/en/' + langCode + '; path=/' + domainStr;
-        if (window.location.hostname) {
-            document.cookie = 'googtrans=/en/' + langCode + '; path=/; domain=.' + window.location.hostname;
+        const menu = document.getElementById('customLangMenu');
+        if (menu) {
+            menu.classList.add('hidden');
         }
 
-        function triggerTranslate() {
-            var gtSelect = document.querySelector('.goog-te-combo');
-            if (gtSelect) {
-                gtSelect.value = langCode;
-                gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-                return true;
+        // 1. Trigger Google Translate if a googleCode exists
+        if (googleCode) {
+            let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
+            document.cookie = 'googtrans=/en/' + googleCode + '; path=/' + domainStr;
+            if (window.location.hostname) {
+                document.cookie = 'googtrans=/en/' + googleCode + '; path=/; domain=.' + window.location.hostname;
             }
-            return false;
+
+            function triggerTranslate() {
+                var gtSelect = document.querySelector('.goog-te-combo');
+                if (gtSelect) {
+                    gtSelect.value = googleCode;
+                    gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                    return true;
+                }
+                return false;
+            }
+
+            if (!triggerTranslate()) {
+                let attempts = 0;
+                let retryTimer = setInterval(function() {
+                    if (triggerTranslate() || attempts >= 20) {
+                        clearInterval(retryTimer);
+                        if (attempts >= 20) {
+                            window.location.reload();
+                        }
+                    }
+                    attempts++;
+                }, 100);
+            }
         }
 
-        if (!triggerTranslate()) {
-            let attempts = 0;
-            let retryTimer = setInterval(function() {
-                if (triggerTranslate() || attempts >= 20) {
-                    clearInterval(retryTimer);
-                    if (attempts >= 20) {
-                        // Fallback: reload page to force google script to read our manually set cookie
-                        window.location.reload();
-                    }
-                }
-                attempts++;
-            }, 100);
+        // 2. Trigger Native Translation if a nativeCode exists and it's different
+        if (nativeCode && typeof appState !== 'undefined' && appState.config && appState.config.language !== nativeCode) {
+            // Note: changeLanguage will handle fetching native json and re-rendering
+            changeLanguage(nativeCode);
         }
     }
 
