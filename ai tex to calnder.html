@@ -7941,10 +7941,10 @@ function renderCalendarGrid(data) {
                         </div>` : ''}
 
                         <!-- 5. Rich Details (Notes/Events) -->
-                        <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2 notranslate">
+                        <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2 ${appState.config.bilingualMode !== false ? 'notranslate' : ''}">
                             ${dayEvents.map(ev => `
                                 <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
-                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
+                                    <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)[\]]/g, '').trim()}</h4>
                                     ${(appState.config.bilingualMode !== false && ev.locName) ? `<p class="text-[0.8rem] text-gray-600 font-oriya line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
                                 </div>
                             `).join('')}
