@@ -420,7 +420,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             }
         }
 
-        .filter-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .filter-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);  max-width: 100%; min-height: fit-content; word-break: break-word; }
         .filter-btn:active { transform: scale(0.95); }
 
         /* Modal Animation */
@@ -981,7 +981,11 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
 
         .glass-time-box .time {
-            font-size: 11px;
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60px;
             font-weight: 800;
             line-height: 1;
             color: #ffffff;
@@ -1145,17 +1149,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     }
     @media (min-width: 768px) { .today-badge { display: block; } }
 
-    .event-pill {
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        max-width: 100%;
-        margin-top: 2px;
-    }
+    .event-pill { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; overflow: hidden; max-width: 100%; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); }
     
     /* --- 3. MOBILE ONLY STYLES (Original Look) --- */
     /* Ensures the SVG icons are positioned exactly like the original app */
@@ -1564,7 +1558,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         
         .pulse-text { 
             background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.2); 
-            font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; 
+            font-size: 0.65rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.6;
             animation: pulse-opacity 2.5s ease-in-out infinite; 
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -1572,26 +1566,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         .card-text-area { display: flex; flex-direction: column; gap: 4px; width: 100%; }
-        .card-title { 
-            font-size: 13px; 
-            font-weight: 900; 
-            letter-spacing: -0.02em; 
-            line-height: 1.6;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis;
-            padding-bottom: 0.2rem;
-        }
+        .card-title { font-size: 0.8rem; font-weight: 900; letter-spacing: 0.02em; color: #ffffff; line-height: 1.6; padding-bottom: 0.2rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
         .card-title.large { font-size: 16px; }
-        .card-desc { 
-            font-size: 10px; 
-            font-weight: 600; 
-            opacity: 1; 
-            line-height: 1.6;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2); 
-            padding-bottom: 0.15rem;
-        }
+        .card-desc { font-size: 0.7rem; color: rgba(255, 255, 255, 0.8); font-weight: 600; line-height: 1.6; padding-bottom: 0.15rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
 
         /* Improved Card Footers (The data blocks) */
         .card-footer { 
@@ -1622,13 +1599,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
         .progress-track { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.3); position: relative; border-radius: 2px; }
         .progress-fill { height: 100%; background: #ffffff; border-radius: 2px; transition: width 0.5s ease; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        .progress-badge { 
-            /* Unified Floating Badge Style */
-            display: inline-block;
-            font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; 
-            border-width: 2px; border-style: solid; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 2; white-space: nowrap; line-height: 1.6;
-        }
+        .progress-badge { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; max-width: 120px; text-align: center; }
 
         /* Themed Badges */
         .badge-green { background-color: rgba(6, 78, 59, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
@@ -1687,9 +1658,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             /* Turn the list into a 3-Column Grid */
             .timeline-container { grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-            .card-title { font-size: 18px; }
+            .card-title { font-size: 0.8rem; font-weight: 900; letter-spacing: 0.02em; color: #ffffff; line-height: 1.6; padding-bottom: 0.2rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
             .card-title.large { font-size: 20px; }
-            .card-desc { font-size: 13px; }
+            .card-desc { font-size: 0.7rem; color: rgba(255, 255, 255, 0.8); font-weight: 600; line-height: 1.6; padding-bottom: 0.15rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
         }
         
         /* New utility classes */
@@ -2395,7 +2366,7 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                     <div class="text-white">
                         <h2 id="modal-full-date" class="text-white/80 text-[10px] uppercase tracking-widest font-semibold mb-1">Friday, November 21, 2025</h2>
-                        <h1 id="modal-main-title" class="text-2xl font-bold leading-tight font-oriya drop-shadow-md">Nuakhai</h1>
+                        <h1 id="modal-main-title" class="text-xl sm:text-2xl line-clamp-2 break-words font-bold leading-tight font-oriya drop-shadow-md">Nuakhai</h1>
                         <div id="modal-tag-pill" class="mt-2 inline-block"></div>
                     </div>
                 </div>
@@ -7194,9 +7165,9 @@ function renderCalendarGrid(data) {
                 // RESPONSIVE LOGIC: flex-1 on mobile, sm:flex-none on desktop
                 let className = `
                     filter-btn relative px-5 py-2.5 rounded-full 
-                    text-sm font-bold whitespace-nowrap outline-none
+                    text-[0.8rem] font-bold line-clamp-1 break-words max-w-[150px] sm:max-w-[200px] min-h-[fit-content] outline-none
                     flex items-center justify-center gap-2
-                    flex-1 sm:flex-none min-w-[fit-content]
+                    flex-1 sm:flex-none
                     transition-all duration-200 hover:scale-105 active:scale-95
                 `;
 
