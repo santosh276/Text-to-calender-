@@ -1559,13 +1559,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
-        .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+        .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.6; }
         .timeline-icon { width: 12px; height: 12px; fill: currentColor; }
         
         .pulse-text { 
             background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.2); 
             font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; 
-            text-transform: uppercase; letter-spacing: 0.05em; 
+            text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.6;
             animation: pulse-opacity 2.5s ease-in-out infinite; 
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
@@ -1576,19 +1576,21 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             font-size: 13px; 
             font-weight: 900; 
             letter-spacing: -0.02em; 
-            line-height: 1.1; 
+            line-height: 1.6;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis;
+            padding-bottom: 0.2rem;
         }
         .card-title.large { font-size: 16px; }
         .card-desc { 
             font-size: 10px; 
             font-weight: 600; 
             opacity: 1; 
-            line-height: 1.2; 
+            line-height: 1.6;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2); 
+            padding-bottom: 0.15rem;
         }
 
         /* Improved Card Footers (The data blocks) */
@@ -1611,10 +1613,11 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             margin-bottom: 2px; 
             font-weight: 700; 
             color: rgba(255,255,255,0.95);
+            line-height: 1.6;
         }
-        .footer-value { font-size: 14px; font-weight: 800; letter-spacing: -0.01em;}
+        .footer-value { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.6;}
         .footer-value.large { font-size: 18px; }
-        .footer-value.large span { font-size: 12px; font-weight: 700; opacity: 0.9; }
+        .footer-value.large span { font-size: 12px; font-weight: 700; opacity: 0.9; line-height: 1.6;}
 
         .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
         .progress-track { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.3); position: relative; border-radius: 2px; }
@@ -1624,7 +1627,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             display: inline-block;
             font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; 
             border-width: 2px; border-style: solid; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 2; white-space: nowrap;
+            z-index: 2; white-space: nowrap; line-height: 1.6;
         }
 
         /* Themed Badges */
@@ -6690,7 +6693,7 @@ function renderCalendarGrid(data) {
 
                 } else {
                     // COMPLETED
-                    badge.innerText = "Completed";
+                    badge.innerText = "COMPLETED";
                     badge.classList.remove('badge-ending-soon');
                     if (pulseText) pulseText.style.display = 'none';
                     card.classList.add('completed');
@@ -6922,7 +6925,7 @@ function renderCalendarGrid(data) {
                         const mTime = waitMins % 60;
                         statusText = `UPCOMING IN ${h}H ${mTime}M`;
                     } else {
-                        statusText = "Completed";
+                        statusText = "COMPLETED";
                     }
 
                     const pillClass = `badge-${m.themeKey}`;
@@ -6934,15 +6937,15 @@ function renderCalendarGrid(data) {
                     <div class="card-footer ${footerClass}" style="display: block;">
                         <div class="flex justify-center items-center">
                             <div class="glass-time-box border-r-0" style="border-radius: 12px 0 0 12px;">
-                                    <span class="label">Start</span>
-                                    <span class="time">${startTime}</span>
-                                    <span class="period">${startPeriod}</span>
+                                    <span class="label leading-normal">Start</span>
+                                    <span class="time leading-normal">${startTime}</span>
+                                    <span class="period leading-normal">${startPeriod}</span>
                             </div>
 
                             <div class="glass-time-box" style="border-radius: 0 12px 12px 0;">
-                                    <span class="label">End</span>
-                                    <span class="time">${endTime}</span>
-                                    <span class="period">${endPeriod}</span>
+                                    <span class="label leading-normal">End</span>
+                                    <span class="time leading-normal">${endTime}</span>
+                                    <span class="period leading-normal">${endPeriod}</span>
                             </div>
                         </div>
                     </div>`;
@@ -6953,7 +6956,7 @@ function renderCalendarGrid(data) {
                                 
                                 <!-- Status Badge (Top Left) -->
                                 <div class="absolute top-0 left-0 z-20" style="top: -6px; left: -1px;">
-                                    <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-2 py-0.5 text-[8px] font-bold block" style="border-radius: 10px 0 10px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
+                                    <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-2 pt-[2px] pb-[1px] text-[10px] sm:text-[11px] font-bold block leading-relaxed" style="border-radius: 10px 0 10px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                 </div>
 
                                 <div class="relative w-full h-full overflow-hidden rounded-xl">
@@ -6966,7 +6969,7 @@ function renderCalendarGrid(data) {
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
                                         <div class="relative mt-auto pt-3">
                                             <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
-                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-2 py-0.5 text-[8px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
+                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-3 py-1 text-[10px] tracking-widest whitespace-nowrap leading-relaxed" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
                                             </div>
                                             ${footerHtml}
                                         </div>
