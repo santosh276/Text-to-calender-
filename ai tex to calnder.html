@@ -2151,18 +2151,39 @@ The word "Nua" means new and "Khai" means food.
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
                         
                         <!-- Language -->
-                        <div class="w-full">
-                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Language</label>
-                            <div class="relative notranslate">
-                                <button onclick="toggleCustomLangMenu()" class="w-full p-3 pl-4 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold flex items-center justify-between hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400">
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-globe-asia text-indigo-500"></i>
-                                        <span id="currentLangDisplay">English</span>
+                        <div class="w-full flex flex-col gap-4">
+                            <!-- Bilingual Toggle -->
+                            <div>
+                                <label class="flex items-center justify-between cursor-pointer group">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-gray-700 group-hover:text-orange-600 transition-colors">Bilingual Mode</span>
+                                        <span class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">(Native + English)</span>
                                     </div>
-                                    <i class="fas fa-chevron-down text-gray-400"></i>
-                                </button>
-                                <div id="customLangMenu" class="lang-menu-container hidden absolute w-full top-full mt-2 !right-auto left-0 !transform-none">
-                                    <div class="grid grid-cols-2 gap-x-2 gap-y-1" id="langListContainer"></div>
+                                    <div class="relative">
+                                        <input type="checkbox" id="toggle-bilingual" class="sr-only" onchange="toggleBilingualMode(this.checked)">
+                                        <div class="block bg-gray-200 w-10 h-6 rounded-full transition-colors duration-300 shadow-inner" id="bilingual-track"></div>
+                                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-300 shadow-sm" id="bilingual-dot"></div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Unified Language Dropdown -->
+                            <div id="unified-lang-wrapper">
+                                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase flex justify-between">
+                                    <span>Language</span>
+                                    <span id="bilingual-disabled-note" class="text-[10px] text-red-500 hidden">Disabled in Bilingual Mode</span>
+                                </label>
+                                <div class="relative notranslate">
+                                    <button onclick="toggleCustomLangMenu()" id="unified-lang-btn" class="w-full p-3 pl-4 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold flex items-center justify-between hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-globe-asia text-indigo-500"></i>
+                                            <span id="currentLangDisplay">English</span>
+                                        </div>
+                                        <i class="fas fa-chevron-down text-gray-400"></i>
+                                    </button>
+                                    <div id="customLangMenu" class="lang-menu-container hidden absolute w-full top-full mt-2 !right-auto left-0 !transform-none">
+                                        <div class="grid grid-cols-2 gap-x-2 gap-y-1" id="langListContainer"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3627,6 +3648,7 @@ const LOCATION_DATA = {
         let bannerCurrentIndex = 0;
         let currentBannerDataHash = "";
         let isBannerDismissed = false;
+        let isBilingualMode = false;
 
         const langData = {
     en: { 
@@ -5997,9 +6019,10 @@ function getCDNUrl(originalUrl) {
                     const todayEvent = monthData.events.find(e => e.date === currentRealDay && ['!','*','^'].includes(e.symbol));
                     
                     if (todayEvent) {
-                         const locText = todayEvent.locName ? ` <span class="font-oriya opacity-80 font-normal">(${todayEvent.locName})</span>` : '';
+                         const locText = todayEvent.locName && !isBilingualMode ? ` <span class="font-oriya opacity-80 font-normal">(${todayEvent.locName})</span>` : '';
+                         const eventName = isBilingualMode && todayEvent.locName ? `<span class="notranslate">${todayEvent.engName} (${todayEvent.locName})</span>` : todayEvent.engName;
                          footerHtml = `<div class="mt-2 text-[9px] text-center truncate border-t border-gray-50 pt-1">
-                                         <span class="text-orange-600 font-bold animate-pulse">Today:</span> <span class="text-gray-700 font-semibold">${todayEvent.engName}${locText}</span>
+                                         <span class="text-orange-600 font-bold animate-pulse">Today:</span> <span class="text-gray-700 font-semibold">${eventName}${locText}</span>
                                        </div>`;
                     } else {
                          const nextEvent = monthData.events
@@ -6007,9 +6030,10 @@ function getCDNUrl(originalUrl) {
                              .sort((a,b) => a.date - b.date)[0];
                          
                          if (nextEvent) {
-                              const locText = nextEvent.locName ? ` <span class="font-oriya opacity-80 font-normal">(${nextEvent.locName})</span>` : '';
+                              const locText = nextEvent.locName && !isBilingualMode ? ` <span class="font-oriya opacity-80 font-normal">(${nextEvent.locName})</span>` : '';
+                              const eventName = isBilingualMode && nextEvent.locName ? `<span class="notranslate">${nextEvent.engName} (${nextEvent.locName})</span>` : nextEvent.engName;
                               footerHtml = `<div class="mt-2 text-[9px] text-center truncate border-t border-gray-50 pt-1">
-                                              <span class="text-gray-400 font-bold">Next:</span> <span class="text-gray-600">${nextEvent.engName}${locText}</span>
+                                              <span class="text-gray-400 font-bold">Next:</span> <span class="text-gray-600">${eventName}${locText}</span>
                                             </div>`;
                          }
                     }
@@ -6190,14 +6214,28 @@ function renderCalendarGrid(data) {
             </span>
         `;
 
+        // Helper function for Bilingual Mode
+        }
+
         // Desktop Pills
         let desktopPills = '';
+        // Helper function for Bilingual Mode
+
         dayEvents.slice(0, 2).forEach(ev => {
             let pillColor = "bg-gray-100 text-gray-600";
             if(ev.symbol === '!') pillColor = "bg-red-50 text-red-800";
             else if(ev.symbol === '*') pillColor = "bg-blue-50 text-blue-700";
             else if(ev.symbol === '^') pillColor = "bg-orange-100 text-orange-800";
-            desktopPills += `<span class="event-pill ${pillColor}">${ev.engName}</span>`;
+
+            // Adjust pill content for bilingual mode if applicable
+            let contentHtml = ev.engName;
+            if (isBilingualMode && ev.locName) {
+                contentHtml = `<div class="notranslate" style="display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.1;">
+                                   <span>${ev.engName}</span>
+                                   <span class="text-[0.6rem] opacity-80 font-sans mt-0.5">(${ev.locName.replace(/[\(\)\[\]]/g, '').trim()})</span>
+                               </div>`;
+            }
+            desktopPills += `<span class="event-pill flex flex-col items-start justify-center ${pillColor}">${contentHtml}</span>`;
         });
 
         // ==========================================
@@ -7116,7 +7154,7 @@ function renderCalendarGrid(data) {
                              </div>
                         </div>
 
-                        <div>
+                        <div class="${isBilingualMode && upNextEvent.locName ? 'notranslate' : ''}">
                             <h3 class="font-extrabold text-lg leading-tight mb-1 drop-shadow-sm whitespace-normal">${upNextEvent.engName}</h3>
                             <p class="text-[0.8rem] font-medium opacity-90 font-oriya leading-relaxed line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${upNextEvent.locName || ''}</p>
                         </div>
@@ -7440,8 +7478,9 @@ function renderCalendarGrid(data) {
                 const eventsHtml = group.events.map((ev, idx) => {
                     const mt = idx > 0 ? 'mt-1 pt-1 border-t border-gray-100' : '';
                     const titleClass = isToday ? 'font-extrabold text-gray-900 text-base' : 'font-bold text-gray-900 text-sm';
+                    const wrapperClass = (isBilingualMode && ev.locName) ? 'notranslate' : '';
                     return `
-                    <div class="${mt}">
+                    <div class="${mt} ${wrapperClass}">
                         <div class="${titleClass} whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
                         <div class="text-[0.7rem] text-gray-500 font-oriya whitespace-normal leading-snug line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName || ''}</div>
                     </div>
@@ -7899,7 +7938,7 @@ function renderCalendarGrid(data) {
                         <!-- 5. Rich Details (Notes/Events) -->
                         <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2 notranslate">
                             ${dayEvents.map(ev => `
-                                <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
+                                <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3 ${isBilingualMode && ev.locName ? 'notranslate' : ''}">
                                     <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
                                     ${ev.locName ? `<p class="text-[0.8rem] text-gray-600 font-oriya line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
                                 </div>
@@ -8607,6 +8646,60 @@ function renderCalendarGrid(data) {
                 <span>› ${lang.name}</span>
             </div>
         `}).join('');
+    }
+
+    function toggleBilingualMode(isOn) {
+        isBilingualMode = isOn;
+
+        // Update styling of the toggle button itself
+        const track = document.getElementById('bilingual-track');
+        const dot = document.getElementById('bilingual-dot');
+        if (track && dot) {
+            if (isOn) {
+                track.classList.replace('bg-gray-200', 'bg-orange-500');
+                dot.style.transform = 'translateX(1.5rem)';
+            } else {
+                track.classList.replace('bg-orange-500', 'bg-gray-200');
+                dot.style.transform = 'translateX(0)';
+            }
+        }
+
+        const langBtn = document.getElementById('unified-lang-btn');
+        const disabledNote = document.getElementById('bilingual-disabled-note');
+        const customMenu = document.getElementById('customLangMenu');
+
+        if (isOn) {
+            // 1. Force Google Translate OFF (reset to 'en')
+            const gtSelect = document.querySelector('.goog-te-combo');
+            if (gtSelect && gtSelect.value !== 'en') {
+                gtSelect.value = 'en';
+                gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            }
+
+            // 2. Disable Unified Lang Dropdown UI
+            if (langBtn) {
+                langBtn.classList.add('opacity-50', 'pointer-events-none');
+            }
+            if (disabledNote) {
+                disabledNote.classList.remove('hidden');
+            }
+            if (customMenu) {
+                customMenu.classList.add('hidden');
+            }
+        } else {
+            // Re-enable Unified Lang Dropdown UI
+            if (langBtn) {
+                langBtn.classList.remove('opacity-50', 'pointer-events-none');
+            }
+            if (disabledNote) {
+                disabledNote.classList.add('hidden');
+            }
+        }
+
+        // 3. Re-render the UI to apply/remove bilingual formatting
+        if (appState.monthsData && appState.monthsData.length > 0) {
+            renderCalendar();
+        }
     }
 
     function toggleCustomLangMenu() {
