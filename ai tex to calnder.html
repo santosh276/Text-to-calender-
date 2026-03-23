@@ -8702,18 +8702,43 @@ function renderCalendarGrid(data) {
         if (!isChecked) {
             // Disable Full Page Translation
             localStorage.setItem('disableFullPageTranslate', 'true');
+
             // Clear googtrans cookie
             let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
             document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/' + domainStr;
             if (window.location.hostname) {
                 document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + window.location.hostname;
             }
-            // Reload page to remove google translate completely
-            window.location.reload();
+
+            // Soft reload: Revert Google Translate to original language if the script is loaded
+            const gtSelect = document.querySelector('.goog-te-combo');
+            if (gtSelect) {
+                gtSelect.value = 'en'; // Force English (original)
+                gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            }
+
+            // Re-render native UI to ensure clean state
+            if (typeof render === 'function') render();
+
         } else {
             // Enable Full Page Translation
             localStorage.removeItem('disableFullPageTranslate');
-            window.location.reload();
+
+            // If the script hasn't been loaded at all, inject it dynamically
+            if (!document.querySelector('script[src*="translate.google.com"]')) {
+                let script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                document.body.appendChild(script);
+            }
+
+            // Re-apply the current active language after a short delay
+            setTimeout(() => {
+                const langObj = indianLanguages.find(l => l.nativeCode === currentActiveLang || l.googleCode === currentActiveLang);
+                if (langObj) {
+                    applyUnifiedLanguage(langObj.nativeCode, langObj.googleCode, langObj.name);
+                }
+            }, 500);
         }
     }
 
