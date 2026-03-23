@@ -8043,6 +8043,38 @@ function renderCalendarGrid(data) {
             // 1. Clone the current document structure
             const clone = document.documentElement.cloneNode(true);
 
+            // --- GOOGLE TRANSLATE CLEANUP ---
+            // 1. Empty the Main Translate Container
+            const gtElement = clone.querySelector('#google_translate_element');
+            if (gtElement) gtElement.innerHTML = '';
+
+            // 2. Remove Injected Iframes & Banners
+            const skipElements = clone.querySelectorAll('.skiptranslate');
+            skipElements.forEach(el => el.remove());
+
+            // 3. Clean Body Styles
+            const cloneBody = clone.querySelector('body');
+            if (cloneBody) {
+                cloneBody.removeAttribute('style');
+
+                // 4. Clean Body Classes
+                if (cloneBody.className) {
+                    const cleanClasses = cloneBody.className.split(' ')
+                        .filter(cls => !cls.startsWith('goog-te-'))
+                        .join(' ');
+                    cloneBody.className = cleanClasses;
+                }
+            }
+
+            // 5. Remove Dynamically Injected Scripts (but keep element.js)
+            const dynamicScripts = clone.querySelectorAll('script');
+            dynamicScripts.forEach(script => {
+                if (script.src && script.src.includes('translate.googleapis.com')) {
+                    script.remove();
+                }
+            });
+            // --------------------------------
+
             // --- OPTIMIZATION: PURGE HEAVY CONTAINERS ---
             const idsToEmpty = ['calendar-grid', 'year-grid', 'festival-list', 'panchang-list', 'panchang-pills', 'banner-slides', 'banner-dots'];
             idsToEmpty.forEach(id => {
