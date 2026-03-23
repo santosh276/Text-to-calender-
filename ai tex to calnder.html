@@ -1146,14 +1146,18 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     @media (min-width: 768px) { .today-badge { display: block; } }
 
     .event-pill {
-        font-size: 10px;
+        font-size: 0.7rem;
         padding: 2px 6px;
         border-radius: 4px;
-        white-space: nowrap;
+        white-space: normal;
+        word-break: break-word;
+        display: -webkit-inline-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-        display: inline-block;
         max-width: 100%;
+        min-height: fit-content;
         margin-top: 2px;
     }
     
@@ -7114,7 +7118,7 @@ function renderCalendarGrid(data) {
 
                         <div>
                             <h3 class="font-extrabold text-lg leading-tight mb-1 drop-shadow-sm whitespace-normal">${upNextEvent.engName}</h3>
-                            <p class="text-sm font-medium opacity-90 font-oriya leading-relaxed">${upNextEvent.locName || ''}</p>
+                            <p class="text-[0.8rem] font-medium opacity-90 font-oriya leading-relaxed line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${upNextEvent.locName || ''}</p>
                         </div>
                     </div>
                     <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
@@ -7439,7 +7443,7 @@ function renderCalendarGrid(data) {
                     return `
                     <div class="${mt}">
                         <div class="${titleClass} whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
-                        <div class="text-[11px] text-gray-500 font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
+                        <div class="text-[0.7rem] text-gray-500 font-oriya whitespace-normal leading-snug line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName || ''}</div>
                     </div>
                     `;
                 }).join('');
@@ -7637,8 +7641,8 @@ function renderCalendarGrid(data) {
                 
                 // Process brackets and parentheses for localized text styling
                 // We use 'ml-1' for space before the translation but omit 'mr-1' so trailing punctuation isn't pushed away
-                trimmed = trimmed.replace(/\[([^\]]+)\]/g, '<span class="text-sm text-gray-500 font-oriya ml-1">$1</span>');
-                trimmed = trimmed.replace(/\(([^)]+)\)/g, '<span class="text-sm text-gray-500 font-oriya ml-1">$1</span>');
+                trimmed = trimmed.replace(/\[([^\]]+)\]/g, '<span class="text-[0.8rem] text-gray-500 font-oriya ml-1">$1</span>');
+                trimmed = trimmed.replace(/\(([^)]+)\)/g, '<span class="text-[0.8rem] text-gray-500 font-oriya ml-1">$1</span>');
 
                 if (isListItem) {
                     if (!inList) {
@@ -7897,7 +7901,7 @@ function renderCalendarGrid(data) {
                             ${dayEvents.map(ev => `
                                 <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
                                     <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
-                                    ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
+                                    ${ev.locName ? `<p class="text-[0.8rem] text-gray-600 font-oriya line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
                                 </div>
                             `).join('')}
                             
