@@ -2192,6 +2192,14 @@ The word "Nua" means new and "Khai" means food.
                             </label>
                         </div>
 
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="text-sm font-bold text-gray-700">Bilingual Mode</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-bilingual" class="sr-only peer" onchange="toggleBilingualMode(this.checked)">
+                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+
                     </div>
                 </div>
 
@@ -3243,6 +3251,18 @@ return SunCalc;
             render();
         }
 
+        function toggleBilingualMode(isVisible) {
+            if (!appState.config) appState.config = {};
+            appState.config.bilingualMode = isVisible;
+            saveStateToCache();
+            render();
+
+            if (isVisible) {
+                // Mutually exclusive: Force Google Translate OFF when Bilingual is ON
+                applyUnifiedLanguage('en', null, 'English');
+            }
+        }
+
         function getUserLocation() {
             const btn = document.getElementById('btn-location');
             const originalContent = btn ? btn.innerHTML : '';
@@ -3862,6 +3882,9 @@ const LOCATION_DATA = {
             const secs = appState.config.sections || { festivals: true, panchang: true };
             if(document.getElementById('toggle-festivals')) document.getElementById('toggle-festivals').checked = secs.festivals;
             if(document.getElementById('toggle-panchang')) document.getElementById('toggle-panchang').checked = secs.panchang;
+
+            const isBilingual = appState.config.bilingualMode !== false; // Default true
+            if(document.getElementById('toggle-bilingual')) document.getElementById('toggle-bilingual').checked = isBilingual;
 
             // Update Sync Toggles
             const liveUrl = appState.config.liveUrl || "";
@@ -5997,7 +6020,7 @@ function getCDNUrl(originalUrl) {
                     const todayEvent = monthData.events.find(e => e.date === currentRealDay && ['!','*','^'].includes(e.symbol));
                     
                     if (todayEvent) {
-                         const locText = todayEvent.locName ? ` <span class="font-oriya opacity-80 font-normal">(${todayEvent.locName})</span>` : '';
+                         const locText = (appState.config.bilingualMode !== false && todayEvent.locName) ? ` <span class="font-oriya opacity-80 font-normal">(${todayEvent.locName})</span>` : '';
                          footerHtml = `<div class="mt-2 text-[9px] text-center truncate border-t border-gray-50 pt-1">
                                          <span class="text-orange-600 font-bold animate-pulse">Today:</span> <span class="text-gray-700 font-semibold">${todayEvent.engName}${locText}</span>
                                        </div>`;
@@ -6007,7 +6030,7 @@ function getCDNUrl(originalUrl) {
                              .sort((a,b) => a.date - b.date)[0];
                          
                          if (nextEvent) {
-                              const locText = nextEvent.locName ? ` <span class="font-oriya opacity-80 font-normal">(${nextEvent.locName})</span>` : '';
+                              const locText = (appState.config.bilingualMode !== false && nextEvent.locName) ? ` <span class="font-oriya opacity-80 font-normal">(${nextEvent.locName})</span>` : '';
                               footerHtml = `<div class="mt-2 text-[9px] text-center truncate border-t border-gray-50 pt-1">
                                               <span class="text-gray-400 font-bold">Next:</span> <span class="text-gray-600">${nextEvent.engName}${locText}</span>
                                             </div>`;
@@ -7118,7 +7141,7 @@ function renderCalendarGrid(data) {
 
                         <div>
                             <h3 class="font-extrabold text-lg leading-tight mb-1 drop-shadow-sm whitespace-normal">${upNextEvent.engName}</h3>
-                            <p class="text-[0.8rem] font-medium opacity-90 font-oriya leading-relaxed line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${upNextEvent.locName || ''}</p>
+                            ${(appState.config.bilingualMode !== false && upNextEvent.locName) ? `<p class="text-[0.8rem] font-medium opacity-90 font-oriya leading-relaxed line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${upNextEvent.locName}</p>` : ''}
                         </div>
                     </div>
                     <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
@@ -7443,7 +7466,7 @@ function renderCalendarGrid(data) {
                     return `
                     <div class="${mt}">
                         <div class="${titleClass} whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
-                        <div class="text-[0.7rem] text-gray-500 font-oriya whitespace-normal leading-snug line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName || ''}</div>
+                        ${(appState.config.bilingualMode !== false && ev.locName) ? `<div class="text-[0.7rem] text-gray-500 font-oriya whitespace-normal leading-snug line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName}</div>` : ''}
                     </div>
                     `;
                 }).join('');
@@ -7641,8 +7664,13 @@ function renderCalendarGrid(data) {
                 
                 // Process brackets and parentheses for localized text styling
                 // We use 'ml-1' for space before the translation but omit 'mr-1' so trailing punctuation isn't pushed away
-                trimmed = trimmed.replace(/\[([^\]]+)\]/g, '<span class="text-[0.8rem] text-gray-500 font-oriya ml-1">$1</span>');
-                trimmed = trimmed.replace(/\(([^)]+)\)/g, '<span class="text-[0.8rem] text-gray-500 font-oriya ml-1">$1</span>');
+                if (appState.config.bilingualMode !== false) {
+                    trimmed = trimmed.replace(/\[([^\]]+)\]/g, '<span class="text-[0.8rem] text-gray-500 font-oriya ml-1">$1</span>');
+                    trimmed = trimmed.replace(/\(([^)]+)\)/g, '<span class="text-[0.8rem] text-gray-500 font-oriya ml-1">$1</span>');
+                } else {
+                    trimmed = trimmed.replace(/\[([^\]]+)\]/g, '');
+                    trimmed = trimmed.replace(/\(([^)]+)\)/g, '');
+                }
 
                 if (isListItem) {
                     if (!inList) {
@@ -7901,7 +7929,7 @@ function renderCalendarGrid(data) {
                             ${dayEvents.map(ev => `
                                 <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
                                     <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
-                                    ${ev.locName ? `<p class="text-[0.8rem] text-gray-600 font-oriya line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
+                                    ${(appState.config.bilingualMode !== false && ev.locName) ? `<p class="text-[0.8rem] text-gray-600 font-oriya line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
                                 </div>
                             `).join('')}
                             
@@ -8635,6 +8663,17 @@ function renderCalendarGrid(data) {
         const menu = document.getElementById('customLangMenu');
         if (menu) {
             menu.classList.add('hidden');
+        }
+
+        // Mutually exclusive logic: if user selects Google Translate language, turn OFF Bilingual Mode
+        if (googleCode && googleCode !== 'en') {
+            if (typeof appState !== 'undefined' && appState.config) {
+                appState.config.bilingualMode = false;
+                const toggleBtn = document.getElementById('toggle-bilingual');
+                if (toggleBtn) toggleBtn.checked = false;
+                if (typeof saveStateToCache === 'function') saveStateToCache();
+                if (typeof render === 'function') render();
+            }
         }
 
         // 1. Trigger Google Translate if a googleCode exists
