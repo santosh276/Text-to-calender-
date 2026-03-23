@@ -6495,28 +6495,28 @@ function renderCalendarGrid(data) {
                 const timelineDiv = document.createElement('div');
                 timelineDiv.className = "astro-timeline-modern";
                 timelineDiv.innerHTML = `
-                    <div class="astro-time-item notranslate">
+                    <div class="astro-time-item">
                         <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
                         <span class="astro-label">Sunrise</span>
-                        <span class="astro-time">${fmt(sunTimes.sunrise)}</span>
+                        <span class="astro-time notranslate">${fmt(sunTimes.sunrise)}</span>
                     </div>
                     <div class="astro-divider"></div>
-                    <div class="astro-time-item notranslate">
+                    <div class="astro-time-item">
                         <i class="fa-solid fa-cloud-sun text-2xl text-purple-400 icon-glow-purple"></i>
                         <span class="astro-label">Sunset</span>
-                        <span class="astro-time">${fmt(sunTimes.sunset)}</span>
+                        <span class="astro-time notranslate">${fmt(sunTimes.sunset)}</span>
                     </div>
                     <div class="astro-divider"></div>
-                    <div class="astro-time-item notranslate">
+                    <div class="astro-time-item">
                         <i class="fa-solid fa-cloud-moon text-2xl text-blue-400 icon-glow-blue"></i>
                         <span class="astro-label">Moonrise</span>
-                        <span class="astro-time">${fmt(moonTimes ? moonTimes.rise : null)}</span>
+                        <span class="astro-time notranslate">${fmt(moonTimes ? moonTimes.rise : null)}</span>
                     </div>
                     <div class="astro-divider"></div>
-                    <div class="astro-time-item notranslate">
+                    <div class="astro-time-item">
                         <i class="fa-solid fa-moon text-2xl text-gray-300 icon-glow-gray"></i>
                         <span class="astro-label">Moonset</span>
-                        <span class="astro-time">${fmt(moonTimes ? moonTimes.set : null)}</span>
+                        <span class="astro-time notranslate">${fmt(moonTimes ? moonTimes.set : null)}</span>
                     </div>
                 `;
                 list.appendChild(timelineDiv);
@@ -7864,26 +7864,26 @@ function renderCalendarGrid(data) {
                                 <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-cloud-sun"></i></div>
                                 <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Astro Details</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-3 text-center notranslate">
+                            <div class="grid grid-cols-2 gap-3 text-center">
                                  <div class="bg-orange-50 rounded-xl p-2 border border-orange-100 flex flex-col items-center">
                                      <i class="fa-solid fa-sun text-orange-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Sunrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunrise)}</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono notranslate">${fmtAstroTime(sunTimes.sunrise)}</span>
                                  </div>
                                  <div class="bg-purple-50 rounded-xl p-2 border border-purple-100 flex flex-col items-center">
                                      <i class="fa-solid fa-cloud-sun text-purple-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Sunset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunset)}</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono notranslate">${fmtAstroTime(sunTimes.sunset)}</span>
                                  </div>
                                  <div class="bg-blue-50 rounded-xl p-2 border border-blue-100 flex flex-col items-center">
                                      <i class="fa-solid fa-cloud-moon text-blue-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Moonrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono notranslate">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
                                  </div>
                                  <div class="bg-gray-50 rounded-xl p-2 border border-gray-200 flex flex-col items-center">
                                      <i class="fa-solid fa-moon text-gray-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Moonset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono notranslate">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
                                  </div>
                             </div>
                         </div>` : ''}
