@@ -3255,12 +3255,28 @@ return SunCalc;
             if (!appState.config) appState.config = {};
             appState.config.bilingualMode = isVisible;
             saveStateToCache();
-            render();
 
             if (isVisible) {
-                // Mutually exclusive: Force Google Translate OFF when Bilingual is ON
-                applyUnifiedLanguage('en', null, 'English');
+                // When Bilingual Mode is ON: Force Google Translate OFF without changing the selected Native language
+                var gtSelect = document.querySelector('.goog-te-combo');
+                if (gtSelect) {
+                    gtSelect.value = 'en';
+                    gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                }
+            } else {
+                // When Bilingual Mode is OFF: Restore Google Translate for the currently selected language
+                if (typeof indianLanguages !== 'undefined' && typeof currentActiveLang !== 'undefined') {
+                    const lang = indianLanguages.find(l => l.nativeCode === currentActiveLang || l.googleCode === currentActiveLang);
+                    if (lang && lang.googleCode && lang.googleCode !== 'en') {
+                        var gtSelect = document.querySelector('.goog-te-combo');
+                        if (gtSelect) {
+                            gtSelect.value = lang.googleCode;
+                            gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                        }
+                    }
+                }
             }
+            render();
         }
 
         function getUserLocation() {
@@ -8665,19 +8681,10 @@ function renderCalendarGrid(data) {
             menu.classList.add('hidden');
         }
 
-        // Mutually exclusive logic: if user selects Google Translate language, turn OFF Bilingual Mode
-        if (googleCode && googleCode !== 'en') {
-            if (typeof appState !== 'undefined' && appState.config) {
-                appState.config.bilingualMode = false;
-                const toggleBtn = document.getElementById('toggle-bilingual');
-                if (toggleBtn) toggleBtn.checked = false;
-                if (typeof saveStateToCache === 'function') saveStateToCache();
-                if (typeof render === 'function') render();
-            }
-        }
+        const isBilingualMode = typeof appState !== 'undefined' && appState.config && appState.config.bilingualMode !== false;
 
         // 1. Trigger Google Translate if a googleCode exists
-        if (googleCode) {
+        if (googleCode && !isBilingualMode) {
             let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
             document.cookie = 'googtrans=/en/' + googleCode + '; path=/' + domainStr;
             if (window.location.hostname) {
@@ -8706,12 +8713,22 @@ function renderCalendarGrid(data) {
                     attempts++;
                 }, 100);
             }
+        } else if (googleCode && isBilingualMode) {
+            // When Bilingual Mode is ON: Ensure Google Translate stays OFF (set to 'en') without changing Native language
+            var gtSelect = document.querySelector('.goog-te-combo');
+            if (gtSelect && gtSelect.value !== 'en') {
+                gtSelect.value = 'en';
+                gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            }
         }
 
         // 2. Trigger Native Translation if a nativeCode exists and it's different
         if (nativeCode && typeof appState !== 'undefined' && appState.config && appState.config.language !== nativeCode) {
             // Note: changeLanguage will handle fetching native json and re-rendering
             changeLanguage(nativeCode);
+        } else if (isBilingualMode && typeof render === 'function') {
+            // Force re-render to ensure bilingual text updates even if native language didn't change
+            render();
         }
     }
 
