@@ -1559,13 +1559,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
-        .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+        .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.6; }
         .timeline-icon { width: 12px; height: 12px; fill: currentColor; }
         
         .pulse-text { 
             background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.2); 
             font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; 
-            text-transform: uppercase; letter-spacing: 0.05em; 
+            text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.6;
             animation: pulse-opacity 2.5s ease-in-out infinite; 
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
@@ -1576,19 +1576,21 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             font-size: 13px; 
             font-weight: 900; 
             letter-spacing: -0.02em; 
-            line-height: 1.1; 
+            line-height: 1.6; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis;
+            padding-bottom: 0.2rem;
         }
         .card-title.large { font-size: 16px; }
         .card-desc { 
             font-size: 10px; 
             font-weight: 600; 
             opacity: 1; 
-            line-height: 1.2; 
+            line-height: 1.6; 
             text-shadow: 0 1px 2px rgba(0,0,0,0.2); 
+            padding-bottom: 0.15rem;
         }
 
         /* Improved Card Footers (The data blocks) */
@@ -1611,10 +1613,11 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             margin-bottom: 2px; 
             font-weight: 700; 
             color: rgba(255,255,255,0.95);
+            line-height: 1.6;
         }
-        .footer-value { font-size: 14px; font-weight: 800; letter-spacing: -0.01em;}
+        .footer-value { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.6;}
         .footer-value.large { font-size: 18px; }
-        .footer-value.large span { font-size: 12px; font-weight: 700; opacity: 0.9; }
+        .footer-value.large span { font-size: 12px; font-weight: 700; opacity: 0.9; line-height: 1.6;}
 
         .progress-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; position: relative;}
         .progress-track { width: 100%; height: 2px; background: rgba(255, 255, 255, 0.3); position: relative; border-radius: 2px; }
@@ -1624,7 +1627,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             display: inline-block;
             font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; 
             border-width: 2px; border-style: solid; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 2; white-space: nowrap;
+            z-index: 2; white-space: nowrap; line-height: 1.6;
         }
 
         /* Themed Badges */
@@ -1986,7 +1989,7 @@ The word "Nua" means new and "Khai" means food.
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24">
             <!-- YEAR VIEW CONTAINER -->
-            <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
+            <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto notranslate">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-orange-50 to-transparent pointer-events-none"></div>
                     <button onclick="toggleView('month')" class="flex items-center gap-2 text-gray-600 hover:text-deepred transition font-bold z-10 bg-white/50 backdrop-blur-md px-3 py-1.5 rounded-xl border border-transparent hover:border-orange-200 hover:text-orange-700 hover:bg-orange-50">
@@ -2029,12 +2032,12 @@ The word "Nua" means new and "Khai" means food.
                                 
                                 <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
                                     <!-- Adaptive Month/Year Container -->
-                                    <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
+                                    <div class="flex flex-wrap justify-center items-baseline gap-x-2.5 notranslate">
                                         <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md"></span>
                                         <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
                                     </div>
 
-                                    <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
+                                    <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden notranslate"></p>
                                     
                                     <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 px-3 rounded-full text-[10px] font-extrabold transition-all duration-300 items-center justify-center gap-1 border hover:scale-105 active:scale-95" style="line-height: normal; padding-top: 0; padding-bottom: 0; height: 24px; color: #f97316; background-color: rgba(249, 115, 22, 0.15); border-color: rgba(249, 115, 22, 0.3); letter-spacing: 0.1em; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);">
                                         <i class="fa-regular fa-calendar"></i> TODAY
@@ -2067,7 +2070,7 @@ The word "Nua" means new and "Khai" means food.
                             <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
                         </div>
 
-                        <div id="calendar-swipe-area" class="bg-white rounded-xl shadow-lg p-2 md:p-3">
+                        <div id="calendar-swipe-area" class="bg-white rounded-xl shadow-lg p-2 md:p-3 notranslate">
                             <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
                             <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
                             
@@ -2097,8 +2100,8 @@ The word "Nua" means new and "Khai" means food.
                     <div id="sec-festivals" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden order-2">
                         <div class="absolute top-0 right-0 -mr-4 -mt-4 pointer-events-none" style="width: 6rem; height: 6rem; background: linear-gradient(to right bottom, rgba(239, 68, 68, 0.1), transparent); border-bottom-left-radius: 100%;"></div>
                         <div class="flex justify-between items-center mb-4 relative z-10"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0"><i class="fa-solid fa-bell text-red-600 text-lg"></i> Festivals</h3><button class="bg-orange-50 hover:bg-orange-100 text-orange-700 px-2.5 py-1 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 border border-orange-200 transition shadow-sm" onclick="openLocationModal()"><i class="fa-solid fa-location-dot animate-slight-bounce"></i> Location</button></div>
-                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
-                        <ul id="festival-list" class="space-y-2 text-sm"></ul>
+                        <div id="festival-filters" class="flex flex-wrap gap-2 mb-4 notranslate"></div>
+                        <ul id="festival-list" class="space-y-2 text-sm notranslate"></ul>
                     </div>
                 </div>
             </div>
@@ -2146,27 +2149,6 @@ The word "Nua" means new and "Khai" means food.
                         <!-- Language -->
                         <div class="w-full">
                             <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Language</label>
-                            <div class="relative mb-4">
-                                <select id="language-select" onchange="changeLanguage(this.value)" class="w-full appearance-none p-3 pl-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none transition cursor-pointer">
-                                    <option value="en">English</option>
-                                    <option value="hi">Hindi (हिन्दी)</option>
-                                    <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                                    <option value="bn">Bengali (বাংলা)</option>
-                                    <option value="mr">Marathi (मराठी)</option>
-                                    <option value="gu">Gujarati (ગુજરાતી)</option>
-                                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                                    <option value="ta">Tamil (தமிழ்)</option>
-                                    <option value="te">Telugu (తెలుగు)</option>
-                                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                                    <option value="ml">Malayalam (മലയാളം)</option>
-                                    <option value="as">Assamese (অসমীয়া)</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-8 pointer-events-none text-gray-500">
-                                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                            
-                            <h4 class="text-xs font-bold text-gray-500 mb-2 uppercase border-t pt-2 border-gray-100">Full Page Translation (Google)</h4>
                             <div class="relative notranslate">
                                 <button onclick="toggleCustomLangMenu()" class="w-full p-3 pl-4 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold flex items-center justify-between hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400">
                                     <div class="flex items-center gap-2">
@@ -3840,7 +3822,8 @@ const LOCATION_DATA = {
         function openSettingsModal() {
             lockScroll();
 
-            document.getElementById('language-select').value = appState.config.language || 'en';
+            // document.getElementById('language-select') is removed
+            // The unified dropdown relies on `buildLanguageMenu` which sets state correctly
             
             // --- EDITOR LOGIC START ---
             // Environment Check: Hide Sync Settings in App Mode (User View)
@@ -6710,7 +6693,7 @@ function renderCalendarGrid(data) {
 
                 } else {
                     // COMPLETED
-                    badge.innerText = "Completed";
+                    badge.innerText = "COMPLETED";
                     badge.classList.remove('badge-ending-soon');
                     if (pulseText) pulseText.style.display = 'none';
                     card.classList.add('completed');
@@ -6942,7 +6925,7 @@ function renderCalendarGrid(data) {
                         const mTime = waitMins % 60;
                         statusText = `UPCOMING IN ${h}H ${mTime}M`;
                     } else {
-                        statusText = "Completed";
+                        statusText = "COMPLETED";
                     }
 
                     const pillClass = `badge-${m.themeKey}`;
@@ -6954,15 +6937,15 @@ function renderCalendarGrid(data) {
                     <div class="card-footer ${footerClass}" style="display: block;">
                         <div class="flex justify-center items-center">
                             <div class="glass-time-box border-r-0" style="border-radius: 12px 0 0 12px;">
-                                    <span class="label">Start</span>
-                                    <span class="time">${startTime}</span>
-                                    <span class="period">${startPeriod}</span>
+                                    <span class="label leading-normal">Start</span>
+                                    <span class="time leading-normal">${startTime}</span>
+                                    <span class="period leading-normal">${startPeriod}</span>
                             </div>
 
                             <div class="glass-time-box" style="border-radius: 0 12px 12px 0;">
-                                    <span class="label">End</span>
-                                    <span class="time">${endTime}</span>
-                                    <span class="period">${endPeriod}</span>
+                                    <span class="label leading-normal">End</span>
+                                    <span class="time leading-normal">${endTime}</span>
+                                    <span class="period leading-normal">${endPeriod}</span>
                             </div>
                         </div>
                     </div>`;
@@ -6973,7 +6956,7 @@ function renderCalendarGrid(data) {
                                 
                                 <!-- Status Badge (Top Left) -->
                                 <div class="absolute top-0 left-0 z-20" style="top: -6px; left: -1px;">
-                                    <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-2 py-0.5 text-[8px] font-bold block" style="border-radius: 10px 0 10px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
+                                    <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-2 pt-[2px] pb-[1px] text-[10px] sm:text-[11px] font-bold block leading-relaxed" style="border-radius: 10px 0 10px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                 </div>
 
                                 <div class="relative w-full h-full overflow-hidden rounded-xl">
@@ -6986,7 +6969,7 @@ function renderCalendarGrid(data) {
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
                                         <div class="relative mt-auto pt-3">
                                             <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
-                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-2 py-0.5 text-[8px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
+                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-3 py-1 text-[10px] tracking-widest whitespace-nowrap leading-relaxed" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
                                             </div>
                                             ${footerHtml}
                                         </div>
@@ -7163,7 +7146,7 @@ function renderCalendarGrid(data) {
 
             clockCard.innerHTML = `
                 <div class="p-3 relative z-10 text-white text-center flex flex-col items-center justify-center h-full">
-                     <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">--:--:-- --</div>
+                     <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap notranslate">--:--:-- --</div>
                      <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
                 </div>
                 <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
@@ -7192,7 +7175,7 @@ function renderCalendarGrid(data) {
             // --- SMART-LINE FILTER BUTTONS ---
             const filterContainer = document.createElement('div');
             filterContainer.id = "festival-filters";
-            filterContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
+            filterContainer.className = "flex flex-wrap gap-2 mb-4 justify-center notranslate";
             
             const currentLang = appState.config.language || 'en';
             const localizedFilters = langData[currentLang] ? langData[currentLang].filters : langData.en.filters;
@@ -7269,7 +7252,7 @@ function renderCalendarGrid(data) {
             if (allTags.size > 0) {
                 const tagContainer = document.createElement('div');
                 tagContainer.id = "festival-tag-filters";
-                tagContainer.className = "flex flex-wrap gap-2 mb-4 justify-center";
+                tagContainer.className = "flex flex-wrap gap-2 mb-4 justify-center notranslate";
                 
                 const sortedTags = Array.from(allTags).sort();
                 sortedTags.forEach(tag => {
@@ -7288,7 +7271,7 @@ function renderCalendarGrid(data) {
             // 5. Festival List Container
             const list = document.createElement('ul');
             list.id = 'festival-list';
-            list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll"; 
+            list.className = "space-y-2 text-sm max-h-[350px] overflow-y-auto pr-1 custom-scroll notranslate"; 
             section.appendChild(list);
 
             const input = searchWrapper.querySelector('input');
@@ -7823,7 +7806,7 @@ function renderCalendarGrid(data) {
                                 <div class="flex justify-between items-center mt-3 px-0.5">
                                     <div class="flex flex-col items-start">
                                         <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Start</span>
-                                        <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-1 notranslate">
                                             <i class="fa-regular fa-clock text-gray-400 text-[10px]"></i>
                                             <span class="text-[10px] text-gray-600 font-bold font-mono leading-none">${fmtTime(tithiTimes.start)}</span>
                                         </div>
@@ -7831,7 +7814,7 @@ function renderCalendarGrid(data) {
                                     <div class="h-6 w-px bg-gray-200 mx-4"></div>
                                     <div class="flex flex-col items-end">
                                         <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">End</span>
-                                        <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-1 notranslate">
                                             <i class="fa-regular fa-clock text-amber-500 text-[10px]"></i>
                                             <span class="text-[10px] text-amber-500 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
                                         </div>
@@ -7877,7 +7860,7 @@ function renderCalendarGrid(data) {
                                 <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-cloud-sun"></i></div>
                                 <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Astro Details</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-3 text-center">
+                            <div class="grid grid-cols-2 gap-3 text-center notranslate">
                                  <div class="bg-orange-50 rounded-xl p-2 border border-orange-100 flex flex-col items-center">
                                      <i class="fa-solid fa-sun text-orange-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Sunrise</span>
@@ -7910,7 +7893,7 @@ function renderCalendarGrid(data) {
                         </div>` : ''}
 
                         <!-- 5. Rich Details (Notes/Events) -->
-                        <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
+                        <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2 notranslate">
                             ${dayEvents.map(ev => `
                                 <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
                                     <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
@@ -8062,6 +8045,38 @@ function renderCalendarGrid(data) {
         function downloadCalendar() {
             // 1. Clone the current document structure
             const clone = document.documentElement.cloneNode(true);
+
+            // --- GOOGLE TRANSLATE CLEANUP ---
+            // 1. Empty the Main Translate Container
+            const gtElement = clone.querySelector('#google_translate_element');
+            if (gtElement) gtElement.innerHTML = '';
+            
+            // 2. Remove Injected Iframes & Banners
+            const skipElements = clone.querySelectorAll('.skiptranslate');
+            skipElements.forEach(el => el.remove());
+            
+            // 3. Clean Body Styles
+            const cloneBody = clone.querySelector('body');
+            if (cloneBody) {
+                cloneBody.removeAttribute('style');
+                
+                // 4. Clean Body Classes
+                if (cloneBody.className) {
+                    const cleanClasses = cloneBody.className.split(' ')
+                        .filter(cls => !cls.startsWith('goog-te-'))
+                        .join(' ');
+                    cloneBody.className = cleanClasses;
+                }
+            }
+            
+            // 5. Remove Dynamically Injected Scripts (but keep element.js)
+            const dynamicScripts = clone.querySelectorAll('script');
+            dynamicScripts.forEach(script => {
+                if (script.src && script.src.includes('translate.googleapis.com')) {
+                    script.remove();
+                }
+            });
+            // --------------------------------
 
             // --- OPTIMIZATION: PURGE HEAVY CONTAINERS ---
             const idsToEmpty = ['calendar-grid', 'year-grid', 'festival-list', 'panchang-list', 'panchang-pills', 'banner-slides', 'banner-dots'];
@@ -8524,10 +8539,18 @@ function renderCalendarGrid(data) {
 
 <script>
     const indianLanguages = [
-        { code: 'as', name: 'Assamese' }, { code: 'bn', name: 'Bengali' }, { code: 'en', name: 'English' },
-        { code: 'gu', name: 'Gujarati' }, { code: 'hi', name: 'Hindi' }, { code: 'kn', name: 'Kannada' },
-        { code: 'ml', name: 'Malayalam' }, { code: 'mr', name: 'Marathi' }, { code: 'or', name: 'Odia' },
-        { code: 'pa', name: 'Punjabi' }, { code: 'ta', name: 'Tamil' }, { code: 'te', name: 'Telugu' }
+        { name: 'English', nativeCode: 'en', googleCode: 'en' },
+        { name: 'Hindi (हिन्दी)', nativeCode: 'hi', googleCode: 'hi' },
+        { name: 'Odia (ଓଡ଼ିଆ)', nativeCode: 'or', googleCode: 'or' },
+        { name: 'Bengali (বাংলা)', nativeCode: 'bn', googleCode: 'bn' },
+        { name: 'Marathi (मराठी)', nativeCode: 'mr', googleCode: 'mr' },
+        { name: 'Gujarati (ગુજરાતી)', nativeCode: 'gu', googleCode: 'gu' },
+        { name: 'Punjabi (ਪੰਜਾਬੀ)', nativeCode: 'pa', googleCode: 'pa' },
+        { name: 'Tamil (தமிழ்)', nativeCode: 'ta', googleCode: 'ta' },
+        { name: 'Telugu (తెలుగు)', nativeCode: 'te', googleCode: 'te' },
+        { name: 'Kannada (ಕನ್ನಡ)', nativeCode: 'kn', googleCode: 'kn' },
+        { name: 'Malayalam (മലയാളം)', nativeCode: 'ml', googleCode: 'ml' },
+        { name: 'Assamese (অসমীয়া)', nativeCode: 'as', googleCode: 'as' }
     ];
 
     let currentActiveLang = 'en';
@@ -8537,32 +8560,49 @@ function renderCalendarGrid(data) {
         return match ? match[2] : null;
     }
 
-    let existingLangCookie = getCookie('googtrans');
-    if (existingLangCookie) {
-        let parts = existingLangCookie.split('/');
-        if(parts.length === 3) {
-            let savedLangCode = parts[2];
-            let foundLang = indianLanguages.find(l => l.code === savedLangCode);
-            if(foundLang) {
-                currentActiveLang = savedLangCode;
-                // Use setTimeout to ensure DOM is ready before updating text
-                setTimeout(() => {
-                    const langDisplay = document.getElementById('currentLangDisplay');
-                    if(langDisplay) langDisplay.textContent = foundLang.name;
-                }, 100);
+    // Determine initial language based on existing state or cookie
+    setTimeout(() => {
+        let defaultLang = 'en';
+        let defaultName = 'English';
+        
+        // 1. First check if native appState has a configured language
+        if (typeof appState !== 'undefined' && appState.config && appState.config.language) {
+            defaultLang = appState.config.language;
+        } else {
+            // 2. Fallback to Google Translate cookie
+            let existingLangCookie = getCookie('googtrans');
+            if (existingLangCookie) {
+                let parts = existingLangCookie.split('/');
+                if(parts.length === 3) {
+                    defaultLang = parts[2];
+                }
             }
         }
-    }
+
+        let foundLang = indianLanguages.find(l => l.nativeCode === defaultLang || l.googleCode === defaultLang);
+        if(foundLang) {
+            currentActiveLang = foundLang.nativeCode || foundLang.googleCode;
+            defaultName = foundLang.name;
+        }
+
+        const langDisplay = document.getElementById('currentLangDisplay');
+        if(langDisplay) langDisplay.textContent = defaultName;
+        
+        // Ensure menu marks correct active state on load
+        buildLanguageMenu();
+    }, 100);
 
     function buildLanguageMenu() {
         const container = document.getElementById('langListContainer');
         if(!container) return;
-        container.innerHTML = indianLanguages.map(lang => `
-            <div class="lang-item ${lang.code === currentActiveLang ? 'active' : ''}" 
-                 onclick="changeCustomLanguage('${lang.code}', '${lang.name}')">
+        container.innerHTML = indianLanguages.map(lang => {
+            const isActive = (lang.nativeCode === currentActiveLang || lang.googleCode === currentActiveLang);
+            return `
+            <div class="lang-item ${isActive ? 'active' : ''}" 
+                 onclick="applyUnifiedLanguage('${lang.nativeCode || ''}', '${lang.googleCode || ''}', '${lang.name}')">
                 <span>› ${lang.name}</span>
             </div>
-        `).join('');
+        `}).join('');
     }
 
     function toggleCustomLangMenu() {
@@ -8578,41 +8618,57 @@ function renderCalendarGrid(data) {
         }
     });
 
-    function changeCustomLanguage(langCode, langName) {
-        currentActiveLang = langCode;
-        document.getElementById('currentLangDisplay').textContent = langName;
+    function applyUnifiedLanguage(nativeCode, googleCode, langName) {
+        currentActiveLang = nativeCode || googleCode;
+        
+        const langDisplay = document.getElementById('currentLangDisplay');
+        if (langDisplay) {
+            langDisplay.textContent = langName;
+        }
+        
         buildLanguageMenu();
-        document.getElementById('customLangMenu').classList.add('hidden');
-
-        // Set cookie explicitly to ensure persistence, handle local file:// paths
-        let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
-        document.cookie = 'googtrans=/en/' + langCode + '; path=/' + domainStr;
-        if (window.location.hostname) {
-            document.cookie = 'googtrans=/en/' + langCode + '; path=/; domain=.' + window.location.hostname;
+        
+        const menu = document.getElementById('customLangMenu');
+        if (menu) {
+            menu.classList.add('hidden');
         }
 
-        function triggerTranslate() {
-            var gtSelect = document.querySelector('.goog-te-combo');
-            if (gtSelect) {
-                gtSelect.value = langCode;
-                gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-                return true;
+        // 1. Trigger Google Translate if a googleCode exists
+        if (googleCode) {
+            let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
+            document.cookie = 'googtrans=/en/' + googleCode + '; path=/' + domainStr;
+            if (window.location.hostname) {
+                document.cookie = 'googtrans=/en/' + googleCode + '; path=/; domain=.' + window.location.hostname;
             }
-            return false;
+
+            function triggerTranslate() {
+                var gtSelect = document.querySelector('.goog-te-combo');
+                if (gtSelect) {
+                    gtSelect.value = googleCode;
+                    gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                    return true;
+                }
+                return false;
+            }
+
+            if (!triggerTranslate()) {
+                let attempts = 0;
+                let retryTimer = setInterval(function() {
+                    if (triggerTranslate() || attempts >= 20) {
+                        clearInterval(retryTimer);
+                        if (attempts >= 20) {
+                            window.location.reload();
+                        }
+                    }
+                    attempts++;
+                }, 100);
+            }
         }
 
-        if (!triggerTranslate()) {
-            let attempts = 0;
-            let retryTimer = setInterval(function() {
-                if (triggerTranslate() || attempts >= 20) {
-                    clearInterval(retryTimer);
-                    if (attempts >= 20) {
-                        // Fallback: reload page to force google script to read our manually set cookie
-                        window.location.reload();
-                    }
-                }
-                attempts++;
-            }, 100);
+        // 2. Trigger Native Translation if a nativeCode exists and it's different
+        if (nativeCode && typeof appState !== 'undefined' && appState.config && appState.config.language !== nativeCode) {
+            // Note: changeLanguage will handle fetching native json and re-rendering
+            changeLanguage(nativeCode);
         }
     }
 
