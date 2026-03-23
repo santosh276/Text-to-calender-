@@ -2192,6 +2192,14 @@ The word "Nua" means new and "Khai" means food.
                             </label>
                         </div>
 
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="text-sm font-bold text-gray-700" title="Turns off the external Google Translate widget but keeps the Native Language selection working">Full Page Converter</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-full-page-translation" class="sr-only peer" checked onchange="toggleFullPageTranslation(this.checked)">
+                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+
                     </div>
                 </div>
 
@@ -3862,6 +3870,11 @@ const LOCATION_DATA = {
             const secs = appState.config.sections || { festivals: true, panchang: true };
             if(document.getElementById('toggle-festivals')) document.getElementById('toggle-festivals').checked = secs.festivals;
             if(document.getElementById('toggle-panchang')) document.getElementById('toggle-panchang').checked = secs.panchang;
+
+            const fullPageToggle = document.getElementById('toggle-full-page-translation');
+            if (fullPageToggle) {
+                fullPageToggle.checked = !localStorage.getItem('disableFullPageTranslate');
+            }
 
             // Update Sync Toggles
             const liveUrl = appState.config.liveUrl || "";
@@ -8532,14 +8545,23 @@ function renderCalendarGrid(data) {
 
 <script type="text/javascript">
     function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,bn,te,mr,ta,gu,kn,ml,pa,or,as',
-            autoDisplay: false
-        }, 'google_translate_element');
+        if (!localStorage.getItem('disableFullPageTranslate')) {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,hi,bn,te,mr,ta,gu,kn,ml,pa,or,as',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
     }
 </script>
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+    if (!localStorage.getItem('disableFullPageTranslate')) {
+        let script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        document.body.appendChild(script);
+    }
+</script>
 
 <script>
     const indianLanguages = [
@@ -8638,7 +8660,7 @@ function renderCalendarGrid(data) {
         }
 
         // 1. Trigger Google Translate if a googleCode exists
-        if (googleCode) {
+        if (googleCode && !localStorage.getItem('disableFullPageTranslate')) {
             let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
             document.cookie = 'googtrans=/en/' + googleCode + '; path=/' + domainStr;
             if (window.location.hostname) {
@@ -8676,8 +8698,33 @@ function renderCalendarGrid(data) {
         }
     }
 
+    function toggleFullPageTranslation(isChecked) {
+        if (!isChecked) {
+            // Disable Full Page Translation
+            localStorage.setItem('disableFullPageTranslate', 'true');
+            // Clear googtrans cookie
+            let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
+            document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/' + domainStr;
+            if (window.location.hostname) {
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + window.location.hostname;
+            }
+            // Reload page to remove google translate completely
+            window.location.reload();
+        } else {
+            // Enable Full Page Translation
+            localStorage.removeItem('disableFullPageTranslate');
+            window.location.reload();
+        }
+    }
+
     // Initialize menu on load
-    window.addEventListener('DOMContentLoaded', buildLanguageMenu);
+    window.addEventListener('DOMContentLoaded', () => {
+        buildLanguageMenu();
+        const fullPageToggle = document.getElementById('toggle-full-page-translation');
+        if (fullPageToggle) {
+            fullPageToggle.checked = !localStorage.getItem('disableFullPageTranslate');
+        }
+    });
 </script>
 
     <!-- Location Prompt Toast Popup -->
