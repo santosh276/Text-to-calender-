@@ -1146,14 +1146,18 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     @media (min-width: 768px) { .today-badge { display: block; } }
 
     .event-pill {
-        font-size: 10px;
+        font-size: 0.7rem;
         padding: 2px 6px;
         border-radius: 4px;
-        white-space: nowrap;
+        white-space: normal;
+        word-break: break-word;
+        display: -webkit-inline-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-        display: inline-block;
         max-width: 100%;
+        min-height: fit-content;
         margin-top: 2px;
     }
     
@@ -6494,25 +6498,25 @@ function renderCalendarGrid(data) {
                     <div class="astro-time-item">
                         <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
                         <span class="astro-label">Sunrise</span>
-                        <span class="astro-time">${fmt(sunTimes.sunrise)}</span>
+                        <span class="astro-time notranslate">${fmt(sunTimes.sunrise)}</span>
                     </div>
                     <div class="astro-divider"></div>
                     <div class="astro-time-item">
                         <i class="fa-solid fa-cloud-sun text-2xl text-purple-400 icon-glow-purple"></i>
                         <span class="astro-label">Sunset</span>
-                        <span class="astro-time">${fmt(sunTimes.sunset)}</span>
+                        <span class="astro-time notranslate">${fmt(sunTimes.sunset)}</span>
                     </div>
                     <div class="astro-divider"></div>
                     <div class="astro-time-item">
                         <i class="fa-solid fa-cloud-moon text-2xl text-blue-400 icon-glow-blue"></i>
                         <span class="astro-label">Moonrise</span>
-                        <span class="astro-time">${fmt(moonTimes ? moonTimes.rise : null)}</span>
+                        <span class="astro-time notranslate">${fmt(moonTimes ? moonTimes.rise : null)}</span>
                     </div>
                     <div class="astro-divider"></div>
                     <div class="astro-time-item">
                         <i class="fa-solid fa-moon text-2xl text-gray-300 icon-glow-gray"></i>
                         <span class="astro-label">Moonset</span>
-                        <span class="astro-time">${fmt(moonTimes ? moonTimes.set : null)}</span>
+                        <span class="astro-time notranslate">${fmt(moonTimes ? moonTimes.set : null)}</span>
                     </div>
                 `;
                 list.appendChild(timelineDiv);
@@ -6836,20 +6840,20 @@ function renderCalendarGrid(data) {
                         <div class="timing-baseline"></div>
                         
                         <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
-                        <div class="timing-marker" style="left: 0%;">
+                        <div class="timing-marker notranslate" style="left: 0%;">
                             <div class="timing-marker-label text-center">6:00 AM</div>
                         </div>
-                        <div class="timing-marker" style="left: 50%;">
+                        <div class="timing-marker notranslate" style="left: 50%;">
                             <div class="timing-marker-label text-center">12:00 PM</div>
                         </div>
-                        <div class="timing-marker" style="left: 100%;">
+                        <div class="timing-marker notranslate" style="left: 100%;">
                             <div class="timing-marker-label text-center">6:00 PM</div>
                         </div>
 
                         ${eventsHtml}
 
                         <!-- NOW Indicator -->
-                        <div class="timing-now-indicator" style="left: ${nowPercent}%;">
+                        <div class="timing-now-indicator notranslate" style="left: ${nowPercent}%;">
                             <div class="timing-now-badge">NOW</div>
                         </div>
                     </div>
@@ -6863,7 +6867,7 @@ function renderCalendarGrid(data) {
                     <span class="badge">${dateStr}</span>
                 </div>
                 
-                <div class="current-time">
+                <div class="current-time notranslate">
                     <div class="label">NOW</div>
                     <div class="line-container">
                         <div class="pulse-beacon"></div>
@@ -6936,13 +6940,13 @@ function renderCalendarGrid(data) {
                     footerHtml = `
                     <div class="card-footer ${footerClass}" style="display: block;">
                         <div class="flex justify-center items-center">
-                            <div class="glass-time-box border-r-0" style="border-radius: 12px 0 0 12px;">
+                            <div class="glass-time-box border-r-0 notranslate" style="border-radius: 12px 0 0 12px;">
                                     <span class="label leading-normal">Start</span>
                                     <span class="time leading-normal">${startTime}</span>
                                     <span class="period leading-normal">${startPeriod}</span>
                             </div>
 
-                            <div class="glass-time-box" style="border-radius: 0 12px 12px 0;">
+                            <div class="glass-time-box notranslate" style="border-radius: 0 12px 12px 0;">
                                     <span class="label leading-normal">End</span>
                                     <span class="time leading-normal">${endTime}</span>
                                     <span class="period leading-normal">${endPeriod}</span>
@@ -6955,7 +6959,7 @@ function renderCalendarGrid(data) {
                             <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''} overflow-visible mt-1" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
                                 
                                 <!-- Status Badge (Top Left) -->
-                                <div class="absolute top-0 left-0 z-20" style="top: -6px; left: -1px;">
+                                <div class="absolute top-0 left-0 z-20 notranslate" style="top: -6px; left: -1px;">
                                     <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-2 pt-[2px] pb-[1px] text-[10px] sm:text-[11px] font-bold block leading-relaxed" style="border-radius: 10px 0 10px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                 </div>
 
@@ -6968,7 +6972,7 @@ function renderCalendarGrid(data) {
                                         
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
                                         <div class="relative mt-auto pt-3">
-                                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
+                                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 notranslate" style="display: ${isActive ? 'block' : 'none'}">
                                                 <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-3 py-1 text-[10px] tracking-widest whitespace-nowrap leading-relaxed" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
                                             </div>
                                             ${footerHtml}
@@ -7114,7 +7118,7 @@ function renderCalendarGrid(data) {
 
                         <div>
                             <h3 class="font-extrabold text-lg leading-tight mb-1 drop-shadow-sm whitespace-normal">${upNextEvent.engName}</h3>
-                            <p class="text-sm font-medium opacity-90 font-oriya leading-relaxed">${upNextEvent.locName || ''}</p>
+                            <p class="text-[0.8rem] font-medium opacity-90 font-oriya leading-relaxed line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${upNextEvent.locName || ''}</p>
                         </div>
                     </div>
                     <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
@@ -7439,7 +7443,7 @@ function renderCalendarGrid(data) {
                     return `
                     <div class="${mt}">
                         <div class="${titleClass} whitespace-normal leading-tight group-hover:text-orange-700 transition-colors">${ev.engName}</div>
-                        <div class="text-[11px] text-gray-500 font-oriya whitespace-normal leading-snug">${ev.locName || ''}</div>
+                        <div class="text-[0.7rem] text-gray-500 font-oriya whitespace-normal leading-snug line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName || ''}</div>
                     </div>
                     `;
                 }).join('');
@@ -7637,8 +7641,8 @@ function renderCalendarGrid(data) {
                 
                 // Process brackets and parentheses for localized text styling
                 // We use 'ml-1' for space before the translation but omit 'mr-1' so trailing punctuation isn't pushed away
-                trimmed = trimmed.replace(/\[([^\]]+)\]/g, '<span class="text-sm text-gray-500 font-oriya ml-1">$1</span>');
-                trimmed = trimmed.replace(/\(([^)]+)\)/g, '<span class="text-sm text-gray-500 font-oriya ml-1">$1</span>');
+                trimmed = trimmed.replace(/\[([^\]]+)\]/g, '<span class="text-[0.8rem] text-gray-500 font-oriya ml-1">$1</span>');
+                trimmed = trimmed.replace(/\(([^)]+)\)/g, '<span class="text-[0.8rem] text-gray-500 font-oriya ml-1">$1</span>');
 
                 if (isListItem) {
                     if (!inList) {
@@ -7788,7 +7792,7 @@ function renderCalendarGrid(data) {
                                 <div class="absolute inset-0 bg-amber-500/5 pointer-events-none"></div>
                                 <div class="flex justify-between items-center mb-2 relative z-10">
                                     <span class="text-gray-500 font-bold text-[11px] uppercase tracking-widest">Tithi Progress</span>
-                                    <div class="flex items-baseline gap-1">
+                                    <div class="flex items-baseline gap-1 notranslate">
                                         <span class="text-2xl font-extrabold text-amber-500 drop-shadow-sm font-sans">${tithiProgress}</span>
                                         <span class="text-xs text-amber-600 font-bold">%</span>
                                     </div>
@@ -7860,26 +7864,26 @@ function renderCalendarGrid(data) {
                                 <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-cloud-sun"></i></div>
                                 <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Astro Details</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-3 text-center notranslate">
+                            <div class="grid grid-cols-2 gap-3 text-center">
                                  <div class="bg-orange-50 rounded-xl p-2 border border-orange-100 flex flex-col items-center">
                                      <i class="fa-solid fa-sun text-orange-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Sunrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunrise)}</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono notranslate">${fmtAstroTime(sunTimes.sunrise)}</span>
                                  </div>
                                  <div class="bg-purple-50 rounded-xl p-2 border border-purple-100 flex flex-col items-center">
                                      <i class="fa-solid fa-cloud-sun text-purple-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Sunset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunset)}</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono notranslate">${fmtAstroTime(sunTimes.sunset)}</span>
                                  </div>
                                  <div class="bg-blue-50 rounded-xl p-2 border border-blue-100 flex flex-col items-center">
                                      <i class="fa-solid fa-cloud-moon text-blue-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Moonrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono notranslate">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
                                  </div>
                                  <div class="bg-gray-50 rounded-xl p-2 border border-gray-200 flex flex-col items-center">
                                      <i class="fa-solid fa-moon text-gray-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase">Moonset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
+                                     <span class="text-sm font-bold text-gray-800 font-mono notranslate">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
                                  </div>
                             </div>
                         </div>` : ''}
@@ -7897,7 +7901,7 @@ function renderCalendarGrid(data) {
                             ${dayEvents.map(ev => `
                                 <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
                                     <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
-                                    ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
+                                    ${ev.locName ? `<p class="text-[0.8rem] text-gray-600 font-oriya line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
                                 </div>
                             `).join('')}
                             
