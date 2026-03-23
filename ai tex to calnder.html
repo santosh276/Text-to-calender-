@@ -6495,25 +6495,25 @@ function renderCalendarGrid(data) {
                 const timelineDiv = document.createElement('div');
                 timelineDiv.className = "astro-timeline-modern";
                 timelineDiv.innerHTML = `
-                    <div class="astro-time-item">
+                    <div class="astro-time-item notranslate">
                         <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
                         <span class="astro-label">Sunrise</span>
                         <span class="astro-time">${fmt(sunTimes.sunrise)}</span>
                     </div>
                     <div class="astro-divider"></div>
-                    <div class="astro-time-item">
+                    <div class="astro-time-item notranslate">
                         <i class="fa-solid fa-cloud-sun text-2xl text-purple-400 icon-glow-purple"></i>
                         <span class="astro-label">Sunset</span>
                         <span class="astro-time">${fmt(sunTimes.sunset)}</span>
                     </div>
                     <div class="astro-divider"></div>
-                    <div class="astro-time-item">
+                    <div class="astro-time-item notranslate">
                         <i class="fa-solid fa-cloud-moon text-2xl text-blue-400 icon-glow-blue"></i>
                         <span class="astro-label">Moonrise</span>
                         <span class="astro-time">${fmt(moonTimes ? moonTimes.rise : null)}</span>
                     </div>
                     <div class="astro-divider"></div>
-                    <div class="astro-time-item">
+                    <div class="astro-time-item notranslate">
                         <i class="fa-solid fa-moon text-2xl text-gray-300 icon-glow-gray"></i>
                         <span class="astro-label">Moonset</span>
                         <span class="astro-time">${fmt(moonTimes ? moonTimes.set : null)}</span>
@@ -6840,20 +6840,20 @@ function renderCalendarGrid(data) {
                         <div class="timing-baseline"></div>
                         
                         <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
-                        <div class="timing-marker" style="left: 0%;">
+                        <div class="timing-marker notranslate" style="left: 0%;">
                             <div class="timing-marker-label text-center">6:00 AM</div>
                         </div>
-                        <div class="timing-marker" style="left: 50%;">
+                        <div class="timing-marker notranslate" style="left: 50%;">
                             <div class="timing-marker-label text-center">12:00 PM</div>
                         </div>
-                        <div class="timing-marker" style="left: 100%;">
+                        <div class="timing-marker notranslate" style="left: 100%;">
                             <div class="timing-marker-label text-center">6:00 PM</div>
                         </div>
 
                         ${eventsHtml}
 
                         <!-- NOW Indicator -->
-                        <div class="timing-now-indicator" style="left: ${nowPercent}%;">
+                        <div class="timing-now-indicator notranslate" style="left: ${nowPercent}%;">
                             <div class="timing-now-badge">NOW</div>
                         </div>
                     </div>
@@ -6867,7 +6867,7 @@ function renderCalendarGrid(data) {
                     <span class="badge">${dateStr}</span>
                 </div>
                 
-                <div class="current-time">
+                <div class="current-time notranslate">
                     <div class="label">NOW</div>
                     <div class="line-container">
                         <div class="pulse-beacon"></div>
@@ -6959,7 +6959,7 @@ function renderCalendarGrid(data) {
                             <div class="timeline-card ${m.gradientClass} ${isCompleted ? 'completed' : ''} overflow-visible mt-1" data-start="${m.start.getTime()}" data-end="${m.end.getTime()}">
                                 
                                 <!-- Status Badge (Top Left) -->
-                                <div class="absolute top-0 left-0 z-20" style="top: -6px; left: -1px;">
+                                <div class="absolute top-0 left-0 z-20 notranslate" style="top: -6px; left: -1px;">
                                     <span class="progress-badge ${pillClass} ${badgeClass} shadow-lg border-white/20 backdrop-blur-md uppercase tracking-wider px-2 pt-[2px] pb-[1px] text-[10px] sm:text-[11px] font-bold block leading-relaxed" style="border-radius: 10px 0 10px 0; border-width: 1px 1px 1px 0px;">${statusText}</span>
                                 </div>
 
@@ -6972,7 +6972,7 @@ function renderCalendarGrid(data) {
                                         
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
                                         <div class="relative mt-auto pt-3">
-                                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
+                                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 notranslate" style="display: ${isActive ? 'block' : 'none'}">
                                                 <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-3 py-1 text-[10px] tracking-widest whitespace-nowrap leading-relaxed" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
                                             </div>
                                             ${footerHtml}
