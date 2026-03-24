@@ -8,6 +8,10 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Translate Preconnect -->
+    <link rel="preconnect" href="https://translate.googleapis.com">
+    <link rel="dns-prefetch" href="https://translate.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Sans+Oriya:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
@@ -8619,6 +8623,10 @@ function renderCalendarGrid(data) {
 
         // Trigger translation script for the saved language on load so text changes automatically
         if (foundLang) {
+            // Instant Native Rendering: Load native JSON immediately for core UI (calendar, festivals)
+            if (foundLang.nativeCode) {
+                changeLanguage(foundLang.nativeCode);
+            }
             applyUnifiedLanguage(foundLang.nativeCode, foundLang.googleCode, foundLang.name);
         }
     }, 100);
@@ -8681,12 +8689,12 @@ function renderCalendarGrid(data) {
                     clearInterval(retryTimer);
                 } else {
                     attempts++;
-                    if (attempts >= 50) {
+                    if (attempts >= 150) {
                         clearInterval(retryTimer);
                         window.location.reload();
                     }
                 }
-            }, 100);
+            }, 20); // 20ms ultra-fast polling
         }
 
         // 2. Trigger Native Translation if a nativeCode exists and it's different
