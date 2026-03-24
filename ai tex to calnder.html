@@ -8700,9 +8700,16 @@ function renderCalendarGrid(data) {
                 }
 
                 attempts++;
-                if (attempts >= 20) {
+                if (attempts >= 10) {
                     clearInterval(retryTimer);
-                    window.location.reload();
+                    if (!sessionStorage.getItem('translateReloadFired')) {
+                        sessionStorage.setItem('translateReloadFired', 'true');
+                        window.location.reload();
+                    } else {
+                        console.warn('Google Translate fallback reload already fired once. Skipping to prevent infinite loop.');
+                        // Reset the flag for future manual changes after initial load is done.
+                        setTimeout(() => sessionStorage.removeItem('translateReloadFired'), 5000);
+                    }
                 }
             }, 50); // 50ms aggressive polling
         }
