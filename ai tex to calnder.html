@@ -8674,27 +8674,37 @@ function renderCalendarGrid(data) {
 
         // 1. Trigger Google Translate if a googleCode exists
         if (googleCode && !localStorage.getItem('disableFullPageTranslate')) {
-            let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
-            document.cookie = 'googtrans=/en/' + googleCode + '; path=/' + domainStr;
-            if (window.location.hostname) {
-                document.cookie = 'googtrans=/en/' + googleCode + '; path=/; domain=.' + window.location.hostname;
-            }
+            // Step 1: Force Set the Cookies First
+            document.cookie = 'googtrans=/en/' + googleCode + '; path=/; domain=' + window.location.hostname;
+            document.cookie = 'googtrans=/en/' + googleCode + '; path=/';
+
+            // Reset translation classes to allow detection of new changes
+            document.documentElement.classList.remove('translated-ltr', 'translated-rtl');
 
             let attempts = 0;
             let retryTimer = setInterval(function() {
                 var gtSelect = document.querySelector('.goog-te-combo');
-                if (gtSelect && gtSelect.options && gtSelect.options.length > 0) {
-                    gtSelect.value = googleCode;
-                    gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-                    clearInterval(retryTimer);
-                } else {
-                    attempts++;
-                    if (attempts >= 150) {
-                        clearInterval(retryTimer);
-                        window.location.reload();
-                    }
+
+                // Step 3: Aggressive Verification Loop
+                if (document.documentElement.classList.contains('translated-ltr') || document.documentElement.classList.contains('translated-rtl')) {
+                     clearInterval(retryTimer);
+                     return;
                 }
-            }, 20); // 20ms ultra-fast polling
+
+                if (gtSelect && gtSelect.options && gtSelect.options.length > 0) {
+                    // Step 2: Enhance the Event Dispatch Sequence
+                    gtSelect.value = googleCode;
+                    gtSelect.dispatchEvent(new Event('focus', { bubbles: true }));
+                    gtSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    gtSelect.dispatchEvent(new Event('blur', { bubbles: true }));
+                }
+
+                attempts++;
+                if (attempts >= 20) {
+                    clearInterval(retryTimer);
+                    window.location.reload();
+                }
+            }, 50); // 50ms aggressive polling
         }
 
         // 2. Trigger Native Translation if a nativeCode exists and it's different
