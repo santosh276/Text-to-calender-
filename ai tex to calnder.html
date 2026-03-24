@@ -8616,6 +8616,11 @@ function renderCalendarGrid(data) {
         
         // Ensure menu marks correct active state on load
         buildLanguageMenu();
+
+        // Trigger translation script for the saved language on load so text changes automatically
+        if (foundLang) {
+            applyUnifiedLanguage(foundLang.nativeCode, foundLang.googleCode, foundLang.name);
+        }
     }, 100);
 
     function buildLanguageMenu() {
@@ -8667,28 +8672,21 @@ function renderCalendarGrid(data) {
                 document.cookie = 'googtrans=/en/' + googleCode + '; path=/; domain=.' + window.location.hostname;
             }
 
-            function triggerTranslate() {
+            let attempts = 0;
+            let retryTimer = setInterval(function() {
                 var gtSelect = document.querySelector('.goog-te-combo');
-                if (gtSelect) {
+                if (gtSelect && gtSelect.options && gtSelect.options.length > 0) {
                     gtSelect.value = googleCode;
                     gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-                    return true;
-                }
-                return false;
-            }
-
-            if (!triggerTranslate()) {
-                let attempts = 0;
-                let retryTimer = setInterval(function() {
-                    if (triggerTranslate() || attempts >= 20) {
-                        clearInterval(retryTimer);
-                        if (attempts >= 20) {
-                            window.location.reload();
-                        }
-                    }
+                    clearInterval(retryTimer);
+                } else {
                     attempts++;
-                }, 100);
-            }
+                    if (attempts >= 50) {
+                        clearInterval(retryTimer);
+                        window.location.reload();
+                    }
+                }
+            }, 100);
         }
 
         // 2. Trigger Native Translation if a nativeCode exists and it's different
