@@ -3949,6 +3949,18 @@ const LOCATION_DATA = {
             localStorage.removeItem('panchang_autosave_text');
             localStorage.removeItem('panchang_cached_state');
             localStorage.removeItem('panchang_last_sync_ts');
+            // Check for StorageManager indexedDB and clear heavy data
+            if (typeof StorageManager !== 'undefined' && StorageManager.clearHeavyData) {
+                StorageManager.clearHeavyData().catch(console.error);
+            }
+            if (typeof StorageManager !== 'undefined' && typeof StorageManager.clearAll === 'function') {
+                StorageManager.clearAll().catch(console.error);
+            } else {
+                // Manually delete indexedDB just in case StorageManager exposes something else or is not initialized
+                try {
+                    indexedDB.deleteDatabase('VaidikCalendarDB');
+                } catch(e) {}
+            }
 
             // 3. Clear Editor
             const editor = document.getElementById('editor');
@@ -8197,13 +8209,13 @@ function renderCalendarGrid(data) {
 
             const stateToSave = {
                 activeMonthIndex: appState.activeMonthIndex || 0,
-                monthsData: appState.monthsData || [],
+                monthsData: [],
                 todayIndex: appState.todayIndex || -1,
-                details: appState.details || {},
-                recurringDetails: appState.recurringDetails || {},
-                manualTithis: appState.manualTithis || {},
-                customSeasonDescriptions: appState.customSeasonDescriptions || {},
-                images: appState.images || {},
+                details: {},
+                recurringDetails: {},
+                manualTithis: {},
+                customSeasonDescriptions: {},
+                images: {},
                 config: exportConfig
             };
 
