@@ -2192,6 +2192,14 @@ The word "Nua" means new and "Khai" means food.
                             </label>
                         </div>
 
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="text-sm font-bold text-gray-700" title="Turns off the external Google Translate widget but keeps the Native Language selection working">Full Page Converter</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-full-page-translation" class="sr-only peer" onchange="toggleFullPageTranslation(this.checked)">
+                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+
                     </div>
                 </div>
 
@@ -3862,6 +3870,11 @@ const LOCATION_DATA = {
             const secs = appState.config.sections || { festivals: true, panchang: true };
             if(document.getElementById('toggle-festivals')) document.getElementById('toggle-festivals').checked = secs.festivals;
             if(document.getElementById('toggle-panchang')) document.getElementById('toggle-panchang').checked = secs.panchang;
+            
+            const fullPageToggle = document.getElementById('toggle-full-page-translation');
+            if (fullPageToggle) {
+                fullPageToggle.checked = !!localStorage.getItem('disableFullPageTranslate');
+            }
 
             // Update Sync Toggles
             const liveUrl = appState.config.liveUrl || "";
@@ -7749,14 +7762,14 @@ function renderCalendarGrid(data) {
             
             if (isShukla) {
                 pakshaBadgeHtml = `
-                <div class="paksha-badge-shukla">
+                <div class="paksha-badge-shukla notranslate">
                     <i class="fa-solid fa-sun icon"></i>
                     <span class="text">${paksha}</span>
                 </div>
                 `;
             } else {
                 pakshaBadgeHtml = `
-                <div class="paksha-badge-krishna">
+                <div class="paksha-badge-krishna notranslate">
                     <i class="fa-solid fa-moon icon"></i>
                     <span class="text">${paksha}</span>
                 </div>
@@ -7785,7 +7798,7 @@ function renderCalendarGrid(data) {
                                 <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-moon"></i></div>
                                 <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Current Tithi</span>
                             </div>
-                            <h3 class="text-3xl font-extrabold text-deepred mb-1 leading-none">${tithiInfo.tithi}</h3>
+                            <h3 class="text-3xl font-extrabold text-deepred mb-1 leading-none notranslate">${tithiInfo.tithi}</h3>
                             <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
                             
                             <div class="mt-5 p-4 bg-gray-50 rounded-2xl border border-gray-200 shadow-inner relative overflow-hidden">
@@ -7848,12 +7861,12 @@ function renderCalendarGrid(data) {
                                 </div>
                                 <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                     <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase">Hindu Month</div>
-                                    <div class="font-mono text-gray-900 font-bold">${hinduMonthName}</div>
+                                    <div class="font-mono text-gray-900 font-bold notranslate">${hinduMonthName}</div>
                                 </div>
                             </div>
                             <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 text-xs">
                                 <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase">Ritu (Season)</div>
-                                <div class="font-mono text-gray-900 font-bold">${seasonName}</div>
+                                <div class="font-mono text-gray-900 font-bold notranslate">${seasonName}</div>
                             </div>
                         </div>
 
@@ -8532,14 +8545,23 @@ function renderCalendarGrid(data) {
 
 <script type="text/javascript">
     function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,bn,te,mr,ta,gu,kn,ml,pa,or,as',
-            autoDisplay: false
-        }, 'google_translate_element');
+        if (!localStorage.getItem('disableFullPageTranslate')) {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,hi,bn,te,mr,ta,gu,kn,ml,pa,or,as',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
     }
 </script>
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+    if (!localStorage.getItem('disableFullPageTranslate')) {
+        let script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        document.body.appendChild(script);
+    }
+</script>
 
 <script>
     const indianLanguages = [
@@ -8638,7 +8660,7 @@ function renderCalendarGrid(data) {
         }
 
         // 1. Trigger Google Translate if a googleCode exists
-        if (googleCode) {
+        if (googleCode && !localStorage.getItem('disableFullPageTranslate')) {
             let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
             document.cookie = 'googtrans=/en/' + googleCode + '; path=/' + domainStr;
             if (window.location.hostname) {
@@ -8676,8 +8698,58 @@ function renderCalendarGrid(data) {
         }
     }
 
+    function toggleFullPageTranslation(isChecked) {
+        if (isChecked) {
+            // Disable Full Page Translation
+            localStorage.setItem('disableFullPageTranslate', 'true');
+            
+            // Clear googtrans cookie
+            let domainStr = window.location.hostname ? '; domain=' + window.location.hostname : '';
+            document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/' + domainStr;
+            if (window.location.hostname) {
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + window.location.hostname;
+            }
+            
+            // Soft reload: Revert Google Translate to original language if the script is loaded
+            const gtSelect = document.querySelector('.goog-te-combo');
+            if (gtSelect) {
+                gtSelect.value = 'en'; // Force English (original)
+                gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            }
+            
+            // Re-render native UI to ensure clean state
+            if (typeof render === 'function') render();
+            
+        } else {
+            // Enable Full Page Translation
+            localStorage.removeItem('disableFullPageTranslate');
+            
+            // If the script hasn't been loaded at all, inject it dynamically
+            if (!document.querySelector('script[src*="translate.google.com"]')) {
+                let script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                document.body.appendChild(script);
+            }
+            
+            // Re-apply the current active language after a short delay
+            setTimeout(() => {
+                const langObj = indianLanguages.find(l => l.nativeCode === currentActiveLang || l.googleCode === currentActiveLang);
+                if (langObj) {
+                    applyUnifiedLanguage(langObj.nativeCode, langObj.googleCode, langObj.name);
+                }
+            }, 500);
+        }
+    }
+
     // Initialize menu on load
-    window.addEventListener('DOMContentLoaded', buildLanguageMenu);
+    window.addEventListener('DOMContentLoaded', () => {
+        buildLanguageMenu();
+        const fullPageToggle = document.getElementById('toggle-full-page-translation');
+        if (fullPageToggle) {
+            fullPageToggle.checked = !!localStorage.getItem('disableFullPageTranslate');
+        }
+    });
 </script>
 
     <!-- Location Prompt Toast Popup -->
