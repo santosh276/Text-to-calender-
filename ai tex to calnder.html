@@ -4737,45 +4737,71 @@ function getCDNUrl(originalUrl) {
         }
 
         function syncAndResetApp() {
-            // 1. Deep Cleanup (Data only - preserve User Config)
-            localStorage.removeItem('panchang_cached_state');
-            localStorage.removeItem('panchang_autosave_text');
-            localStorage.removeItem('panchang_last_sync_ts');
-            sessionStorage.removeItem('panchang_retry_count');
-            
-            // 2. Identify Language & Link
-            const currentLang = appState.config.language || 'en';
-            let link = null;
-            
-            if (appState.config.syncLinks && appState.config.syncLinks[currentLang]) {
-                link = appState.config.syncLinks[currentLang];
-                // Decrypt if needed
-                if (appState.config.linksEncrypted) {
-                    try {
-                        link = LinkSecurity.decrypt(link);
-                    } catch (e) {
-                        console.error("Link decryption failed during syncAndReset", e);
-                        link = null;
-                    }
+            // 1. Deep Cleanup (Factory Reset)
+            localStorage.clear();
+            sessionStorage.clear();
+
+            // Note: If indexedDB is used, try clearing it
+            try {
+                if (window.indexedDB && window.indexedDB.deleteDatabase) {
+                    indexedDB.deleteDatabase('VaidikCalendarDB');
                 }
+            } catch (e) {
+                console.error('Failed to delete indexedDB', e);
+            }
+            
+            // Note: If StorageManager exists, clear it
+            if (typeof StorageManager !== 'undefined' && StorageManager.clearAll) {
+                StorageManager.clearAll();
             }
 
-            // 3. Action
+            // 2. Reset App State completely to Default
+            appState.config = {
+                title: 'Panchang App',
+                logoUrl: null,
+                language: 'en',
+                location: null,
+                syncLinks: { ...DEFAULT_SYNC_LINKS },
+                sections: { festivals: true, panchang: true },
+                bilingualMode: true
+            };
+            
+            appState.monthsData = [];
+            appState.recurringEvents = [];
+            appState.details = {};
+            appState.recurringDetails = {};
+            appState.manualTithis = {};
+            appState.customSeasonDescriptions = {};
+            appState.images = {};
+            appState.todayIndex = -1;
+            appState.activeMonthIndex = 0;
+
+            // 3. Update active UI variables
+            currentIsolationFilter = null;
+            currentTagFilter = null;
+
+            // Set up default English sync links
+            let link = appState.config.syncLinks['en'];
+            if (appState.config.linksEncrypted) {
+                try {
+                    link = LinkSecurity.decrypt(link);
+                } catch (e) {
+                    console.error("Link decryption failed during syncAndReset", e);
+                    link = null;
+                }
+            }
             if (link) {
-                // Update Live URL to match current language source
                 appState.config.liveUrl = link;
                 appState.config.syncGitHubUrl = link;
-                saveConfigToStorage();
-                
-                showToast(`Resetting and syncing ${currentLang.toUpperCase()} data...`);
-                
-                // Force Fetch (bypass cache/timer)
-                fetchGitHubData(link, true);
-            } else {
-                // Fallback to standard retry (reloads page) if no source is configured
-                showToast("No sync source. Performing full reset...");
-                retryAppInitialization();
             }
+
+            // Save the reset config
+            saveConfigToStorage();
+
+            showToast("Factory Reset Complete. Fetching default language...");
+
+            // 4. Force default language and re-render instantly without page reload
+            changeLanguage('en');
         }
 
         function retryAppInitialization() {
