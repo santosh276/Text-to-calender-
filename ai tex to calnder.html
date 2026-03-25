@@ -3395,11 +3395,11 @@ return SunCalc;
         const LinkSecurity = {
             encrypt: (s) => {
                 if (!s) return "";
-                try { return btoa(s).split('').reverse().join(''); } catch(e) { return s; }
+                try { return btoa(encodeURIComponent(s)).split('').reverse().join(''); } catch(e) { return s; }
             },
             decrypt: (s) => {
                 if (!s) return "";
-                try { return atob(s.split('').reverse().join('')); } catch(e) { return s; }
+                try { return decodeURIComponent(atob(s.split('').reverse().join(''))); } catch(e) { return s; }
             }
         };
 
@@ -4323,7 +4323,7 @@ const LOCATION_DATA = {
                     const response = await fetch(proxyUrl);
                     if (!response.ok) throw new Error("Failed to connect to file.");
                     
-                    const text = await response.text();
+                    const buffer = await response.arrayBuffer(); const text = new TextDecoder("utf-8").decode(buffer);
                     
                     // 4. Update the Editor and App
                     const editor = document.getElementById('editor');
@@ -4548,7 +4548,7 @@ function getCDNUrl(originalUrl) {
                 
                 clearTimeout(timeoutId);
                 
-                const cleanText = await response.text();
+                const buffer = await response.arrayBuffer(); const cleanText = new TextDecoder("utf-8").decode(buffer);
                 
                 // VALIDATION
                 if (!cleanText || cleanText.length < 10) throw new Error("Document seems empty or invalid");
@@ -4640,7 +4640,7 @@ function getCDNUrl(originalUrl) {
 
                 if (!response.ok) throw new Error("Proxy Connection failed");
 
-                const html = await response.text();
+                const buffer = await response.arrayBuffer(); const html = new TextDecoder("utf-8").decode(buffer);
                 
                 // Parse HTML to get raw text syntax
                 const parser = new DOMParser();
@@ -8228,7 +8228,10 @@ function renderCalendarGrid(data) {
             if(body) body.prepend(dataScript);
 
             // 7. Download
-            let htmlContent = "<!DOCTYPE html>" + clone.outerHTML;
+            let htmlContent = "<!DOCTYPE html>\n" + clone.outerHTML;
+            if (!htmlContent.includes("<meta charset=\"UTF-8\">")) {
+                htmlContent = htmlContent.replace("<head>", "<head>\n    <meta charset=\"UTF-8\">");
+            }
             // Scrub HTML Comments
             htmlContent = htmlContent.replace(/<!--[\s\S]*?-->/g, "");
             
