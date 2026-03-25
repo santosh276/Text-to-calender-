@@ -3990,7 +3990,6 @@ const LOCATION_DATA = {
             }
         }
 
-        // --- EDITOR LOGIC START ---
         function updateSyncLinkInput() {
             const langEl = document.getElementById('sync-lang-select');
             if (!langEl) return; // Exit if elements don't exist (e.g., in downloaded app)
@@ -4007,9 +4006,7 @@ const LOCATION_DATA = {
                 input.value = '';
             }
         }
-        // --- EDITOR LOGIC END ---
 
-        // --- EDITOR LOGIC START ---
         function saveSyncLink() {
             const langEl = document.getElementById('sync-lang-select');
             if (!langEl) return;
@@ -4045,7 +4042,6 @@ const LOCATION_DATA = {
             
             saveConfigToStorage();
         }
-        // --- EDITOR LOGIC END ---
 
         function toggleBannerVisibility(checkbox) {
             isBannerDismissed = !checkbox.checked;
@@ -8118,7 +8114,6 @@ function renderCalendarGrid(data) {
                 '#bannerInput',              // Upload input
                 '#fileInput',                // Upload input
                 '#container-sync-settings',  // Developer settings
-                '#container-lang-links',     // Developer settings
                 '#app-loader'                // Existing loader
             ];
             removeSelectors.forEach(sel => {
