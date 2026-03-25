@@ -8224,7 +8224,8 @@ function renderCalendarGrid(data) {
 
             // 6. Inject Data Script
             const dataScript = document.createElement('script');
-            dataScript.textContent = `window.exportedData = ${JSON.stringify(stateToSave)};`;
+            const encodedState = btoa(encodeURIComponent(JSON.stringify(stateToSave)));
+            dataScript.textContent = `try { window.exportedData = JSON.parse(decodeURIComponent(atob('${encodedState}'))); } catch(e) { console.error('Failed to parse exported data', e); }`;
             if(body) body.prepend(dataScript);
 
             // 7. Download
