@@ -4743,45 +4743,33 @@ function getCDNUrl(originalUrl) {
         }
 
         function syncAndResetApp() {
-            // 1. Deep Cleanup (Data only - preserve User Config)
-            localStorage.removeItem('panchang_cached_state');
-            localStorage.removeItem('panchang_autosave_text');
-            localStorage.removeItem('panchang_last_sync_ts');
-            sessionStorage.removeItem('panchang_retry_count');
+            // 1. Complete Data Wipe (Factory Reset)
+            localStorage.clear();
+            sessionStorage.clear();
             
-            // 2. Identify Language & Link
-            const currentLang = appState.config.language || 'en';
-            let link = null;
-            
-            if (appState.config.syncLinks && appState.config.syncLinks[currentLang]) {
-                link = appState.config.syncLinks[currentLang];
-                // Decrypt if needed
-                if (appState.config.linksEncrypted) {
-                    try {
-                        link = LinkSecurity.decrypt(link);
-                    } catch (e) {
-                        console.error("Link decryption failed during syncAndReset", e);
-                        link = null;
-                    }
-                }
+            // 2. Clear IndexedDB caching via hybrid storage mechanism
+            if (typeof StorageManager !== 'undefined' && typeof StorageManager.clearAll === 'function') {
+                StorageManager.clearAll();
+            } else {
+                // Fallback: manually delete the database to be safe
+                const dbReq = indexedDB.deleteDatabase('VaidikCalendarDB');
+                dbReq.onerror = () => console.log('Error deleting DB');
+                dbReq.onsuccess = () => console.log('DB deleted successfully');
             }
 
-            // 3. Action
-            if (link) {
-                // Update Live URL to match current language source
-                appState.config.liveUrl = link;
-                appState.config.syncGitHubUrl = link;
-                saveConfigToStorage();
-                
-                showToast(`Resetting and syncing ${currentLang.toUpperCase()} data...`);
-                
-                // Force Fetch (bypass cache/timer)
-                fetchGitHubData(link, true);
-            } else {
-                // Fallback to standard retry (reloads page) if no source is configured
-                showToast("No sync source. Performing full reset...");
-                retryAppInitialization();
-            }
+            // 3. Restore Default Configuration
+            appState.config = {
+                title: 'Vaidik Calendar',
+                logoUrl: null,
+                language: 'en',
+                location: null,
+                sections: { festivals: true, panchang: true },
+                syncLinks: { ...DEFAULT_SYNC_LINKS }
+            };
+
+            // 4. Fetch default language data and seamlessly update UI
+            showToast("Factory Reset complete. Loading defaults...");
+            changeLanguage('en');
         }
 
         function retryAppInitialization() {
