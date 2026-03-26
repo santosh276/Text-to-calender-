@@ -8591,11 +8591,13 @@ function renderCalendarGrid(data) {
         let defaultLang = 'en';
         let defaultName = 'English';
         
-        // 1. First check if native appState has a configured language
-        if (typeof appState !== 'undefined' && appState.config && appState.config.language) {
+        let savedLang = localStorage.getItem('preferredLanguage');
+
+        if (savedLang) {
+            defaultLang = savedLang;
+        } else if (typeof appState !== 'undefined' && appState.config && appState.config.language) {
             defaultLang = appState.config.language;
         } else {
-            // 2. Fallback to Google Translate cookie
             let existingLangCookie = getCookie('googtrans');
             if (existingLangCookie) {
                 let parts = existingLangCookie.split('/');
@@ -8607,12 +8609,9 @@ function renderCalendarGrid(data) {
 
         let foundLang = indianLanguages.find(l => l.nativeCode === defaultLang || l.googleCode === defaultLang);
         if(foundLang) {
-            currentActiveLang = foundLang.nativeCode || foundLang.googleCode;
-            defaultName = foundLang.name;
+            // Automatically apply the language logic to ensure Google Translate triggers
+            applyUnifiedLanguage(foundLang.nativeCode, foundLang.googleCode, foundLang.name);
         }
-
-        const langDisplay = document.getElementById('currentLangDisplay');
-        if(langDisplay) langDisplay.textContent = defaultName;
         
         // Ensure menu marks correct active state on load
         buildLanguageMenu();
@@ -8647,6 +8646,9 @@ function renderCalendarGrid(data) {
     function applyUnifiedLanguage(nativeCode, googleCode, langName) {
         currentActiveLang = nativeCode || googleCode;
         
+        // Save to localStorage for persistence
+        localStorage.setItem('preferredLanguage', currentActiveLang);
+
         const langDisplay = document.getElementById('currentLangDisplay');
         if (langDisplay) {
             langDisplay.textContent = langName;
@@ -8671,7 +8673,9 @@ function renderCalendarGrid(data) {
                 var gtSelect = document.querySelector('.goog-te-combo');
                 if (gtSelect) {
                     gtSelect.value = googleCode;
+                    gtSelect.dispatchEvent(new Event('focus', { bubbles: true, cancelable: true }));
                     gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                    gtSelect.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));
                     return true;
                 }
                 return false;
