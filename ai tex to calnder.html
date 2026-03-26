@@ -1695,6 +1695,44 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .mt-8 { margin-top: 2rem; }
         .mt-10 { margin-top: 2.5rem; }
         .mb-6 { margin-bottom: 1.5rem; }
+
+        /* Custom Language Dropdown */
+        .lang-dropdown-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid rgba(229, 107, 58, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+        }
+        .lang-dropdown-card.open {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .lang-option {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4B5563;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: none;
+            width: 100%;
+        }
+        .lang-option:hover {
+            background: #FFFBF5;
+            color: #E56B3A;
+        }
+        .lang-option.lang-selected {
+            background: #FFF6ED;
+            color: #E56B3A;
+            font-weight: 800;
+        }
 </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -2130,26 +2168,73 @@ The word "Nua" means new and "Khai" means food.
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
                         
                         <!-- Language -->
-                        <div class="w-full">
-                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Language</label>
-                            <div class="relative">
-                                <select id="language-select" onchange="changeLanguage(this.value)" class="w-full appearance-none p-3 pl-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none transition cursor-pointer">
-                                    <option value="en">English</option>
-                                    <option value="hi">Hindi (हिन्दी)</option>
-                                    <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                                    <option value="bn">Bengali (বাংলা)</option>
-                                    <option value="mr">Marathi (मराठी)</option>
-                                    <option value="gu">Gujarati (ગુજરાતી)</option>
-                                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                                    <option value="ta">Tamil (தமிழ்)</option>
-                                    <option value="te">Telugu (తెలుగు)</option>
-                                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                                    <option value="ml">Malayalam (മലയാളം)</option>
-                                    <option value="as">Assamese (অসমীয়া)</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-8 pointer-events-none text-gray-500">
-                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                        <div class="w-full relative" id="custom-language-container">
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Language</label>
+
+                            <!-- Hidden Native Select (for compatibility) -->
+                            <select id="language-select" class="sr-only" onchange="changeLanguage(this.value)">
+                                <option value="en">English</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="mr">Marathi (मराठी)</option>
+                                <option value="gu">Gujarati (ગુજરાતી)</option>
+                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                <option value="ta">Tamil (தமிழ்)</option>
+                                <option value="te">Telugu (తెలుగు)</option>
+                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                <option value="ml">Malayalam (മലയാളം)</option>
+                                <option value="as">Assamese (অসমীয়া)</option>
+                            </select>
+
+                            <!-- Custom Main Button -->
+                            <button type="button" id="custom-language-btn" onclick="toggleLanguageDropdown()" class="w-full flex items-center justify-between p-3 pl-4 pr-4 bg-gray-50 border border-gray-200 rounded-xl transition-all duration-200 cursor-pointer outline-none hover:bg-gray-100 focus:ring-2 focus:ring-orange-200 focus:border-orange-400 group">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-globe-asia text-indigo-500 text-lg"></i>
+                                    <span id="custom-language-text" class="font-bold text-gray-700 text-[15px]">English</span>
                                 </div>
+                                <i class="fa-solid fa-chevron-down text-gray-400 text-sm group-hover:text-gray-600 transition-colors" id="custom-language-chevron"></i>
+                            </button>
+
+                            <!-- Dropdown Menu Card -->
+                            <div id="custom-language-menu" class="absolute top-full left-0 w-full mt-2 z-50 lang-dropdown-card grid grid-cols-2 gap-x-2 gap-y-1 transform scale-95 opacity-0 pointer-events-none transition-all duration-200 origin-top">
+                                <!-- Generated by JS or Static -->
+                                <button type="button" class="lang-option lang-selected" data-value="en" onclick="selectCustomLanguage('en', 'English')">
+                                    <span class="flex-1 text-left">› English</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="hi" onclick="selectCustomLanguage('hi', 'Hindi (हिन्दी)')">
+                                    <span class="flex-1 text-left">› Hindi (हिन्दी)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="or" onclick="selectCustomLanguage('or', 'Odia (ଓଡ଼ିଆ)')">
+                                    <span class="flex-1 text-left">› Odia (ଓଡ଼ିଆ)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="bn" onclick="selectCustomLanguage('bn', 'Bengali (বাংলা)')">
+                                    <span class="flex-1 text-left">› Bengali (বাংলা)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="mr" onclick="selectCustomLanguage('mr', 'Marathi (मराठी)')">
+                                    <span class="flex-1 text-left">› Marathi (मराठी)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="gu" onclick="selectCustomLanguage('gu', 'Gujarati (ગુજરાતી)')">
+                                    <span class="flex-1 text-left">› Gujarati (ગુજરાતી)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="pa" onclick="selectCustomLanguage('pa', 'Punjabi (ਪੰਜਾਬੀ)')">
+                                    <span class="flex-1 text-left">› Punjabi (ਪੰਜਾਬੀ)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="ta" onclick="selectCustomLanguage('ta', 'Tamil (தமிழ்)')">
+                                    <span class="flex-1 text-left">› Tamil (தமிழ்)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="te" onclick="selectCustomLanguage('te', 'Telugu (తెలుగు)')">
+                                    <span class="flex-1 text-left">› Telugu (తెలుగు)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="kn" onclick="selectCustomLanguage('kn', 'Kannada (ಕನ್ನಡ)')">
+                                    <span class="flex-1 text-left">› Kannada (ಕನ್ನಡ)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="ml" onclick="selectCustomLanguage('ml', 'Malayalam (മലയാളം)')">
+                                    <span class="flex-1 text-left">› Malayalam (മലയാളം)</span>
+                                </button>
+                                <button type="button" class="lang-option" data-value="as" onclick="selectCustomLanguage('as', 'Assamese (অসমীয়া)')">
+                                    <span class="flex-1 text-left">› Assamese (অসমীয়া)</span>
+                                </button>
                             </div>
                         </div>
 
@@ -3809,10 +3894,98 @@ const LOCATION_DATA = {
             }
         }
 
+
+        // --- CUSTOM LANGUAGE DROPDOWN LOGIC ---
+        function toggleLanguageDropdown() {
+            const menu = document.getElementById('custom-language-menu');
+            const chevron = document.getElementById('custom-language-chevron');
+            const isOpen = menu.classList.contains('open');
+
+            if (isOpen) {
+                closeLanguageDropdown();
+            } else {
+                menu.classList.add('open');
+                menu.classList.remove('scale-95', 'opacity-0', 'pointer-events-none');
+                menu.classList.add('scale-100', 'opacity-100', 'pointer-events-auto');
+                if (chevron) {
+                    chevron.classList.remove('fa-chevron-down');
+                    chevron.classList.add('fa-chevron-up');
+                }
+            }
+        }
+
+        function closeLanguageDropdown() {
+            const menu = document.getElementById('custom-language-menu');
+            const chevron = document.getElementById('custom-language-chevron');
+            if (menu && menu.classList.contains('open')) {
+                menu.classList.remove('open');
+                menu.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
+                menu.classList.remove('scale-100', 'opacity-100', 'pointer-events-auto');
+                if (chevron) {
+                    chevron.classList.remove('fa-chevron-up');
+                    chevron.classList.add('fa-chevron-down');
+                }
+            }
+        }
+
+        function updateCustomLanguageUI(langCode) {
+            const textSpan = document.getElementById('custom-language-text');
+            if (!textSpan) return;
+
+            const options = document.querySelectorAll('.lang-option');
+            options.forEach(opt => {
+                if (opt.getAttribute('data-value') === langCode) {
+                    opt.classList.add('lang-selected');
+                    // Extract text without the leading arrow
+                    const labelSpan = opt.querySelector('span');
+                    let rawText = labelSpan ? labelSpan.innerText : '';
+                    if (rawText.startsWith('› ')) {
+                        rawText = rawText.substring(2);
+                    }
+                    textSpan.innerText = rawText;
+                } else {
+                    opt.classList.remove('lang-selected');
+                }
+            });
+        }
+
+        function selectCustomLanguage(langCode, langName) {
+            // Update UI
+            updateCustomLanguageUI(langCode);
+
+            // Hide dropdown
+            closeLanguageDropdown();
+
+            // Update Native Select and Trigger Change
+            const nativeSelect = document.getElementById('language-select');
+            if (nativeSelect) {
+                nativeSelect.value = langCode;
+                // Dispatch change event to trigger existing app logic
+                nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.getElementById('custom-language-container');
+            const menu = document.getElementById('custom-language-menu');
+            if (container && menu && menu.classList.contains('open')) {
+                if (!container.contains(event.target)) {
+                    closeLanguageDropdown();
+                }
+            }
+        });
+        // --- END CUSTOM LANGUAGE DROPDOWN LOGIC ---
+
         function openSettingsModal() {
             lockScroll();
 
-            document.getElementById('language-select').value = appState.config.language || 'en';
+            const langCode = appState.config.language || 'en';
+            const nativeSelect = document.getElementById('language-select');
+            if (nativeSelect) nativeSelect.value = langCode;
+
+            // Sync custom language UI
+            updateCustomLanguageUI(langCode);
             
             // --- EDITOR LOGIC START ---
             // Environment Check: Hide Sync Settings in App Mode (User View)
