@@ -3851,21 +3851,16 @@ const LOCATION_DATA = {
             // The unified dropdown relies on `buildLanguageMenu` which sets state correctly
             
             // --- EDITOR LOGIC START ---
-            // Environment Check: Hide Sync Settings in App Mode (User View)
+            // Environment Check: Show Sync Settings in App Mode (User View)
             const isEditor = !!document.getElementById('editor');
             
             const syncSettingsContainer = document.getElementById('container-sync-settings');
             const langLinksContainer = document.getElementById('container-lang-links');
             
-            if (!isEditor) {
-                 // App Mode: Hide everything
-                 if(syncSettingsContainer) syncSettingsContainer.style.display = 'none';
-                 if(langLinksContainer) langLinksContainer.style.display = 'none';
-            } else {
-                 // Editor Mode: Show everything (and handle Docs Sync logic)
-                 if(syncSettingsContainer) syncSettingsContainer.style.display = 'block';
-                 if(langLinksContainer) langLinksContainer.style.display = 'block';
-                 
+            if(syncSettingsContainer) syncSettingsContainer.style.display = 'block';
+            if(langLinksContainer) langLinksContainer.style.display = 'block';
+
+            if (isEditor) {
                  const docsContainer = document.getElementById('container-sync-docs');
                  if (docsContainer) {
                      docsContainer.style.display = 'flex'; // Docs sync is editor-only feature
@@ -3995,7 +3990,6 @@ const LOCATION_DATA = {
             }
         }
 
-        // --- EDITOR LOGIC START ---
         function updateSyncLinkInput() {
             const langEl = document.getElementById('sync-lang-select');
             if (!langEl) return; // Exit if elements don't exist (e.g., in downloaded app)
@@ -4012,9 +4006,7 @@ const LOCATION_DATA = {
                 input.value = '';
             }
         }
-        // --- EDITOR LOGIC END ---
 
-        // --- EDITOR LOGIC START ---
         function saveSyncLink() {
             const langEl = document.getElementById('sync-lang-select');
             if (!langEl) return;
@@ -4050,7 +4042,6 @@ const LOCATION_DATA = {
             
             saveConfigToStorage();
         }
-        // --- EDITOR LOGIC END ---
 
         function toggleBannerVisibility(checkbox) {
             isBannerDismissed = !checkbox.checked;
@@ -4767,25 +4758,29 @@ function getCDNUrl(originalUrl) {
             }
 
             // 2. Reset App State completely to Default
-            appState.config = {
-                title: 'Panchang App',
-                logoUrl: null,
-                language: 'en',
-                location: null,
-                syncLinks: { ...DEFAULT_SYNC_LINKS },
-                sections: { festivals: true, panchang: true },
-                bilingualMode: true
-            };
-            
-            appState.monthsData = [];
-            appState.recurringEvents = [];
-            appState.details = {};
-            appState.recurringDetails = {};
-            appState.manualTithis = {};
-            appState.customSeasonDescriptions = {};
-            appState.images = {};
-            appState.todayIndex = -1;
-            appState.activeMonthIndex = 0;
+            if (typeof window.exportedData !== 'undefined') {
+                appState = JSON.parse(JSON.stringify(window.exportedData));
+            } else {
+                appState.config = {
+                    title: 'Panchang App',
+                    logoUrl: null,
+                    language: 'en',
+                    location: null,
+                    syncLinks: { ...DEFAULT_SYNC_LINKS },
+                    sections: { festivals: true, panchang: true },
+                    bilingualMode: true
+                };
+
+                appState.monthsData = [];
+                appState.recurringEvents = [];
+                appState.details = {};
+                appState.recurringDetails = {};
+                appState.manualTithis = {};
+                appState.customSeasonDescriptions = {};
+                appState.images = {};
+                appState.todayIndex = -1;
+                appState.activeMonthIndex = 0;
+            }
 
             // 3. Update active UI variables
             currentIsolationFilter = null;
@@ -8148,8 +8143,6 @@ function renderCalendarGrid(data) {
                 '#link-modal',               // Editor modal
                 '#bannerInput',              // Upload input
                 '#fileInput',                // Upload input
-                '#container-sync-settings',  // Developer settings
-                '#container-lang-links',     // Developer settings
                 '#app-loader'                // Existing loader
             ];
             removeSelectors.forEach(sel => {
