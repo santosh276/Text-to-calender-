@@ -3393,11 +3393,22 @@ return SunCalc;
         const LinkSecurity = {
             encrypt: (s) => {
                 if (!s) return "";
-                try { return btoa(s).split('').reverse().join(''); } catch(e) { return s; }
+                try { return btoa(encodeURIComponent(s)).split('').reverse().join(''); } catch(e) { return s; }
             },
             decrypt: (s) => {
                 if (!s) return "";
-                try { return atob(s.split('').reverse().join('')); } catch(e) { return s; }
+                // If it's already a valid plain text URL, do not attempt to decrypt
+                if (s.startsWith('http://') || s.startsWith('https://')) return s;
+
+                // Attempt to decode as URI component, but fallback gracefully if it fails
+                try {
+                    const decoded = atob(s.split('').reverse().join(''));
+                    try {
+                        return decodeURIComponent(decoded);
+                    } catch (uriError) {
+                        return decoded; // Fallback for links encrypted before encodeURIComponent was added
+                    }
+                } catch(e) { return s; }
             }
         };
 
