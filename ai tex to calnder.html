@@ -2130,25 +2130,38 @@ The word "Nua" means new and "Khai" means food.
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
                         
                         <!-- Language -->
-                        <div class="w-full">
+                        <div class="w-full relative">
                             <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Language</label>
-                            <div class="relative">
-                                <select id="language-select" onchange="changeLanguage(this.value)" class="w-full appearance-none p-3 pl-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none transition cursor-pointer">
-                                    <option value="en">English</option>
-                                    <option value="hi">Hindi (हिन्दी)</option>
-                                    <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                                    <option value="bn">Bengali (বাংলা)</option>
-                                    <option value="mr">Marathi (मराठी)</option>
-                                    <option value="gu">Gujarati (ગુજરાતી)</option>
-                                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                                    <option value="ta">Tamil (தமிழ்)</option>
-                                    <option value="te">Telugu (తెలుగు)</option>
-                                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                                    <option value="ml">Malayalam (മലയാളം)</option>
-                                    <option value="as">Assamese (অসমীয়া)</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-8 pointer-events-none text-gray-500">
-                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+
+                            <!-- Hidden Select for existing code compatibility -->
+                            <select id="language-select" class="hidden" onchange="changeLanguage(this.value); updateCustomLanguageDropdown(this.value)">
+                                <option value="en">English</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="mr">Marathi (मराठी)</option>
+                                <option value="gu">Gujarati (ગુજરાતી)</option>
+                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                <option value="ta">Tamil (தமிழ்)</option>
+                                <option value="te">Telugu (తెలుగు)</option>
+                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                <option value="ml">Malayalam (മലയാളം)</option>
+                                <option value="as">Assamese (অসমীয়া)</option>
+                            </select>
+
+                            <!-- Custom Dropdown Toggle -->
+                            <button type="button" onclick="toggleLanguageDropdown()" id="custom-lang-btn" class="w-full flex items-center justify-between p-3.5 bg-white border-2 border-[#fcdeb3] hover:border-[#fbc88b] rounded-2xl text-gray-800 font-bold outline-none transition cursor-pointer shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-earth-americas text-[#5c5ce6] text-lg"></i>
+                                    <span id="custom-lang-label" class="text-[16px] font-extrabold text-[#374151]">English</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-gray-400 text-sm transition-transform" id="custom-lang-chevron"></i>
+                            </button>
+
+                            <!-- Custom Dropdown Panel -->
+                            <div id="custom-lang-panel" class="absolute z-50 left-0 w-[340px] mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-orange-100/50 p-4 hidden origin-top-left transition-all duration-200 scale-95 opacity-0">
+                                <div class="grid grid-cols-2 gap-x-2 gap-y-3" id="custom-lang-grid">
+                                    <!-- Options injected via JS -->
                                 </div>
                             </div>
                         </div>
@@ -2401,6 +2414,109 @@ The word "Nua" means new and "Khai" means food.
     <input type="file" id="bannerInput" accept="image/*" style="display: none;" onchange="handleBannerUpload(event)">
 
     <script>
+
+        // --- CUSTOM LANGUAGE DROPDOWN LOGIC ---
+        const LANGUAGES = [
+            { code: 'en', label: 'English' },
+            { code: 'hi', label: 'Hindi (हिन्दी)' },
+            { code: 'or', label: 'Odia (ଓଡ଼ିଆ)' },
+            { code: 'bn', label: 'Bengali (বাংলা)' },
+            { code: 'mr', label: 'Marathi (मराठी)' },
+            { code: 'gu', label: 'Gujarati (ગુજરાતી)' },
+            { code: 'pa', label: 'Punjabi (ਪੰਜਾਬੀ)' },
+            { code: 'ta', label: 'Tamil (தமிழ்)' },
+            { code: 'te', label: 'Telugu (తెలుగు)' },
+            { code: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
+            { code: 'ml', label: 'Malayalam (മലയാളം)' },
+            { code: 'as', label: 'Assamese (অসমীয়া)' }
+        ];
+
+        function toggleLanguageDropdown() {
+            const panel = document.getElementById('custom-lang-panel');
+            const chevron = document.getElementById('custom-lang-chevron');
+            if (!panel || !chevron) return;
+
+            const isHidden = panel.classList.contains('hidden');
+
+            if (isHidden) {
+                renderCustomLanguageGrid();
+                panel.classList.remove('hidden');
+                setTimeout(() => {
+                    panel.classList.remove('opacity-0', 'scale-95');
+                    panel.classList.add('opacity-100', 'scale-100');
+                    chevron.style.transform = 'rotate(180deg)';
+                }, 10);
+            } else {
+                closeCustomLanguageDropdown();
+            }
+        }
+
+        function closeCustomLanguageDropdown() {
+            const panel = document.getElementById('custom-lang-panel');
+            const chevron = document.getElementById('custom-lang-chevron');
+            if (!panel || !chevron) return;
+
+            if (!panel.classList.contains('hidden')) {
+                panel.classList.remove('opacity-100', 'scale-100');
+                panel.classList.add('opacity-0', 'scale-95');
+                chevron.style.transform = 'rotate(0deg)';
+                setTimeout(() => {
+                    panel.classList.add('hidden');
+                }, 200);
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const btn = document.getElementById('custom-lang-btn');
+            const panel = document.getElementById('custom-lang-panel');
+            if (btn && panel && !btn.contains(event.target) && !panel.contains(event.target)) {
+                closeCustomLanguageDropdown();
+            }
+        });
+
+        function renderCustomLanguageGrid() {
+            const grid = document.getElementById('custom-lang-grid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            const selectEl = document.getElementById('language-select');
+            const currentLang = selectEl ? selectEl.value : 'en';
+
+            LANGUAGES.forEach(lang => {
+                const btn = document.createElement('button');
+                const isActive = (lang.code === currentLang);
+
+                btn.className = "flex items-start gap-2 px-3 py-2.5 rounded-xl text-[15px] transition-all cursor-pointer text-left w-full border border-transparent";
+
+                if (isActive) {
+                    btn.classList.add("bg-[#fff4eb]", "text-[#e96b34]", "font-bold");
+                    btn.innerHTML = `<span class="text-[#e96b34] text-[15px] font-extrabold mt-[1px] leading-none shrink-0">&rsaquo;</span> <span class="leading-tight">${lang.label}</span>`;
+                } else {
+                    btn.classList.add("text-[#4b5563]", "hover:bg-gray-50", "font-medium");
+                    btn.innerHTML = `<span class="text-gray-400 text-[15px] font-extrabold group-hover:text-gray-600 transition-colors mt-[1px] leading-none shrink-0">&rsaquo;</span> <span class="leading-tight">${lang.label}</span>`;
+                    btn.classList.add("group");
+                }
+
+                btn.onclick = () => {
+                    if (selectEl) selectEl.value = lang.code;
+                    changeLanguage(lang.code);
+                    updateCustomLanguageDropdown(lang.code);
+                    closeCustomLanguageDropdown();
+                };
+
+                grid.appendChild(btn);
+            });
+        }
+
+        function updateCustomLanguageDropdown(langCode) {
+            const lang = LANGUAGES.find(l => l.code === langCode);
+            if (lang) {
+                const labelEl = document.getElementById('custom-lang-label');
+                if (labelEl) labelEl.textContent = lang.label;
+            }
+        }
+        // ----------------------------------------
+
         // --- GLOBAL ERROR HANDLER ---
         // Catches unexpected crashes (e.g. Render errors, Logic bugs) and removes the loader
         window.onerror = function(message, source, lineno, colno, error) {
@@ -3813,6 +3929,7 @@ const LOCATION_DATA = {
             lockScroll();
 
             document.getElementById('language-select').value = appState.config.language || 'en';
+            updateCustomLanguageDropdown(appState.config.language || 'en');
             
             // --- EDITOR LOGIC START ---
             // Environment Check: Hide Sync Settings in App Mode (User View)
@@ -5016,7 +5133,7 @@ function getCDNUrl(originalUrl) {
                 
                 // 3. Update UI (Language Dropdown)
                 const langSelect = document.getElementById('language-select');
-                if (langSelect) langSelect.value = 'en';
+                if (langSelect) { langSelect.value = 'en'; updateCustomLanguageDropdown('en'); }
 
                 // 4. Auto-Fetch English Data
                 if (appState.config.syncLinks && appState.config.syncLinks['en']) {
@@ -5066,7 +5183,7 @@ function getCDNUrl(originalUrl) {
                         
                         // Update the dropdown menu visually if it exists
                         const langSelect = document.getElementById('language-select');
-                        if (langSelect) langSelect.value = matchedShortCode;
+                        if (langSelect) { langSelect.value = matchedShortCode; updateCustomLanguageDropdown(matchedShortCode); }
                         
                         // Trigger the full language change process
                         changeLanguage(matchedShortCode);
