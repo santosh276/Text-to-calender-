@@ -8673,7 +8673,8 @@ function renderCalendarGrid(data) {
 
             function triggerTranslate() {
                 var gtSelect = document.querySelector('.goog-te-combo');
-                if (gtSelect) {
+                // Ensure the select element exists AND has options populated by Google Translate
+                if (gtSelect && gtSelect.options && gtSelect.options.length > 0) {
                     gtSelect.value = googleCode;
                     gtSelect.dispatchEvent(new Event('focus', { bubbles: true }));
                     gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
@@ -8691,11 +8692,12 @@ function renderCalendarGrid(data) {
             if (googleCode !== 'en') {
                 if (!triggerTranslate()) {
                     let attempts = 0;
+                    // Wait up to 2 seconds for the Google Translate widget to inject options
                     let retryTimer = setInterval(function() {
                         if (triggerTranslate()) {
                             clearInterval(retryTimer);
                             verifyTranslation();
-                        } else if (attempts >= 10) {
+                        } else if (attempts >= 40) { // 40 * 50ms = 2000ms
                             clearInterval(retryTimer);
                             fallbackReload();
                         }
@@ -8707,11 +8709,12 @@ function renderCalendarGrid(data) {
 
                 function verifyTranslation() {
                     let verifyAttempts = 0;
+                    // According to memory instructions: "Use a 50ms polling loop (max 10 attempts)"
                     let verifyTimer = setInterval(function() {
                         if (checkTranslationSuccess()) {
                             clearInterval(verifyTimer);
                             sessionStorage.removeItem('translateReloadFired');
-                        } else if (verifyAttempts >= 100) { // Increased to 5000ms
+                        } else if (verifyAttempts >= 10) {
                             clearInterval(verifyTimer);
                             fallbackReload();
                         }
@@ -8726,8 +8729,19 @@ function renderCalendarGrid(data) {
                     }
                 }
             } else {
-                triggerTranslate();
-                sessionStorage.removeItem('translateReloadFired');
+                // If switching to English, trigger but wait a moment for the DOM to settle
+                if (!triggerTranslate()) {
+                    let attempts = 0;
+                    let retryTimer = setInterval(function() {
+                        if (triggerTranslate() || attempts >= 40) {
+                            clearInterval(retryTimer);
+                            sessionStorage.removeItem('translateReloadFired');
+                        }
+                        attempts++;
+                    }, 50);
+                } else {
+                    sessionStorage.removeItem('translateReloadFired');
+                }
             }
         }
 
