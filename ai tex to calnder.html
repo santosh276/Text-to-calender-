@@ -8616,6 +8616,10 @@ function renderCalendarGrid(data) {
         
         // Ensure menu marks correct active state on load
         buildLanguageMenu();
+
+        if (foundLang) {
+            applyUnifiedLanguage(foundLang.nativeCode, foundLang.googleCode, foundLang.name);
+        }
     }, 100);
 
     function buildLanguageMenu() {
@@ -8671,23 +8675,59 @@ function renderCalendarGrid(data) {
                 var gtSelect = document.querySelector('.goog-te-combo');
                 if (gtSelect) {
                     gtSelect.value = googleCode;
+                    gtSelect.dispatchEvent(new Event('focus', { bubbles: true }));
                     gtSelect.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                    gtSelect.dispatchEvent(new Event('blur', { bubbles: true }));
                     return true;
                 }
                 return false;
             }
 
-            if (!triggerTranslate()) {
-                let attempts = 0;
-                let retryTimer = setInterval(function() {
-                    if (triggerTranslate() || attempts >= 20) {
-                        clearInterval(retryTimer);
-                        if (attempts >= 20) {
-                            window.location.reload();
+            function checkTranslationSuccess() {
+                const htmlTag = document.documentElement;
+                return htmlTag.classList.contains('translated-ltr') || htmlTag.classList.contains('translated-rtl');
+            }
+
+            if (googleCode !== 'en') {
+                if (!triggerTranslate()) {
+                    let attempts = 0;
+                    let retryTimer = setInterval(function() {
+                        if (triggerTranslate()) {
+                            clearInterval(retryTimer);
+                            verifyTranslation();
+                        } else if (attempts >= 10) {
+                            clearInterval(retryTimer);
+                            fallbackReload();
                         }
+                        attempts++;
+                    }, 50);
+                } else {
+                    verifyTranslation();
+                }
+
+                function verifyTranslation() {
+                    let verifyAttempts = 0;
+                    let verifyTimer = setInterval(function() {
+                        if (checkTranslationSuccess()) {
+                            clearInterval(verifyTimer);
+                            sessionStorage.removeItem('translateReloadFired');
+                        } else if (verifyAttempts >= 100) { // Increased to 5000ms
+                            clearInterval(verifyTimer);
+                            fallbackReload();
+                        }
+                        verifyAttempts++;
+                    }, 50);
+                }
+
+                function fallbackReload() {
+                    if (!sessionStorage.getItem('translateReloadFired')) {
+                        sessionStorage.setItem('translateReloadFired', 'true');
+                        window.location.reload();
                     }
-                    attempts++;
-                }, 100);
+                }
+            } else {
+                triggerTranslate();
+                sessionStorage.removeItem('translateReloadFired');
             }
         }
 
