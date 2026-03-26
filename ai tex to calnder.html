@@ -2131,24 +2131,35 @@ The word "Nua" means new and "Khai" means food.
                         
                         <!-- Language -->
                         <div class="w-full">
-                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Language</label>
-                            <div class="relative">
-                                <select id="language-select" onchange="changeLanguage(this.value)" class="w-full appearance-none p-3 pl-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none transition cursor-pointer">
-                                    <option value="en">English</option>
-                                    <option value="hi">Hindi (हिन्दी)</option>
-                                    <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                                    <option value="bn">Bengali (বাংলা)</option>
-                                    <option value="mr">Marathi (मराठी)</option>
-                                    <option value="gu">Gujarati (ગુજરાતી)</option>
-                                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                                    <option value="ta">Tamil (தமிழ்)</option>
-                                    <option value="te">Telugu (తెలుగు)</option>
-                                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                                    <option value="ml">Malayalam (മലയാളം)</option>
-                                    <option value="as">Assamese (অসমীয়া)</option>
+                            <label class="block text-[13px] font-extrabold text-gray-500 mb-2 uppercase tracking-wide">Language</label>
+                            <div class="relative" id="custom-language-dropdown">
+                                <select id="language-select" onchange="changeLanguage(this.value)" class="hidden">
+                                    <option value="en" data-name="English">English</option>
+                                    <option value="hi" data-name="Hindi (हिन्दी)">Hindi (हिन्दी)</option>
+                                    <option value="or" data-name="Odia (ଓଡ଼ିଆ)">Odia (ଓଡ଼ିଆ)</option>
+                                    <option value="bn" data-name="Bengali (বাংলা)">Bengali (বাংলা)</option>
+                                    <option value="mr" data-name="Marathi (मराठी)">Marathi (मराठी)</option>
+                                    <option value="gu" data-name="Gujarati (ગુજરાતી)">Gujarati (ગુજરાતી)</option>
+                                    <option value="pa" data-name="Punjabi (ਪੰਜਾਬੀ)">Punjabi (ਪੰਜਾਬੀ)</option>
+                                    <option value="ta" data-name="Tamil (தமிழ்)">Tamil (தமிழ்)</option>
+                                    <option value="te" data-name="Telugu (తెలుగు)">Telugu (తెలుగు)</option>
+                                    <option value="kn" data-name="Kannada (ಕನ್ನಡ)">Kannada (ಕನ್ನಡ)</option>
+                                    <option value="ml" data-name="Malayalam (മലയാളം)">Malayalam (മലയാളം)</option>
+                                    <option value="as" data-name="Assamese (অসমীয়া)">Assamese (অসমীয়া)</option>
                                 </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-8 pointer-events-none text-gray-500">
-                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+
+                                <button type="button" id="language-dropdown-btn" onclick="toggleLanguageDropdown(event)" class="w-full flex items-center justify-between p-3.5 pl-4 pr-5 bg-[#FAFAFA] border-[1.5px] border-orange-300 rounded-[14px] text-gray-800 font-bold focus:outline-none focus:ring-[3px] focus:ring-orange-100 transition cursor-pointer shadow-sm relative z-20">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fa-solid fa-earth-americas text-blue-600 text-[18px]"></i>
+                                        <span id="language-dropdown-text" class="text-[17px] font-extrabold tracking-tight">English</span>
+                                    </div>
+                                    <i id="language-dropdown-icon" class="fa-solid fa-chevron-down text-gray-400 text-sm transition-transform duration-200"></i>
+                                </button>
+
+                                <div id="language-dropdown-menu" class="absolute left-0 top-[calc(100%+8px)] w-full min-w-[320px] sm:min-w-[400px] bg-white border border-gray-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] p-4 opacity-0 invisible transform -translate-y-2 transition-all duration-200 z-50">
+                                    <div class="grid grid-cols-2 gap-x-2 gap-y-1" id="language-options-grid">
+                                        <!-- Options populated by JS -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3812,7 +3823,11 @@ const LOCATION_DATA = {
         function openSettingsModal() {
             lockScroll();
 
-            document.getElementById('language-select').value = appState.config.language || 'en';
+            const langSelect = document.getElementById('language-select');
+            if (langSelect) {
+                langSelect.value = appState.config.language || 'en';
+                if (typeof renderLanguageOptions === 'function') renderLanguageOptions();
+            }
             
             // --- EDITOR LOGIC START ---
             // Environment Check: Hide Sync Settings in App Mode (User View)
@@ -6635,6 +6650,143 @@ function renderCalendarGrid(data) {
                 liveClockInterval = null;
             }
         }
+
+        // --- CUSTOM LANGUAGE DROPDOWN LOGIC ---
+        function toggleLanguageDropdown(event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault(); // Prevent modal from jumping
+            }
+            const menu = document.getElementById('language-dropdown-menu');
+            const icon = document.getElementById('language-dropdown-icon');
+            const btn = document.getElementById('language-dropdown-btn');
+
+            const isOpen = !menu.classList.contains('invisible');
+
+            if (isOpen) {
+                closeLanguageDropdown();
+            } else {
+                openLanguageDropdown();
+            }
+        }
+
+        function openLanguageDropdown() {
+            const menu = document.getElementById('language-dropdown-menu');
+            const icon = document.getElementById('language-dropdown-icon');
+            const btn = document.getElementById('language-dropdown-btn');
+
+            renderLanguageOptions();
+
+            menu.classList.remove('invisible', 'opacity-0', '-translate-y-2');
+            menu.classList.add('visible', 'opacity-100', 'translate-y-0');
+            icon.classList.add('rotate-180');
+            btn.classList.add('ring-[3px]', 'ring-orange-100', 'border-orange-400');
+            btn.classList.remove('border-orange-300');
+
+            // Close on click outside
+            document.addEventListener('click', closeLanguageDropdownOnClickOutside);
+        }
+
+        function closeLanguageDropdown() {
+            const menu = document.getElementById('language-dropdown-menu');
+            const icon = document.getElementById('language-dropdown-icon');
+            const btn = document.getElementById('language-dropdown-btn');
+
+            menu.classList.remove('visible', 'opacity-100', 'translate-y-0');
+            menu.classList.add('invisible', 'opacity-0', '-translate-y-2');
+            icon.classList.remove('rotate-180');
+            btn.classList.remove('ring-[3px]', 'ring-orange-100', 'border-orange-400');
+            btn.classList.add('border-orange-300');
+
+            document.removeEventListener('click', closeLanguageDropdownOnClickOutside);
+        }
+
+        function closeLanguageDropdownOnClickOutside(event) {
+            const dropdown = document.getElementById('custom-language-dropdown');
+            if (dropdown && !dropdown.contains(event.target)) {
+                closeLanguageDropdown();
+            }
+        }
+
+        function selectLanguageOption(value, name, event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault(); // Prevent modal jump
+            }
+
+            // 1. Update Custom UI
+            const btnText = document.getElementById('language-dropdown-text');
+            if (btnText) btnText.innerText = name;
+
+            // 2. Update Native Select
+            const select = document.getElementById('language-select');
+            if (select) {
+                select.value = value;
+                // Dispatch change event to trigger existing app logic
+                const evt = new Event('change', { bubbles: true });
+                select.dispatchEvent(evt);
+            }
+
+            // 4. Close dropdown and re-render options for active state
+            closeLanguageDropdown();
+            renderLanguageOptions();
+        }
+
+        function renderLanguageOptions() {
+            const grid = document.getElementById('language-options-grid');
+            if (!grid) return;
+
+            const select = document.getElementById('language-select');
+            const currentValue = select ? select.value : (appState.config.language || 'en');
+
+            // Sync button text to current value
+            const currentOption = select ? select.querySelector(`option[value="${currentValue}"]`) : null;
+            if (currentOption) {
+                 const btnText = document.getElementById('language-dropdown-text');
+                 if (btnText) btnText.innerText = currentOption.getAttribute('data-name');
+            }
+
+            // Define options matching HTML select
+            const options = [
+                { val: 'en', name: 'English' },
+                { val: 'hi', name: 'Hindi (हिन्दी)' },
+                { val: 'or', name: 'Odia (ଓଡ଼ିଆ)' },
+                { val: 'bn', name: 'Bengali (বাংলা)' },
+                { val: 'mr', name: 'Marathi (मराठी)' },
+                { val: 'gu', name: 'Gujarati (ગુજરાતી)' },
+                { val: 'pa', name: 'Punjabi (ਪੰਜਾਬੀ)' },
+                { val: 'ta', name: 'Tamil (தமிழ்)' },
+                { val: 'te', name: 'Telugu (తెలుగు)' },
+                { val: 'kn', name: 'Kannada (ಕನ್ನಡ)' },
+                { val: 'ml', name: 'Malayalam (മലയാളം)' },
+                { val: 'as', name: 'Assamese (অসমীয়া)' }
+            ];
+
+            let html = '';
+
+            options.forEach(opt => {
+                const isSelected = (opt.val === currentValue);
+
+                if (isSelected) {
+                    html += `
+                        <button type="button" onclick="selectLanguageOption('${opt.val}', '${opt.name}', event)" class="flex items-center gap-2 p-3 rounded-xl bg-[#FFF6EF] transition-all border border-transparent outline-none">
+                            <i class="fa-solid fa-chevron-right text-orange-500 text-[10px] ml-1 opacity-80 shrink-0"></i>
+                            <span class="text-orange-600 font-extrabold text-[15px] tracking-tight whitespace-normal leading-snug text-left">${opt.name}</span>
+                        </button>
+                    `;
+                } else {
+                    html += `
+                        <button type="button" onclick="selectLanguageOption('${opt.val}', '${opt.name}', event)" class="flex items-center gap-2 p-3 rounded-xl bg-transparent hover:bg-gray-50 transition-all border border-transparent outline-none text-left">
+                            <i class="fa-solid fa-chevron-right text-gray-400 text-[10px] ml-1 opacity-70 group-hover:text-gray-600 transition-colors shrink-0"></i>
+                            <span class="text-gray-600 font-bold text-[15px] tracking-tight whitespace-normal leading-snug text-left">${opt.name}</span>
+                        </button>
+                    `;
+                }
+            });
+
+            grid.innerHTML = html;
+        }
+        // --- END CUSTOM LANGUAGE DROPDOWN LOGIC ---
 
         function updateLiveTimers() {
             const cards = document.querySelectorAll('.timeline-card[data-start][data-end]');
