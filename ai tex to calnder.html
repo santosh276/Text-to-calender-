@@ -2504,14 +2504,16 @@ The word "Nua" means new and "Khai" means food.
                 </div>
                 <div class="relative z-10 bg-black/40 rounded-xl p-4 flex flex-col gap-3 border border-orange-500/10">
                     <div class="flex items-center justify-between">
-                        <div class="text-sm font-bold text-white truncate">Select a Mantra</div>
+                        <div id="listen-mode-title" class="text-sm font-bold text-white truncate">Select a Mantra</div>
                         <div class="flex gap-2">
-                            <button class="p-2 rounded-full bg-white/10 text-white hover:bg-white/20"><i class="fa-solid fa-backward-step"></i></button>
-                            <button class="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center"><i class="fa-solid fa-play"></i></button>
-                            <button class="p-2 rounded-full bg-white/10 text-white hover:bg-white/20"><i class="fa-solid fa-forward-step"></i></button>
+                            <button onclick="window.sadhanaApp.playPrev()" class="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 active:scale-95 transition-transform"><i class="fa-solid fa-backward-step"></i></button>
+                            <button id="listen-mode-play-btn" onclick="window.sadhanaApp.toggleAudio()" class="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center active:scale-95 transition-transform"><i class="fa-solid fa-play"></i></button>
+                            <button onclick="window.sadhanaApp.playNext()" class="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 active:scale-95 transition-transform"><i class="fa-solid fa-forward-step"></i></button>
                         </div>
                     </div>
-                    <div class="w-full h-1.5 bg-white/20 rounded-full overflow-hidden"><div class="w-0 h-full bg-orange-500"></div></div>
+                    <div id="listen-mode-progress-bg" class="w-full h-1.5 bg-white/20 rounded-full overflow-hidden cursor-pointer" onclick="window.sadhanaApp.seekAudio(event)">
+                        <div id="listen-mode-progress-fill" class="w-0 h-full bg-orange-500 pointer-events-none"></div>
+                    </div>
                 </div>
             </div>
 
@@ -2531,11 +2533,11 @@ The word "Nua" means new and "Khai" means food.
                     <div class="relative w-32 h-32 mx-auto">
                         <svg viewBox="0 0 200 200" class="w-full h-full">
                             <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(245,158,11,0.1)" stroke-width="8"/>
-                            <circle cx="100" cy="100" r="90" fill="none" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" stroke-dasharray="565.48" stroke-dashoffset="400" transform="rotate(-90 100 100)"/>
+                            <circle id="mala-progress-ring" cx="100" cy="100" r="90" fill="none" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" stroke-dasharray="565.48" stroke-dashoffset="565.48" transform="rotate(-90 100 100)" class="transition-all duration-300"/>
                         </svg>
-                        <button class="absolute inset-0 flex flex-col items-center justify-center group focus:outline-none">
+                        <button onclick="window.sadhanaApp.incrementMala()" class="absolute inset-0 flex flex-col items-center justify-center group focus:outline-none rounded-full active:scale-95 transition-transform">
                             <span class="text-4xl font-bold text-amber-500" style="font-family: 'Georgia', serif;">ॐ</span>
-                            <span class="text-xs text-amber-500/50 mt-1 font-mono">0 / 108</span>
+                            <span id="mala-count-text" class="text-xs text-amber-500/50 mt-1 font-mono">0 / 108</span>
                         </button>
                     </div>
                 </div>
@@ -2554,18 +2556,18 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
                 <div class="relative z-10 flex-1 flex flex-col items-center justify-end mt-2">
-                    <div class="text-4xl font-bold text-indigo-400 font-mono mb-4">10:00</div>
+                    <div id="meditation-time-display" class="text-4xl font-bold text-indigo-400 font-mono mb-4">10:00</div>
                     <div class="flex flex-wrap justify-center gap-2 mb-4">
-                        <button class="px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20">5m</button>
-                        <button class="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500 text-xs text-indigo-400 font-bold">10m</button>
-                        <button class="px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20">15m</button>
-                        <button class="px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20">30m</button>
+                        <button onclick="window.sadhanaApp.setMeditationTime(5)" class="med-time-btn px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20 transition-all">5m</button>
+                        <button onclick="window.sadhanaApp.setMeditationTime(10)" class="med-time-btn active px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500 text-xs text-indigo-400 font-bold transition-all">10m</button>
+                        <button onclick="window.sadhanaApp.setMeditationTime(15)" class="med-time-btn px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20 transition-all">15m</button>
+                        <button onclick="window.sadhanaApp.setMeditationTime(30)" class="med-time-btn px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20 transition-all">30m</button>
                     </div>
                     <div class="flex justify-center gap-3 w-full">
-                        <button class="flex-1 py-2.5 rounded-full bg-indigo-500 text-black font-bold flex items-center justify-center gap-1 shadow-lg shadow-indigo-500/20">
+                        <button id="meditation-start-btn" onclick="window.sadhanaApp.toggleMeditation()" class="flex-1 py-2.5 rounded-full bg-indigo-500 text-black font-bold flex items-center justify-center gap-1 shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform">
                             <i class="fa-solid fa-play"></i> Start
                         </button>
-                        <button class="px-4 py-2.5 rounded-full bg-black/40 border border-indigo-500/20 text-indigo-400">
+                        <button onclick="window.sadhanaApp.resetMeditation()" class="px-4 py-2.5 rounded-full bg-black/40 border border-indigo-500/20 text-indigo-400 hover:bg-white/10 active:scale-95 transition-transform">
                             <i class="fa-solid fa-rotate-right"></i>
                         </button>
                     </div>
@@ -2607,22 +2609,22 @@ The word "Nua" means new and "Khai" means food.
                 <div class="absolute top-0 right-0 w-40 h-40 bg-purple-500/5 rounded-full blur-3xl group-hover:bg-purple-500/10 transition-all duration-700"></div>
                 <div class="flex items-center gap-4 mb-4 relative z-10">
                     <div class="rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 flex items-center justify-center flex-shrink-0" style="width:4.5rem;height:4.5rem">
-                        <span class="text-4xl">🎵</span>
+                        <span class="text-4xl">📚</span>
                     </div>
                     <div class="flex-1 min-w-0">
                         <h3 class="font-bold text-2xl text-white font-serif">Quiz Mode</h3>
-                        <p class="text-sm text-slate-400 mt-1">Test your knowledge</p>
+                        <p id="quiz-question-text" class="text-sm text-slate-400 mt-1 truncate">Test your knowledge</p>
                     </div>
                 </div>
-                <div class="relative z-10 flex-1 flex flex-col justify-end mt-2" id="quiz-options">
-                    <button class="w-full py-2.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-400 font-bold flex items-center justify-center gap-2 hover:bg-purple-500/30">
+                <div class="relative z-10 flex-1 flex flex-col justify-end gap-2 mt-2" id="quiz-options">
+                    <button onclick="window.sadhanaApp.startQuiz()" class="w-full py-2.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-400 font-bold flex items-center justify-center gap-2 hover:bg-purple-500/30 active:scale-95 transition-transform">
                         <i class="fa-solid fa-play"></i> Play Now
                     </button>
                 </div>
             </div>
 
             <!-- Reading Mode Placeholder -->
-            <div class="group flex flex-col p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-blue-900/40 via-[#2e2013] to-[#3a2a1a] border border-blue-500/15 hover:border-blue-400/50 transition-all cursor-pointer relative overflow-hidden" style="min-width: 0;" onclick="navigateTo('reading')">
+            <div class="group flex flex-col p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-blue-900/40 via-[#2e2013] to-[#3a2a1a] border border-blue-500/15 hover:border-blue-400/50 transition-all cursor-pointer relative overflow-hidden" style="min-width: 0;" onclick="window.sadhanaApp.nextVerse()">
                 <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-all duration-700"></div>
                 <div class="flex items-center gap-4 mb-4 relative z-10">
                     <div class="rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-600/10 border border-blue-500/30 flex items-center justify-center flex-shrink-0" style="width:4.5rem;height:4.5rem">
@@ -2634,9 +2636,13 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
                 <div class="relative z-10 flex-1 flex flex-col justify-end">
-                    <p class="text-sm text-slate-300 leading-relaxed mb-4">Explore ancient wisdom, verse by verse with translations and meaning.</p>
-                    <div class="flex items-center gap-2 text-blue-400 text-sm font-bold w-fit px-4 py-2.5 rounded-full bg-blue-500/10 border border-blue-500/20">
-                        <span>Read</span><i class="fa-solid fa-arrow-right text-xs"></i>
+                    <p id="reading-sanskrit" class="text-sm text-orange-300 leading-relaxed mb-2 font-serif text-center" style="font-family: 'Georgia', serif;">Explore ancient wisdom...</p>
+                    <p id="reading-translation" class="text-xs text-slate-400 leading-relaxed mb-4 text-center">Click to read next verse.</p>
+                    <div class="flex justify-between items-center w-full">
+                        <div class="flex items-center gap-2 text-blue-400 text-sm font-bold w-fit px-4 py-2.5 rounded-full bg-blue-500/10 border border-blue-500/20">
+                            <span>Next Verse</span><i class="fa-solid fa-arrow-right text-xs"></i>
+                        </div>
+                        <span id="reading-progress" class="text-xs text-blue-400/50 font-mono">1/3</span>
                     </div>
                 </div>
             </div>
@@ -2646,25 +2652,27 @@ The word "Nua" means new and "Khai" means food.
         <!-- MINI PLAYER PLACEHOLDER -->
         <div id="sadhana-mini-player" class="fixed bottom-0 left-0 right-0 border-t border-orange-500/30 p-3 z-50 flex items-center justify-between gap-4 text-white hidden">
             <div class="flex items-center gap-3 w-1/3 min-w-0 cursor-pointer">
-                <div class="w-12 h-12 rounded-lg bg-cover bg-center shadow-lg shadow-orange-500/20 flex-shrink-0 bg-[#2e2013]"></div>
+                <div class="w-12 h-12 rounded-lg bg-cover bg-center shadow-lg shadow-orange-500/20 flex-shrink-0 bg-[#2e2013] flex items-center justify-center"><i class="fa-solid fa-music text-orange-400/50"></i></div>
                 <div class="hidden sm:block min-w-0">
-                    <h5 class="text-sm font-bold text-white leading-tight truncate">Select a Mantra</h5>
-                    <p class="text-xs text-orange-400/80 truncate">Dharma Player</p>
+                    <h5 id="mini-player-title" class="text-sm font-bold text-white leading-tight truncate">Select a Mantra</h5>
+                    <p id="mini-player-subtitle" class="text-xs text-orange-400/80 truncate">Dharma Player</p>
                 </div>
             </div>
             <div class="flex flex-col items-center gap-1 w-1/3">
                 <div class="flex items-center gap-4 md:gap-6">
-                    <i class="fa-solid fa-backward-step text-orange-400 cursor-pointer text-xl"></i>
-                    <button class="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:scale-110 transition-transform">
+                    <i onclick="window.sadhanaApp.playPrev()" class="fa-solid fa-backward-step text-orange-400 cursor-pointer text-xl active:scale-95 transition-transform"></i>
+                    <button id="mini-player-play-btn" onclick="window.sadhanaApp.toggleAudio()" class="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-transform">
                         <i class="fa-solid fa-play"></i>
                     </button>
-                    <i class="fa-solid fa-forward-step text-orange-400 cursor-pointer text-xl"></i>
+                    <i onclick="window.sadhanaApp.playNext()" class="fa-solid fa-forward-step text-orange-400 cursor-pointer text-xl active:scale-95 transition-transform"></i>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-3 w-1/3 text-orange-400/60">
-                <i class="fa-solid fa-expand hover:text-orange-400 cursor-pointer transition-colors"></i>
-                <i class="fa-solid fa-xmark hover:text-orange-400 cursor-pointer transition-colors" onclick="document.getElementById('sadhana-mini-player').classList.add('hidden'); document.body.classList.remove('pb-24');"></i>
+            <div class="flex items-center justify-end gap-3 w-1/3 text-orange-400/60 hidden sm:flex">
+                <i class="fa-solid fa-volume-high cursor-pointer" onclick="window.sadhanaApp.toggleMute()"></i>
+                <div id="mini-player-vol-bg" class="w-20 h-1 bg-white/10 rounded-full cursor-pointer" onclick="window.sadhanaApp.setVolume(event)"><div id="mini-player-vol-fill" class="w-full h-full bg-orange-400 rounded-full pointer-events-none"></div></div>
+                <i class="fa-solid fa-xmark hover:text-orange-400 cursor-pointer transition-colors ml-2 text-xl" onclick="window.sadhanaApp.closeMiniPlayer()"></i>
             </div>
+            <div id="mini-player-progress-bar" class="absolute top-0 left-0 h-0.5 bg-orange-500 w-0 shadow-[0_0_10px_rgba(249,115,22,0.8)] transition-all"></div>
         </div>
     </div>
 
@@ -9037,6 +9045,412 @@ function renderCalendarGrid(data) {
             fullPageToggle.checked = !!localStorage.getItem('disableFullPageTranslate');
         }
     });
+</script>
+
+<!-- SADHANA ECOSYSTEM LOGIC -->
+<script>
+    (function () {
+        // State Management
+        let sadhanaState = {
+            totalMalas: 0,
+            meditationMinutes: 0,
+            dayStreak: 0,
+            lastActiveDate: null,
+            favorites: [],
+            ...JSON.parse(localStorage.getItem('sadhana_app_data') || '{}')
+        };
+
+        function saveSadhanaState() {
+            localStorage.setItem('sadhana_app_data', JSON.stringify(sadhanaState));
+            updateStreaksUI();
+        }
+
+        function updateStreaksUI() {
+            const streakEl = document.getElementById('sadhana-streak');
+            const malasEl = document.getElementById('sadhana-total-malas');
+            const medEl = document.getElementById('sadhana-total-meditation');
+
+            if (streakEl) streakEl.innerText = sadhanaState.dayStreak;
+            if (malasEl) malasEl.innerText = sadhanaState.totalMalas;
+            if (medEl) medEl.innerText = Math.floor(sadhanaState.meditationMinutes);
+        }
+
+        // Streak Logic: Check if it's a new day and update
+        function checkStreak() {
+            const today = new Date().toDateString();
+            if (sadhanaState.lastActiveDate !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+
+                if (sadhanaState.lastActiveDate === yesterday.toDateString()) {
+                    sadhanaState.dayStreak++;
+                } else if (sadhanaState.lastActiveDate !== today) {
+                    sadhanaState.dayStreak = 1; // Reset or start streak
+                }
+                sadhanaState.lastActiveDate = today;
+                saveSadhanaState();
+            }
+        }
+
+        // Mala Counter Logic
+        let currentBeads = 0;
+        const maxBeads = 108;
+        const ringCircumference = 565.48; // 2 * pi * r (r=90)
+
+        function updateMalaUI() {
+            const countText = document.getElementById('mala-count-text');
+            const progressRing = document.getElementById('mala-progress-ring');
+
+            if (countText) countText.innerText = `${currentBeads} / ${maxBeads}`;
+
+            if (progressRing) {
+                const offset = ringCircumference - (currentBeads / maxBeads) * ringCircumference;
+                progressRing.style.strokeDashoffset = offset;
+            }
+        }
+
+        function incrementMala() {
+            currentBeads++;
+            if (currentBeads >= maxBeads) {
+                sadhanaState.totalMalas++;
+                saveSadhanaState();
+                currentBeads = 0; // Reset for next mala
+
+                // Visual feedback (optional)
+                const ring = document.getElementById('mala-progress-ring');
+                if (ring) {
+                    ring.classList.add('stroke-amber-300');
+                    setTimeout(() => ring.classList.remove('stroke-amber-300'), 500);
+                }
+            }
+            updateMalaUI();
+        }
+
+        // Meditation Timer Logic
+        let medTimerInterval = null;
+        let medTimeLeft = 10 * 60; // default 10 mins in seconds
+        let medInitialTime = 10 * 60;
+        let isMeditationActive = false;
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function updateMeditationUI() {
+            const display = document.getElementById('meditation-time-display');
+            if (display) display.innerText = formatTime(medTimeLeft);
+        }
+
+        function setMeditationTime(mins) {
+            if (isMeditationActive) return; // Prevent changing while running
+            medInitialTime = mins * 60;
+            medTimeLeft = medInitialTime;
+            updateMeditationUI();
+
+            // Update active pill styling
+            document.querySelectorAll('.med-time-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-500/20', 'border-indigo-500', 'font-bold');
+                btn.classList.add('bg-black/40', 'border-indigo-500/20');
+                if(btn.innerText === `${mins}m`) {
+                    btn.classList.remove('bg-black/40', 'border-indigo-500/20');
+                    btn.classList.add('bg-indigo-500/20', 'border-indigo-500', 'font-bold');
+                }
+            });
+        }
+
+        function toggleMeditation() {
+            const startBtn = document.getElementById('meditation-start-btn');
+            if (!startBtn) return;
+
+            if (isMeditationActive) {
+                // Pause
+                clearInterval(medTimerInterval);
+                isMeditationActive = false;
+                startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Resume';
+            } else {
+                // Start
+                isMeditationActive = true;
+                startBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+                medTimerInterval = setInterval(() => {
+                    if (medTimeLeft > 0) {
+                        medTimeLeft--;
+                        updateMeditationUI();
+                    } else {
+                        // Finished
+                        clearInterval(medTimerInterval);
+                        isMeditationActive = false;
+                        startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start';
+
+                        // Add to stats
+                        sadhanaState.meditationMinutes += (medInitialTime / 60);
+                        saveSadhanaState();
+
+                        // Reset for next time
+                        medTimeLeft = medInitialTime;
+                        updateMeditationUI();
+
+                        // Play a simple beep if possible, or just visual feedback
+                        try {
+                            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                            const osc = ctx.createOscillator();
+                            osc.connect(ctx.destination);
+                            osc.start();
+                            setTimeout(() => osc.stop(), 500);
+                        } catch(e) {}
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetMeditation() {
+            clearInterval(medTimerInterval);
+            isMeditationActive = false;
+            medTimeLeft = medInitialTime;
+            updateMeditationUI();
+            const startBtn = document.getElementById('meditation-start-btn');
+            if (startBtn) startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start';
+        }
+
+        // Listen Mode (Audio Player) Logic
+        const playlist = [
+            { title: "Om Namah Shivaya", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }, // Placeholders
+            { title: "Gayatri Mantra", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+            { title: "Maha Mrityunjaya", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+        ];
+        let currentTrackIndex = 0;
+        let audioPlayer = new Audio();
+        let isPlaying = false;
+        let progressInterval;
+
+        function updateAudioUI() {
+            const track = playlist[currentTrackIndex];
+
+            // Update Card UI
+            const cardTitle = document.getElementById('listen-mode-title');
+            const cardPlayBtn = document.getElementById('listen-mode-play-btn');
+            if (cardTitle) cardTitle.innerText = track.title;
+            if (cardPlayBtn) cardPlayBtn.innerHTML = isPlaying ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
+
+            // Update Mini Player UI
+            const miniTitle = document.getElementById('mini-player-title');
+            const miniPlayBtn = document.getElementById('mini-player-play-btn');
+            if (miniTitle) miniTitle.innerText = track.title;
+            if (miniPlayBtn) miniPlayBtn.innerHTML = isPlaying ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
+        }
+
+        function toggleAudio() {
+            if (!audioPlayer.src || audioPlayer.src === "") {
+                audioPlayer.src = playlist[currentTrackIndex].url;
+            }
+
+            if (isPlaying) {
+                audioPlayer.pause();
+                isPlaying = false;
+                clearInterval(progressInterval);
+            } else {
+                audioPlayer.play().catch(e => console.warn("Audio playback failed:", e));
+                isPlaying = true;
+
+                // Show mini player
+                const miniPlayer = document.getElementById('sadhana-mini-player');
+                if (miniPlayer) {
+                    miniPlayer.classList.remove('hidden');
+                    document.body.classList.add('pb-24');
+                }
+
+                progressInterval = setInterval(updateProgress, 100);
+            }
+            updateAudioUI();
+        }
+
+        function playNext() {
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            audioPlayer.src = playlist[currentTrackIndex].url;
+            if (isPlaying) {
+                audioPlayer.play().catch(e => console.warn(e));
+            }
+            updateAudioUI();
+            updateProgress(); // reset visual progress
+        }
+
+        function playPrev() {
+            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            audioPlayer.src = playlist[currentTrackIndex].url;
+            if (isPlaying) {
+                audioPlayer.play().catch(e => console.warn(e));
+            }
+            updateAudioUI();
+            updateProgress();
+        }
+
+        function updateProgress() {
+            if (!audioPlayer.duration) return;
+            const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+
+            const cardFill = document.getElementById('listen-mode-progress-fill');
+            const miniFill = document.getElementById('mini-player-progress-bar');
+
+            if (cardFill) cardFill.style.width = `${percentage}%`;
+            if (miniFill) miniFill.style.width = `${percentage}%`;
+        }
+
+        function seekAudio(e) {
+            const bg = e.currentTarget;
+            const rect = bg.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const percentage = clickX / rect.width;
+
+            if (audioPlayer.duration) {
+                audioPlayer.currentTime = percentage * audioPlayer.duration;
+                updateProgress();
+            }
+        }
+
+        function setVolume(e) {
+            const bg = e.currentTarget;
+            const rect = bg.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            let percentage = clickX / rect.width;
+            percentage = Math.max(0, Math.min(1, percentage));
+
+            audioPlayer.volume = percentage;
+            const fill = document.getElementById('mini-player-vol-fill');
+            if (fill) fill.style.width = `${percentage * 100}%`;
+            audioPlayer.muted = false;
+        }
+
+        function toggleMute() {
+            audioPlayer.muted = !audioPlayer.muted;
+            const fill = document.getElementById('mini-player-vol-fill');
+            if (fill) fill.style.width = audioPlayer.muted ? '0%' : `${audioPlayer.volume * 100}%`;
+        }
+
+        function closeMiniPlayer() {
+            const miniPlayer = document.getElementById('sadhana-mini-player');
+            if (miniPlayer) {
+                miniPlayer.classList.add('hidden');
+                document.body.classList.remove('pb-24');
+            }
+            if (isPlaying) {
+                toggleAudio(); // pause it
+            }
+        }
+
+        audioPlayer.addEventListener('ended', playNext);
+
+
+        // Reading Mode Logic
+        const scriptures = [
+            { sanskrit: "ॐ भूर्भुवः स्वः", translation: "Om, the physical, mental, and spiritual realms" },
+            { sanskrit: "तत्सवितुर्वरेण्यं", translation: "May we meditate upon the adorable light of the Divine" },
+            { sanskrit: "भर्गो देवस्य धीमहि", translation: "The supreme radiant Divine" },
+            { sanskrit: "धियो यो नः प्रचोदयात्", translation: "May that Divine guide our intellect" }
+        ];
+        let currentVerseIndex = 0;
+
+        function updateReadingUI() {
+            const verse = scriptures[currentVerseIndex];
+            const sText = document.getElementById('reading-sanskrit');
+            const tText = document.getElementById('reading-translation');
+            const pText = document.getElementById('reading-progress');
+
+            if (sText) sText.innerText = verse.sanskrit;
+            if (tText) tText.innerText = verse.translation;
+            if (pText) pText.innerText = `${currentVerseIndex + 1}/${scriptures.length}`;
+        }
+
+        function nextVerse() {
+            currentVerseIndex = (currentVerseIndex + 1) % scriptures.length;
+            updateReadingUI();
+        }
+
+        // Quiz Mode Logic
+        const questions = [
+            { q: "How many beads are in a standard Japa Mala?", options: ["54", "108", "100", "12"], ans: 1 },
+            { q: "Which sacred sound is considered the sound of the universe?", options: ["Aum (ॐ)", "Shanti", "Swaha", "Hari"], ans: 0 },
+            { q: "What is the primary language of ancient Hindu scriptures?", options: ["Hindi", "Pali", "Sanskrit", "Tamil"], ans: 2 }
+        ];
+        let currentQuestionIndex = 0;
+
+        function updateQuizUI() {
+            const qObj = questions[currentQuestionIndex];
+            const qText = document.getElementById('quiz-question-text');
+            const optsContainer = document.getElementById('quiz-options');
+
+            if (qText) qText.innerText = qObj.q;
+
+            if (optsContainer) {
+                optsContainer.innerHTML = '';
+                qObj.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm font-bold flex items-center justify-center gap-2 hover:bg-purple-500/30 active:scale-95 transition-all text-left px-4 truncate";
+                    btn.innerText = opt;
+                    btn.onclick = (e) => handleQuizAnswer(idx, e.currentTarget);
+                    optsContainer.appendChild(btn);
+                });
+            }
+        }
+
+        function handleQuizAnswer(selectedIndex, btnEl) {
+            const correctIndex = questions[currentQuestionIndex].ans;
+            if (selectedIndex === correctIndex) {
+                btnEl.classList.remove('bg-purple-500/10', 'border-purple-500/20', 'text-purple-300');
+                btnEl.classList.add('bg-green-500/20', 'border-green-500', 'text-green-400');
+                setTimeout(() => {
+                    currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+                    updateQuizUI();
+                }, 800);
+            } else {
+                btnEl.classList.remove('bg-purple-500/10', 'border-purple-500/20', 'text-purple-300');
+                btnEl.classList.add('bg-red-500/20', 'border-red-500', 'text-red-400');
+                // Shake effect could be added here
+            }
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            updateQuizUI();
+        }
+
+        // Initialize UI Elements when the script loads
+        function initSadhanaUI() {
+            updateStreaksUI();
+            checkStreak();
+            updateMalaUI();
+            updateMeditationUI();
+            updateAudioUI();
+            updateReadingUI();
+            // Quiz waits for explicit start
+        }
+
+        // Wait for DOM to be fully parsed before running logic
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSadhanaUI);
+        } else {
+            initSadhanaUI();
+        }
+
+        // Export state functions to window if other scripts need to interact with it
+        window.sadhanaApp = {
+            getState: () => sadhanaState,
+            incrementMala: incrementMala,
+            setMeditationTime: setMeditationTime,
+            toggleMeditation: toggleMeditation,
+            resetMeditation: resetMeditation,
+            toggleAudio: toggleAudio,
+            playNext: playNext,
+            playPrev: playPrev,
+            seekAudio: seekAudio,
+            setVolume: setVolume,
+            toggleMute: toggleMute,
+            closeMiniPlayer: closeMiniPlayer,
+            nextVerse: nextVerse,
+            startQuiz: startQuiz,
+            checkStreak: checkStreak
+        };
+    })();
 </script>
 
     <!-- Location Prompt Toast Popup -->
