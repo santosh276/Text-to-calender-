@@ -138,18 +138,12 @@ tailwind.config = {
       </div>
     </div>
     <div class="flex items-center gap-2 md:gap-3">
-      <button onclick="navigateTo('home')" class="nav-btn p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Home">
-        <span class="material-symbols-outlined">home</span>
-      </button>
       <button onclick="navigateTo('editor')" class="nav-btn p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Editor">
         <span class="material-symbols-outlined">edit_note</span>
       </button>
       <button onclick="downloadApp()" class="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors" title="Download App">
         <span class="material-symbols-outlined">download</span>
       </button>
-      <div class="size-10 rounded-full border-2 border-primary bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center">
-        <span class="material-symbols-outlined text-primary fill-icon">person</span>
-      </div>
     </div>
   </div>
 </header>
@@ -1435,6 +1429,15 @@ function escapeHtml(unsafe) {
 
 function extractHtmlUrl(val) {
   if (!val) return '';
+  
+  // Support for Blogger Video Object
+  if (val.includes('BLOG_video_class') && val.includes('contentid=')) {
+    const contentIdMatch = val.match(/contentid=["'](.*?)["']/i);
+    if (contentIdMatch && contentIdMatch[1]) {
+      return 'https://www.blogger.com/video-play.mp4?contentId=' + contentIdMatch[1];
+    }
+  }
+  
   const srcMatch = val.match(/src=["'](.*?)["']/);
   if (srcMatch && srcMatch[1]) return srcMatch[1];
   const hrefMatch = val.match(/href=["'](.*?)["']/);
