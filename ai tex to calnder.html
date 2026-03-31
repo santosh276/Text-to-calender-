@@ -1714,8 +1714,58 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .lang-item.active { background-color: #FFF6ED; color: #E56B3A; font-weight: 800; }
         .lang-item:hover { background-color: #FFFBF5; color: #E56B3A; }
 </style>
+<style id="sadhana-custom-styles">
+    /* Sadhana Dashboard Custom Styles */
+    #sadhana-ecosystem-wrapper {
+        --tw-bg-opacity: 1;
+        background-color: #1a120c;
+        color: #f1f5f9;
+        font-family: 'Inter', sans-serif;
+    }
+
+    #sadhana-ecosystem-wrapper .font-serif {
+        font-family: 'Playfair Display', serif;
+    }
+
+    /* Missing gradients from tailwind defaults */
+    #sadhana-ecosystem-wrapper .bg-gradient-to-br {
+        background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+    }
+    #sadhana-ecosystem-wrapper .from-orange-900\/40 {
+        --tw-gradient-from: rgb(124 45 18 / 0.4);
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(124 45 18 / 0));
+    }
+    #sadhana-ecosystem-wrapper .from-blue-900\/40 {
+        --tw-gradient-from: rgb(30 58 138 / 0.4);
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(30 58 138 / 0));
+    }
+    #sadhana-ecosystem-wrapper .from-amber-900\/40 {
+        --tw-gradient-from: rgb(120 53 15 / 0.4);
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(120 53 15 / 0));
+    }
+    #sadhana-ecosystem-wrapper .from-indigo-900\/40 {
+        --tw-gradient-from: rgb(49 46 129 / 0.4);
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(49 46 129 / 0));
+    }
+    #sadhana-ecosystem-wrapper .from-purple-900\/40 {
+        --tw-gradient-from: rgb(88 28 135 / 0.4);
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(88 28 135 / 0));
+    }
+    #sadhana-ecosystem-wrapper .via-\[\#2e2013\] {
+        --tw-gradient-via-position: ;
+        --tw-gradient-stops: var(--tw-gradient-from), #2e2013 var(--tw-gradient-via-position), var(--tw-gradient-to, rgb(46 32 19 / 0));
+    }
+    #sadhana-ecosystem-wrapper .to-\[\#3a2a1a\] {
+        --tw-gradient-to: #3a2a1a;
+    }
+    #sadhana-mini-player {
+        background-color: rgba(35, 25, 15, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+</style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body class="h-screen flex flex-col overflow-hidden transition-all duration-300">
     <div id="google_translate_element"></div>
 
     <!-- Navbar -->
@@ -1746,8 +1796,22 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         </div>
     </header>
 
+    <!-- Top-Level Toggle Switch -->
+    <div class="w-full bg-white border-b border-gray-200 z-40 shrink-0">
+        <div class="max-w-7xl mx-auto flex justify-center py-2">
+            <div class="inline-flex items-center p-1 rounded-full border border-orange-200 bg-orange-50 shadow-inner">
+                <button id="btn-mode-calendar" onclick="toggleAppMode('calendar')" class="flex items-center justify-center gap-2 px-6 py-2 rounded-full font-bold text-sm transition-all duration-300 bg-white shadow-md text-orange-600">
+                    <i class="fa-regular fa-calendar"></i> Calendar Mode
+                </button>
+                <button id="btn-mode-sadhana" onclick="toggleAppMode('sadhana')" class="flex items-center justify-center gap-2 px-6 py-2 rounded-full font-bold text-sm transition-all duration-300 bg-transparent text-orange-600/60 hover:text-orange-600">
+                    <span class="text-lg leading-none" style="font-family: 'Georgia', serif;">ॐ</span> Sadhana Mode
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content Area -->
-    <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+    <div id="calendar-app-view" class="w-full h-full flex flex-col md:flex-row flex-1 overflow-hidden">
         
         <!-- LEFT PANEL: Editor -->
         <div id="editor-panel" class="w-full md:w-[35%] h-[62%] md:h-full bg-gray-900 text-gray-100 flex flex-col border-b-4 md:border-b-0 md:border-r-4 border-saffron z-10 transition-all duration-300 relative overflow-hidden">
@@ -2422,7 +2486,230 @@ The word "Nua" means new and "Khai" means food.
     <!-- Hidden Banner Upload Input -->
     <input type="file" id="bannerInput" accept="image/*" style="display: none;" onchange="handleBannerUpload(event)">
 
+    <!-- SADHANA ECOSYSTEM WRAPPER -->
+    <div id="sadhana-ecosystem-wrapper" class="w-full h-full overflow-y-auto max-w-7xl mx-auto hidden notranslate">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4 md:p-8">
+
+            <!-- Listen Mode (Audio Player) Placeholder -->
+            <div class="col-span-1 lg:col-span-2 group flex flex-col p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-orange-900/40 via-[#2e2013] to-[#3a2a1a] border border-orange-500/15 hover:border-orange-400/50 transition-all cursor-pointer relative overflow-hidden" style="min-width: 0;">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-all duration-700"></div>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <div class="rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-600/10 border border-orange-500/30 flex items-center justify-center flex-shrink-0" style="width:4.5rem;height:4.5rem">
+                        <i class="fa-solid fa-headphones text-4xl text-orange-400"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-2xl text-white font-serif">Listen Mode</h3>
+                        <p class="text-sm text-slate-400 mt-1">Play mantras and bhajans</p>
+                    </div>
+                </div>
+                <div class="relative z-10 bg-black/40 rounded-xl p-4 flex flex-col gap-3 border border-orange-500/10">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm font-bold text-white truncate">Select a Mantra</div>
+                        <div class="flex gap-2">
+                            <button class="p-2 rounded-full bg-white/10 text-white hover:bg-white/20"><i class="fa-solid fa-backward-step"></i></button>
+                            <button class="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center"><i class="fa-solid fa-play"></i></button>
+                            <button class="p-2 rounded-full bg-white/10 text-white hover:bg-white/20"><i class="fa-solid fa-forward-step"></i></button>
+                        </div>
+                    </div>
+                    <div class="w-full h-1.5 bg-white/20 rounded-full overflow-hidden"><div class="w-0 h-full bg-orange-500"></div></div>
+                </div>
+            </div>
+
+            <!-- Mala Counter Placeholder -->
+            <div class="group flex flex-col p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-900/40 via-[#2e2013] to-[#3a2a1a] border border-amber-500/15 hover:border-amber-400/50 transition-all cursor-pointer relative overflow-hidden" style="min-width: 0;">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-all duration-700"></div>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <div class="rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0" style="width:4.5rem;height:4.5rem">
+                        <span class="text-4xl">📿</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-2xl text-white font-serif">Mala Counter</h3>
+                        <p class="text-sm text-slate-400 mt-1">108 beads</p>
+                    </div>
+                </div>
+                <div class="relative z-10 flex-1 flex flex-col items-center justify-center mt-2">
+                    <div class="relative w-32 h-32 mx-auto">
+                        <svg viewBox="0 0 200 200" class="w-full h-full">
+                            <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(245,158,11,0.1)" stroke-width="8"/>
+                            <circle cx="100" cy="100" r="90" fill="none" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" stroke-dasharray="565.48" stroke-dashoffset="400" transform="rotate(-90 100 100)"/>
+                        </svg>
+                        <button class="absolute inset-0 flex flex-col items-center justify-center group focus:outline-none">
+                            <span class="text-4xl font-bold text-amber-500" style="font-family: 'Georgia', serif;">ॐ</span>
+                            <span class="text-xs text-amber-500/50 mt-1 font-mono">0 / 108</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meditation Timer Placeholder -->
+            <div class="group flex flex-col p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-indigo-900/40 via-[#2e2013] to-[#3a2a1a] border border-indigo-500/15 hover:border-indigo-400/50 transition-all cursor-pointer relative overflow-hidden" style="min-width: 0;">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl group-hover:bg-indigo-500/10 transition-all duration-700"></div>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <div class="rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 border border-indigo-500/30 flex items-center justify-center flex-shrink-0" style="width:4.5rem;height:4.5rem">
+                        <span class="text-4xl">🧘</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-2xl text-white font-serif">Meditation Timer</h3>
+                        <p class="text-sm text-slate-400 mt-1">Guided timer</p>
+                    </div>
+                </div>
+                <div class="relative z-10 flex-1 flex flex-col items-center justify-end mt-2">
+                    <div class="text-4xl font-bold text-indigo-400 font-mono mb-4">10:00</div>
+                    <div class="flex flex-wrap justify-center gap-2 mb-4">
+                        <button class="px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20">5m</button>
+                        <button class="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500 text-xs text-indigo-400 font-bold">10m</button>
+                        <button class="px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20">15m</button>
+                        <button class="px-3 py-1 rounded-full bg-black/40 border border-indigo-500/20 text-xs text-indigo-400 hover:bg-indigo-500/20">30m</button>
+                    </div>
+                    <div class="flex justify-center gap-3 w-full">
+                        <button class="flex-1 py-2.5 rounded-full bg-indigo-500 text-black font-bold flex items-center justify-center gap-1 shadow-lg shadow-indigo-500/20">
+                            <i class="fa-solid fa-play"></i> Start
+                        </button>
+                        <button class="px-4 py-2.5 rounded-full bg-black/40 border border-indigo-500/20 text-indigo-400">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streaks & Dashboard Placeholder -->
+            <div class="col-span-1 sm:col-span-2 group flex flex-col p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-orange-900/40 via-[#2e2013] to-[#3a2a1a] border border-orange-500/15 hover:border-orange-400/50 transition-all cursor-pointer relative overflow-hidden" style="min-width: 0;">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-all duration-700"></div>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <div class="rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-600/10 border border-orange-500/30 flex items-center justify-center flex-shrink-0" style="width:4.5rem;height:4.5rem">
+                        <span class="text-4xl">🔥</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-2xl text-white font-serif">Streaks & Badges</h3>
+                        <p class="text-sm text-slate-400 mt-1">Track daily devotion</p>
+                    </div>
+                </div>
+                <div class="relative z-10 flex-1 flex items-end mt-2">
+                    <div class="grid grid-cols-3 gap-3 w-full">
+                        <div class="bg-black/40 rounded-xl p-3 text-center border border-orange-500/10">
+                            <p class="text-2xl font-bold text-orange-400" id="sadhana-streak">0</p>
+                            <p class="text-[10px] text-slate-500 uppercase mt-1">Day Streak</p>
+                        </div>
+                        <div class="bg-black/40 rounded-xl p-3 text-center border border-orange-500/10">
+                            <p class="text-2xl font-bold text-amber-400" id="sadhana-total-malas">0</p>
+                            <p class="text-[10px] text-slate-500 uppercase mt-1">Total Malas</p>
+                        </div>
+                        <div class="bg-black/40 rounded-xl p-3 text-center border border-orange-500/10">
+                            <p class="text-2xl font-bold text-indigo-400" id="sadhana-total-meditation">0</p>
+                            <p class="text-[10px] text-slate-500 uppercase mt-1">Med. Minutes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Mode Placeholder -->
+            <div class="group flex flex-col p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-purple-900/40 via-[#2e2013] to-[#3a2a1a] border border-purple-500/15 hover:border-purple-400/50 transition-all cursor-pointer relative overflow-hidden" style="min-width: 0;">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-purple-500/5 rounded-full blur-3xl group-hover:bg-purple-500/10 transition-all duration-700"></div>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <div class="rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 flex items-center justify-center flex-shrink-0" style="width:4.5rem;height:4.5rem">
+                        <span class="text-4xl">🎵</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-2xl text-white font-serif">Quiz Mode</h3>
+                        <p class="text-sm text-slate-400 mt-1">Test your knowledge</p>
+                    </div>
+                </div>
+                <div class="relative z-10 flex-1 flex flex-col justify-end mt-2" id="quiz-options">
+                    <button class="w-full py-2.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-400 font-bold flex items-center justify-center gap-2 hover:bg-purple-500/30">
+                        <i class="fa-solid fa-play"></i> Play Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reading Mode Placeholder -->
+            <div class="group flex flex-col p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-blue-900/40 via-[#2e2013] to-[#3a2a1a] border border-blue-500/15 hover:border-blue-400/50 transition-all cursor-pointer relative overflow-hidden" style="min-width: 0;" onclick="navigateTo('reading')">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-all duration-700"></div>
+                <div class="flex items-center gap-4 mb-4 relative z-10">
+                    <div class="rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-600/10 border border-blue-500/30 flex items-center justify-center flex-shrink-0" style="width:4.5rem;height:4.5rem">
+                        <i class="fa-solid fa-book-open text-3xl text-blue-400"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-2xl text-white font-serif">Reading Mode</h3>
+                        <p class="text-sm text-slate-400 mt-1">Sacred Scriptures</p>
+                    </div>
+                </div>
+                <div class="relative z-10 flex-1 flex flex-col justify-end">
+                    <p class="text-sm text-slate-300 leading-relaxed mb-4">Explore ancient wisdom, verse by verse with translations and meaning.</p>
+                    <div class="flex items-center gap-2 text-blue-400 text-sm font-bold w-fit px-4 py-2.5 rounded-full bg-blue-500/10 border border-blue-500/20">
+                        <span>Read</span><i class="fa-solid fa-arrow-right text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- MINI PLAYER PLACEHOLDER -->
+        <div id="sadhana-mini-player" class="fixed bottom-0 left-0 right-0 border-t border-orange-500/30 p-3 z-50 flex items-center justify-between gap-4 text-white hidden">
+            <div class="flex items-center gap-3 w-1/3 min-w-0 cursor-pointer">
+                <div class="w-12 h-12 rounded-lg bg-cover bg-center shadow-lg shadow-orange-500/20 flex-shrink-0 bg-[#2e2013]"></div>
+                <div class="hidden sm:block min-w-0">
+                    <h5 class="text-sm font-bold text-white leading-tight truncate">Select a Mantra</h5>
+                    <p class="text-xs text-orange-400/80 truncate">Dharma Player</p>
+                </div>
+            </div>
+            <div class="flex flex-col items-center gap-1 w-1/3">
+                <div class="flex items-center gap-4 md:gap-6">
+                    <i class="fa-solid fa-backward-step text-orange-400 cursor-pointer text-xl"></i>
+                    <button class="w-10 h-10 rounded-full bg-orange-500 text-black flex items-center justify-center hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <i class="fa-solid fa-forward-step text-orange-400 cursor-pointer text-xl"></i>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 w-1/3 text-orange-400/60">
+                <i class="fa-solid fa-expand hover:text-orange-400 cursor-pointer transition-colors"></i>
+                <i class="fa-solid fa-xmark hover:text-orange-400 cursor-pointer transition-colors" onclick="document.getElementById('sadhana-mini-player').classList.add('hidden'); document.body.classList.remove('pb-24');"></i>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // --- APP MODE TOGGLE LOGIC ---
+        window.toggleAppMode = function(mode) {
+            const calView = document.getElementById('calendar-app-view');
+            const sadhanaView = document.getElementById('sadhana-ecosystem-wrapper');
+            const btnCal = document.getElementById('btn-mode-calendar');
+            const btnSadhana = document.getElementById('btn-mode-sadhana');
+
+            // Logic to handle mini-player padding
+            const miniPlayer = document.getElementById('sadhana-mini-player');
+            const hasMiniPlayerActive = miniPlayer && !miniPlayer.classList.contains('hidden');
+
+            if (mode === 'calendar') {
+                calView.classList.remove('hidden');
+                sadhanaView.classList.add('hidden');
+
+                // Active calendar styling
+                btnCal.classList.add('bg-white', 'shadow-md', 'text-orange-600');
+                btnCal.classList.remove('bg-transparent', 'text-orange-600/60', 'hover:text-orange-600');
+
+                // Inactive sadhana styling
+                btnSadhana.classList.remove('bg-white', 'shadow-md', 'text-orange-600');
+                btnSadhana.classList.add('bg-transparent', 'text-orange-600/60', 'hover:text-orange-600');
+
+                if (hasMiniPlayerActive) document.body.classList.remove('pb-24');
+
+            } else if (mode === 'sadhana') {
+                calView.classList.add('hidden');
+                sadhanaView.classList.remove('hidden');
+
+                // Active sadhana styling
+                btnSadhana.classList.add('bg-white', 'shadow-md', 'text-orange-600');
+                btnSadhana.classList.remove('bg-transparent', 'text-orange-600/60', 'hover:text-orange-600');
+
+                // Inactive calendar styling
+                btnCal.classList.remove('bg-white', 'shadow-md', 'text-orange-600');
+                btnCal.classList.add('bg-transparent', 'text-orange-600/60', 'hover:text-orange-600');
+
+                if (hasMiniPlayerActive) document.body.classList.add('pb-24');
+            }
+        };
+
         // --- GLOBAL ERROR HANDLER ---
         // Catches unexpected crashes (e.g. Render errors, Logic bugs) and removes the loader
         window.onerror = function(message, source, lineno, colno, error) {
