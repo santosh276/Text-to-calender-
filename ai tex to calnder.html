@@ -8860,7 +8860,7 @@ function renderCalendarGrid(data) {
                                 <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-sm"><span style="font-family: 'Georgia', serif;" class="font-bold">ॐ</span></div>
                                 <span class="text-sm font-bold text-gray-700">Total Malas</span>
                             </div>
-                            <div class="text-2xl font-black text-red-600 font-sans tracking-tighter">48<span class="text-xs font-bold text-red-400 uppercase ml-1">Malas</span></div>
+                            <div class="text-2xl font-black text-[#c62828] font-sans tracking-tighter">48<span class="text-xs font-bold text-red-400 uppercase ml-1">Malas</span></div>
                         </div>
 
                         <!-- Stat Row 3 -->
@@ -8913,43 +8913,68 @@ function renderCalendarGrid(data) {
                 </div>
 
                 <!-- Mala Counter Placeholder -->
-                <div class="bg-white rounded-3xl shadow-xl shadow-red-100/50 border border-red-100 p-6 flex flex-col items-center justify-center min-w-0 transition-transform hover:scale-[1.02]">
-                    <div class="flex w-full items-center gap-3 mb-4 border-b border-red-100 pb-3">
-                        <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500 shadow-sm shrink-0">
-                            <span style="font-family: 'Georgia', serif;" class="text-xl">ॐ</span>
+                <div class="bg-white rounded-[2rem] shadow-sm border border-gray-50 p-6 flex flex-col items-center justify-center min-w-0 h-full">
+                    <div class="flex w-full items-center justify-between mb-8 border-b border-gray-50 pb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-red-50/50 flex items-center justify-center text-red-500 shrink-0">
+                                <span style="font-family: 'Georgia', serif;" class="text-2xl">ॐ</span>
+                            </div>
+                            <h3 class="font-black text-slate-800 text-xl tracking-wide leading-tight uppercase">Mala<br>Counter</h3>
                         </div>
-                        <h3 class="font-extrabold text-gray-900 text-lg uppercase tracking-wide">Mala Counter</h3>
-                        <div class="ml-auto text-xs font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-full border border-gray-100">Target: 108</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-full flex flex-col items-end leading-tight"><span>Target:</span><span>108</span></div>
                     </div>
 
-                    <div id="mala-btn" onclick="if(window.incrementMala) window.incrementMala()" class="relative w-48 h-48 flex items-center justify-center my-6 group cursor-pointer active:scale-95 transition-transform duration-200">
+                    <div id="mala-btn" onclick="if(window.incrementMala) window.incrementMala()" class="relative w-56 h-56 flex items-center justify-center my-4 group cursor-pointer active:scale-95 transition-transform duration-200">
                         <!-- SVG Ring -->
                         <svg class="absolute inset-0 w-full h-full transform -rotate-90" style="width: 100%; height: 100%;" viewBox="0 0 192 192">
-                            <circle class="text-gray-100" stroke-width="8" stroke="currentColor" fill="transparent" r="88" cx="96" cy="96" />
-                            <circle id="mala-progress-ring" class="text-red-500 transition-all duration-300 ease-out" stroke-width="8" stroke-dasharray="553" stroke-dashoffset="553" stroke-linecap="round" stroke="currentColor" fill="transparent" r="88" cx="96" cy="96" style="transition: stroke-dashoffset 0.35s;" />
+                            <circle class="text-slate-100" stroke-width="6" stroke="currentColor" fill="transparent" r="88" cx="96" cy="96" />
+                            <circle id="mala-progress-ring" class="text-[#ef5350] transition-all duration-300 ease-out" stroke-width="6" stroke-dasharray="553" stroke-dashoffset="553" stroke-linecap="round" stroke="currentColor" fill="transparent" r="88" cx="96" cy="96" style="transition: stroke-dashoffset 0.35s;" />
                         </svg>
 
                         <!-- Inner Content -->
-                        <div class="absolute inset-0 m-auto z-10 flex flex-col items-center justify-center w-36 h-36 rounded-full bg-gradient-to-br from-red-50 to-white shadow-inner border border-red-50/50 group-hover:shadow-md transition-shadow">
-                            <span id="mala-counter-text" class="text-5xl font-black text-red-600 drop-shadow-sm font-sans tracking-tighter">0</span>
-                            <span class="text-[10px] font-bold text-red-400 uppercase tracking-widest mt-1">Beads</span>
+                        <div class="absolute inset-0 m-auto z-10 flex flex-col items-center justify-center w-40 h-40 rounded-full bg-white shadow-sm border border-red-50 group-hover:shadow-sm transition-shadow">
+                            <span id="mala-counter-text" class="text-4xl font-black text-[#c62828] font-sans tracking-tight">0</span>
+                            <span class="text-[11px] font-bold text-slate-800 uppercase tracking-[0.2em] mt-2">Beads</span>
                         </div>
                     </div>
 
-                    <button onclick="if(window.resetMala) window.resetMala()" class="w-full mt-2 bg-red-50 hover:bg-red-100 text-red-700 font-bold py-3 rounded-xl transition-colors shadow-sm active:scale-95">
-                        <i class="fa-solid fa-rotate-left mr-2"></i>Reset Counter
+                    <button onclick="if(window.resetMala) window.resetMala()" class="w-full mt-8 bg-red-50/50 hover:bg-red-50 text-[#b71c1c] font-bold py-4 rounded-2xl transition-colors active:scale-95 text-lg flex items-center justify-center">
+                        <i class="fa-solid fa-rotate-left mr-3"></i>Reset Counter
                     </button>
                 </div>
 
                 <!-- Meditation Timer Placeholder -->
-                <div class="bg-white rounded-3xl shadow-xl shadow-green-100/50 border border-green-100 p-6 flex flex-col items-center justify-center min-w-0 transition-transform hover:scale-[1.02]">
-                    <div class="flex w-full items-center gap-3 mb-4 border-b border-green-100 pb-3">
-                        <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-500 shadow-sm shrink-0">
-                            <i class="fa-solid fa-leaf text-lg"></i>
+                <div class="bg-white rounded-[2rem] shadow-sm border border-gray-50 p-6 flex flex-col items-center justify-center min-w-0 h-full">
+                    <div class="flex w-full items-center justify-between mb-8 border-b border-gray-50 pb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-green-50/50 flex items-center justify-center text-slate-800 shrink-0">
+                                <i class="fa-solid fa-leaf text-xl"></i>
+                            </div>
+                            <h3 class="font-black text-slate-800 text-xl tracking-wide uppercase">Meditation</h3>
                         </div>
-                        <h3 class="font-extrabold text-gray-900 text-lg uppercase tracking-wide">Meditation</h3>
-                        <div class="ml-auto text-xs font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-full border border-gray-100">Timer</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-full">Timer</div>
                     </div>
+
+                    <div class="text-center my-4 w-full flex flex-col items-center flex-1">
+                        <span id="meditation-display" class="text-2xl font-medium text-slate-700 tracking-[0.2em] block mb-8 font-mono mt-4">15:00</span>
+
+                        <div class="flex gap-3 justify-center mb-8 w-full px-2">
+                            <button onclick="window.setMeditationTime(5, this)" class="med-btn w-14 h-14 rounded-full border border-gray-100 text-slate-600 font-bold hover:bg-gray-50 transition-all active:scale-95 text-sm">5m</button>
+                            <button onclick="window.setMeditationTime(10, this)" class="med-btn w-14 h-14 rounded-full border-2 border-[#4caf50] text-[#4caf50] font-bold transition-all active:scale-95 text-sm shadow-sm ring-4 ring-green-50">10m</button>
+                            <button onclick="window.setMeditationTime(15, this)" class="med-btn w-14 h-14 rounded-full border border-gray-100 text-slate-600 font-bold hover:bg-gray-50 transition-all active:scale-95 text-sm">15m</button>
+                            <button onclick="window.setMeditationTime(30, this)" class="med-btn w-14 h-14 rounded-full border border-gray-100 text-slate-600 font-bold hover:bg-gray-50 transition-all active:scale-95 text-sm">30m</button>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 w-full mt-auto">
+                        <button id="meditation-toggle-btn" onclick="window.toggleMeditation()" class="flex-1 bg-[#00b050] hover:bg-[#009e48] text-white font-bold py-4 rounded-2xl transition-colors active:scale-95 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-play mr-2"></i> Resume
+                        </button>
+                        <button onclick="window.resetMeditation()" class="w-14 bg-white hover:bg-gray-50 text-slate-600 font-bold py-4 rounded-2xl border border-gray-100 transition-colors active:scale-95 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-rotate-right text-lg"></i>
+                        </button>
+                    </div>
+                </div>
 
                     <div class="text-center my-6">
                         <span id="meditation-display" class="text-6xl font-black text-gray-800 drop-shadow-md font-mono tracking-tighter block mb-2">15:00</span>
@@ -8972,24 +8997,32 @@ function renderCalendarGrid(data) {
                 </div>
 
                 <!-- Listen Mode (Audio Player UI Placeholder) -->
-                <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-6 flex flex-col min-w-0 transition-transform hover:scale-[1.02]">
-                    <div class="flex items-center gap-3 mb-4 border-b border-orange-100 pb-3">
-                        <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shadow-sm shrink-0">
-                            <i class="fa-solid fa-headphones text-lg"></i>
+                <div class="bg-white rounded-[2rem] shadow-sm border border-gray-50 p-6 flex flex-col min-w-0 h-full">
+                    <div class="flex items-center gap-4 mb-8 border-b border-gray-50 pb-4">
+                        <div class="w-12 h-12 rounded-full bg-amber-50/50 flex items-center justify-center text-amber-500 shrink-0">
+                            <i class="fa-solid fa-headphones text-xl"></i>
                         </div>
-                        <h3 class="font-extrabold text-gray-900 text-lg uppercase tracking-wide">Listen Mode</h3>
+                        <h3 class="font-black text-slate-800 text-xl tracking-wide uppercase">Listen Mode</h3>
                     </div>
-                    <div class="flex-1 flex flex-col items-center justify-center gap-4 py-6">
-                        <div onclick="window.toggleAudioPlay()" class="audio-play-btn w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-lg shadow-orange-200 cursor-pointer hover:shadow-xl transition-all active:scale-95 text-white" style="width: 6rem; height: 6rem;">
-                            <i class="fa-solid fa-play text-3xl ml-1"></i>
-                        </div>
-                        <p class="text-gray-500 font-semibold text-sm text-center">Play Sacred Mantras</p>
 
-                        <!-- Progress Bar Placeholder -->
-                        <div class="w-full mt-4">
-                            <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-orange-500 w-1/3 rounded-full"></div>
+                    <div class="flex-1 flex flex-col items-center justify-center gap-6 py-8">
+                        <div onclick="window.toggleAudioPlay()" class="audio-play-btn w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-lg shadow-orange-200/50 cursor-pointer hover:shadow-xl transition-all active:scale-95 text-white" style="width: 8rem; height: 8rem;">
+                            <i class="fa-solid fa-play text-4xl ml-2"></i>
+                        </div>
+                        <p class="text-slate-500 font-bold text-lg text-center mt-2">Play Sacred Mantras</p>
+
+                        <!-- Progress Bar -->
+                        <div class="w-full mt-10 px-2">
+                            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-orange-500 w-full rounded-full"></div>
                             </div>
+                            <div class="flex justify-between text-xs text-slate-400 font-bold mt-3 px-1">
+                                <span>0:00</span>
+                                <span>108 Chants</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                             <div class="flex justify-between text-[10px] text-gray-400 font-bold mt-1">
                                 <span>0:00</span>
                                 <span>108 Chants</span>
