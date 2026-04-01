@@ -5963,9 +5963,38 @@ function getCDNUrl(originalUrl) {
 
             heroContainer.onclick = () => openDayModal(heroEvent.event.date, heroEvent.monthData);
 
+            // Calculate Panchang details for the banner
+            const astro = calculateTithi(heroEvent.dateObj);
+            let panchangHtml = '';
+
+            if (astro && astro.tithi) {
+                panchangHtml += `<div class="bg-white/20 backdrop-blur-md rounded-lg px-2 py-1 text-white text-[10px] font-bold tracking-wide flex items-center gap-1 border border-white/30 shadow-sm"><i class="fa-solid fa-moon text-amber-300"></i> ${astro.tithi}</div>`;
+            }
+
+            if (appState.config.location && typeof SunCalc !== 'undefined') {
+                const sunTimes = SunCalc.getTimes(heroEvent.dateObj, appState.config.location.lat, appState.config.location.lng);
+                if (sunTimes.sunrise && sunTimes.sunset) {
+                    const times = getSpecialTimes(heroEvent.dateObj, sunTimes.sunrise, sunTimes.sunset);
+                    if (times.inauspicious) {
+                        const rahu = times.inauspicious.find(t => t.name.includes("Rahu"));
+                        if (rahu) {
+                            const rStart = rahu.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            const rEnd = rahu.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            panchangHtml += `<div class="bg-white/20 backdrop-blur-md rounded-lg px-2 py-1 text-white text-[10px] font-bold tracking-wide flex items-center gap-1 border border-white/30 shadow-sm"><i class="fa-solid fa-clock text-red-300"></i> ରାହୁକାଳ: ${rStart}-${rEnd}</div>`;
+                        }
+                    }
+                }
+            }
+
             heroContainer.innerHTML = `
                 <div class="absolute inset-0" style="${heroBg}"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent"></div>
+
+                <div class="absolute top-4 left-4 flex items-center gap-2 z-20">
+                    <div class="w-2 h-2 rounded-full bg-white/80"></div>
+                    <span class="text-white/90 text-xs font-bold tracking-widest uppercase drop-shadow-md">ଆଗାମୀ ପର୍ବପର୍ବାଣୀ (NEXT FESTIVAL)</span>
+                </div>
+
                 <div class="absolute top-4 right-4 opacity-10 pointer-events-none">
                     <svg width="120" height="120" viewBox="465.9997 -33.2869 1628.0002 1666.5739" fill="white">
                         <g transform="translate(-210.63 -364.11)">
@@ -5975,27 +6004,28 @@ function getCDNUrl(originalUrl) {
                         </g>
                     </svg>
                 </div>
-                <div class="absolute bottom-0 left-0 p-5 w-full flex flex-col gap-1 z-10">
-                    <div class="flex items-center gap-2 text-white/80 text-xs font-bold tracking-wider uppercase">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
-                        Next Festival
+
+                <div class="absolute inset-0 p-4 flex flex-col justify-center gap-1 z-10 pt-10">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight drop-shadow-md truncate">${heroEvent.event.engName}</h1>
+                    ${heroEvent.event.locName ? `<p class="text-white/90 text-sm font-oriya drop-shadow-sm line-clamp-1">${heroEvent.event.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
+                    <div class="flex items-center gap-2 mt-1">
+                        <p class="text-white/95 text-sm font-medium drop-shadow-sm">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
                     </div>
-                    <h1 class="text-3xl font-extrabold text-white leading-tight drop-shadow-md">${heroEvent.event.engName}</h1>
-                    <p class="text-white/90 text-sm font-medium mb-3 drop-shadow-sm">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
-                    
-                    <div class="flex gap-3 mt-1">
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 shadow-lg">
-                            <div id="hero-cd-days" class="text-xl font-bold text-white leading-none">--</div>
-                            <div class="text-[9px] text-white/70 font-semibold uppercase mt-1">Days</div>
-                        </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 shadow-lg">
-                            <div id="hero-cd-hours" class="text-xl font-bold text-white leading-none">--</div>
-                            <div class="text-[9px] text-white/70 font-semibold uppercase mt-1">Hours</div>
-                        </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 shadow-lg">
-                            <div id="hero-cd-mins" class="text-xl font-bold text-white leading-none">--</div>
-                            <div class="text-[9px] text-white/70 font-semibold uppercase mt-1">Mins</div>
-                        </div>
+                    ${panchangHtml ? `<div class="flex flex-wrap gap-2 mt-1">${panchangHtml}</div>` : ''}
+                </div>
+
+                <div class="absolute bottom-4 left-4 flex gap-2 z-10">
+                    <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[3.5rem] flex flex-col items-center justify-center border border-white/30 shadow-lg">
+                        <span id="hero-cd-days" class="text-xl font-bold text-white leading-none">--</span>
+                        <span class="text-[8px] text-white/80 font-bold uppercase mt-1">Days</span>
+                    </div>
+                    <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[3.5rem] flex flex-col items-center justify-center border border-white/30 shadow-lg">
+                        <span id="hero-cd-hours" class="text-xl font-bold text-white leading-none">--</span>
+                        <span class="text-[8px] text-white/80 font-bold uppercase mt-1">Hours</span>
+                    </div>
+                    <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[3.5rem] flex flex-col items-center justify-center border border-white/30 shadow-lg">
+                        <span id="hero-cd-mins" class="text-xl font-bold text-white leading-none">--</span>
+                        <span class="text-[8px] text-white/80 font-bold uppercase mt-1">Mins</span>
                     </div>
                 </div>
             `;
