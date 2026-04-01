@@ -8843,24 +8843,24 @@ function renderCalendarGrid(data) {
     </div>
 
     <!-- Mobile Bottom Navigation Bar -->
-    <div id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around items-center py-2 px-4 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-5">
-        <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500 transition-colors w-16" onclick="toggleView('month')">
+    <div id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-between items-center py-2 px-2 sm:px-4 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-5">
+        <button class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1" onclick="toggleView('month')">
             <i class="fa-solid fa-calendar text-xl"></i>
             <span class="text-[10px] font-bold">Calendar</span>
         </button>
-        <button id="nav-btn-festivals" class="flex flex-col items-center gap-1 text-orange-600 transition-colors w-16" onclick="toggleView('festivals')">
+        <button id="nav-btn-festivals" class="flex flex-col items-center justify-center gap-1 text-orange-600 transition-colors flex-1" onclick="toggleView('festivals')">
             <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
             <span class="text-[10px] font-bold">Festivals</span>
         </button>
-        <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500 transition-colors w-16">
+        <button class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <i class="fa-solid fa-headphones text-xl"></i>
             <span class="text-[10px] font-bold">Listen</span>
         </button>
-        <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500 transition-colors w-16">
+        <button class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <i class="fa-regular fa-comment-dots text-xl"></i>
             <span class="text-[10px] font-bold">Chat</span>
         </button>
-        <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500 transition-colors w-16">
+        <button class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <i class="fa-regular fa-user text-xl"></i>
             <span class="text-[10px] font-bold">Profile</span>
         </button>
