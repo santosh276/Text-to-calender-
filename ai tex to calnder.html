@@ -7347,45 +7347,53 @@ function renderCalendarGrid(data) {
             if (upNextEvent) {
                 const eventDate = new Date(upNextMonthData.year, upNextMonthData.month, upNextEvent.date);
                 
-                // Diff days
+                // Check for banner image in details
+                const dateKey = `${upNextMonthData.year}-${upNextMonthData.month}-${upNextEvent.date}`;
+                const recKey = `rec-${upNextMonthData.month}-${upNextEvent.date}`;
+                let details = appState.details[dateKey] || appState.recurringDetails[recKey];
+
+                let imgUrl = '';
+                if (details && Array.isArray(details)) {
+                    const dWithBanner = details.find(d => d.bannerUrl);
+                    if (dWithBanner) imgUrl = resolveImageUrls(dWithBanner.bannerUrl);
+                } else if (details && details.bannerUrl) {
+                    imgUrl = resolveImageUrls(details.bannerUrl);
+                }
+
+                // Diff logic for countdown
                 const t1 = new Date(realToday.getFullYear(), realToday.getMonth(), realToday.getDate());
                 const t2 = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
-                const diffTime = t2 - t1;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                const diffTime = eventDate.getTime() - realToday.getTime(); // accurate diff
                 
-                let badgeText = "";
-                if (diffDays === 0) badgeText = "Today";
-                else if (diffDays === 1) badgeText = "Tomorrow";
-                else if (diffDays < 7) badgeText = `In ${diffDays} days`;
-                else badgeText = `${upNextEvent.date} ${shortMonths[upNextMonthData.month]}`;
+                let d = 0, h = 0, m = 0;
+                if (diffTime > 0) {
+                    const targetStart = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+                    const cdDiff = targetStart.getTime() - realToday.getTime();
+                    if (cdDiff > 0) {
+                        d = Math.floor(cdDiff / (1000 * 60 * 60 * 24));
+                        h = Math.floor((cdDiff / (1000 * 60 * 60)) % 24);
+                        m = Math.floor((cdDiff / 1000 / 60) % 60);
+                    }
+                }
+
+                const formattedDate = `${months[upNextMonthData.month]} ${upNextEvent.date}, ${upNextMonthData.year}`;
 
                 // --- CARD 1: Event Details ---
                 const eventCard = document.createElement('div');
-                eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
+                eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer group h-52 transition-transform hover:scale-[1.02] active:scale-95";
                 eventCard.onclick = () => openDayModal(upNextEvent.date, upNextMonthData);
-                eventCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)";
-                eventCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
                 
-                eventCard.innerHTML = `
-                    <div class="p-4 relative z-10 text-white flex flex-col gap-3">
-                        <div class="flex justify-between items-start">
-                             <div class="text-[10px] font-bold opacity-90 tracking-widest uppercase flex items-center gap-2">
-                                <i class="fa-regular fa-calendar"></i> UP NEXT
-                             </div>
-                             <div class="bg-white/20 backdrop-blur-[10px] px-3 py-1 rounded-full text-[10px] font-bold border border-white/50 shadow-lg">
-                                ${badgeText}
-                             </div>
-                        </div>
+                const hasImg = imgUrl !== '';
+                const cardBg = hasImg
+                    ? `background-image: url('${imgUrl}'); background-size: cover; background-position: center;`
+                    : `background: linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%);`;
 
-                        <div>
-                            <h3 class="font-extrabold text-lg leading-tight mb-1 drop-shadow-sm whitespace-normal">${upNextEvent.engName}</h3>
-                            <p class="text-sm font-medium opacity-90 font-oriya leading-relaxed">${upNextEvent.locName || ''}</p>
-                        </div>
-                    </div>
-                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
-                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 rounded-full bg-black/5 blur-xl pointer-events-none"></div>
-                    <div class="absolute bottom-0 right-0 opacity-12 pointer-events-none up-next-om-wrapper">
-                        <svg class="text-white up-next-om-icon" viewBox="465.9997 -33.2869 1628.0002 1666.5739" fill="currentColor">
+                eventCard.innerHTML = `
+                    <div class="absolute inset-0" style="${cardBg}"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/50 to-transparent"></div>
+
+                    <div class="absolute top-4 right-4 opacity-15 pointer-events-none w-24 h-24">
+                        <svg class="w-full h-full text-white" viewBox="465.9997 -33.2869 1628.0002 1666.5739" fill="currentColor">
                             <g transform="translate(-210.63 -364.11)">
                                 <path d="M1674.7654,364.11l-142.1121,149.3132l149.3608,137.2957l144.4966-146.9288L1674.7654,364.11z"/>
                                 <path d="M1383.3402,445.9915c0,0,158.9464,500.9695,618.9987,84.3135 c2.4321,2.3845,125.2305,163.7629,127.6626,163.7629c-178.2604,199.9108-722.5786,308.3072-746.6614-248.0764L1383.3402,445.9915 L1383.3402,445.9915z"/>
@@ -7393,13 +7401,67 @@ function renderCalendarGrid(data) {
                             </g>
                         </svg>
                     </div>
+
+                    <div class="absolute bottom-0 left-0 p-4 w-full flex flex-col gap-1 z-10 text-white">
+                        <div class="flex items-center gap-2 text-white/80 text-[10px] font-bold tracking-wider uppercase">
+                            <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
+                            Next Festival
+                        </div>
+
+                        <h3 class="text-2xl font-extrabold leading-tight drop-shadow-md whitespace-normal">${upNextEvent.engName}</h3>
+                        <p class="text-white/90 text-xs font-medium mb-2 drop-shadow-sm">${formattedDate}</p>
+
+                        <div class="flex gap-2 mt-1">
+                            <div class="bg-white/20 backdrop-blur-md rounded-lg p-1.5 min-w-[50px] text-center border border-white/30 shadow-lg">
+                                <div id="sidebar-cd-days" class="text-lg font-bold leading-none">${d}</div>
+                                <div class="text-[8px] text-white/70 font-semibold uppercase mt-0.5">Days</div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-md rounded-lg p-1.5 min-w-[50px] text-center border border-white/30 shadow-lg">
+                                <div id="sidebar-cd-hours" class="text-lg font-bold leading-none">${h}</div>
+                                <div class="text-[8px] text-white/70 font-semibold uppercase mt-0.5">Hours</div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-md rounded-lg p-1.5 min-w-[50px] text-center border border-white/30 shadow-lg">
+                                <div id="sidebar-cd-mins" class="text-lg font-bold leading-none">${m}</div>
+                                <div class="text-[8px] text-white/70 font-semibold uppercase mt-0.5">Mins</div>
+                            </div>
+                        </div>
+                    </div>
                 `;
                 section.appendChild(eventCard);
                 
-                // Automatic fitting algorithm
-                adjustUpNextIcon(eventCard);
-                const ro = new ResizeObserver(() => adjustUpNextIcon(eventCard));
-                ro.observe(eventCard);
+                // Sidebar Countdown Timer Logic
+                const sidebarTargetDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+
+                const updateSidebarCountdown = () => {
+                    const now = new Date();
+                    const diff = sidebarTargetDate - now;
+
+                    if (diff <= 0) {
+                        const elD = document.getElementById('sidebar-cd-days');
+                        const elH = document.getElementById('sidebar-cd-hours');
+                        const elM = document.getElementById('sidebar-cd-mins');
+                        if (elD) elD.innerText = "0";
+                        if (elH) elH.innerText = "0";
+                        if (elM) elM.innerText = "0";
+                        return;
+                    }
+
+                    const diffD = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const diffH = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const diffM = Math.floor((diff / 1000 / 60) % 60);
+
+                    const elD = document.getElementById('sidebar-cd-days');
+                    const elH = document.getElementById('sidebar-cd-hours');
+                    const elM = document.getElementById('sidebar-cd-mins');
+
+                    if(elD) elD.innerText = diffD;
+                    if(elH) elH.innerText = diffH;
+                    if(elM) elM.innerText = diffM;
+                };
+
+                // Clear previous interval if needed. Since renderFestivals creates it, we can use a global or local var.
+                if (window.sidebarCountdownInterval) clearInterval(window.sidebarCountdownInterval);
+                window.sidebarCountdownInterval = setInterval(updateSidebarCountdown, 60000);
 
             }
 
