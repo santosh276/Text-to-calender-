@@ -1728,7 +1728,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
           </div>
         </div>
 
-        <div class="hidden md:flex items-center gap-6">
+        <div id="desktop-top-nav" class="hidden md:flex items-center gap-6">
             <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer" onclick="toggleView('month')">
                 <i class="fa-solid fa-calendar text-xl"></i>
                 <span class="text-[10px] font-bold">Calendar</span>
@@ -6077,14 +6077,25 @@ function getCDNUrl(originalUrl) {
         function toggleView(viewName) {
             appState.view = viewName;
             
-            // Handle bottom nav button states
+            // Handle mobile bottom nav button states
             const allNavBtns = document.querySelectorAll('#mobile-bottom-nav button');
             allNavBtns.forEach(btn => {
                 btn.classList.replace('text-orange-600', 'text-gray-400');
-                if (btn.querySelector('.fa-om')) {
+                if (btn.querySelector('.fa-calendar')) {
                     if (viewName === 'month' || viewName === 'year') btn.classList.replace('text-gray-400', 'text-orange-600');
                 } else if (btn.querySelector('.fa-wand-magic-sparkles')) {
                     if (viewName === 'festivals') btn.classList.replace('text-gray-400', 'text-orange-600');
+                }
+            });
+
+            // Handle desktop top nav button states
+            const allDesktopNavBtns = document.querySelectorAll('#desktop-top-nav button');
+            allDesktopNavBtns.forEach(btn => {
+                btn.classList.replace('text-white', 'text-white/80');
+                if (btn.querySelector('.fa-calendar')) {
+                    if (viewName === 'month' || viewName === 'year') btn.classList.replace('text-white/80', 'text-white');
+                } else if (btn.querySelector('.fa-wand-magic-sparkles')) {
+                    if (viewName === 'festivals') btn.classList.replace('text-white/80', 'text-white');
                 }
             });
             
