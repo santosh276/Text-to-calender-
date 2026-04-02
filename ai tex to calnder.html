@@ -5965,9 +5965,12 @@ function getCDNUrl(originalUrl) {
 
             heroContainer.innerHTML = `
                 <div class="absolute inset-0" style="${heroBg}"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent"></div>
-                <div class="absolute top-4 right-4 opacity-10 pointer-events-none">
-                    <svg width="120" height="120" viewBox="465.9997 -33.2869 1628.0002 1666.5739" fill="white">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/30 to-transparent"></div>
+                <!-- Left side transparent dark gradient layer for text contrast -->
+                <div class="absolute inset-y-0 left-0 w-3/4 bg-gradient-to-r from-black/80 via-black/40 to-transparent pointer-events-none"></div>
+                
+                <div class="absolute -top-12 -right-8 opacity-10 pointer-events-none">
+                    <svg width="200" height="200" viewBox="465.9997 -33.2869 1628.0002 1666.5739" fill="white">
                         <g transform="translate(-210.63 -364.11)">
                             <path d="M1674.7654,364.11l-142.1121,149.3132l149.3608,137.2957l144.4966-146.9288L1674.7654,364.11z"/>
                             <path d="M1383.3402,445.9915c0,0,158.9464,500.9695,618.9987,84.3135 c2.4321,2.3845,125.2305,163.7629,127.6626,163.7629c-178.2604,199.9108-722.5786,308.3072-746.6614-248.0764L1383.3402,445.9915 L1383.3402,445.9915z"/>
@@ -5975,26 +5978,26 @@ function getCDNUrl(originalUrl) {
                         </g>
                     </svg>
                 </div>
-                <div class="absolute bottom-0 left-0 p-5 w-full flex flex-col gap-1 z-10">
-                    <div class="flex items-center gap-2 text-white/80 text-xs font-bold tracking-wider uppercase">
+                <div class="absolute bottom-2 left-2 p-5 w-full flex flex-col gap-1 z-10">
+                    <div class="flex items-center gap-2 text-white text-xs font-bold tracking-wider uppercase [text-shadow:_0_1px_2px_rgb(0_0_0_/_100%)]">
                         <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
                         Next Upcoming Festival
                     </div>
-                    <h1 class="text-3xl font-extrabold text-white leading-tight drop-shadow-md">${heroEvent.event.engName}</h1>
-                    <p class="text-white/90 text-sm font-medium mb-3 drop-shadow-sm">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
+                    <h1 class="text-4xl font-extrabold text-white leading-tight [text-shadow:_0_2px_6px_rgb(0_0_0_/_100%)]">${heroEvent.event.engName}</h1>
+                    <p class="text-white text-sm font-medium mb-3 [text-shadow:_0_1px_3px_rgb(0_0_0_/_100%)]">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
                     
                     <div class="flex gap-3 mt-1">
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 shadow-lg">
-                            <div id="hero-cd-days" class="text-xl font-bold text-white leading-none">--</div>
-                            <div class="text-[9px] text-white/70 font-semibold uppercase mt-1">Days</div>
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 [box-shadow:_0_4px_12px_rgba(0,0,0,0.5)]">
+                            <div id="hero-cd-days" class="text-xl font-bold text-white leading-none [text-shadow:_0_2px_4px_rgb(0_0_0_/_100%)]">--</div>
+                            <div class="text-[9px] text-white font-semibold uppercase mt-1 [text-shadow:_0_1px_2px_rgb(0_0_0_/_100%)]">Days</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 shadow-lg">
-                            <div id="hero-cd-hours" class="text-xl font-bold text-white leading-none">--</div>
-                            <div class="text-[9px] text-white/70 font-semibold uppercase mt-1">Hours</div>
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 [box-shadow:_0_4px_12px_rgba(0,0,0,0.5)]">
+                            <div id="hero-cd-hours" class="text-xl font-bold text-white leading-none [text-shadow:_0_2px_4px_rgb(0_0_0_/_100%)]">--</div>
+                            <div class="text-[9px] text-white font-semibold uppercase mt-1 [text-shadow:_0_1px_2px_rgb(0_0_0_/_100%)]">Hours</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 shadow-lg">
-                            <div id="hero-cd-mins" class="text-xl font-bold text-white leading-none">--</div>
-                            <div class="text-[9px] text-white/70 font-semibold uppercase mt-1">Mins</div>
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 [box-shadow:_0_4px_12px_rgba(0,0,0,0.5)]">
+                            <div id="hero-cd-mins" class="text-xl font-bold text-white leading-none [text-shadow:_0_2px_4px_rgb(0_0_0_/_100%)]">--</div>
+                            <div class="text-[9px] text-white font-semibold uppercase mt-1 [text-shadow:_0_1px_2px_rgb(0_0_0_/_100%)]">Mins</div>
                         </div>
                     </div>
                 </div>
