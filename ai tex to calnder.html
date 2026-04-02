@@ -26,6 +26,16 @@
             .mobile-hide {
                 display: none !important;
             }
+
+            /* Slightly smaller countdown badges on mobile */
+            .hero-cd-container { gap: 0.5rem !important; }
+            .hero-cd-badge {
+                min-width: 48px !important;
+                padding: 0.35rem !important;
+                border-radius: 0.5rem !important;
+            }
+            .hero-cd-num { font-size: 1.125rem !important; }
+            .hero-cd-label { font-size: 8px !important; margin-top: 0.15rem !important; }
             .mobile-main {
                 height: calc(100vh - 60px) !important; /* Adjust for bottom nav */
             }
@@ -5732,7 +5742,7 @@ function getCDNUrl(originalUrl) {
                 slide.onclick = () => openDayModal(banner.date, data); // Click banner to open day
                 
                 slide.innerHTML = `
-                    <img src="${banner.url}" class="w-full h-full" style="object-fit: fill;">
+                    <img src="${banner.url}" class="w-full h-full" style="object-fit: cover;">
                     <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white pt-10" style="background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent);">
 
                         <div class="text-xs md:text-sm opacity-90 font-semibold uppercase tracking-wide bg-black/30 inline-block px-2 py-0.5 rounded mt-1 backdrop-blur-sm border border-white/20">${months[data.month]} ${banner.date}</div>
@@ -5958,7 +5968,7 @@ function getCDNUrl(originalUrl) {
             const hasHeroImg = heroEvent.imgUrl !== '';
             
             let heroBg = hasHeroImg 
-                ? `background-image: url('${heroEvent.imgUrl}'); background-size: 100% 100%; background-position: center;`
+                ? `background-image: url('${heroEvent.imgUrl}'); background-size: cover; background-position: center;`
                 : `background: linear-gradient(135deg, #1e3a8a, #581c87);`; // fallback gradient
 
             heroContainer.onclick = () => openDayModal(heroEvent.event.date, heroEvent.monthData);
@@ -5983,21 +5993,21 @@ function getCDNUrl(originalUrl) {
                         <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
                         Next Upcoming Festival
                     </div>
-
-                    <p class="text-white text-xs font-medium mb-2" style="text-shadow: 0 1px 3px rgb(0 0 0 / 100%);">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
                     
-                    <div class="flex gap-3 mt-1">
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
-                            <div id="hero-cd-days" class="text-xl font-bold text-white leading-none" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
-                            <div class="text-[9px] text-white font-semibold uppercase mt-1" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Days</div>
+                    <p class="text-white text-xs font-medium mb-2" style="text-shadow: 0 1px 3px rgb(0 0 0 / 100%);">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
+
+                    <div class="flex gap-3 mt-1 hero-cd-container">
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            <div id="hero-cd-days" class="text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
+                            <div class="text-[9px] text-white font-semibold uppercase mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Days</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
-                            <div id="hero-cd-hours" class="text-xl font-bold text-white leading-none" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
-                            <div class="text-[9px] text-white font-semibold uppercase mt-1" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Hours</div>
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            <div id="hero-cd-hours" class="text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
+                            <div class="text-[9px] text-white font-semibold uppercase mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Hours</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
-                            <div id="hero-cd-mins" class="text-xl font-bold text-white leading-none" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
-                            <div class="text-[9px] text-white font-semibold uppercase mt-1" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Mins</div>
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            <div id="hero-cd-mins" class="text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
+                            <div class="text-[9px] text-white font-semibold uppercase mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Mins</div>
                         </div>
                     </div>
                 </div>
