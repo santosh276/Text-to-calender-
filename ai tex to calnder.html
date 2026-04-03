@@ -6008,7 +6008,7 @@ function getCDNUrl(originalUrl) {
                             <div id="hero-cd-mins" class="text-lg md:text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
                             <div class="text-[8px] md:text-[9px] text-white font-semibold uppercase mt-0.5 md:mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Mins</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                        <div id="hero-cd-secs-container" class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                             <div id="hero-cd-secs" class="text-lg md:text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
                             <div class="text-[8px] md:text-[9px] text-white font-semibold uppercase mt-0.5 md:mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Secs</div>
                         </div>
@@ -6040,6 +6040,7 @@ function getCDNUrl(originalUrl) {
                 const diff = targetDate - now;
                 
                 const elDaysContainer = document.getElementById('hero-cd-days-container');
+                const elSecsContainer = document.getElementById('hero-cd-secs-container');
 
                 if (diff <= 0) {
                     document.getElementById('hero-cd-days').innerText = "0";
@@ -6047,6 +6048,7 @@ function getCDNUrl(originalUrl) {
                     document.getElementById('hero-cd-mins').innerText = "0";
                     document.getElementById('hero-cd-secs').innerText = "0";
                     if (elDaysContainer) elDaysContainer.style.display = 'none';
+                    if (elSecsContainer) elSecsContainer.style.display = '';
                     clearInterval(heroCountdownInterval);
                     return;
                 }
@@ -6056,11 +6058,13 @@ function getCDNUrl(originalUrl) {
                 const m = Math.floor((diff / 1000 / 60) % 60);
                 const s = Math.floor((diff / 1000) % 60);
 
-                if (elDaysContainer) {
+                if (elDaysContainer && elSecsContainer) {
                     if (d <= 0) {
                         elDaysContainer.style.display = 'none';
+                        elSecsContainer.style.display = '';
                     } else {
                         elDaysContainer.style.display = '';
+                        elSecsContainer.style.display = 'none';
                     }
                 }
 
