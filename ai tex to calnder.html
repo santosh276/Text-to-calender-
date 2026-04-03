@@ -6008,6 +6008,10 @@ function getCDNUrl(originalUrl) {
                             <div id="hero-cd-mins" class="text-lg md:text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
                             <div class="text-[8px] md:text-[9px] text-white font-semibold uppercase mt-0.5 md:mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Mins</div>
                         </div>
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            <div id="hero-cd-secs" class="text-lg md:text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
+                            <div class="text-[8px] md:text-[9px] text-white font-semibold uppercase mt-0.5 md:mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Secs</div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -6039,6 +6043,7 @@ function getCDNUrl(originalUrl) {
                     document.getElementById('hero-cd-days').innerText = "0";
                     document.getElementById('hero-cd-hours').innerText = "0";
                     document.getElementById('hero-cd-mins').innerText = "0";
+                    document.getElementById('hero-cd-secs').innerText = "0";
                     clearInterval(heroCountdownInterval);
                     return;
                 }
@@ -6046,18 +6051,21 @@ function getCDNUrl(originalUrl) {
                 const d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 const m = Math.floor((diff / 1000 / 60) % 60);
+                const s = Math.floor((diff / 1000) % 60);
 
                 const elD = document.getElementById('hero-cd-days');
                 const elH = document.getElementById('hero-cd-hours');
                 const elM = document.getElementById('hero-cd-mins');
+                const elS = document.getElementById('hero-cd-secs');
 
                 if(elD) elD.innerText = d;
                 if(elH) elH.innerText = h;
                 if(elM) elM.innerText = m;
+                if(elS) elS.innerText = s;
             };
 
             updateCountdown();
-            heroCountdownInterval = setInterval(updateCountdown, 60000); // update every minute
+            heroCountdownInterval = setInterval(updateCountdown, 1000); // update every second
 
             // --- GRID SECTION (Remaining festivals) ---
             gridContainer.innerHTML = '';
