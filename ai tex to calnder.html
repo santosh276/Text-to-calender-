@@ -5927,7 +5927,7 @@ function getCDNUrl(originalUrl) {
                     const mEvents = m.events.filter(e => e.symbol === '!' || e.symbol === '^' || e.symbol === '*');
                     mEvents.forEach(e => {
                         const eDate = new Date(m.year, m.month, e.date);
-                        if (eDate >= new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+                        if (eDate > new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
                             
                             // Check for banner image in details
                             const dateKey = `${m.year}-${m.month}-${e.date}`;
