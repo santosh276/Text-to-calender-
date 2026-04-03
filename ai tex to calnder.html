@@ -26,6 +26,16 @@
             .mobile-hide {
                 display: none !important;
             }
+            
+            /* Slightly smaller countdown badges on mobile */
+            .hero-cd-container { gap: 0.5rem !important; }
+            .hero-cd-badge { 
+                min-width: 48px !important; 
+                padding: 0.35rem !important;
+                border-radius: 0.5rem !important;
+            }
+            .hero-cd-num { font-size: 1.125rem !important; }
+            .hero-cd-label { font-size: 8px !important; margin-top: 0.15rem !important; }
             .mobile-main {
                 height: calc(100vh - 60px) !important; /* Adjust for bottom nav */
             }
@@ -2044,7 +2054,7 @@ The word "Nua" means new and "Khai" means food.
 
             <div id="app-festival-view" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4">
                 <!-- Hero Festival Banner -->
-                <div id="hero-festival-banner" class="relative rounded-2xl overflow-hidden shadow-lg mb-6 cursor-pointer group" style="height: 16rem; min-height: 250px;">
+                <div id="hero-festival-banner" class="relative rounded-2xl overflow-hidden shadow-lg mb-6 cursor-pointer group aspect-[3/1] md:aspect-[5/1]" style="width: 100%;">
                     <!-- populated by JS -->
                 </div>
                 
@@ -5732,9 +5742,9 @@ function getCDNUrl(originalUrl) {
                 slide.onclick = () => openDayModal(banner.date, data); // Click banner to open day
                 
                 slide.innerHTML = `
-                    <img src="${banner.url}" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 md:p-6 text-white pt-10">
-                        <div class="font-bold text-lg md:text-2xl drop-shadow-sm">${banner.caption}</div>
+                    <img src="${banner.url}" class="w-full h-full" style="object-fit: cover;">
+                    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white pt-10" style="background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent);">
+                        
                         <div class="text-xs md:text-sm opacity-90 font-semibold uppercase tracking-wide bg-black/30 inline-block px-2 py-0.5 rounded mt-1 backdrop-blur-sm border border-white/20">${months[data.month]} ${banner.date}</div>
                     </div>
                 `;
@@ -5965,9 +5975,9 @@ function getCDNUrl(originalUrl) {
 
             heroContainer.innerHTML = `
                 <div class="absolute inset-0" style="${heroBg}"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/30 to-transparent"></div>
+                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(17,24,39,0.8), rgba(17,24,39,0.3), transparent);"></div>
                 <!-- Left side transparent dark gradient layer for text contrast -->
-                <div class="absolute inset-y-0 left-0 w-3/4 bg-gradient-to-r from-black/80 via-black/40 to-transparent pointer-events-none"></div>
+                <div class="absolute inset-y-0 left-0 w-3/4 pointer-events-none" style="background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent);"></div>
                 
                 <div class="absolute -top-12 -right-8 opacity-10 pointer-events-none">
                     <svg width="200" height="200" viewBox="465.9997 -33.2869 1628.0002 1666.5739" fill="white">
@@ -5979,25 +5989,25 @@ function getCDNUrl(originalUrl) {
                     </svg>
                 </div>
                 <div class="absolute bottom-2 left-2 p-5 w-full flex flex-col gap-1 z-10">
-                    <div class="flex items-center gap-2 text-white text-xs font-bold tracking-wider uppercase [text-shadow:_0_1px_2px_rgb(0_0_0_/_100%)]">
+                    <div class="flex items-center gap-2 text-white font-bold tracking-wider uppercase" style="font-size: 0.55rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">
                         <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
                         Next Upcoming Festival
                     </div>
-                    <h1 class="text-4xl font-extrabold text-white leading-tight [text-shadow:_0_2px_6px_rgb(0_0_0_/_100%)]">${heroEvent.event.engName}</h1>
-                    <p class="text-white text-sm font-medium mb-3 [text-shadow:_0_1px_3px_rgb(0_0_0_/_100%)]">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
                     
-                    <div class="flex gap-3 mt-1">
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 [box-shadow:_0_4px_12px_rgba(0,0,0,0.5)]">
-                            <div id="hero-cd-days" class="text-xl font-bold text-white leading-none [text-shadow:_0_2px_4px_rgb(0_0_0_/_100%)]">--</div>
-                            <div class="text-[9px] text-white font-semibold uppercase mt-1 [text-shadow:_0_1px_2px_rgb(0_0_0_/_100%)]">Days</div>
+                    <p class="text-white text-xs font-medium mb-2" style="text-shadow: 0 1px 3px rgb(0 0 0 / 100%);">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
+                    
+                    <div class="flex gap-2 md:gap-3 mt-1 hero-cd-container">
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            <div id="hero-cd-days" class="text-lg md:text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
+                            <div class="text-[8px] md:text-[9px] text-white font-semibold uppercase mt-0.5 md:mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Days</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 [box-shadow:_0_4px_12px_rgba(0,0,0,0.5)]">
-                            <div id="hero-cd-hours" class="text-xl font-bold text-white leading-none [text-shadow:_0_2px_4px_rgb(0_0_0_/_100%)]">--</div>
-                            <div class="text-[9px] text-white font-semibold uppercase mt-1 [text-shadow:_0_1px_2px_rgb(0_0_0_/_100%)]">Hours</div>
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            <div id="hero-cd-hours" class="text-lg md:text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
+                            <div class="text-[8px] md:text-[9px] text-white font-semibold uppercase mt-0.5 md:mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Hours</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-2 min-w-[60px] text-center border border-white/30 [box-shadow:_0_4px_12px_rgba(0,0,0,0.5)]">
-                            <div id="hero-cd-mins" class="text-xl font-bold text-white leading-none [text-shadow:_0_2px_4px_rgb(0_0_0_/_100%)]">--</div>
-                            <div class="text-[9px] text-white font-semibold uppercase mt-1 [text-shadow:_0_1px_2px_rgb(0_0_0_/_100%)]">Mins</div>
+                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            <div id="hero-cd-mins" class="text-lg md:text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
+                            <div class="text-[8px] md:text-[9px] text-white font-semibold uppercase mt-0.5 md:mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Mins</div>
                         </div>
                     </div>
                 </div>
@@ -6044,12 +6054,12 @@ function getCDNUrl(originalUrl) {
 
             gridEvents.forEach(item => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer active:scale-95 flex flex-col";
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer active:scale-95 flex flex-col w-full min-w-0";
                 card.onclick = () => openDayModal(item.event.date, item.monthData);
 
                 let cardImgHtml = '';
                 if (item.imgUrl) {
-                    cardImgHtml = `<img src="${item.imgUrl}" class="w-full h-32 object-cover" alt="${item.event.engName}">`;
+                    cardImgHtml = `<img src="${item.imgUrl}" class="w-full h-32 object-cover object-left" alt="${item.event.engName}">`;
                 } else {
                     // Fallback visual
                     const gradients = [
@@ -8154,9 +8164,9 @@ function renderCalendarGrid(data) {
 
                         <!-- 4. Banner Display (Only if URL exists) -->
                         ${bannerUrl ? `
-                        <div id="modal-banner-container" class="modal-card p-0 overflow-hidden relative group min-h-[200px] transition-all duration-500 ease-out flex items-center justify-center border border-gray-200 bg-gray-50">
+                        <div id="modal-banner-container" class="modal-card p-0 overflow-hidden relative group aspect-[3/1] md:aspect-[5/1] transition-all duration-500 ease-out flex items-center justify-center border border-gray-200 bg-gray-50">
                             <!-- View Mode -->
-                            <img src="${bannerUrl}" onload="adjustBannerHeight(this)" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                            <img src="${bannerUrl}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                             <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
                         </div>` : ''}
 
@@ -8520,30 +8530,6 @@ function renderCalendarGrid(data) {
             }
         }
 
-        function adjustBannerHeight(img) {
-            const container = document.getElementById('modal-banner-container');
-            if (!container || !img) return;
-            
-            // Algorithm: Fit height based on aspect ratio, constrained to [200px, 300px]
-            // We use a timeout to ensure container has width (modal rendering)
-            setTimeout(() => {
-                const aspect = img.naturalHeight / img.naturalWidth;
-                const currentWidth = container.offsetWidth || container.getBoundingClientRect().width || 460;
-                
-                let targetHeight = currentWidth * aspect;
-                
-                // Constraints
-                const minHeight = 200;
-                const maxHeight = 300;
-                
-                // Clamp
-                let finalHeight = Math.max(minHeight, Math.min(targetHeight, maxHeight));
-                
-                // Apply
-                container.style.minHeight = `${finalHeight}px`;
-                container.style.height = `${finalHeight}px`;
-            }, 50);
-        }
 
     
         // --- LOCATION SELECTION LOGIC ---        // Handle Location Search
