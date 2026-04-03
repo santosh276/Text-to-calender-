@@ -5927,7 +5927,7 @@ function getCDNUrl(originalUrl) {
                     const mEvents = m.events.filter(e => e.symbol === '!' || e.symbol === '^' || e.symbol === '*');
                     mEvents.forEach(e => {
                         const eDate = new Date(m.year, m.month, e.date);
-                        if (eDate > new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+                        if (eDate >= new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
                             
                             // Check for banner image in details
                             const dateKey = `${m.year}-${m.month}-${e.date}`;
@@ -5988,9 +5988,9 @@ function getCDNUrl(originalUrl) {
                     </svg>
                 </div>
                 <div class="absolute bottom-2 left-2 p-5 w-full flex flex-col gap-1 z-10">
-                    <div class="flex items-center gap-2 text-white font-bold tracking-wider uppercase" style="font-size: 0.55rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
-                        Next Upcoming Festival
+                    <div class="flex items-center gap-2 text-white font-bold tracking-wider uppercase" style="font-size: 0.55rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%);" id="hero-festival-label">
+                        <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse" id="hero-festival-pulse"></div>
+                        <span id="hero-festival-text">Next Upcoming Festival</span>
                     </div>
                     
                     <p class="text-white text-xs font-medium mb-2" style="text-shadow: 0 1px 3px rgb(0 0 0 / 100%);">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
@@ -6013,9 +6013,23 @@ function getCDNUrl(originalUrl) {
             `;
 
             // Countdown Timer Logic
-            const targetDate = heroEvent.dateObj;
-            // Set target to start of day for the festival
-            targetDate.setHours(0, 0, 0, 0);
+            const targetDate = new Date(heroEvent.dateObj.getTime());
+
+            // Check if the festival is today
+            const isToday = (today.getDate() === targetDate.getDate() &&
+                             today.getMonth() === targetDate.getMonth() &&
+                             today.getFullYear() === targetDate.getFullYear());
+
+            if (isToday) {
+                document.getElementById('hero-festival-text').innerText = "Live Active Festival • Remaining Time";
+                document.getElementById('hero-festival-pulse').classList.add('bg-red-500');
+                document.getElementById('hero-festival-pulse').classList.remove('bg-white');
+                // Set target to end of day
+                targetDate.setHours(23, 59, 59, 999);
+            } else {
+                // Set target to start of day for the festival
+                targetDate.setHours(0, 0, 0, 0);
+            }
 
             const updateCountdown = () => {
                 const now = new Date();
