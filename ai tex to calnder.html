@@ -5975,9 +5975,8 @@ function getCDNUrl(originalUrl) {
 
             heroContainer.innerHTML = `
                 <div class="absolute inset-0" style="${heroBg}"></div>
-                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(17,24,39,0.8), rgba(17,24,39,0.3), transparent);"></div>
-                <!-- Left side transparent dark gradient layer for text contrast -->
-                <div class="absolute inset-y-0 left-0 w-3/4 pointer-events-none" style="background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent);"></div>
+                <!-- Left-aligned bottom corner transparent dark gradient layer for text contrast -->
+                <div class="absolute bottom-0 left-0 w-full h-full pointer-events-none" style="background: linear-gradient(to top right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 40%, transparent 70%);"></div>
                 
                 <div class="absolute -top-12 -right-8 opacity-10 pointer-events-none">
                     <svg width="200" height="200" viewBox="465.9997 -33.2869 1628.0002 1666.5739" fill="white">
