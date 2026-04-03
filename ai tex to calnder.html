@@ -6026,8 +6026,11 @@ function getCDNUrl(originalUrl) {
 
             if (isToday) {
                 document.getElementById('hero-festival-text').innerText = "Live Active Festival";
-                document.getElementById('hero-festival-pulse').classList.add('bg-red-500');
-                document.getElementById('hero-festival-pulse').classList.remove('bg-white');
+                const pulseEl = document.getElementById('hero-festival-pulse');
+                pulseEl.classList.remove('bg-white', 'animate-pulse');
+                pulseEl.classList.add('bg-red-500');
+                pulseEl.innerHTML = '<div class="absolute inset-0 rounded-full bg-red-500" style="opacity: 0.75; animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>';
+                pulseEl.style.position = 'relative';
                 // Set target to end of day
                 targetDate.setHours(23, 59, 59, 999);
             } else {
