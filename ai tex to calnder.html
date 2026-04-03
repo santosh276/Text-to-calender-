@@ -6058,7 +6058,12 @@ function getCDNUrl(originalUrl) {
 
                 let cardImgHtml = '';
                 if (item.imgUrl) {
-                    cardImgHtml = `<img src="${item.imgUrl}" class="w-full h-32 object-cover object-left" alt="${item.event.engName}">`;
+                    // Use scale and origin-left to zoom in on the left illustration and push the text out of the container
+                    cardImgHtml = `
+                        <div class="w-full h-32 overflow-hidden relative">
+                            <img src="${item.imgUrl}" class="w-full h-full object-cover origin-left scale-[1.75] md:scale-100 md:object-[15%_center]" alt="${item.event.engName}">
+                        </div>
+                    `;
                 } else {
                     // Fallback visual
                     const gradients = [
