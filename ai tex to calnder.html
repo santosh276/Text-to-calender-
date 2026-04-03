@@ -5996,7 +5996,7 @@ function getCDNUrl(originalUrl) {
                     <p class="text-white text-xs font-medium mb-2" style="text-shadow: 0 1px 3px rgb(0 0 0 / 100%);">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
                     
                     <div class="flex gap-2 md:gap-3 mt-1 hero-cd-container">
-                        <div class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                        <div id="hero-cd-days-container" class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                             <div id="hero-cd-days" class="text-lg md:text-xl font-bold text-white leading-none hero-cd-num" style="text-shadow: 0 2px 4px rgb(0 0 0 / 100%);">--</div>
                             <div class="text-[8px] md:text-[9px] text-white font-semibold uppercase mt-0.5 md:mt-1 hero-cd-label" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);">Days</div>
                         </div>
@@ -6039,11 +6039,14 @@ function getCDNUrl(originalUrl) {
                 const now = new Date();
                 const diff = targetDate - now;
                 
+                const elDaysContainer = document.getElementById('hero-cd-days-container');
+
                 if (diff <= 0) {
                     document.getElementById('hero-cd-days').innerText = "0";
                     document.getElementById('hero-cd-hours').innerText = "0";
                     document.getElementById('hero-cd-mins').innerText = "0";
                     document.getElementById('hero-cd-secs').innerText = "0";
+                    if (elDaysContainer) elDaysContainer.style.display = 'none';
                     clearInterval(heroCountdownInterval);
                     return;
                 }
@@ -6052,6 +6055,14 @@ function getCDNUrl(originalUrl) {
                 const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 const m = Math.floor((diff / 1000 / 60) % 60);
                 const s = Math.floor((diff / 1000) % 60);
+
+                if (elDaysContainer) {
+                    if (d <= 0) {
+                        elDaysContainer.style.display = 'none';
+                    } else {
+                        elDaysContainer.style.display = '';
+                    }
+                }
 
                 const elD = document.getElementById('hero-cd-days');
                 const elH = document.getElementById('hero-cd-hours');
