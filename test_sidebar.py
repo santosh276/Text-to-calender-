@@ -9,6 +9,9 @@ async def run():
         file_path = f"file://{os.path.abspath('ai tex to calnder.html')}"
         await page.goto(file_path)
 
+        # Take screenshot of header to verify button is removed
+        await page.screenshot(path="header.png")
+
         # Click the right corner gear icon
         await page.click("button[title='Settings']")
         await page.wait_for_selector("#settings-sidebar:visible")

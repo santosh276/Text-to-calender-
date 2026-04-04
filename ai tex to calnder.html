@@ -1772,9 +1772,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         </div>
 
         <div class="flex gap-3">
-          <button onclick="syncAndResetApp()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3 hidden md:flex">
-            <i class="fa-solid fa-rotate-right text-[24px]"></i>
-          </button>
           <button onclick="openSettingsSidebar()" title="Settings" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
             <i class="fa-solid fa-gear text-[24px]"></i>
           </button>
@@ -2256,6 +2253,14 @@ The word "Nua" means new and "Khai" means food.
                                 <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
+
+                        <!-- Restart App -->
+                        <button onclick="syncAndResetApp()" class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors active:scale-95 group">
+                            <span class="text-sm font-bold text-gray-700">Restart App</span>
+                            <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-orange-500 group-hover:border-orange-200 transition-colors">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </div>
+                        </button>
 
                     </div>
                 </div>
