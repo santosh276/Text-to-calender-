@@ -5984,15 +5984,17 @@ function getCDNUrl(originalUrl) {
                         </g>
                     </svg>
                 </div>
-                <div class="absolute bottom-2 left-2 p-5 w-full flex flex-col gap-1 z-10">
-                    <div class="flex items-center gap-2 text-white font-bold tracking-wider uppercase" style="font-size: 0.55rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%);" id="hero-festival-label">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white relative" id="hero-festival-pulse">
-                            <div class="absolute inset-0 rounded-full bg-white" style="opacity: 0.75; animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+                <div class="absolute bottom-2 left-2 p-5 w-full flex flex-col gap-2 z-10 pr-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-md border border-white/30 self-start w-fit max-w-[95%] md:max-w-[90%]" style="box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                        <div class="flex items-center gap-2 text-white font-medium tracking-wide shrink-0" style="font-size: 0.9rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%);" id="hero-festival-label">
+                            <div class="w-2.5 h-2.5 rounded-full bg-white shrink-0 relative" id="hero-festival-pulse">
+                                <div class="absolute inset-0 rounded-full bg-white" style="opacity: 0.75; animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+                            </div>
+                            <span id="hero-festival-text" class="whitespace-nowrap leading-none tracking-normal">Next Upcoming Festival</span>
                         </div>
-                        <span id="hero-festival-text">Next Upcoming Festival</span>
+                        <span class="text-white/80 shrink-0 mx-0.5" style="font-size: 1.1rem; line-height: 1;">|</span>
+                        <p class="text-white font-medium whitespace-nowrap overflow-hidden text-ellipsis leading-none tracking-normal" style="font-size: 0.9rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%); min-width: 0;">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
                     </div>
-                    
-                    <p class="text-white text-xs font-medium mb-1" style="text-shadow: 0 1px 3px rgb(0 0 0 / 100%);">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
                     
                     <div class="flex gap-2 md:gap-3 mt-1 hero-cd-container">
                         <div id="hero-cd-days-container" class="bg-white/20 backdrop-blur-md rounded-xl p-1.5 md:p-2 min-w-[50px] md:min-w-[60px] text-center border border-white/30 hero-cd-badge" style="box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
