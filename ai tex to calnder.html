@@ -5989,7 +5989,9 @@ function getCDNUrl(originalUrl) {
                 </div>
                 <div class="absolute bottom-2 left-2 p-5 w-full flex flex-col gap-1 z-10">
                     <div class="flex items-center gap-2 text-white font-bold tracking-wider uppercase" style="font-size: 0.55rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%);" id="hero-festival-label">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse" id="hero-festival-pulse"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-white relative" id="hero-festival-pulse">
+                            <div class="absolute inset-0 rounded-full bg-white" style="opacity: 0.75; animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+                        </div>
                         <span id="hero-festival-text">Next Upcoming Festival</span>
                     </div>
                     
@@ -6027,10 +6029,9 @@ function getCDNUrl(originalUrl) {
             if (isToday) {
                 document.getElementById('hero-festival-text').innerText = "Live Active Festival";
                 const pulseEl = document.getElementById('hero-festival-pulse');
-                pulseEl.classList.remove('bg-white', 'animate-pulse');
+                pulseEl.classList.remove('bg-white');
                 pulseEl.classList.add('bg-red-500');
                 pulseEl.innerHTML = '<div class="absolute inset-0 rounded-full bg-red-500" style="opacity: 0.75; animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>';
-                pulseEl.style.position = 'relative';
                 // Set target to end of day
                 targetDate.setHours(23, 59, 59, 999);
             } else {
