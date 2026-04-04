@@ -6148,8 +6148,7 @@ function getCDNUrl(originalUrl) {
             const allNavBtns = document.querySelectorAll('#mobile-bottom-nav button');
             allNavBtns.forEach(btn => {
                 btn.classList.replace('text-orange-600', 'text-gray-400');
-                if (btn.querySelector('.fa-calendar') || btn.querySelector('svg[stroke="currentColor"]')) {
-                    // Added fallback check for svg since the new icon might not have the class properly bound if replaced, though we added it.
+                if (btn.querySelector('.fa-calendar')) {
                     if (viewName === 'month' || viewName === 'year') btn.classList.replace('text-gray-400', 'text-orange-600');
                 } else if (btn.querySelector('.festivals-icon')) {
                     if (viewName === 'festivals') btn.classList.replace('text-gray-400', 'text-orange-600');
@@ -6160,7 +6159,7 @@ function getCDNUrl(originalUrl) {
             const allDesktopNavBtns = document.querySelectorAll('#desktop-top-nav button');
             allDesktopNavBtns.forEach(btn => {
                 btn.classList.replace('text-white', 'text-white/80');
-                if (btn.querySelector('.fa-calendar') || btn.querySelector('svg[stroke="currentColor"]')) {
+                if (btn.querySelector('.fa-calendar')) {
                     if (viewName === 'month' || viewName === 'year') btn.classList.replace('text-white/80', 'text-white');
                 } else if (btn.querySelector('.festivals-icon')) {
                     if (viewName === 'festivals') btn.classList.replace('text-white/80', 'text-white');
