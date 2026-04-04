@@ -5985,15 +5985,15 @@ function getCDNUrl(originalUrl) {
                     </svg>
                 </div>
                 <div class="absolute bottom-2 left-2 p-5 w-full flex flex-col gap-2 z-10 pr-6">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-md border border-white/30 self-start w-fit max-w-[95%] md:max-w-[90%]" style="box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-                        <div class="flex items-center gap-2 text-white font-medium tracking-wide shrink-0" style="font-size: 0.9rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%);" id="hero-festival-label">
-                            <div class="w-2.5 h-2.5 rounded-full bg-white shrink-0 relative" id="hero-festival-pulse">
+                    <div class="inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 rounded-full bg-black/20 backdrop-blur-md border border-white/30 self-start w-fit max-w-[95%] md:max-w-[90%]" style="box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                        <div class="flex items-center gap-1.5 md:gap-2 text-white font-medium shrink-0 text-[0.85rem] tracking-wide" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%);" id="hero-festival-label">
+                            <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white shrink-0 relative" id="hero-festival-pulse">
                                 <div class="absolute inset-0 rounded-full bg-white" style="opacity: 0.75; animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
                             </div>
-                            <span id="hero-festival-text" class="whitespace-nowrap leading-none tracking-normal">Next Upcoming Festival</span>
+                            <span id="hero-festival-text" class="whitespace-nowrap leading-none">Next Upcoming Festival</span>
                         </div>
-                        <span class="text-white/80 shrink-0 mx-0.5" style="font-size: 1.1rem; line-height: 1;">|</span>
-                        <p class="text-white font-medium whitespace-nowrap overflow-hidden text-ellipsis leading-none tracking-normal" style="font-size: 0.9rem; text-shadow: 0 1px 2px rgb(0 0 0 / 100%); min-width: 0;">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
+                        <span class="text-white/80 shrink-0 mx-0.5 text-[0.95rem] leading-none font-light">|</span>
+                        <p class="text-white font-medium whitespace-nowrap overflow-hidden text-ellipsis leading-none text-[0.85rem] tracking-wide" style="text-shadow: 0 1px 2px rgb(0 0 0 / 100%); min-width: 0;">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
                     </div>
                     
                     <div class="flex gap-2 md:gap-3 mt-1 hero-cd-container">
@@ -6146,22 +6146,66 @@ function getCDNUrl(originalUrl) {
             // Handle mobile bottom nav button states
             const allNavBtns = document.querySelectorAll('#mobile-bottom-nav button');
             allNavBtns.forEach(btn => {
-                btn.classList.replace('text-orange-600', 'text-gray-400');
+                btn.classList.remove('text-orange-600');
+                btn.classList.add('text-gray-400');
                 if (btn.querySelector('.fa-calendar')) {
-                    if (viewName === 'month' || viewName === 'year') btn.classList.replace('text-gray-400', 'text-orange-600');
+                    if (viewName === 'month' || viewName === 'year') {
+                        btn.classList.remove('text-gray-400');
+                        btn.classList.add('text-orange-600');
+                    }
                 } else if (btn.querySelector('.festivals-icon')) {
-                    if (viewName === 'festivals') btn.classList.replace('text-gray-400', 'text-orange-600');
+                    if (viewName === 'festivals') {
+                        btn.classList.remove('text-gray-400');
+                        btn.classList.add('text-orange-600');
+                    }
+                } else if (btn.querySelector('.fa-music')) {
+                    if (viewName === 'listen') {
+                        btn.classList.remove('text-gray-400');
+                        btn.classList.add('text-orange-600');
+                    }
+                } else if (btn.querySelector('.fa-user')) {
+                    if (viewName === 'profile') {
+                        btn.classList.remove('text-gray-400');
+                        btn.classList.add('text-orange-600');
+                    }
+                } else if (btn.querySelector('.fa-comment-dots') || btn.querySelector('.fa-message')) {
+                    if (viewName === 'chat') {
+                        btn.classList.remove('text-gray-400');
+                        btn.classList.add('text-orange-600');
+                    }
                 }
             });
 
             // Handle desktop top nav button states
             const allDesktopNavBtns = document.querySelectorAll('#desktop-top-nav button');
             allDesktopNavBtns.forEach(btn => {
-                btn.classList.replace('text-white', 'text-white/80');
+                btn.classList.remove('text-white');
+                btn.classList.add('text-white/80');
                 if (btn.querySelector('.fa-calendar')) {
-                    if (viewName === 'month' || viewName === 'year') btn.classList.replace('text-white/80', 'text-white');
+                    if (viewName === 'month' || viewName === 'year') {
+                        btn.classList.remove('text-white/80');
+                        btn.classList.add('text-white');
+                    }
                 } else if (btn.querySelector('.festivals-icon')) {
-                    if (viewName === 'festivals') btn.classList.replace('text-white/80', 'text-white');
+                    if (viewName === 'festivals') {
+                        btn.classList.remove('text-white/80');
+                        btn.classList.add('text-white');
+                    }
+                } else if (btn.querySelector('.fa-music')) {
+                    if (viewName === 'listen') {
+                        btn.classList.remove('text-white/80');
+                        btn.classList.add('text-white');
+                    }
+                } else if (btn.querySelector('.fa-user')) {
+                    if (viewName === 'profile') {
+                        btn.classList.remove('text-white/80');
+                        btn.classList.add('text-white');
+                    }
+                } else if (btn.querySelector('.fa-comment-dots') || btn.querySelector('.fa-message')) {
+                    if (viewName === 'chat') {
+                        btn.classList.remove('text-white/80');
+                        btn.classList.add('text-white');
+                    }
                 }
             });
             
@@ -8901,7 +8945,7 @@ function renderCalendarGrid(data) {
             <svg viewBox="0 0 24 24" width="20" height="20" class="fa-calendar text-xl" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
             <span class="text-[10px] font-bold">Calendar</span>
         </button>
-        <button id="nav-btn-festivals" class="flex flex-col items-center justify-center gap-1 text-orange-600 transition-colors flex-1" onclick="toggleView('festivals')">
+        <button id="nav-btn-festivals" class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1" onclick="toggleView('festivals')">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="festivals-icon w-5 h-5 mb-0.5 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5.8 11.3 2 22l10.7-3.79" />
                 <path d="M4 3h.01" />
