@@ -1772,8 +1772,11 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         </div>
 
         <div class="flex gap-3">
-          <button onclick="syncAndResetApp()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
+          <button onclick="syncAndResetApp()" title="Reset App Data" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3 hidden md:flex">
             <i class="fa-solid fa-rotate-right text-[24px]"></i>
+          </button>
+          <button onclick="openSettingsSidebar()" title="Settings" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
+            <i class="fa-solid fa-gear text-[24px]"></i>
           </button>
         </div>
     </header>
@@ -1799,7 +1802,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                     <button onclick="downloadTxtFile()" class="header-btn flex-1"><i class="fa-solid fa-file-lines"></i> Download TXT</button>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="openSettingsModal()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
+                    <button onclick="openSettingsSidebar()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
                     <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
                 </div>
                 <div class="mt-2 border-t border-gray-800 pt-3">
@@ -2180,27 +2183,30 @@ The word "Nua" means new and "Khai" means food.
         </div>
     </div>
 
-    <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
-    <div id="settings-modal" class="fixed inset-0 z-[80] flex items-center justify-center modal-hidden menu-overlay" style="display: none;">
-        <div class="modal-backdrop absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
-        <div class="modal-content w-full h-full md:w-[90%] md:h-[90%] bg-aurora rounded-none md:rounded-3xl shadow-2xl relative z-10 overflow-hidden flex flex-col glass">
+    <!-- SETTINGS SIDEBAR OVERLAY -->
+    <div id="settings-sidebar" class="fixed inset-0 z-[90] flex justify-end" style="display: none;">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeSettingsSidebar()"></div>
+
+        <!-- Sidebar Content -->
+        <div class="relative w-[320px] max-w-[85vw] h-full bg-white shadow-2xl flex flex-col transform transition-transform translate-x-full duration-300 overflow-hidden" id="settings-sidebar-content">
             
-            <!-- Glassmorphism Header -->
-            <div class="glass-header p-6 border-b border-gray-200/50 flex justify-between items-center bg-white/90 sticky top-0 z-20">
-                <h3 class="font-bold text-2xl text-gray-800 flex items-center gap-3">
-                    <i class="fa-solid fa-bars text-orange-500"></i> Menu
+            <!-- Header -->
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 shrink-0">
+                <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-orange-500"></i> Settings
                 </h3>
-                <button onclick="closeSettingsModal()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition shadow-sm">
-                    <i class="fa-solid fa-times text-lg"></i>
+                <button onclick="closeSettingsSidebar()" class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-500 transition">
+                    <i class="fa-solid fa-times"></i>
                 </button>
             </div>
 
-            <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
-                
-                <!-- SECTION 1: Quick Settings (Preserved) -->
+            <!-- Scrollable Content -->
+            <div class="overflow-y-auto flex-grow p-4 custom-scroll" id="settings-sidebar-body">
+                <!-- SECTION 1: Quick Settings -->
                 <div class="mb-8">
-                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Settings</h4>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">Quick Settings</h4>
+                    <div class="flex flex-col gap-4">
                         
                         <!-- Language -->
                         <div class="w-full">
@@ -2231,7 +2237,7 @@ The word "Nua" means new and "Khai" means food.
                             <span class="text-sm font-bold text-gray-700">Festivals</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
-                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
 
@@ -2239,7 +2245,7 @@ The word "Nua" means new and "Khai" means food.
                             <span class="text-sm font-bold text-gray-700">Panchang</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
-                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
 
@@ -2247,12 +2253,82 @@ The word "Nua" means new and "Khai" means food.
                             <span class="text-sm font-bold text-gray-700">Daily Banner</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="banner-toggle" class="sr-only peer" onchange="toggleBannerVisibility(this)">
-                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
 
                     </div>
                 </div>
+
+                <!-- SECTION 3: Developer Settings (Sync) - Hidden in App Mode -->
+                <div id="container-sync-settings" class="mb-8 border-t border-gray-200 pt-6">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-code"></i> Developer Settings</h4>
+
+                    <div class="flex flex-col gap-4">
+                        <div id="container-sync-docs" class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="text-sm font-bold text-gray-700">Live Sync Docs</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
+                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="text-sm font-bold text-gray-700">Live Sync GitHub</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
+                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Language Links (Developer) -->
+                <div id="container-lang-links" class="mb-8">
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Configure Language Source</label>
+                        <div class="flex flex-col gap-3">
+                            <select id="sync-lang-select" onchange="updateSyncLinkInput()" class="w-full p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500 bg-white">
+                                <option value="en">English</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="mr">Marathi (मराठी)</option>
+                                <option value="gu">Gujarati (ગુજરાતી)</option>
+                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                <option value="ta">Tamil (தமிழ்)</option>
+                                <option value="te">Telugu (తెలుగు)</option>
+                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                <option value="ml">Malayalam (മലയാളം)</option>
+                                <option value="as">Assamese (অসমীয়া)</option>
+                            </select>
+                            <input type="text" id="sync-link-input" placeholder="Paste GitHub Raw Link..." class="w-full p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500">
+                            <button onclick="saveSyncLink()" class="w-full bg-gray-800 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-gray-700 transition active:scale-95 shadow-md">Save</button>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-2 italic text-center">Stored securely.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
+    <div id="settings-modal" class="fixed inset-0 z-[80] flex items-center justify-center modal-hidden menu-overlay" style="display: none;">
+        <div class="modal-backdrop absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
+        <div class="modal-content w-full h-full md:w-[90%] md:h-[90%] bg-aurora rounded-none md:rounded-3xl shadow-2xl relative z-10 overflow-hidden flex flex-col glass">
+
+            <!-- Glassmorphism Header -->
+            <div class="glass-header p-6 border-b border-gray-200/50 flex justify-between items-center bg-white/90 sticky top-0 z-20">
+                <h3 class="font-bold text-2xl text-gray-800 flex items-center gap-3">
+                    <i class="fa-solid fa-bars text-orange-500"></i> Menu
+                </h3>
+                <button onclick="closeSettingsModal()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition shadow-sm">
+                    <i class="fa-solid fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
 
                 <!-- SECTION 2: Menu Grid (The "Typing Tutor" Design) -->
                 <div class="mb-8">
@@ -2343,54 +2419,6 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
 
-                <!-- SECTION 3: Developer Settings (Sync) - Hidden in App Mode -->
-                <div id="container-sync-settings" class="mt-8 border-t border-gray-200 pt-8">
-                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4"><i class="fa-solid fa-code"></i> Developer Settings</h4>
-                    
-                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
-                        <div id="container-sync-docs" class="flex items-center justify-between">
-                            <label class="text-sm font-bold text-gray-700">Live Sync Docs</label>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
-                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                            </label>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-bold text-gray-700">Live Sync GitHub</label>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
-                                <div class="w-11 h-6 bg-gray-100 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Language Links (Developer) -->
-                <div id="container-lang-links" class="mt-4">
-                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200">
-                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Configure Language Source</label>
-                        <div class="flex flex-col md:flex-row gap-3">
-                            <select id="sync-lang-select" onchange="updateSyncLinkInput()" class="md:w-1/3 p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500 bg-white">
-                                <option value="en">English</option>
-                                <option value="hi">Hindi (हिन्दी)</option>
-                                <option value="or">Odia (ଓଡ଼ିଆ)</option>
-                                <option value="bn">Bengali (বাংলা)</option>
-                                <option value="mr">Marathi (मराठी)</option>
-                                <option value="gu">Gujarati (ગુજરાતી)</option>
-                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                                <option value="ta">Tamil (தமிழ்)</option>
-                                <option value="te">Telugu (తెలుగు)</option>
-                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                                <option value="ml">Malayalam (മലയാളം)</option>
-                                <option value="as">Assamese (অসমীয়া)</option>
-                            </select>
-                            <input type="text" id="sync-link-input" placeholder="Paste GitHub Raw Link..." class="flex-1 p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500">
-                            <button onclick="saveSyncLink()" class="bg-gray-800 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-gray-700 transition active:scale-95 shadow-lg">Save</button>
-                        </div>
-                        <p class="text-[10px] text-gray-400 mt-2 italic">Stored securely.</p>
-                    </div>
-                </div>
 
             </div>
         </div>
@@ -3882,15 +3910,9 @@ const LOCATION_DATA = {
             }
         }
 
-        function openSettingsModal() {
-            lockScroll();
-
-            document.getElementById('language-select').value = appState.config.language || 'en';
-            
-            // --- EDITOR LOGIC START ---
-            // Environment Check: Hide Sync Settings in App Mode (User View)
+        // Update sidebar content visibility based on environment
+        function initSettingsContentVisibility() {
             const isEditor = !!document.getElementById('editor');
-            
             const syncSettingsContainer = document.getElementById('container-sync-settings');
             const langLinksContainer = document.getElementById('container-lang-links');
             
@@ -3908,7 +3930,14 @@ const LOCATION_DATA = {
                      docsContainer.style.display = 'flex'; // Docs sync is editor-only feature
                  }
             }
-            // --- EDITOR LOGIC END ---
+        }
+
+        function openSettingsSidebar() {
+            lockScroll();
+
+            document.getElementById('language-select').value = appState.config.language || 'en';
+
+            initSettingsContentVisibility();
 
             // Update toggle state
             const toggle = document.getElementById('banner-toggle');
@@ -3932,6 +3961,33 @@ const LOCATION_DATA = {
             if(docsToggle) docsToggle.checked = isDocs;
             if(githubToggle) githubToggle.checked = isGitHub;
 
+            const sidebar = document.getElementById('settings-sidebar');
+            const content = document.getElementById('settings-sidebar-content');
+
+            sidebar.style.display = 'flex';
+            // Force reflow
+            sidebar.offsetHeight;
+            content.classList.remove('translate-x-full');
+        }
+
+        function closeSettingsSidebar() {
+            const sidebar = document.getElementById('settings-sidebar');
+            const content = document.getElementById('settings-sidebar-content');
+
+            content.classList.add('translate-x-full');
+
+            unlockScroll();
+
+            // Wait for transition to complete before hiding container
+            setTimeout(() => {
+                sidebar.style.display = 'none';
+            }, 300);
+        }
+
+        function openSettingsModal() {
+            lockScroll();
+            initSettingsContentVisibility();
+
             const modal = document.getElementById('settings-modal');
             modal.style.display = 'flex';
             setTimeout(() => {
@@ -3939,6 +3995,7 @@ const LOCATION_DATA = {
                 modal.classList.add('is-open');
             }, 10);
         }
+
         function closeSettingsModal() {
             const modal = document.getElementById('settings-modal');
             modal.classList.remove('is-open');
