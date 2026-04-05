@@ -727,7 +727,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     /* Missing Tablet/Desktop Utilities */
     @media (min-width: 768px) {
         .md\:h-auto { height: auto; }
-        .md\:aspect-\[5\/2\] { aspect-ratio: 5 / 2; }
+        .md\:aspect-\[3\/1\] { aspect-ratio: 3 / 1; }
         .md\:bg-white { --tw-bg-opacity: 1; background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)); }
         .md\:bg-red-50 { --tw-bg-opacity: 1; background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1)); }
         .md\:bg-red-100 { --tw-bg-opacity: 1; background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1)); }
@@ -6162,7 +6162,7 @@ function getCDNUrl(originalUrl) {
                 if (item.imgUrl) {
                     // Use background-image with bg-left (mobile) and bg-[15%_center] (desktop) to strictly crop the right side text out.
                     cardImgHtml = `
-                        <div class="w-full h-32 md:h-auto md:aspect-[5/2] overflow-hidden relative bg-left md:bg-[15%_center] bg-cover" style="background-image: url('${item.imgUrl}');" title="${item.event.engName}">
+                        <div class="w-full h-32 md:h-auto md:aspect-[3/1] overflow-hidden relative bg-left md:bg-center bg-cover" style="background-image: url('${item.imgUrl}');" title="${item.event.engName}">
                         </div>
                     `;
                 } else {
@@ -6176,7 +6176,7 @@ function getCDNUrl(originalUrl) {
                     // Pick pseudo-randomly based on date
                     const grad = gradients[(item.event.date + item.monthData.month) % gradients.length];
                     cardImgHtml = `
-                        <div class="w-full h-32 md:h-auto md:aspect-[5/2] bg-gradient-to-br ${grad} flex items-center justify-center opacity-80">
+                        <div class="w-full h-32 md:h-auto md:aspect-[3/1] bg-gradient-to-br ${grad} flex items-center justify-center opacity-80">
                             <i class="fa-solid fa-om text-white/30 text-5xl"></i>
                         </div>
                     `;
