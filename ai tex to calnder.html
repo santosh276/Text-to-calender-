@@ -6167,8 +6167,30 @@ function getCDNUrl(originalUrl) {
 
             gridEvents.forEach(item => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer active:scale-95 flex flex-col w-full min-w-0";
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer active:scale-95 flex flex-col w-full min-w-0 relative";
                 card.onclick = () => openDayModal(item.event.date, item.monthData);
+
+                // Calculate days remaining
+                const itemTargetDate = new Date(item.dateObj.getTime());
+                itemTargetDate.setHours(0, 0, 0, 0);
+                const todayStart = new Date(today.getTime());
+                todayStart.setHours(0, 0, 0, 0);
+
+                const diffTime = itemTargetDate - todayStart;
+                const daysDiff = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                let badgeHtml = '';
+                if (daysDiff === 0) {
+                    badgeHtml = `<div class="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full border" style="background-color: rgba(255, 237, 213, 0.85); backdrop-filter: blur(4px); border-color: rgba(251, 146, 60, 0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10;">
+                        <svg class="w-3 h-3 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="text-[9px] font-bold text-orange-600 tracking-wider">TODAY</span>
+                    </div>`;
+                } else {
+                    badgeHtml = `<div class="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full border" style="background-color: rgba(255, 237, 213, 0.85); backdrop-filter: blur(4px); border-color: rgba(251, 146, 60, 0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10;">
+                        <svg class="w-3 h-3 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="text-[9px] font-bold text-orange-600 tracking-wider">${daysDiff} DAYS</span>
+                    </div>`;
+                }
 
                 let cardImgHtml = '';
                 if (item.imgUrl) {
@@ -6195,6 +6217,7 @@ function getCDNUrl(originalUrl) {
                 }
 
                 card.innerHTML = `
+                    ${badgeHtml}
                     ${cardImgHtml}
                     <div class="p-3 flex-1 flex flex-col justify-between">
                         <h3 class="font-bold text-gray-900 text-sm leading-snug mb-1 line-clamp-2">${item.event.engName}</h3>
