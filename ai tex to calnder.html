@@ -6181,14 +6181,14 @@ function getCDNUrl(originalUrl) {
 
                 let badgeHtml = '';
                 if (daysDiff === 0) {
-                    badgeHtml = `<div class="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full border" style="background-color: rgba(255, 237, 213, 0.85); backdrop-filter: blur(4px); border-color: rgba(251, 146, 60, 0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10;">
-                        <svg class="w-3 h-3 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span class="text-[9px] font-bold text-orange-600 tracking-wider">TODAY</span>
+                    badgeHtml = `<div class="absolute top-2 right-2 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border" style="background-color: rgba(255, 237, 213, 0.5); backdrop-filter: blur(6px); border-color: rgba(251, 146, 60, 0.3); box-shadow: 0 1px 2px rgba(0,0,0,0.05); z-index: 10;">
+                        <svg class="w-2.5 h-2.5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="text-[8px] font-bold text-orange-600 tracking-wider">TODAY</span>
                     </div>`;
                 } else {
-                    badgeHtml = `<div class="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full border" style="background-color: rgba(255, 237, 213, 0.85); backdrop-filter: blur(4px); border-color: rgba(251, 146, 60, 0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10;">
-                        <svg class="w-3 h-3 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span class="text-[9px] font-bold text-orange-600 tracking-wider">${daysDiff} DAYS</span>
+                    badgeHtml = `<div class="absolute top-2 right-2 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border" style="background-color: rgba(255, 237, 213, 0.5); backdrop-filter: blur(6px); border-color: rgba(251, 146, 60, 0.3); box-shadow: 0 1px 2px rgba(0,0,0,0.05); z-index: 10;">
+                        <svg class="w-2.5 h-2.5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="text-[8px] font-bold text-orange-600 tracking-wider">${daysDiff} DAYS</span>
                     </div>`;
                 }
 
