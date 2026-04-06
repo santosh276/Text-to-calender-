@@ -461,8 +461,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             transform: translateZ(0); /* Hardware accelerate */
         }
         .modal-content { 
-            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out; 
-            will-change: transform, opacity; 
+            transition: opacity 0.2s ease-out; 
+            will-change: opacity; 
             transform: translateZ(0);
             backface-visibility: hidden;
         }
@@ -474,30 +474,22 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .modal-hidden .modal-content { 
             opacity: 0; 
             /* Subtle scale down only, no translation to avoid movement clutter */
-            transform: scale(0.96); 
             pointer-events: none; 
             /* Faster opacity fade, simpler transform to reduce repaints */
-            transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+            transition: opacity 0.15s ease-in;
         }
 
-        /* Default (Desktop) - Keep slide from right */
-        @media (min-width: 768px) {
-            #settings-modal .modal-content { transform: translateX(100%); }
-            #settings-modal.is-open .modal-content { transform: translateX(0); }
-        }
-
-        /* Mobile - Slide from Bottom */
+        /* Mobile */
         @media (max-width: 767px) {
             #settings-modal .modal-content {
-                transform: translateY(100%); /* Start below screen */
-                border-radius: 24px 24px 0 0 !important; /* Round top corners only */
-                height: 85vh !important; /* Don't cover full screen */
-                position: absolute;
-                bottom: 0;
-            }
-            
-            #settings-modal.is-open .modal-content {
-                transform: translateY(0);
+                border-radius: 0 !important; /* Full screen, no rounded corners */
+                height: 100vh !important; /* Full screen height (fallback) */
+                height: 100dvh !important; /* Full dynamic screen height */
+                width: 100vw !important; /* Full screen width */
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                bottom: 0 !important;
             }
         }
 
@@ -2338,7 +2330,8 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
-    <div id="settings-modal" class="fixed inset-0 z-[80] flex items-center justify-center modal-hidden menu-overlay" style="display: none;">
+    <!-- z-[80] -> z-[200] so it goes over the mobile bottom nav z-[100] -->
+    <div id="settings-modal" class="fixed inset-0 z-[200] flex items-center justify-center modal-hidden menu-overlay" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
         <div class="modal-content w-full h-full md:w-[90%] md:h-[90%] bg-aurora rounded-none md:rounded-3xl shadow-2xl relative z-10 overflow-hidden flex flex-col glass">
             
@@ -4523,7 +4516,7 @@ const LOCATION_DATA = {
                 
                 // Save to App State
                 appState.config.liveUrl = url;
-                appState.config.syncGitHubUrl = url;
+                                appState.config.syncGitHubUrl = url;
                 
                 saveConfigToStorage();
                 
