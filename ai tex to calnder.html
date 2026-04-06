@@ -770,80 +770,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             will-change: opacity;
         }
         
-        .menu-card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-            will-change: transform;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1.5rem;
-            cursor: pointer;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-
-        .menu-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-
-        .menu-card .accent-line {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0%;
-            height: 3px;
-            background: linear-gradient(90deg, #FF9933, #B91C1C);
-            transition: width 0.4s ease-out;
-        }
-
-        .menu-card:hover .accent-line {
-            width: 100%;
-        }
-
-        .menu-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #FF9933 0%, #B91C1C 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transition: transform 0.3s ease;
-        }
-
-        .menu-card:hover .menu-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .menu-title {
-            font-family: 'Poppins', 'Inter', sans-serif;
-            font-weight: 700;
-            color: #333;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .menu-sub-items {
-            font-size: 0.75rem;
-            color: #666;
-            opacity: 0;
-            max-height: 0;
-            transition: all 0.3s ease;
-            transform: translateY(10px);
-        }
-
-        .menu-card:hover .menu-sub-items {
-            opacity: 1;
-            max-height: 50px;
-            transform: translateY(0);
-        }
-
         /* --- New Panchang Styles --- */
         /* --- Ending Soon Pulse (Live Timers) --- */
         @keyframes ending-soon-pulse {
@@ -1771,7 +1697,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                 <i class="fa-regular fa-comment-dots text-xl"></i>
                 <span class="text-[10px] font-bold">Chat</span>
             </button>
-            <button onclick="toggleView('menu')" class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
+            <button onclick="toggleView('menu')" class="menu-icon-btn flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
                     <rect x="3" y="3" width="7" height="7" rx="2" ry="2"></rect>
                     <rect x="14" y="3" width="7" height="7" rx="2" ry="2"></rect>
@@ -2339,97 +2265,7 @@ The word "Nua" means new and "Khai" means food.
 
 
             <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
-                
-                <!-- SECTION 2: Menu Grid (The "Typing Tutor" Design) -->
-                <div class="mb-8">
-                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Explore</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        
-                        <!-- Horoscope -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-solid fa-star-and-crescent menu-icon"></i>
-                            <div class="menu-title">Horoscope</div>
-                            <div class="menu-sub-items">Daily, Weekly & Monthly Predictions</div>
-                        </div>
-
-                        <!-- Puja Vidhi -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-solid fa-bell menu-icon"></i>
-                            <div class="menu-title">Puja Vidhi</div>
-                            <div class="menu-sub-items">Step-by-step Rituals & Mantras</div>
-                        </div>
-
-                        <!-- Kundli -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-solid fa-scroll menu-icon"></i>
-                            <div class="menu-title">Kundli</div>
-                            <div class="menu-sub-items">Birth Chart & Analysis</div>
-                        </div>
-
-                        <!-- Matching -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-solid fa-heart menu-icon"></i>
-                            <div class="menu-title">Matching</div>
-                            <div class="menu-sub-items">
-                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Marriage Match</div>
-                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Zodiac Match</div>
-                            </div>
-                        </div>
-
-                        <!-- Daily Panchang -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-regular fa-calendar-check menu-icon"></i>
-                            <div class="menu-title">Daily Panchang</div>
-                            <div class="menu-sub-items">Tithi, Nakshatra, Yoga & Karana</div>
-                        </div>
-
-                        <!-- Smart Tool -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-solid fa-calculator menu-icon"></i>
-                            <div class="menu-title">Smart Tool</div>
-                            <div class="menu-sub-items">Date Converter & Utilities</div>
-                        </div>
-
-                        <!-- Bhagavat Gita -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-solid fa-book-open menu-icon"></i>
-                            <div class="menu-title">Bhagavat Gita</div>
-                            <div class="menu-sub-items">Slokas & Meanings</div>
-                        </div>
-
-                        <!-- Holiday -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-solid fa-umbrella-beach menu-icon"></i>
-                            <div class="menu-title">Holiday</div>
-                            <div class="menu-sub-items">
-                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Government Holiday</div>
-                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> State Holiday</div>
-                            </div>
-                        </div>
-
-                        <!-- Muhurat -->
-                        <div class="menu-card group">
-                            <div class="accent-line"></div>
-                            <i class="fa-solid fa-clock menu-icon"></i>
-                            <div class="menu-title">Muhurat</div>
-                            <div class="menu-sub-items">
-                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Griha Muhurat</div>
-                                <div><i class="fa-solid fa-caret-right text-orange-400 mr-1"></i> Vivah Muhurat</div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-
+                <!-- Tab contents cleared -->
             </div>
         </div>
     </div>
@@ -6231,7 +6067,7 @@ function getCDNUrl(originalUrl) {
                     if (viewName === 'month' || viewName === 'year') btn.classList.replace('text-gray-400', 'text-orange-600');
                 } else if (btn.querySelector('.festivals-icon')) {
                     if (viewName === 'festivals') btn.classList.replace('text-gray-400', 'text-orange-600');
-                } else if (btn.querySelector('svg circle') || btn.textContent.includes('More')) {
+                } else if (btn.classList.contains('menu-icon-btn')) {
                     if (viewName === 'menu') btn.classList.replace('text-gray-400', 'text-orange-600');
                 }
             });
@@ -6244,7 +6080,7 @@ function getCDNUrl(originalUrl) {
                     if (viewName === 'month' || viewName === 'year') btn.classList.replace('text-white/80', 'text-white');
                 } else if (btn.querySelector('.festivals-icon')) {
                     if (viewName === 'festivals') btn.classList.replace('text-white/80', 'text-white');
-                } else if (btn.querySelector('svg circle') || btn.textContent.includes('More')) {
+                } else if (btn.classList.contains('menu-icon-btn')) {
                     if (viewName === 'menu') btn.classList.replace('text-white/80', 'text-white');
                 }
             });
@@ -9007,7 +8843,7 @@ function renderCalendarGrid(data) {
             <i class="fa-regular fa-comment-dots text-xl"></i>
             <span class="text-[10px] font-bold">Chat</span>
         </button>
-        <button onclick="toggleView('menu')" class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
+        <button onclick="toggleView('menu')" class="menu-icon-btn flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
                 <rect x="3" y="3" width="7" height="7" rx="2" ry="2"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="2" ry="2"></rect>
