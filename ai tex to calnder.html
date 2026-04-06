@@ -490,10 +490,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         @media (max-width: 767px) {
             #settings-modal .modal-content {
                 transform: translateY(100%); /* Start below screen */
-                border-radius: 24px 24px 0 0 !important; /* Round top corners only */
-                height: 95vh !important; /* Don't cover full screen */
-                position: absolute;
-                bottom: 0;
+                border-radius: 0 !important; /* Full screen, no rounded corners */
+                height: 100vh !important; /* Full screen height (fallback) */
+                height: 100dvh !important; /* Full dynamic screen height */
+                width: 100vw !important; /* Full screen width */
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                bottom: 0 !important;
             }
             
             #settings-modal.is-open .modal-content {
@@ -2338,7 +2342,8 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
-    <div id="settings-modal" class="fixed inset-0 z-[80] flex items-center justify-center modal-hidden menu-overlay" style="display: none;">
+    <!-- z-[80] -> z-[200] so it goes over the mobile bottom nav z-[100] -->
+    <div id="settings-modal" class="fixed inset-0 z-[200] flex items-center justify-center modal-hidden menu-overlay" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
         <div class="modal-content w-full h-full md:w-[90%] md:h-[90%] bg-aurora rounded-none md:rounded-3xl shadow-2xl relative z-10 overflow-hidden flex flex-col glass">
             
