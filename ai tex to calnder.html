@@ -461,8 +461,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             transform: translateZ(0); /* Hardware accelerate */
         }
         .modal-content { 
-            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out; 
-            will-change: transform, opacity; 
+            transition: opacity 0.2s ease-out;
+            will-change: opacity;
             transform: translateZ(0);
             backface-visibility: hidden;
         }
@@ -474,22 +474,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .modal-hidden .modal-content { 
             opacity: 0; 
             /* Subtle scale down only, no translation to avoid movement clutter */
-            transform: scale(0.96); 
             pointer-events: none; 
             /* Faster opacity fade, simpler transform to reduce repaints */
-            transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+            transition: opacity 0.15s ease-in;
         }
 
-        /* Default (Desktop) - Keep slide from right */
-        @media (min-width: 768px) {
-            #settings-modal .modal-content { transform: translateX(100%); }
-            #settings-modal.is-open .modal-content { transform: translateX(0); }
-        }
-
-        /* Mobile - Slide from Bottom */
+        /* Mobile */
         @media (max-width: 767px) {
             #settings-modal .modal-content {
-                transform: translateY(100%); /* Start below screen */
                 border-radius: 0 !important; /* Full screen, no rounded corners */
                 height: 100vh !important; /* Full screen height (fallback) */
                 height: 100dvh !important; /* Full dynamic screen height */
@@ -498,10 +490,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                 top: 0 !important;
                 left: 0 !important;
                 bottom: 0 !important;
-            }
-            
-            #settings-modal.is-open .modal-content {
-                transform: translateY(0);
             }
         }
 
