@@ -17,6 +17,118 @@
 
     <!-- Tailwind CSS -->
     <style>
+        /* SEO Tools UI Styles */
+        .seo-text-gradient-1 {
+            background: linear-gradient(90deg, #1e1b4b, #4338ca);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .seo-text-gradient-2 {
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .seo-text-gradient-3 {
+            background: linear-gradient(90deg, #9333ea, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .seo-glass-container {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            min-height: 100%;
+            /* Add some background blobs for glassmorphism */
+            background-image:
+              radial-gradient(circle at 15% 10%, rgba(219, 234, 254, 0.5) 0%, transparent 40%),
+              radial-gradient(circle at 85% 15%, rgba(252, 231, 243, 0.5) 0%, transparent 40%),
+              radial-gradient(circle at 50% 50%, rgba(243, 232, 255, 0.3) 0%, transparent 60%);
+        }
+        .seo-search-input {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            transition: all 0.3s ease;
+        }
+        .seo-search-input:focus {
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.4);
+            outline: none;
+        }
+        .seo-feature-badge {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        .seo-card-pink {
+            background: linear-gradient(135deg, #f43f5e, #be185d);
+            box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.3);
+        }
+        .seo-card-blue {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3);
+        }
+        .seo-card-red {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.3);
+        }
+        .seo-card-purple {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.3);
+        }
+        .seo-stat-blue { color: #2563eb; }
+        .seo-stat-pink { color: #db2777; }
+        .seo-stat-red { color: #dc2626; }
+        .seo-stat-teal { color: #0d9488; }
+        .seo-pill-active {
+            background-color: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+        }
+        .seo-pill-inactive {
+            background-color: white;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .seo-pill-inactive:hover {
+            border-color: #d1d5db;
+            background-color: #f9fafb;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .seo-premium-badge {
+            background: white;
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 9999px;
+            padding: 0.375rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .seo-h-super { font-size: 4.5rem; line-height: 1; letter-spacing: -0.02em; font-weight: 900; }
+        .seo-discover-title { font-size: 3rem; line-height: 1.1; letter-spacing: -0.02em; font-weight: 800; }
+        @media (max-width: 767px) {
+            .seo-h-super { font-size: 3rem; }
+            .seo-discover-title { font-size: 2.25rem; }
+        }
+
         /* Mobile Specific Overrides */
         @media (max-width: 767px) {
             .safe-area-pb {
@@ -2256,11 +2368,184 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
-    <div id="app-menu-view" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4">
-        <div class="w-full h-full pb-24">
-            <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
-                <!-- Tab contents cleared -->
+    <div id="app-menu-view" class="hidden w-full h-full overflow-y-auto pb-24 seo-glass-container">
+        <!-- Hero Section -->
+        <div class="w-full max-w-5xl mx-auto px-4 md:px-8 pt-12 md:pt-16 pb-10 flex flex-col items-center text-center">
+
+            <!-- Premium Badge -->
+            <div class="seo-premium-badge mb-8">
+                <i class="fa-solid fa-bolt text-yellow-500"></i>
+                <span class="seo-text-gradient-1">Premium Tools • Always Free</span>
             </div>
+
+            <!-- Title -->
+            <h1 class="seo-h-super mb-6">
+                <span class="text-gray-900 block">H SuperTools AI</span>
+                <span class="seo-text-gradient-2 block mt-2">Online Web SEO</span>
+                <span class="seo-text-gradient-3 block mt-2">Tools</span>
+            </h1>
+
+            <p class="text-gray-600 md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+                Welcome to HSuperTools Make your life easy with our 250+ ai online seo web tools for free.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="w-full max-w-2xl mx-auto relative mb-12">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
+                </div>
+                <input type="text" class="seo-search-input w-full bg-white text-gray-800 py-4 pl-12 pr-4 rounded-2xl text-base md:text-lg" placeholder="Search your favorite tool here...">
+            </div>
+
+            <!-- Feature Badges -->
+            <div class="flex flex-wrap justify-center gap-3 md:gap-4 mb-16">
+                <div class="seo-feature-badge">
+                    <i class="fa-regular fa-circle-check text-green-500"></i> No registration required
+                </div>
+                <div class="seo-feature-badge">
+                    <i class="fa-regular fa-circle-check text-green-500"></i> 100% free H-SuperTools
+                </div>
+                <div class="seo-feature-badge">
+                    <i class="fa-regular fa-circle-check text-green-500"></i> More Tools Coming Soon
+                </div>
+            </div>
+
+            <!-- Discover Popular Tools -->
+            <div class="w-full text-center mt-8 mb-8">
+                <h2 class="seo-discover-title seo-text-gradient-3 mb-4">Discover Popular Tools</h2>
+                <p class="text-gray-600 md:text-lg max-w-2xl mx-auto leading-relaxed">
+                    Explore our most popular and recently launched tools that are transforming how creators work
+                </p>
+            </div>
+
+            <!-- Horizontal Scrollable Cards Grid -->
+            <div class="w-full overflow-x-auto hide-scrollbar pb-8 -mx-4 px-4 md:mx-0 md:px-0">
+                <div class="flex md:grid md:grid-cols-4 gap-4 md:gap-6 min-w-max md:min-w-0">
+
+                    <!-- Card 1: AI Content -->
+                    <div class="seo-card-pink rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between w-64 md:w-auto h-80 transition-transform hover:scale-105">
+                        <div class="flex justify-between items-start z-10">
+                            <div></div> <!-- Spacer -->
+                            <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/30">58+ tools</span>
+                        </div>
+                        <div class="z-10 text-left">
+                            <h3 class="text-2xl font-bold mb-2">AI Content</h3>
+                            <p class="text-sm opacity-90 mb-4">&nbsp;</p> <!-- spacer to match other cards -->
+                            <div class="text-sm font-medium opacity-90 mt-4 flex justify-between items-center">
+                                <span>Featured Tool:</span>
+                                <span class="font-bold">AI Content</span>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                    </div>
+
+                    <!-- Card 2: Social Media -->
+                    <div class="seo-card-blue rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between w-64 md:w-auto h-80 transition-transform hover:scale-105">
+                        <div class="flex justify-between items-start z-10">
+                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/30"><i class="fa-solid fa-hashtag"></i></div>
+                            <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/30">19+ tools</span>
+                        </div>
+                        <div class="z-10 text-left">
+                            <h3 class="text-2xl font-bold mb-2">Social Media</h3>
+                            <p class="text-sm opacity-90 mb-4">Enhance social presence</p>
+                            <div class="text-sm font-medium opacity-90 mt-4 flex justify-between items-center">
+                                <span>Featured Tool:</span>
+                                <span class="font-bold text-right">AI Hashtag</span>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                    </div>
+
+                    <!-- Card 3: Email Marketing -->
+                    <div class="seo-card-red rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between w-64 md:w-auto h-80 transition-transform hover:scale-105">
+                        <div class="flex justify-between items-start z-10">
+                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/30"><i class="fa-regular fa-envelope"></i></div>
+                            <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/30">10+ tools</span>
+                        </div>
+                        <div class="z-10 text-left">
+                            <h3 class="text-2xl font-bold mb-2">Email Marketing</h3>
+                            <p class="text-sm opacity-90 mb-4">Email campaign tools</p>
+                            <div class="text-sm font-medium opacity-90 mt-4 flex justify-between items-center">
+                                <span>Featured Tool:</span>
+                                <span class="font-bold text-right">Email Template</span>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                    </div>
+
+                    <!-- Card 4: Image -->
+                    <div class="seo-card-purple rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between w-64 md:w-auto h-80 transition-transform hover:scale-105">
+                        <div class="flex justify-between items-start z-10">
+                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/30"><i class="fa-regular fa-image"></i></div>
+                            <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/30">15+ tools</span>
+                        </div>
+                        <div class="z-10 text-left">
+                            <h3 class="text-2xl font-bold mb-2">Image</h3>
+                            <p class="text-sm opacity-90 mb-4">Edit and generate</p>
+                            <div class="text-sm font-medium opacity-90 mt-4 flex justify-between items-center">
+                                <span>Featured Tool:</span>
+                                <span class="font-bold">AI Image</span>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="w-full mt-16 mb-16 grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="flex flex-col items-center">
+                    <span class="text-5xl font-black seo-stat-blue mb-2 tracking-tighter">1m</span>
+                    <span class="text-gray-600 font-medium text-sm md:text-base">Active Users</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-5xl font-black seo-stat-pink mb-2 tracking-tighter">10m</span>
+                    <span class="text-gray-600 font-medium text-sm md:text-base">Files Converted</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-5xl font-black seo-stat-red mb-2 tracking-tighter">250+</span>
+                    <span class="text-gray-600 font-medium text-sm md:text-base">Online Tools</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-5xl font-black seo-stat-teal mb-2 tracking-tighter">500k</span>
+                    <span class="text-gray-600 font-medium text-sm md:text-base">PDFs Created</span>
+                </div>
+            </div>
+
+            <!-- Explore by Category -->
+            <div class="w-full bg-white/50 backdrop-blur-xl rounded-[3rem] p-8 md:p-16 border border-white/60 shadow-2xl shadow-blue-900/5">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">Explore by category</h2>
+                <p class="text-gray-600 md:text-lg mb-10 max-w-2xl mx-auto">
+                    Discover powerful tools designed for every creative workflow
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-3 md:gap-4 max-w-4xl mx-auto">
+                    <button class="seo-pill-active px-6 py-3 rounded-full text-sm font-bold transition-transform hover:scale-105 active:scale-95">All Tools</button>
+                    <button class="seo-pill-inactive px-6 py-3 rounded-full text-sm font-bold transition-all active:scale-95 flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-trend-up text-gray-400"></i> SEO
+                    </button>
+                    <button class="seo-pill-inactive px-6 py-3 rounded-full text-sm font-bold transition-all active:scale-95 flex items-center gap-2">
+                        <i class="fa-regular fa-file-lines text-gray-400"></i> AI Writers
+                    </button>
+                    <button class="seo-pill-inactive px-6 py-3 rounded-full text-sm font-bold transition-all active:scale-95 flex items-center gap-2">
+                        <i class="fa-solid fa-hashtag text-gray-400"></i> Social Media
+                    </button>
+                    <button class="seo-pill-inactive px-6 py-3 rounded-full text-sm font-bold transition-all active:scale-95 flex items-center gap-2">
+                        <i class="fa-regular fa-envelope text-gray-400"></i> Email Marketing
+                    </button>
+                    <button class="seo-pill-inactive px-6 py-3 rounded-full text-sm font-bold transition-all active:scale-95 flex items-center gap-2">
+                        <i class="fa-regular fa-image text-gray-400"></i> Image
+                    </button>
+                    <button class="seo-pill-inactive px-6 py-3 rounded-full text-sm font-bold transition-all active:scale-95 flex items-center gap-2">
+                        <i class="fa-solid fa-font text-gray-400"></i> Text
+                    </button>
+                    <button class="seo-pill-inactive px-6 py-3 rounded-full text-sm font-bold transition-all active:scale-95 flex items-center gap-2">
+                        <i class="fa-solid fa-gear text-gray-400"></i> Utility
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
 
