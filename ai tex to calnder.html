@@ -46,7 +46,42 @@
             .hero-cd-num { font-size: 1.5rem !important; }
             .hero-cd-label { font-size: 9px !important; }
         }
-    </style>
+
+/* MORE TAB UI CSS */
+.seo-glass-container {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.seo-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.05);
+    transition: all 0.3s ease;
+}
+
+.seo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px 0 rgba(31, 38, 135, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.seo-gradient-text {
+    background: linear-gradient(135deg, #FF6B6B, #C0392B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.seo-gradient-bg-1 { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%); }
+.seo-gradient-bg-2 { background: linear-gradient(120deg, #f6d365 0%, #fda085 100%); }
+.seo-gradient-bg-3 { background: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%); }
+.seo-gradient-bg-4 { background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); }
+
+</style>
     <style id="tailwindcss">
 *,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--t
 w-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.18 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Inter,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearanc
@@ -166,6 +201,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 .from-orange-500{--tw-gradient-from:rgb(249 115 22/var(--tw-bg-opacity,1));--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
 .to-red-600{--tw-gradient-to:rgb(220 38 38/var(--tw-bg-opacity,1))}
 .translate-y-4{--tw-translate-y:1rem}
+
 </style>
 <style>
         /* Custom Header Styles */
@@ -1324,7 +1360,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         letter-spacing: 0.25em;
         text-transform: uppercase;
     }
-    </style>
+
+</style>
 <style>
         /* =========================================
            PREMIUM CUSTOM CSS (OFFLINE & RESPONSIVE)
@@ -1650,6 +1687,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .mt-8 { margin-top: 2rem; }
         .mt-10 { margin-top: 2.5rem; }
         .mb-6 { margin-bottom: 1.5rem; }
+
 </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -5442,6 +5480,7 @@ function getCDNUrl(originalUrl) {
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
                 if(menuContainer) menuContainer.classList.remove('hidden');
+                renderAppMenuView();
             } else {
                 if(menuContainer) menuContainer.classList.add('hidden');
                 if(monthContainer) monthContainer.classList.remove('hidden');
@@ -5799,6 +5838,122 @@ function getCDNUrl(originalUrl) {
         }
 
         var heroCountdownInterval = null;
+
+
+        function renderAppMenuView() {
+            const menuContainer = document.getElementById('app-menu-view');
+            if (!menuContainer) return;
+            const innerContainer = menuContainer.querySelector('.custom-scroll');
+            if (!innerContainer) return;
+
+            innerContainer.innerHTML = `
+                <div class="space-y-6 md:space-y-8 pb-10">
+                    <!-- Hero Section -->
+                    <div class="seo-glass-container rounded-3xl p-6 md:p-10 text-center relative overflow-hidden">
+                        <div class="absolute -top-20 -left-20 w-40 h-40 bg-orange-400 rounded-full mix-blend-multiply filter blur-2xl opacity-30"></div>
+                        <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-red-400 rounded-full mix-blend-multiply filter blur-2xl opacity-30"></div>
+
+                        <div class="inline-block bg-white/50 rounded-full px-4 py-1 mb-4 border border-white/50 text-xs font-semibold text-gray-700 backdrop-blur-sm">
+                            <i class="fa-solid fa-om text-orange-500 mr-1"></i> Welcome to Vaidik Calendar
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-bold mb-4 text-gray-800">
+                            Explore <span class="seo-gradient-text">More Features</span>
+                        </h2>
+                        <p class="text-gray-600 mb-6 max-w-md mx-auto text-sm md:text-base relative z-10">
+                            Access your spiritual tools, settings, and personalized dashboard in one beautifully designed space.
+                        </p>
+
+                        <!-- Search Box -->
+                        <div class="relative max-w-lg mx-auto z-10">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-search text-gray-400"></i>
+                            </div>
+                            <input type="text" class="w-full pl-10 pr-4 py-3 md:py-4 rounded-2xl border border-white/50 bg-white/50 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-orange-300 shadow-inner text-gray-700 placeholder-gray-400 transition-all" placeholder="Search tools or settings...">
+                        </div>
+                    </div>
+
+                    <!-- Stats/Highlights -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="seo-card rounded-2xl p-4 text-center">
+                            <div class="w-10 h-10 mx-auto rounded-full seo-gradient-bg-1 flex items-center justify-center text-white mb-2 shadow-sm">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <div class="text-xl font-bold text-gray-800">365</div>
+                            <div class="text-xs text-gray-500">Days Tracked</div>
+                        </div>
+                        <div class="seo-card rounded-2xl p-4 text-center">
+                            <div class="w-10 h-10 mx-auto rounded-full seo-gradient-bg-2 flex items-center justify-center text-white mb-2 shadow-sm">
+                                <i class="fa-solid fa-om"></i>
+                            </div>
+                            <div class="text-xl font-bold text-gray-800">108</div>
+                            <div class="text-xs text-gray-500">Mantras</div>
+                        </div>
+                        <div class="seo-card rounded-2xl p-4 text-center">
+                            <div class="w-10 h-10 mx-auto rounded-full seo-gradient-bg-3 flex items-center justify-center text-white mb-2 shadow-sm">
+                                <i class="fa-solid fa-bell"></i>
+                            </div>
+                            <div class="text-xl font-bold text-gray-800">12</div>
+                            <div class="text-xs text-gray-500">Reminders</div>
+                        </div>
+                        <div class="seo-card rounded-2xl p-4 text-center">
+                            <div class="w-10 h-10 mx-auto rounded-full seo-gradient-bg-4 flex items-center justify-center text-white mb-2 shadow-sm">
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <div class="text-xl font-bold text-gray-800">5</div>
+                            <div class="text-xs text-gray-500">Favorites</div>
+                        </div>
+                    </div>
+
+                    <!-- Categories / Cards -->
+                    <h3 class="text-xl font-bold text-gray-800 px-2 mt-8 mb-4">Quick Tools</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="seo-card rounded-3xl p-5 flex items-start gap-4 cursor-pointer" onclick="openSettingsSidebar()">
+                            <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-500 shrink-0">
+                                <i class="fa-solid fa-gear text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1">App Settings</h4>
+                                <p class="text-xs text-gray-500 line-clamp-2 mb-2">Configure language, themes, and personalized calendar preferences.</p>
+                                <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg inline-flex items-center hover:bg-orange-100 transition-colors">Open Settings <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="seo-card rounded-3xl p-5 flex items-start gap-4 cursor-pointer">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-500 shrink-0">
+                                <i class="fa-solid fa-book-open text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1">Panchang Details</h4>
+                                <p class="text-xs text-gray-500 line-clamp-2 mb-2">View advanced astrological information, Tithi, Nakshatra, and timings.</p>
+                                <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg inline-flex items-center hover:bg-blue-100 transition-colors">View Details <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="seo-card rounded-3xl p-5 flex items-start gap-4 cursor-pointer" onclick="toggleAppMode('sadhana')">
+                            <div class="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-green-500 shrink-0">
+                                <i class="fa-solid fa-hands-praying text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1">Daily Sadhana</h4>
+                                <p class="text-xs text-gray-500 line-clamp-2 mb-2">Track your daily spiritual practices, meditation, and rituals.</p>
+                                <span class="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg inline-flex items-center hover:bg-green-100 transition-colors">Start Practice <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="seo-card rounded-3xl p-5 flex items-start gap-4 cursor-pointer" onclick="openSettingsSidebar()">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-500 shrink-0">
+                                <i class="fa-solid fa-image text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1">Gallery & Themes</h4>
+                                <p class="text-xs text-gray-500 line-clamp-2 mb-2">Customize the application background and explore visual themes.</p>
+                                <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-3 py-1.5 rounded-lg inline-flex items-center hover:bg-purple-100 transition-colors">Explore <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
         function renderAppFestivalView() {
             const heroContainer = document.getElementById('hero-festival-banner');
