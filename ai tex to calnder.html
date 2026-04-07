@@ -2256,7 +2256,7 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
-    <div id="app-menu-view" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4">
+    <div id="app-more-view" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4">
         <div class="w-full h-full pb-24">
             <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
                 <!-- Tab contents cleared -->
@@ -5421,7 +5421,7 @@ function getCDNUrl(originalUrl) {
             const viewBtnIcon = document.getElementById('view-btn-icon');
 
             const festivalContainer = document.getElementById('app-festival-view');
-            const menuContainer = document.getElementById('app-menu-view');
+            const menuContainer = document.getElementById('app-more-view');
 
             if (appState.view === 'year') {
                 if(monthContainer) monthContainer.classList.add('hidden');
