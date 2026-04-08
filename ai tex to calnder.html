@@ -845,6 +845,11 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
     /* Missing Tablet/Desktop Utilities */
     @media (min-width: 768px) {
+        .md\:space-y-4 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+        }
         .md\:w-40 { width: 10rem; }
         .md\:h-40 { height: 10rem; }
         .md\:h-auto { height: auto; }
@@ -1195,6 +1200,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     @media (min-width: 768px) {
         #calendar-grid {
             gap: 0.75rem; /* gap-3 */
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .lg\:justify-start { justify-content: flex-start; }
+        .lg\:space-y-2 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
         }
     }
 
@@ -2375,7 +2389,7 @@ The word "Nua" means new and "Khai" means food.
     <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
     <div id="app-menu-view" class="hidden flex-1 w-full overflow-y-auto pb-24 seo-glass-container">
         <!-- Hero Section -->
-        <div class="w-full max-w-5xl mx-auto px-4 md:px-8 pt-12 md:pt-16 pb-10 flex flex-col items-center text-center space-y-6 md:space-y-10 min-h-[calc(100vh-140px)] justify-evenly">
+        <div class="w-full max-w-5xl mx-auto px-4 md:px-8 pt-12 md:pt-16 pb-10 flex flex-col items-center text-center space-y-6 md:space-y-4 lg:space-y-6 min-h-[calc(100vh-140px)] justify-evenly lg:justify-start">
             
             <!-- Premium Badge -->
             <div class="seo-premium-badge">
