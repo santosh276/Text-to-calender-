@@ -6053,12 +6053,6 @@ function getCDNUrl(originalUrl) {
                     } else {
                         btn.classList.add('text-gray-400');
                     }
-                } else if (btn.classList.contains('menu-icon-btn')) {
-                    if (safeView === 'menu') {
-                        btn.classList.add('text-orange-600');
-                    } else {
-                        btn.classList.add('text-gray-400');
-                    }
                 } else {
                     btn.classList.add('text-gray-400');
                 }
@@ -6076,12 +6070,6 @@ function getCDNUrl(originalUrl) {
                     }
                 } else if (btn.querySelector('.festivals-icon')) {
                     if (viewName === 'festivals') {
-                        btn.classList.add('text-white');
-                    } else {
-                        btn.classList.add('text-white/80');
-                    }
-                } else if (btn.classList.contains('menu-icon-btn')) {
-                    if (viewName === 'menu') {
                         btn.classList.add('text-white');
                     } else {
                         btn.classList.add('text-white/80');
