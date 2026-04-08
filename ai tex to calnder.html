@@ -2260,13 +2260,13 @@ The word "Nua" means new and "Khai" means food.
                 <!-- SECTION 1: Quick Settings -->
                 <div class="mb-8">
                     <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">Quick Settings</h4>
-                    <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-0">
                         
                         <!-- Language -->
-                        <div class="w-full">
+                        <div class="w-full border-b border-gray-200 p-3 bg-transparent">
                             <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Language</label>
                             <div class="relative">
-                                <select id="language-select" onchange="changeLanguage(this.value)" class="w-full appearance-none p-3 pl-4 pr-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-bold focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none transition cursor-pointer">
+                                <select id="language-select" onchange="changeLanguage(this.value)" class="w-full appearance-none p-3 pl-4 pr-10 bg-transparent text-gray-700 font-bold focus:ring-2 focus:ring-orange-200 focus:outline-none transition cursor-pointer">
                                     <option value="en">English</option>
                                     <option value="hi">Hindi (हिन्दी)</option>
                                     <option value="or">Odia (ଓଡ଼ିଆ)</option>
@@ -2287,34 +2287,34 @@ The word "Nua" means new and "Khai" means food.
                         </div>
 
                         <!-- Toggles -->
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center justify-between p-3 border-b border-gray-200 bg-transparent">
                             <span class="text-sm font-bold text-gray-700">Festivals</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="toggle-festivals" class="sr-only peer" checked onchange="toggleSection('festivals', this.checked)">
-                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center justify-between p-3 border-b border-gray-200 bg-transparent">
                             <span class="text-sm font-bold text-gray-700">Panchang</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="toggle-panchang" class="sr-only peer" checked onchange="toggleSection('panchang', this.checked)">
-                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center justify-between p-3 border-b border-gray-200 bg-transparent">
                             <span class="text-sm font-bold text-gray-700">Daily Banner</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="banner-toggle" class="sr-only peer" onchange="toggleBannerVisibility(this)">
-                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 peer-checked:border-orange-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
 
                         <!-- Restart App -->
-                        <button onclick="syncAndResetApp()" class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors active:scale-95 group">
+                        <button onclick="syncAndResetApp()" class="w-full flex items-center justify-between p-3 bg-transparent hover:bg-gray-50 border-b border-gray-200 transition-colors active:scale-95 group">
                             <span class="text-sm font-bold text-gray-700">Restart App</span>
-                            <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-orange-500 group-hover:border-orange-200 transition-colors">
+                            <div class="w-8 h-8 rounded-full bg-transparent border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-orange-500 group-hover:border-orange-200 transition-colors">
                                 <i class="fa-solid fa-rotate-right"></i>
                             </div>
                         </button>
@@ -2326,20 +2326,20 @@ The word "Nua" means new and "Khai" means food.
                 <div id="container-sync-settings" class="mb-8 border-t border-gray-200 pt-6">
                     <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-code"></i> Developer Settings</h4>
                     
-                    <div class="flex flex-col gap-4">
-                        <div id="container-sync-docs" class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                    <div class="flex flex-col gap-0">
+                        <div id="container-sync-docs" class="flex items-center justify-between p-3 border-b border-gray-200 bg-transparent">
                             <span class="text-sm font-bold text-gray-700">Live Sync Docs</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="toggle-sync-docs" class="sr-only peer" onchange="toggleLiveSyncDocs(this.checked)">
-                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
 
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center justify-between p-3 border-b border-gray-200 bg-transparent">
                             <span class="text-sm font-bold text-gray-700">Live Sync GitHub</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="toggle-sync-github" class="sr-only peer" onchange="toggleLiveSyncGitHub(this.checked)">
-                                <div class="w-11 h-6 bg-gray-300 border border-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                <div class="w-11 h-6 bg-gray-300 peer-checked:border-orange-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                             </label>
                         </div>
                     </div>
@@ -2347,10 +2347,10 @@ The word "Nua" means new and "Khai" means food.
 
                 <!-- Language Links (Developer) -->
                 <div id="container-lang-links" class="mb-8">
-                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                    <div class="border-b border-gray-200 p-4 bg-transparent">
                         <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Configure Language Source</label>
                         <div class="flex flex-col gap-3">
-                            <select id="sync-lang-select" onchange="updateSyncLinkInput()" class="w-full p-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-orange-500 bg-white">
+                            <select id="sync-lang-select" onchange="updateSyncLinkInput()" class="w-full p-3 border-b border-gray-300 text-sm outline-none focus:border-orange-500 bg-transparent">
                                 <option value="en">English</option>
                                 <option value="hi">Hindi (हिन्दी)</option>
                                 <option value="or">Odia (ଓଡ଼ିଆ)</option>
