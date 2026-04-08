@@ -761,15 +761,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
-        /* --- MENU CARD GRID STYLES (Typing Tutor Aesthetic) --- */
-        .menu-overlay .modal-backdrop {
-            background: rgba(255, 255, 255, 0.95) !important;
-            /* Static blur, handled by opacity transition */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            will-change: opacity;
-        }
-        
         /* --- New Panchang Styles --- */
         /* --- Ending Soon Pulse (Live Timers) --- */
         @keyframes ending-soon-pulse {
@@ -1697,7 +1688,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                 <i class="fa-regular fa-comment-dots text-xl"></i>
                 <span class="text-[10px] font-bold">Chat</span>
             </button>
-            <button onclick="toggleView('menu')" class="menu-icon-btn flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
+            <button class="menu-icon-btn flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
                     <rect x="3" y="3" width="7" height="7" rx="2" ry="2"></rect>
                     <rect x="14" y="3" width="7" height="7" rx="2" ry="2"></rect>
@@ -2251,15 +2242,6 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </div>
-
-    <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
-    <div id="app-more-view" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4">
-        <div class="w-full h-full pb-24">
-            <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
-                <!-- Tab contents cleared -->
             </div>
         </div>
     </div>
@@ -5421,13 +5403,11 @@ function getCDNUrl(originalUrl) {
             const viewBtnIcon = document.getElementById('view-btn-icon');
 
             const festivalContainer = document.getElementById('app-festival-view');
-            const menuContainer = document.getElementById('app-more-view');
 
             if (appState.view === 'year') {
                 if(monthContainer) monthContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.remove('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
-                if(menuContainer) menuContainer.classList.add('hidden');
                 if(viewBtnText) viewBtnText.innerText = "Month View";
                 if(viewBtnIcon) viewBtnIcon.innerHTML = CALENDAR_ICON_SVG;
                 renderYearView();
@@ -5435,15 +5415,8 @@ function getCDNUrl(originalUrl) {
                 if(monthContainer) monthContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.remove('hidden');
-                if(menuContainer) menuContainer.classList.add('hidden');
                 renderAppFestivalView();
-            } else if (appState.view === 'menu') {
-                if(monthContainer) monthContainer.classList.add('hidden');
-                if(yearContainer) yearContainer.classList.add('hidden');
-                if(festivalContainer) festivalContainer.classList.add('hidden');
-                if(menuContainer) menuContainer.classList.remove('hidden');
             } else {
-                if(menuContainer) menuContainer.classList.add('hidden');
                 if(monthContainer) monthContainer.classList.remove('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
@@ -6080,12 +6053,6 @@ function getCDNUrl(originalUrl) {
                     } else {
                         btn.classList.add('text-gray-400');
                     }
-                } else if (btn.classList.contains('menu-icon-btn')) {
-                    if (safeView === 'menu') {
-                        btn.classList.add('text-orange-600');
-                    } else {
-                        btn.classList.add('text-gray-400');
-                    }
                 } else {
                     btn.classList.add('text-gray-400');
                 }
@@ -6103,12 +6070,6 @@ function getCDNUrl(originalUrl) {
                     }
                 } else if (btn.querySelector('.festivals-icon')) {
                     if (viewName === 'festivals') {
-                        btn.classList.add('text-white');
-                    } else {
-                        btn.classList.add('text-white/80');
-                    }
-                } else if (btn.classList.contains('menu-icon-btn')) {
-                    if (viewName === 'menu') {
                         btn.classList.add('text-white');
                     } else {
                         btn.classList.add('text-white/80');
@@ -8876,7 +8837,7 @@ function renderCalendarGrid(data) {
             <i class="fa-regular fa-comment-dots text-xl"></i>
             <span class="text-[10px] font-bold">Chat</span>
         </button>
-        <button onclick="toggleView('menu')" class="menu-icon-btn flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
+        <button class="menu-icon-btn flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
                 <rect x="3" y="3" width="7" height="7" rx="2" ry="2"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="2" ry="2"></rect>
