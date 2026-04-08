@@ -34,30 +34,18 @@
             -webkit-text-fill-color: transparent;
         }
         .seo-glass-container {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             min-height: 100%;
-            /* Add some background blobs for glassmorphism */
-            background-image: 
-              radial-gradient(circle at 15% 10%, rgba(219, 234, 254, 0.5) 0%, transparent 40%),
-              radial-gradient(circle at 85% 15%, rgba(252, 231, 243, 0.5) 0%, transparent 40%),
-              radial-gradient(circle at 50% 50%, rgba(243, 232, 255, 0.3) 0%, transparent 60%);
         }
         .seo-search-input {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
             border: 1px solid rgba(229, 231, 235, 0.8);
             transition: all 0.3s ease;
         }
         .seo-search-input:focus {
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
             border-color: rgba(99, 102, 241, 0.4);
             outline: none;
         }
         .seo-feature-badge {
-            background: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(229, 231, 235, 0.8);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
             border-radius: 9999px;
             padding: 0.5rem 1rem;
             display: inline-flex;
@@ -69,19 +57,15 @@
         }
         .seo-card-pink {
             background: linear-gradient(135deg, #f43f5e, #be185d);
-            box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.3);
         }
         .seo-card-blue {
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3);
         }
         .seo-card-red {
             background: linear-gradient(135deg, #ef4444, #b91c1c);
-            box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.3);
         }
         .seo-card-purple {
             background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-            box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.3);
         }
         .seo-stat-blue { color: #2563eb; }
         .seo-stat-pink { color: #db2777; }
@@ -91,13 +75,10 @@
             background-color: #8b5cf6;
             color: white;
             border-color: #8b5cf6;
-            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
         }
         .seo-pill-inactive {
-            background-color: white;
             color: #4b5563;
             border: 1px solid #e5e7eb;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .seo-pill-inactive:hover {
             border-color: #d1d5db;
@@ -111,9 +92,7 @@
             scrollbar-width: none;
         }
         .seo-premium-badge {
-            background: white;
             border: 1px solid rgba(229, 231, 235, 0.8);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             border-radius: 9999px;
             padding: 0.375rem 1rem;
             display: inline-flex;
@@ -2413,7 +2392,7 @@ The word "Nua" means new and "Khai" means food.
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
                 </div>
-                <input type="text" class="seo-search-input w-full bg-white text-gray-800 py-4 pl-12 pr-4 rounded-2xl text-base md:text-lg" placeholder="Search your favorite tool here...">
+                <input type="text" class="seo-search-input w-full bg-transparent text-gray-800 py-4 pl-12 pr-4 rounded-2xl text-base md:text-lg" placeholder="Search your favorite tool here...">
             </div>
 
             <!-- Feature Badges -->
@@ -2445,7 +2424,7 @@ The word "Nua" means new and "Khai" means food.
                     <div class="seo-card-pink rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between w-40 md:w-auto h-72 md:h-80 shrink-0 transition-transform hover:scale-105">
                         <div class="flex justify-between items-start z-10">
                             <div></div> <!-- Spacer -->
-                            <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/30">58+ tools</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold">58+ tools</span>
                         </div>
                         <div class="z-10 text-left">
                             <h3 class="text-2xl font-bold mb-2">AI Content</h3>
@@ -2455,14 +2434,13 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="font-bold">AI Content</span>
                             </div>
                         </div>
-                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                     </div>
 
                     <!-- Card 2: Social Media -->
                     <div class="seo-card-blue rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between w-40 md:w-auto h-72 md:h-80 shrink-0 transition-transform hover:scale-105">
                         <div class="flex justify-between items-start z-10">
-                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/30"><i class="fa-solid fa-hashtag"></i></div>
-                            <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/30">19+ tools</span>
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-hashtag"></i></div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold">19+ tools</span>
                         </div>
                         <div class="z-10 text-left">
                             <h3 class="text-2xl font-bold mb-2">Social Media</h3>
@@ -2472,14 +2450,13 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="font-bold text-right">AI Hashtag</span>
                             </div>
                         </div>
-                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                     </div>
 
                     <!-- Card 3: Email Marketing -->
                     <div class="seo-card-red rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between w-40 md:w-auto h-72 md:h-80 shrink-0 transition-transform hover:scale-105">
                         <div class="flex justify-between items-start z-10">
-                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/30"><i class="fa-regular fa-envelope"></i></div>
-                            <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/30">10+ tools</span>
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl"><i class="fa-regular fa-envelope"></i></div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold">10+ tools</span>
                         </div>
                         <div class="z-10 text-left">
                             <h3 class="text-2xl font-bold mb-2">Email Marketing</h3>
@@ -2489,14 +2466,13 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="font-bold text-right">Email Template</span>
                             </div>
                         </div>
-                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                     </div>
 
                     <!-- Card 4: Image -->
                     <div class="seo-card-purple rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between w-40 md:w-auto h-72 md:h-80 shrink-0 transition-transform hover:scale-105">
                         <div class="flex justify-between items-start z-10">
-                            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl border border-white/30"><i class="fa-regular fa-image"></i></div>
-                            <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/30">15+ tools</span>
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl"><i class="fa-regular fa-image"></i></div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold">15+ tools</span>
                         </div>
                         <div class="z-10 text-left">
                             <h3 class="text-2xl font-bold mb-2">Image</h3>
@@ -2506,7 +2482,6 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="font-bold">AI Image</span>
                             </div>
                         </div>
-                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                     </div>
 
                 </div>
