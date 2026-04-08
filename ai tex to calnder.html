@@ -761,15 +761,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
-        /* --- MENU CARD GRID STYLES (Typing Tutor Aesthetic) --- */
-        .menu-overlay .modal-backdrop {
-            background: rgba(255, 255, 255, 0.95) !important;
-            /* Static blur, handled by opacity transition */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            will-change: opacity;
-        }
-        
         /* --- New Panchang Styles --- */
         /* --- Ending Soon Pulse (Live Timers) --- */
         @keyframes ending-soon-pulse {
@@ -2251,15 +2242,6 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </div>
-
-    <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
-    <div id="app-more-view" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4">
-        <div class="w-full h-full pb-24">
-            <div class="overflow-y-auto p-6 md:p-10 custom-scroll flex-grow">
-                <!-- Tab contents cleared -->
             </div>
         </div>
     </div>
@@ -5421,13 +5403,11 @@ function getCDNUrl(originalUrl) {
             const viewBtnIcon = document.getElementById('view-btn-icon');
 
             const festivalContainer = document.getElementById('app-festival-view');
-            const menuContainer = document.getElementById('app-more-view');
 
             if (appState.view === 'year') {
                 if(monthContainer) monthContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.remove('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
-                if(menuContainer) menuContainer.classList.add('hidden');
                 if(viewBtnText) viewBtnText.innerText = "Month View";
                 if(viewBtnIcon) viewBtnIcon.innerHTML = CALENDAR_ICON_SVG;
                 renderYearView();
@@ -5435,15 +5415,12 @@ function getCDNUrl(originalUrl) {
                 if(monthContainer) monthContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.remove('hidden');
-                if(menuContainer) menuContainer.classList.add('hidden');
                 renderAppFestivalView();
             } else if (appState.view === 'menu') {
                 if(monthContainer) monthContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
-                if(menuContainer) menuContainer.classList.remove('hidden');
             } else {
-                if(menuContainer) menuContainer.classList.add('hidden');
                 if(monthContainer) monthContainer.classList.remove('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
