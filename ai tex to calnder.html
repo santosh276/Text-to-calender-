@@ -198,6 +198,11 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
 
 .text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11/var(--tw-text-opacity,1))}
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {--tw-space-y-reverse: 0;margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));}
+.justify-evenly{justify-content: space-evenly;}
+.flex-1{flex: 1 1 0%;}
+.min-h-\[calc\(100vh-140px\)\]{min-height: calc(100vh - 140px);}
+@media (min-width:768px){.md\:space-y-10 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse: 0;margin-top: calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom: calc(2.5rem * var(--tw-space-y-reverse));}}
 .text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}
 .text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}
 .hover\:text-amber-700:hover{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}
@@ -2368,29 +2373,29 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- SETTINGS MODAL (Redesigned as Menu Overlay) -->
-    <div id="app-menu-view" class="hidden w-full h-full overflow-y-auto pb-24 seo-glass-container">
+    <div id="app-menu-view" class="hidden flex-1 w-full overflow-y-auto pb-24 seo-glass-container">
         <!-- Hero Section -->
-        <div class="w-full max-w-5xl mx-auto px-4 md:px-8 pt-12 md:pt-16 pb-10 flex flex-col items-center text-center">
+        <div class="w-full max-w-5xl mx-auto px-4 md:px-8 pt-12 md:pt-16 pb-10 flex flex-col items-center text-center space-y-6 md:space-y-10 min-h-[calc(100vh-140px)] justify-evenly">
             
             <!-- Premium Badge -->
-            <div class="seo-premium-badge mb-8">
+            <div class="seo-premium-badge">
                 <i class="fa-solid fa-bolt text-yellow-500"></i>
                 <span class="seo-text-gradient-1">Premium Tools • Always Free</span>
             </div>
 
             <!-- Title -->
-            <h1 class="seo-h-super mb-6">
+            <h1 class="seo-h-super">
                 <span class="text-gray-900 block">H SuperTools AI</span>
                 <span class="seo-text-gradient-2 block mt-2">Online Web SEO</span>
                 <span class="seo-text-gradient-3 block mt-2">Tools</span>
             </h1>
 
-            <p class="text-gray-600 md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p class="text-gray-600 md:text-lg max-w-2xl mx-auto leading-relaxed">
                 Welcome to HSuperTools Make your life easy with our 250+ ai online seo web tools for free.
             </p>
 
             <!-- Search Bar -->
-            <div class="w-full max-w-2xl mx-auto relative mb-12">
+            <div class="w-full max-w-2xl mx-auto relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
                 </div>
@@ -2398,7 +2403,7 @@ The word "Nua" means new and "Khai" means food.
             </div>
 
             <!-- Feature Badges -->
-            <div class="flex flex-wrap justify-center gap-3 md:gap-4 mb-16">
+            <div class="flex flex-wrap justify-center gap-3 md:gap-4">
                 <div class="seo-feature-badge">
                     <i class="fa-regular fa-circle-check text-green-500"></i> No registration required
                 </div>
@@ -2411,7 +2416,7 @@ The word "Nua" means new and "Khai" means food.
             </div>
 
             <!-- Discover Popular Tools -->
-            <div class="w-full text-center mt-8 mb-8">
+            <div class="w-full text-center">
                 <h2 class="seo-discover-title seo-text-gradient-3 mb-4">Discover Popular Tools</h2>
                 <p class="text-gray-600 md:text-lg max-w-2xl mx-auto leading-relaxed">
                     Explore our most popular and recently launched tools that are transforming how creators work
@@ -2419,7 +2424,7 @@ The word "Nua" means new and "Khai" means food.
             </div>
 
             <!-- Horizontal Scrollable Cards Grid -->
-            <div class="w-full overflow-x-auto hide-scrollbar pb-8 -mx-4 px-4 md:mx-0 md:px-0">
+            <div class="w-full overflow-x-auto hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                 <div class="flex md:grid md:grid-cols-4 gap-4 md:gap-6 w-max md:w-full">
                     
                     <!-- Card 1: AI Content -->
