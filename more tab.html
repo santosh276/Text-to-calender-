@@ -1,0 +1,347 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vaidik Margam | Your Daily Vedic Companion</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "deep-red": "#D92D20",
+                    "saffron": "#FF9933",
+                    "gold": "#FFD700",
+                    "cream": "#fdfbf7",
+                    "primary": "#4647d3",
+                    "surface": "#f5f7f9",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#dfe3e6",
+                    "on-surface": "#2c2f31",
+                    "on-surface-variant": "#595c5e",
+                    "on-primary": "#f4f1ff",
+                    "primary-dim": "#3939c7",
+                    "primary-container": "#9396ff"
+            },
+            "fontFamily": {
+                    "headline": ["Roboto", "sans-serif"],
+                    "body": ["Inter", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-mesh {
+            background: radial-gradient(at 0% 0%, rgba(255, 153, 51, 0.15) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(217, 45, 32, 0.1) 0px, transparent 50%);
+            background-color: #fdfbf7;
+        }
+        
+        /* SCROLLING ANIMATION */
+        @keyframes seamless-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-seamless-scroll {
+            display: flex;
+            width: max-content;
+            animation: seamless-scroll 25s linear infinite;
+        }
+        .animate-seamless-scroll:hover {
+            animation-play-state: paused;
+        }
+        
+        /* Hide scrollbar for the swipeable carousel */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-mesh font-body text-gray-800 antialiased min-h-screen">
+
+<!-- Main Content Area -->
+<main class="pt-6 md:pt-12 pb-12">
+
+    <!-- HERO SECTION -->
+    <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
+        <section class="pt-2 pb-6 md:pb-8 text-center">
+            
+            <!-- CHANGED: Reverted to the simple, confident "Always Free" text -->
+            <div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-orange-100 border border-orange-200 text-deep-red font-semibold text-sm mb-6 md:mb-8 animate-bounce cursor-default shadow-sm">
+                <i class="fas fa-bolt mr-2 text-saffron"></i>Premium Tools &bull; Always Free
+            </div>
+
+            <!-- MAIN TITLE & SUBTITLE -->
+            <h1 class="font-headline font-black text-[clamp(2.3rem,8vw,5.8rem)] tracking-tight leading-[1.05] mb-8 md:mb-12">
+                <span class="block pb-4 -mb-2 text-black flex items-baseline justify-center">
+                    Vaidik Margam<span class="text-[clamp(0.45rem,1.2vw,1rem)] font-bold tracking-normal ml-1">.com</span>
+                </span>
+                
+                <span class="block text-[clamp(1.25rem,4.5vw,3rem)] tracking-normal mt-1 md:mt-2 whitespace-nowrap bg-gradient-to-r from-deep-red to-saffron bg-clip-text text-transparent">
+                    Your Daily Vedic Companion
+                </span>
+            </h1>
+
+            <!-- Search Bar -->
+            <div class="max-w-2xl mx-auto relative group mb-8">
+                <div class="absolute -inset-1 bg-gradient-to-r from-saffron to-deep-red rounded-full blur opacity-20"></div>
+                <div class="relative flex items-center bg-white rounded-full p-2 shadow-xl shadow-orange-900/5">
+                <span class="material-symbols-outlined pl-4 text-gray-400">search</span>
+                <input class="w-full bg-transparent border-none focus:ring-0 text-base md:text-lg px-4 py-2 md:py-3 font-medium placeholder-gray-400 text-gray-800" placeholder="Search tools..." type="text"/>
+                <button class="bg-gradient-to-r from-saffron to-deep-red text-white px-6 md:px-8 py-2 md:py-3 rounded-full font-bold hover:shadow-lg transition-all">Search</button>
+                </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4 mt-8">
+                <div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-orange-50 shadow-sm text-gray-600">
+                    <span class="material-symbols-outlined text-[18px] text-saffron">check_circle</span>
+                    <span class="text-xs md:text-sm font-medium tracking-wide">No registration required</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-orange-50 shadow-sm text-gray-600">
+                    <span class="material-symbols-outlined text-[18px] text-saffron">check_circle</span>
+                    <span class="text-xs md:text-sm font-medium tracking-wide">100% free Vaidik Margam</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <!-- THE TAILORED SCROLLING PANCHANG BANNER -->
+    <div class="w-full bg-deep-red py-2 overflow-hidden flex items-center mb-8">
+        <div class="animate-seamless-scroll flex items-center whitespace-nowrap">
+            <!-- SET 1 -->
+            <div class="flex items-center gap-24 px-12 whitespace-nowrap flex-nowrap">
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap">Tithi:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap">Shukla Paksha Dashami</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-sun text-saffron text-sm shrink-0"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap">Sunrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap">06:12</span>
+                </div>
+            </div>
+            <!-- SET 2 -->
+            <div class="flex items-center gap-24 px-12 whitespace-nowrap flex-nowrap">
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap">Tithi:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap">Shukla Paksha Dashami</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-sun text-saffron text-sm shrink-0"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap">Sunrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap">06:12</span>
+                </div>
+            </div>
+            <!-- SET 3 -->
+            <div class="flex items-center gap-24 px-12 whitespace-nowrap flex-nowrap">
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap">Tithi:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap">Shukla Paksha Dashami</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-sun text-saffron text-sm shrink-0"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap">Sunrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap">06:12</span>
+                </div>
+            </div>
+            <!-- SET 4 -->
+            <div class="flex items-center gap-24 px-12 whitespace-nowrap flex-nowrap">
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap">Tithi:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap">Shukla Paksha Dashami</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-sun text-saffron text-sm shrink-0"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap">Sunrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap">06:12</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- THE GRAND WELCOME ARCH -->
+    <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
+        <section class="text-center mt-10 md:mt-12 mb-8 md:mb-12 px-4">
+            <h2 class="font-headline text-3xl md:text-5xl font-black tracking-tight mb-3 md:mb-4 bg-gradient-to-r from-saffron to-deep-red bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,153,51,0.3)]">Discover Popular Tools</h2>
+            <p class="text-gray-600 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+                Explore timeless wisdom and powerful tools designed to guide your spiritual journey and bring balance to your daily life.
+            </p>
+        </section>
+    </div>
+
+
+    <!-- THE SPIRITUAL TOOLS SWIPEABLE CAROUSEL -->
+    <div class="w-full mb-10">
+        
+        <div class="max-w-screen-2xl mx-auto px-2 md:px-4 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+            <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
+            <h2 class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Spiritual Tools</h2>
+        </div>
+
+        <div class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth">
+            
+            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md bg-[#1e213a]/85 shadow-lg shadow-black/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner" style="background-color: #2e3459;">
+                        <i class="fa-solid fa-book-open text-xl drop-shadow-sm" style="color: #8c9eff;"></i>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm">Reading Mode</span>
+                        <span class="text-[11px] mt-0.5" style="color: #6d7fcc;">Bhagavad Gita Verses</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs" style="color: #4a5998;"></i>
+            </div>
+
+            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-green-900/20 border border-white/20 backdrop-blur-md bg-[#142e20]/85 shadow-lg shadow-black/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner" style="background-color: #1d4a33;">
+                        <i class="fa-solid fa-table-cells-large text-xl drop-shadow-sm" style="color: #5fc48b;"></i>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm">Sadhana Dashboard</span>
+                        <span class="text-[11px] mt-0.5" style="color: #469666;">Calendar &bull; Malas &bull; Streaks</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs" style="color: #2c6e49;"></i>
+            </div>
+
+            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-900/20 border border-white/20 backdrop-blur-md bg-[#361e0d]/85 shadow-lg shadow-black/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner" style="background-color: #543115;">
+                        <i class="fa-solid fa-hands-praying text-xl drop-shadow-sm" style="color: #d48c48;"></i>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm">Mala Counter</span>
+                        <span class="text-[11px] mt-0.5" style="color: #a66a32;">108 Beads</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs" style="color: #7d451a;"></i>
+            </div>
+
+            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-900/20 border border-white/20 backdrop-blur-md bg-[#231b38]/85 shadow-lg shadow-black/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner" style="background-color: #3b2d5c;">
+                        <i class="fa-solid fa-person-praying text-xl drop-shadow-sm" style="color: #fca311;"></i>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm">Meditation</span>
+                        <span class="text-[11px] mt-0.5" style="color: #7660a1;">Timer with Bells</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs" style="color: #554182;"></i>
+            </div>
+
+            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-900/20 border border-white/20 backdrop-blur-md bg-[#3a1d12]/85 shadow-lg shadow-black/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner" style="background-color: #5c2b18;">
+                        <i class="fa-solid fa-fire text-xl drop-shadow-sm" style="color: #ff7b00;"></i>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm">Streaks</span>
+                        <span class="text-[11px] mt-0.5" style="color: #cc6333;">Start Today!</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs" style="color: #8c4221;"></i>
+            </div>
+
+            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-fuchsia-900/20 border border-white/20 backdrop-blur-md bg-[#2c1538]/85 shadow-lg shadow-black/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner" style="background-color: #4a235c;">
+                        <i class="fa-solid fa-music text-xl drop-shadow-sm" style="color: #ae73c9;"></i>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm">Quiz Mode</span>
+                        <span class="text-[11px] mt-0.5" style="color: #8958a1;">Test Knowledge</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs" style="color: #6e358a;"></i>
+            </div>
+
+            <div class="shrink-0 w-1 md:w-4"></div>
+        </div>
+    </div>
+
+
+    <!-- BIG FEATURED CARDS GRID -->
+    <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
+
+        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
+            
+            <div class="bg-gradient-to-b from-[#f43f8d] to-[#d9194e] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                <div class="relative z-10 flex-1 flex flex-col">
+                    <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?auto=format&fit=crop&w=800&q=80" alt="Horoscope Stars" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">Horoscope</h3>
+                    <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">Read your daily, weekly, and yearly astrological predictions based on your zodiac sign.</p>
+                </div>
+                <div class="relative z-10 flex flex-col gap-2 mt-4 md:mt-auto">
+                    <button class="w-full bg-white text-[#d9194e] font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Read Free</button>
+                    <button class="w-full bg-white/10 text-white border border-white/20 font-bold text-xs md:text-sm py-2.5 rounded-lg text-center hover:bg-white/20 transition-colors backdrop-blur-sm">Learn More</button>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#3b82f6] to-[#2563eb] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                <div class="relative z-10 flex-1 flex flex-col">
+                    <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?auto=format&fit=crop&w=800&q=80" alt="Puja Vidhi Diyas" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">Puja Vidhi</h3>
+                    <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">Step-by-step guides and mantras for performing sacred rituals perfectly at home.</p>
+                </div>
+                <button class="relative z-10 w-full bg-white/20 text-white border border-white/20 font-bold text-xs md:text-sm py-2.5 mt-4 md:mt-auto rounded-lg text-center hover:bg-white/30 transition-colors backdrop-blur-sm">View Guides</button>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#f97316] to-[#dc2626] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                <div class="relative z-10 flex-1 flex flex-col">
+                    <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1515286895123-5e04cc79ebf2?auto=format&fit=crop&w=800&q=80" alt="Kundli Chart" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">Kundli</h3>
+                    <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">Create your detailed birth chart and discover the cosmic blueprint of your entire life.</p>
+                </div>
+                <button class="relative z-10 w-full bg-white/20 text-white border border-white/20 font-bold text-xs md:text-sm py-2.5 mt-4 md:mt-auto rounded-lg text-center hover:bg-white/30 transition-colors backdrop-blur-sm">Create Kundli</button>
+            </div>
+
+            <div class="bg-gradient-to-b from-[#a855f7] to-[#7e22ce] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                <div class="relative z-10 flex-1 flex flex-col h-full w-full">
+                    <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1604044547669-eecb318d1846?auto=format&fit=crop&w=800&q=80" alt="Daily Panchang Sunrise" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">Daily Panchang</h3>
+                    <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">Check today's highly auspicious timings, fasts, tithis, and exact planetary positions.</p>
+                    <div class="relative z-10 mt-4 md:mt-auto w-full">
+                        <button class="w-full bg-white text-[#7e22ce] font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">View Today</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</main>
+</body>
+</html>
