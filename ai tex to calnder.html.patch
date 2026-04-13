@@ -1,6 +1,0 @@
-<<<<<<< SEARCH
-.opacity-20 { opacity: 0.2; }
-=======
-.opacity-20 { opacity: 0.2; }
-.group:hover .group-hover\:opacity-30 { opacity: 0.3; }
->>>>>>> REPLACE
