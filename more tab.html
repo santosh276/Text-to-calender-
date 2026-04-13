@@ -50,10 +50,10 @@
         }
         
         /* Missing Blur Utilities for static build */
-        .blur-md { --tw-blur: blur(12px); filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow); }
-        .blur-lg { --tw-blur: blur(16px); filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow); }
-        .blur-xl { --tw-blur: blur(24px); filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow); }
-        .blur-2xl { --tw-blur: blur(40px); filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow); }
+        .blur-md { filter: blur(12px) !important; }
+        .blur-lg { filter: blur(16px) !important; }
+        .blur-xl { filter: blur(24px) !important; }
+        .blur-2xl { filter: blur(40px) !important; }
 
         /* SCROLLING ANIMATION */
         @keyframes seamless-scroll {
