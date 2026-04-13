@@ -49,6 +49,12 @@
             background-color: #fdfbf7;
         }
         
+        /* Missing Blur Utilities for static build */
+        .blur-md { --tw-blur: blur(12px); filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow); }
+        .blur-lg { --tw-blur: blur(16px); filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow); }
+        .blur-xl { --tw-blur: blur(24px); filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow); }
+        .blur-2xl { --tw-blur: blur(40px); filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow); }
+
         /* SCROLLING ANIMATION */
         @keyframes seamless-scroll {
             0% { transform: translateX(0); }
@@ -100,7 +106,7 @@
 
             <!-- Search Bar -->
             <div class="max-w-2xl mx-auto relative group mb-8">
-                <div class="absolute -inset-1 bg-gradient-to-r from-saffron to-deep-red rounded-full blur opacity-20"></div>
+                <div class="absolute -inset-1 bg-gradient-to-r from-saffron to-deep-red rounded-full blur-2xl opacity-20"></div>
                 <div class="relative flex items-center bg-white rounded-full p-2 shadow-xl shadow-orange-900/5">
                 <span class="material-symbols-outlined pl-4 text-gray-400">search</span>
                 <input class="w-full bg-transparent border-none focus:ring-0 text-base md:text-lg px-4 py-2 md:py-3 font-medium placeholder-gray-400 text-gray-800" placeholder="Search tools..." type="text"/>
