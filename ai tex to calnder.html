@@ -51,6 +51,10 @@
     </style>
     <style id="tailwindcss">
         /* Missing Global Utilities */
+        .-mx-2 { margin-left: -0.5rem; margin-right: -0.5rem; }
+        @media (min-width: 768px) {
+            .md\:-mx-8 { margin-left: -2rem; margin-right: -2rem; }
+        }
         .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
         .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
         @media (min-width: 768px) {
@@ -2116,7 +2120,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
 
-            <div id="more-view-container" class="hidden w-full overflow-y-auto pt-6 md:pt-12 pb-12">
+            <div id="more-view-container" class="hidden w-full overflow-x-hidden pt-6 md:pt-12 pb-12">
 
     <!-- HERO SECTION -->
     <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
@@ -2166,7 +2170,7 @@ The word "Nua" means new and "Khai" means food.
 
 
     <!-- THE TAILORED SCROLLING PANCHANG BANNER -->
-    <div class="w-full bg-deep-red py-2.5 overflow-hidden flex items-center mb-8">
+    <div class="bg-deep-red py-2.5 overflow-hidden flex items-center mb-8 -mx-2 md:-mx-8">
         <div class="animate-seamless-scroll flex items-center whitespace-nowrap">
             <!-- SET 1 -->
             <div class="flex items-center gap-8 px-4 whitespace-nowrap flex-nowrap">
@@ -2235,9 +2239,9 @@ The word "Nua" means new and "Khai" means food.
 
 
     <!-- THE SPIRITUAL TOOLS SWIPEABLE CAROUSEL -->
-    <div class="w-full mb-10">
+    <div class="mb-10 -mx-2 md:-mx-8">
         
-        <div class="max-w-screen-2xl mx-auto px-2 md:px-4 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
             <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
             <h2 class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Spiritual Tools</h2>
         </div>
@@ -4627,7 +4631,7 @@ const LOCATION_DATA = {
         // 1. Configure the Link (User clicks button)
         function configureLiveSync() {
             const currentUrl = appState.config.liveUrl || "";
-            let url = prompt("Paste your Published Google Doc Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
+                        let url = prompt("Paste your Published Google Doc Link:\n(The App will auto-fetch this every time it opens)", currentUrl);
                         if (url) {                url = url.trim();
 
                 // GitHub Logic (Redirect to dedicated function if user pastes GitHub here)
