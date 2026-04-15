@@ -1893,6 +1893,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                                 <option value="Puja Vidhi / Festivals">Puja Vidhi / Festivals</option>
                                 <option value="Horoscope">Horoscope</option>
                             </select>
+                            <select id="custom-card-layout" class="w-full bg-gray-900 border border-gray-700 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors">
+                                <option value="Design 1 (Grid Box)">Design 1 (Grid Box)</option>
+                                <option value="Design 2 (List with Arrow)">Design 2 (List with Arrow)</option>
+                            </select>
                             <button onclick="submitCustomCard()" class="w-full mt-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded transition-colors text-sm">Submit Card</button>
                         </div>
                     </div>
@@ -2784,11 +2788,13 @@ The word "Nua" means new and "Khai" means food.
             const descInput = document.getElementById('custom-card-desc');
             const imgInput = document.getElementById('custom-card-img');
             const categoryInput = document.getElementById('custom-card-category');
+            const layoutInput = document.getElementById('custom-card-layout');
 
             const title = titleInput.value.trim();
             const desc = descInput.value.trim();
             let img = imgInput.value.trim();
             const category = categoryInput.value;
+            const layout = layoutInput.value;
 
             // Auto-assign appropriate default icons based on category if img is empty
             if (!img) {
@@ -2806,7 +2812,8 @@ The word "Nua" means new and "Khai" means food.
                 title: title,
                 desc: desc,
                 img: img,
-                category: category
+                category: category,
+                layoutStyle: layout
             };
 
             let customCards = JSON.parse(localStorage.getItem('customCards') || '[]');
@@ -2820,19 +2827,23 @@ The word "Nua" means new and "Khai" means food.
             descInput.value = '';
             imgInput.value = '';
             categoryInput.value = 'General Tool';
+            layoutInput.value = 'Design 1 (Grid Box)';
 
             // Close editor
             toggleCustomCardEditor();
         }
 
         function renderCustomCard(card) {
-            const carousel = document.querySelector('.snap-x.snap-mandatory');
-            if (!carousel) return;
+            // The prompt requests the Design 1 card to match the square grid cards (flex-col, icon top, text bottom).
+            // It requests the Design 2 card to be a full-width list item (col-span-full, flex-row, justify-between, right chevron).
+            // Both should be injected into the main grid section, replacing the old carousel insertion point if needed.
+            const gridContainer = document.querySelector('section.grid.grid-cols-2');
+            if (!gridContainer) return;
 
             // Determine if img is URL or icon class
             const isUrl = card.img.startsWith('http') || card.img.startsWith('/');
 
-            // Default styles
+            // Default styles (colors)
             let bgClass = 'bg-[#1e213a]/85';
             let iconBgClass = 'bg-[#2e3459]';
             let iconColorClass = 'text-[#8c9eff]';
@@ -2857,24 +2868,44 @@ The word "Nua" means new and "Khai" means food.
                 chevronColor = '#a855f7'; // purple-500
             }
 
-            const imgHtml = isUrl
-                ? `<img src="${card.img}" class="w-11 h-11 rounded-xl object-cover shadow-inner">`
-                : `<div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner ${iconBgClass}"><i class="${card.img} text-xl drop-shadow-sm ${iconColorClass}"></i></div>`;
+            let cardHtml = '';
 
-            const cardHtml = `
-            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border border-white/20 backdrop-blur-md ${bgClass} shadow-lg shadow-black/5 custom-card-instance group">
-                <div class="flex items-center gap-3">
-                    ${imgHtml}
-                    <div class="flex flex-col justify-center">
-                        <span class="font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm ${titleColorClass}">${card.title}</span>
-                        ${card.desc ? `<span class="text-[11px] mt-0.5 ${descColorClass} truncate w-32 md:w-40">${card.desc}</span>` : ''}
+            if (card.layoutStyle === 'Design 1 (Grid Box)') {
+                // Design 1: Square grid card
+                const imgHtml = isUrl
+                    ? `<div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10"><img src="${card.img}" class="w-full h-full object-cover"></div>`
+                    : `<div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10 flex items-center justify-center ${iconBgClass}"><i class="${card.img} text-5xl drop-shadow-sm ${iconColorClass}"></i></div>`;
+
+                cardHtml = `
+                <div class="${bgClass} rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1 custom-card-instance">
+                    <div class="relative z-10 flex-1 flex flex-col">
+                        ${imgHtml}
+                        <h3 class="font-headline text-lg md:text-2xl font-extrabold ${titleColorClass} mb-2 tracking-tight leading-tight">${card.title}</h3>
+                        ${card.desc ? `<p class="${descColorClass} text-xs md:text-sm leading-snug line-clamp-2">${card.desc}</p>` : ''}
                     </div>
                 </div>
-                <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover:translate-x-1" style="color: ${chevronColor};"></i>
-            </div>
-            `;
+                `;
+            } else {
+                // Design 2: List with Arrow
+                const imgHtml = isUrl
+                    ? `<img src="${card.img}" class="w-12 h-12 rounded-xl object-cover shadow-inner shrink-0">`
+                    : `<div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner ${iconBgClass}"><i class="${card.img} text-2xl drop-shadow-sm ${iconColorClass}"></i></div>`;
 
-            carousel.insertAdjacentHTML('beforeend', cardHtml);
+                cardHtml = `
+                <div class="col-span-full w-full ${bgClass} rounded-xl p-4 flex flex-row items-center justify-between overflow-hidden relative group shadow-md hover:shadow-lg transition-all hover:-translate-y-1 custom-card-instance">
+                    <div class="flex items-center gap-4">
+                        ${imgHtml}
+                        <div class="flex flex-col justify-center">
+                            <span class="font-bold text-lg leading-tight tracking-wide drop-shadow-sm ${titleColorClass}">${card.title}</span>
+                            ${card.desc ? `<span class="text-sm mt-0.5 ${descColorClass}">${card.desc}</span>` : ''}
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-400 group-hover:translate-x-1 transition-transform" style="color: ${chevronColor};"></i>
+                </div>
+                `;
+            }
+
+            gridContainer.insertAdjacentHTML('beforeend', cardHtml);
         }
 
         function loadCustomCards() {
