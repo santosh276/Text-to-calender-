@@ -1614,6 +1614,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             display: flex; justify-content: center; align-items: center; 
         }
         
+        .text-\[12px\] { font-size: 12px; }
+
         /* Themed Footer Backgrounds */
         .footer-green { background: rgba(4, 120, 87, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); }
         .footer-orange { background: rgba(154, 52, 18, 0.3); border: 1px solid rgba(234, 88, 12, 0.3); }
@@ -2133,7 +2135,7 @@ The word "Nua" means new and "Khai" means food.
         <section class="pt-4 md:pt-6 pb-6 md:pb-8 text-center">
             
             <!-- Notification Badge -->
-            <div class="inline-flex items-center justify-center px-3.5 md:px-4 py-2.5 rounded-full bg-orange-100 border border-orange-200 text-deep-red font-semibold text-[13px] md:text-sm mb-5 md:mb-8 animate-bounce cursor-default shadow-sm mt-3 md:mt-4">
+            <div class="inline-flex items-center justify-center px-3.5 md:px-4 py-2.5 rounded-full bg-orange-100 border border-orange-200 text-deep-red font-semibold text-[12px] md:text-sm mb-5 md:mb-8 animate-bounce cursor-default shadow-sm mt-3 md:mt-4">
                 <span class="flex items-center justify-center">
                     <i class="fas fa-bolt mr-2 flex items-center justify-center" style="color: #FF9933;"></i>
                     <span class="flex items-center justify-center leading-none mt-[2px]">Premium Tools &bull; Always Free</span>
@@ -4069,7 +4071,7 @@ const LOCATION_DATA = {
             const astro = calculateTithi(dateToUse);
 
             let sunTimesStr = { sunrise: "--:--", sunset: "--:--" };
-            if (window.SunCalc) {
+            if (typeof SunCalc !== 'undefined') {
                 let lat = 19.8135; // Default Puri
                 let lng = 85.8312;
                 if (appState.config && appState.config.location && appState.config.location.lat) {
@@ -4077,7 +4079,7 @@ const LOCATION_DATA = {
                     lng = appState.config.location.lng;
                 }
                 const times = SunCalc.getTimes(dateToUse, lat, lng);
-                const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+                const fmt = (d) => (d && !isNaN(d.getTime())) ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 if (times.sunrise && times.sunset) {
                     sunTimesStr = {
                         sunrise: fmt(times.sunrise),
