@@ -19,6 +19,15 @@
 
     <!-- Tailwind CSS -->
     <style>
+        /* DYNAMIC CATEGORY CARD COLORS */
+        .bg-rose-50 { background-color: #fff1f2 !important; }
+        .bg-rose-100 { background-color: #ffe4e6 !important; }
+        .text-rose-500 { color: #f43f5e !important; }
+
+        .bg-purple-50 { background-color: #faf5ff !important; }
+        .bg-purple-100 { background-color: #f3e8ff !important; }
+        .text-purple-500 { color: #a855f7 !important; }
+
         /* Mobile Specific Overrides */
         @media (max-width: 767px) {
             .safe-area-pb {
@@ -1879,6 +1888,11 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                             <input type="text" id="custom-card-title" placeholder="Card Title" class="w-full bg-gray-900 border border-gray-700 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors">
                             <input type="text" id="custom-card-desc" placeholder="Description" class="w-full bg-gray-900 border border-gray-700 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors">
                             <input type="text" id="custom-card-img" placeholder="Image/Icon URL (optional)" class="w-full bg-gray-900 border border-gray-700 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors">
+                            <select id="custom-card-category" class="w-full bg-gray-900 border border-gray-700 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors">
+                                <option value="General Tool">General Tool</option>
+                                <option value="Puja Vidhi / Festivals">Puja Vidhi / Festivals</option>
+                                <option value="Horoscope">Horoscope</option>
+                            </select>
                             <button onclick="submitCustomCard()" class="w-full mt-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded transition-colors text-sm">Submit Card</button>
                         </div>
                     </div>
@@ -2761,10 +2775,19 @@ The word "Nua" means new and "Khai" means food.
             const titleInput = document.getElementById('custom-card-title');
             const descInput = document.getElementById('custom-card-desc');
             const imgInput = document.getElementById('custom-card-img');
+            const categoryInput = document.getElementById('custom-card-category');
 
             const title = titleInput.value.trim();
             const desc = descInput.value.trim();
-            const img = imgInput.value.trim() || 'fa-solid fa-star'; // Default icon
+            let img = imgInput.value.trim();
+            const category = categoryInput.value;
+
+            // Auto-assign appropriate default icons based on category if img is empty
+            if (!img) {
+                if (category === 'Puja Vidhi / Festivals') img = 'fa-solid fa-om';
+                else if (category === 'Horoscope') img = 'fa-solid fa-star-and-crescent';
+                else img = 'fa-solid fa-star';
+            }
 
             if (!title) {
                 alert('Please enter a card title.');
@@ -2774,7 +2797,8 @@ The word "Nua" means new and "Khai" means food.
             const newCard = {
                 title: title,
                 desc: desc,
-                img: img
+                img: img,
+                category: category
             };
 
             let customCards = JSON.parse(localStorage.getItem('customCards') || '[]');
@@ -2787,6 +2811,7 @@ The word "Nua" means new and "Khai" means food.
             titleInput.value = '';
             descInput.value = '';
             imgInput.value = '';
+            categoryInput.value = 'General Tool';
 
             // Close editor
             toggleCustomCardEditor();
@@ -2798,20 +2823,46 @@ The word "Nua" means new and "Khai" means food.
 
             // Determine if img is URL or icon class
             const isUrl = card.img.startsWith('http') || card.img.startsWith('/');
+
+            // Default styles
+            let bgClass = 'bg-[#1e213a]/85';
+            let iconBgClass = 'bg-[#2e3459]';
+            let iconColorClass = 'text-[#8c9eff]';
+            let titleColorClass = 'text-white';
+            let descColorClass = 'text-[#6d7fcc]';
+            let chevronColor = '#4a5998';
+
+            // Override styles based on category
+            if (card.category === 'Puja Vidhi / Festivals') {
+                bgClass = 'bg-rose-50';
+                iconBgClass = 'bg-rose-100';
+                iconColorClass = 'text-rose-500';
+                titleColorClass = 'text-gray-900';
+                descColorClass = 'text-gray-600';
+                chevronColor = '#f43f5e'; // rose-500
+            } else if (card.category === 'Horoscope') {
+                bgClass = 'bg-purple-50';
+                iconBgClass = 'bg-purple-100';
+                iconColorClass = 'text-purple-500';
+                titleColorClass = 'text-gray-900';
+                descColorClass = 'text-gray-600';
+                chevronColor = '#a855f7'; // purple-500
+            }
+
             const imgHtml = isUrl
                 ? `<img src="${card.img}" class="w-11 h-11 rounded-xl object-cover shadow-inner">`
-                : `<div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner bg-[#2e3459]"><i class="${card.img} text-xl drop-shadow-sm text-[#8c9eff]"></i></div>`;
+                : `<div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner ${iconBgClass}"><i class="${card.img} text-xl drop-shadow-sm ${iconColorClass}"></i></div>`;
 
             const cardHtml = `
-            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md bg-[#1e213a]/85 shadow-lg shadow-black/5 custom-card-instance">
+            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border border-white/20 backdrop-blur-md ${bgClass} shadow-lg shadow-black/5 custom-card-instance group">
                 <div class="flex items-center gap-3">
                     ${imgHtml}
                     <div class="flex flex-col justify-center">
-                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm">${card.title}</span>
-                        ${card.desc ? `<span class="text-[11px] mt-0.5 text-[#6d7fcc] truncate w-32 md:w-40">${card.desc}</span>` : ''}
+                        <span class="font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm ${titleColorClass}">${card.title}</span>
+                        ${card.desc ? `<span class="text-[11px] mt-0.5 ${descColorClass} truncate w-32 md:w-40">${card.desc}</span>` : ''}
                     </div>
                 </div>
-                <i class="fa-solid fa-chevron-right text-xs" style="color: #4a5998;"></i>
+                <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover:translate-x-1" style="color: ${chevronColor};"></i>
             </div>
             `;
 
