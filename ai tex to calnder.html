@@ -1868,7 +1868,21 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                     <button onclick="openSettingsSidebar()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
                     <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
                 </div>
-                <div class="mt-2 border-t border-gray-800 pt-3">
+                <div class="mt-2 border-t border-gray-800 pt-3 flex flex-col gap-2">
+                    <!-- Content Editor Section -->
+                    <div class="w-full">
+                        <button onclick="toggleCustomCardEditor()" class="w-full flex items-center justify-between px-4 py-2 bg-purple-900/40 text-purple-300 rounded-lg hover:bg-purple-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-purple-900/50 group">
+                            <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-plus-circle text-purple-400"></i> Add Custom Card</span>
+                            <span class="text-xs bg-purple-900 text-purple-200 px-2 py-0.5 rounded group-hover:bg-purple-700">Click to Expand</span>
+                        </button>
+                        <div id="custom-card-editor" class="hidden mt-2 p-3 bg-gray-800/50 border border-gray-700 rounded-lg flex flex-col gap-2">
+                            <input type="text" id="custom-card-title" placeholder="Card Title" class="w-full bg-gray-900 border border-gray-700 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors">
+                            <input type="text" id="custom-card-desc" placeholder="Description" class="w-full bg-gray-900 border border-gray-700 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors">
+                            <input type="text" id="custom-card-img" placeholder="Image/Icon URL (optional)" class="w-full bg-gray-900 border border-gray-700 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors">
+                            <button onclick="submitCustomCard()" class="w-full mt-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded transition-colors text-sm">Submit Card</button>
+                        </div>
+                    </div>
+
                     <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
                         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i> Formatting Guide</span>
                         <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
@@ -2733,6 +2747,82 @@ The word "Nua" means new and "Khai" means food.
     <input type="file" id="bannerInput" accept="image/*" style="display: none;" onchange="handleBannerUpload(event)">
 
     <script>
+        // --- CUSTOM CARD LOGIC ---
+        function toggleCustomCardEditor() {
+            const editor = document.getElementById('custom-card-editor');
+            if (editor.classList.contains('hidden')) {
+                editor.classList.remove('hidden');
+            } else {
+                editor.classList.add('hidden');
+            }
+        }
+
+        function submitCustomCard() {
+            const titleInput = document.getElementById('custom-card-title');
+            const descInput = document.getElementById('custom-card-desc');
+            const imgInput = document.getElementById('custom-card-img');
+
+            const title = titleInput.value.trim();
+            const desc = descInput.value.trim();
+            const img = imgInput.value.trim() || 'fa-solid fa-star'; // Default icon
+
+            if (!title) {
+                alert('Please enter a card title.');
+                return;
+            }
+
+            const newCard = {
+                title: title,
+                desc: desc,
+                img: img
+            };
+
+            let customCards = JSON.parse(localStorage.getItem('customCards') || '[]');
+            customCards.push(newCard);
+            localStorage.setItem('customCards', JSON.stringify(customCards));
+
+            renderCustomCard(newCard);
+
+            // Clear form
+            titleInput.value = '';
+            descInput.value = '';
+            imgInput.value = '';
+
+            // Close editor
+            toggleCustomCardEditor();
+        }
+
+        function renderCustomCard(card) {
+            const carousel = document.querySelector('.snap-x.snap-mandatory');
+            if (!carousel) return;
+
+            // Determine if img is URL or icon class
+            const isUrl = card.img.startsWith('http') || card.img.startsWith('/');
+            const imgHtml = isUrl
+                ? `<img src="${card.img}" class="w-11 h-11 rounded-xl object-cover shadow-inner">`
+                : `<div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner bg-[#2e3459]"><i class="${card.img} text-xl drop-shadow-sm text-[#8c9eff]"></i></div>`;
+
+            const cardHtml = `
+            <div class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md bg-[#1e213a]/85 shadow-lg shadow-black/5 custom-card-instance">
+                <div class="flex items-center gap-3">
+                    ${imgHtml}
+                    <div class="flex flex-col justify-center">
+                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm">${card.title}</span>
+                        ${card.desc ? `<span class="text-[11px] mt-0.5 text-[#6d7fcc] truncate w-32 md:w-40">${card.desc}</span>` : ''}
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs" style="color: #4a5998;"></i>
+            </div>
+            `;
+
+            carousel.insertAdjacentHTML('beforeend', cardHtml);
+        }
+
+        function loadCustomCards() {
+            const customCards = JSON.parse(localStorage.getItem('customCards') || '[]');
+            customCards.forEach(renderCustomCard);
+        }
+
         // --- GLOBAL ERROR HANDLER ---
         // Catches unexpected crashes (e.g. Render errors, Logic bugs) and removes the loader
         window.onerror = function(message, source, lineno, colno, error) {
@@ -5407,6 +5497,8 @@ function getCDNUrl(originalUrl) {
         document.addEventListener('DOMContentLoaded', () => {
             // Sync the navigation UI with the loaded state (fixes caching issue)
             toggleView(appState.view || 'month');
+            // Load persistent custom cards into the UI
+            loadCustomCards();
         });
         
         initCalendarSwipe();
