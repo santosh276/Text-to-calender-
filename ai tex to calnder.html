@@ -4068,21 +4068,22 @@ const LOCATION_DATA = {
             const dateToUse = appState.selectedDate || appState.currentDate || new Date();
             const astro = calculateTithi(dateToUse);
 
-            let sunTimes = { sunrise: "06:00", sunset: "18:00" };
-            if (window.VedicAstro && typeof VedicAstro.getSunTimes === 'function') {
-                const jd = VedicAstro.julianDay(dateToUse);
-                // default lat/lng for Puri if no location is set? Wait, let's just get whatever location is active.
-                let lat = 19.8135;
+            let sunTimesStr = { sunrise: "--:--", sunset: "--:--" };
+            if (window.SunCalc) {
+                let lat = 19.8135; // Default Puri
                 let lng = 85.8312;
-                if (appState.location && appState.location.latitude) {
-                    lat = appState.location.latitude;
-                    lng = appState.location.longitude;
+                if (appState.config && appState.config.location && appState.config.location.lat) {
+                    lat = appState.config.location.lat;
+                    lng = appState.config.location.lng;
                 }
-                const times = VedicAstro.getSunTimes(jd, lat, lng);
-                sunTimes = {
-                    sunrise: fmtTime(times.rise),
-                    sunset: fmtTime(times.set)
-                };
+                const times = SunCalc.getTimes(dateToUse, lat, lng);
+                const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+                if (times.sunrise && times.sunset) {
+                    sunTimesStr = {
+                        sunrise: fmt(times.sunrise),
+                        sunset: fmt(times.sunset)
+                    };
+                }
             }
 
             // Also check for Odia translation for labels
@@ -4124,12 +4125,12 @@ const LOCATION_DATA = {
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
                     <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_sunrise}:</span>
-                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${sunTimes.sunrise}</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${sunTimesStr.sunrise}</span>
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-cloud-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
                     <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_sunset}:</span>
-                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${sunTimes.sunset}</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${sunTimesStr.sunset}</span>
                 </div>
             </div>`;
 
