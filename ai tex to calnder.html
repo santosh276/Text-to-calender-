@@ -1868,11 +1868,39 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                     <button onclick="openSettingsSidebar()" class="header-btn flex-1"><i class="fa-solid fa-gear"></i> Settings</button>
                     <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
                 </div>
-                <div class="mt-2 border-t border-gray-800 pt-3">
+                <div class="mt-2 border-t border-gray-800 pt-3 space-y-2">
+                    <button onclick="toggleCustomCardEditor()" class="w-full flex items-center justify-between px-4 py-2 bg-pink-900/40 text-pink-300 rounded-lg hover:bg-pink-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-pink-900/50 group">
+                        <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-plus-circle text-pink-400"></i> Add Custom Card</span>
+                        <span class="text-xs bg-pink-900 text-pink-200 px-2 py-0.5 rounded group-hover:bg-pink-700">Click to Expand</span>
+                    </button>
                     <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
                         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i> Formatting Guide</span>
                         <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
                     </button>
+                </div>
+            </div>
+
+            <!-- Content Editor Section for Custom Cards -->
+            <div id="custom-card-editor" class="text-gray-100 relative z-40 hidden">
+                <div class="p-6 pb-4 text-sm bg-gray-800/50 border-b border-gray-800">
+                    <div class="guide-title text-pink-400 mb-4 font-bold text-lg"><i class="fa-solid fa-edit"></i> Create Custom Card</div>
+                    <form id="custom-card-form" class="space-y-4" onsubmit="handleCustomCardSubmit(event)">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1" for="card-title">Card Title</label>
+                            <input type="text" id="card-title" required class="w-full bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:border-pink-500" placeholder="e.g., My Dashboard">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1" for="card-description">Description</label>
+                            <textarea id="card-description" required class="w-full bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:border-pink-500 text-sm" rows="2" placeholder="Describe the tool..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1" for="card-image">Image URL</label>
+                            <input type="url" id="card-image" required class="w-full bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:border-pink-500" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <button type="submit" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-md transition-colors mt-2">
+                            Add Card to Grid
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -2349,7 +2377,7 @@ The word "Nua" means new and "Khai" means food.
     <!-- BIG FEATURED CARDS GRID -->
     <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
 
-        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
+        <section id="popular-tools-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
             
             <div class="bg-[#ea2d71] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                 <div class="relative z-10 flex-1 flex flex-col">
@@ -4539,6 +4567,81 @@ const LOCATION_DATA = {
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
         // --- EDITOR LOGIC START ---
+        function toggleCustomCardEditor() {
+            const editor = document.getElementById('custom-card-editor');
+            editor.classList.toggle('hidden');
+        }
+
+        function handleCustomCardSubmit(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('card-title').value;
+            const description = document.getElementById('card-description').value;
+            const imageUrl = document.getElementById('card-image').value;
+
+            const newCard = {
+                id: Date.now().toString(),
+                title: title,
+                description: description,
+                imageUrl: imageUrl
+            };
+
+            // Save to local storage
+            let customCards = JSON.parse(localStorage.getItem('customCards') || '[]');
+            customCards.push(newCard);
+            localStorage.setItem('customCards', JSON.stringify(customCards));
+
+            // Render the card immediately
+            renderCustomCard(newCard);
+
+            // Clear the form and close editor
+            document.getElementById('custom-card-form').reset();
+            toggleCustomCardEditor();
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g,
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        function renderCustomCard(card) {
+            const grid = document.getElementById('popular-tools-grid');
+            if (!grid) return;
+
+            const safeTitle = escapeHTML(card.title);
+            const safeDescription = escapeHTML(card.description);
+            const safeImageUrl = card.imageUrl.replace(/"/g, '&quot;'); // Basic attribute sanitization
+
+            const cardHTML = `
+            <div id="custom-card-${card.id}" class="bg-gray-800 rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                <div class="relative z-10 flex-1 flex flex-col h-full w-full">
+                    <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                        <img src="${safeImageUrl}" alt="${safeTitle}" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">${safeTitle}</h3>
+                    <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">${safeDescription}</p>
+                    <div class="relative z-10 mt-4 md:mt-auto w-full flex flex-col gap-2">
+                        <button class="w-full bg-white/10 text-white border border-white/20 font-bold text-xs md:text-sm py-2.5 rounded-lg text-center hover:bg-white/20 transition-colors backdrop-blur-sm">Learn More</button>
+                    </div>
+                </div>
+            </div>
+            `;
+
+            grid.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        function loadCustomCards() {
+            const customCards = JSON.parse(localStorage.getItem('customCards') || '[]');
+            customCards.forEach(card => renderCustomCard(card));
+        }
+
         function toggleSyntaxGuide() {
             const guide = document.getElementById('syntax-guide');
             guide.classList.toggle('open');
@@ -5407,6 +5510,8 @@ function getCDNUrl(originalUrl) {
         document.addEventListener('DOMContentLoaded', () => {
             // Sync the navigation UI with the loaded state (fixes caching issue)
             toggleView(appState.view || 'month');
+            // Load custom cards into the grid
+            loadCustomCards();
         });
         
         initCalendarSwipe();
