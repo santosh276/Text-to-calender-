@@ -2377,8 +2377,16 @@ The word "Nua" means new and "Khai" means food.
     <!-- BIG FEATURED CARDS GRID -->
     <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
 
-        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
+        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16 relative">
             
+            <!-- Arrow pointing from editor (implicitly above/left) to first card -->
+            <div class="absolute -top-12 left-10 md:left-24 z-20 pointer-events-none hidden md:block">
+                <svg width="100" height="60" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-green-500/80 transform rotate-12 drop-shadow-md animate-pulse">
+                    <path d="M10 10 Q 50 -10, 80 40" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none" stroke-dasharray="8 4"/>
+                    <path d="M70 30 L 80 40 L 65 45" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+
             <div class="bg-[#ea2d71] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                 <div class="relative z-10 flex-1 flex flex-col">
                     <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
