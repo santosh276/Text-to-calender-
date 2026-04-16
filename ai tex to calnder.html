@@ -5682,10 +5682,12 @@ function getCDNUrl(originalUrl) {
                     if (logoMatch) tempConfig.logoUrl = logoMatch[2];
                     if (syncMatch) {
                          const val = parseInt(syncMatch[1]);
-                         const unit = syncMatch[2].toLowerCase();
+                         const unit = syncMatch[2] ? syncMatch[2].toLowerCase() : '';
                          let multiplier = 1000 * 60 * 60 * 24; // Default day
-                         if (unit.startsWith('minute')) multiplier = 1000 * 60;
-                         if (unit.startsWith('hour')) multiplier = 1000 * 60 * 60;
+                         if (unit && typeof unit === 'string') {
+                             if (unit.startsWith('minute')) multiplier = 1000 * 60;
+                             if (unit.startsWith('hour')) multiplier = 1000 * 60 * 60;
+                         }
                          tempConfig.syncInterval = val * multiplier;
                     }
                 }
@@ -5770,7 +5772,7 @@ function getCDNUrl(originalUrl) {
                     else if (currentDetailKey) {
                         // Check where to push
                         let currentDetail;
-                        if (currentDetailKey.startsWith('rec-')) {
+                        if (currentDetailKey && typeof currentDetailKey === 'string' && currentDetailKey.startsWith('rec-')) {
                             const list = parsedRecurringDetails[currentDetailKey];
                             currentDetail = list[list.length - 1];
                         } else {
