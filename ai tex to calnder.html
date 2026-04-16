@@ -1869,6 +1869,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                     <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
                 </div>
                 <div class="mt-2 border-t border-gray-800 pt-3">
+                    <button onclick="openCustomCardModal()" class="w-full flex items-center justify-center px-4 py-2 bg-saffron/20 text-saffron rounded-lg hover:bg-saffron/30 transition active:scale-95 border border-saffron/50 group mb-3">
+                        <span class="font-bold flex items-center gap-2">➕ Add Custom Card</span>
+                    </button>
                     <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
                         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i> Formatting Guide</span>
                         <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
@@ -1879,6 +1882,18 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             <!-- Enhanced Syntax Guide -->
             <div id="syntax-guide" class="text-gray-100 relative z-40">
                 <div class="p-6 pb-12 text-sm">
+                    <!-- NEW: Custom Card Formatting -->
+                    <div class="guide-section">
+                        <div class="guide-title text-orange-400"><i class="fa-solid fa-address-card"></i> Custom Card Formatting</div>
+                        <div class="code-block">
+::: More tab
+Hyperlink: [Your Link]
+Title: [Your Title]
+Description: [Your Description]
+Image Link: [Your Image URL]
+:::
+                        </div>
+                    </div>
                     <!-- NEW: Quick Start Tutorial -->
                     <div class="guide-section">
                         <div class="guide-title text-green-400"><i class="fa-solid fa-play"></i> Quick Start Tutorial</div>
@@ -2350,6 +2365,7 @@ The word "Nua" means new and "Khai" means food.
     <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
 
         <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
+            <div id="custom-cards-container" style="display: contents;"></div>
             
             <div class="bg-[#ea2d71] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                 <div class="relative z-10 flex-1 flex flex-col">
@@ -9383,5 +9399,135 @@ function renderCalendarGrid(data) {
         </button>
     </div>
 
+
+    <!-- Custom Card Modal -->
+    <div id="custom-card-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+        <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeCustomCardModal()"></div>
+        <div class="modal-content bg-white w-[calc(100%-0.75rem)] sm:w-[calc(100%-1rem)] max-w-[500px] rounded-3xl shadow-2xl relative overflow-hidden flex flex-col mx-auto box-border transition-all duration-300">
+            <div class="rounded-t-3xl px-6 py-4 flex items-center justify-between shrink-0 box-border bg-gray-900">
+                <h2 class="text-white font-bold text-xl flex items-center gap-2"><i class="fa-solid fa-address-card"></i> Content Editor Form</h2>
+                <button onclick="closeCustomCardModal()" class="text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 shadow-sm w-8 h-8 flex items-center justify-center rounded-full transition-all active:scale-95"><i class="fa-solid fa-xmark text-sm font-black"></i></button>
+            </div>
+
+            <div class="px-6 py-5 flex-1 overflow-y-auto space-y-4 box-border text-gray-800">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Title</label>
+                    <input type="text" id="cc-title" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400" placeholder="Card Title">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Description</label>
+                    <textarea id="cc-description" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 resize-none h-20" placeholder="Card Description"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Image Link</label>
+                    <input type="text" id="cc-image" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400" placeholder="https://example.com/image.jpg">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Hyperlink</label>
+                    <input type="text" id="cc-link" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400" placeholder="https://example.com">
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 shrink-0 box-border">
+                <button onclick="submitCustomCard()" class="w-full bg-gradient-to-r from-saffron to-deep-red text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check"></i> Create Custom Card
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+function openCustomCardModal() {
+    const modal = document.getElementById('custom-card-modal');
+    if(modal) {
+        document.getElementById('cc-title').value = '';
+        document.getElementById('cc-description').value = '';
+        document.getElementById('cc-image').value = '';
+        document.getElementById('cc-link').value = '';
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.remove('modal-hidden');
+        }, 10);
+    }
+}
+
+function closeCustomCardModal() {
+    const modal = document.getElementById('custom-card-modal');
+    if(modal) {
+        modal.classList.add('modal-hidden');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+}
+
+function submitCustomCard() {
+    const title = document.getElementById('cc-title').value.trim();
+    const description = document.getElementById('cc-description').value.trim();
+    const image = document.getElementById('cc-image').value.trim();
+    const link = document.getElementById('cc-link').value.trim();
+
+    if (!title || !link) {
+        if(typeof showToast === 'function') showToast('Title and Hyperlink are required', 'error');
+        else alert('Title and Hyperlink are required');
+        return;
+    }
+
+    const newCard = { title, description, image, link, id: Date.now() };
+
+    let cards = [];
+    try {
+        const stored = localStorage.getItem('customCards_v1');
+        if (stored) cards = JSON.parse(stored);
+    } catch(e) {}
+
+    cards.push(newCard);
+    localStorage.setItem('customCards_v1', JSON.stringify(cards));
+
+    renderCustomCards();
+    closeCustomCardModal();
+    if(typeof showToast === 'function') showToast('Custom card added successfully!', 'success');
+}
+
+function renderCustomCards() {
+    const container = document.getElementById('custom-cards-container');
+    if (!container) return;
+
+    let cards = [];
+    try {
+        const stored = localStorage.getItem('customCards_v1');
+        if (stored) cards = JSON.parse(stored);
+    } catch(e) {}
+
+    const escapeHTML = (str) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    let html = '';
+    cards.forEach((card, index) => {
+        const colors = ['bg-[#ea2d71]', 'bg-[#3074f1]', 'bg-[#e8491f]', 'bg-[#9039e0]'];
+        const bgClass = colors[index % colors.length];
+
+        const imgSrc = card.image ? escapeHTML(card.image) : "https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=800&q=80";
+
+        html += `
+            <a href="${escapeHTML(card.link)}" target="_blank" class="${bgClass} rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1 block" style="text-decoration: none;">
+                <div class="relative z-10 flex-1 flex flex-col">
+                    <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                        <img src="${imgSrc}" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight" style="color: white !important;">${escapeHTML(card.title)}</h3>
+                    <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2" style="color: rgba(255,255,255,0.8) !important;">${escapeHTML(card.description)}</p>
+                </div>
+                <div class="relative z-10 flex flex-col gap-2 mt-4 md:mt-auto">
+                    <button class="w-full bg-white/10 text-white border border-white/20 font-bold text-xs md:text-sm py-2.5 rounded-lg text-center hover:bg-white/20 transition-colors backdrop-blur-sm pointer-events-none" style="color: white !important;">Visit Link</button>
+                </div>
+            </a>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(renderCustomCards, 100);
+});
+</script>
 </body>
     </html>

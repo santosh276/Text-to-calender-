@@ -1,0 +1,23 @@
+1. We need to add an "+ Add Custom Card" button directly ABOVE the "Formatting Guide" section in the Calendar editor panel.
+The "Formatting Guide" button is around line 1871.
+
+```html
+<div class="mt-2 border-t border-gray-800 pt-3 flex flex-col gap-3">
+    <button onclick="openCustomCardModal()" class="w-full flex items-center justify-center px-4 py-2 bg-saffron/20 text-saffron rounded-lg hover:bg-saffron/30 transition active:scale-95 border border-saffron/50 group">
+        <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-plus"></i> Add Custom Card</span>
+    </button>
+    <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
+...
+```
+
+2. We need to build the Pop-up Modal.
+It should be injected somewhere in the body.
+It should contain inputs: "Title", "Description", "Image Link", and "Hyperlink", plus a "Submit" button and a "Close/Cancel" button.
+
+3. We need to write JavaScript for `openCustomCardModal()`, `closeCustomCardModal()`, and `submitCustomCard()`.
+`submitCustomCard()` should save to `localStorage` (e.g., `customCards`), then close the modal.
+Wait, we need to generate a new card in the "Spiritual Tools" / "Popular Tools" aesthetic. Wait, where is the "Spiritual Tools" section located? Is it in the "More" tab or "Calendar" tab?
+The requirements state: "Capture the form data and generate a new card matching the existing "Popular Tools" aesthetic. CRITICAL: Wrap the entire generated card in an HTML anchor `<a>` tag using the provided "Hyperlink" URL, and set target="_blank". Save all data to localStorage."
+Ah, the "Spiritual Tools" / "Popular Tools" is inside `#more-view-container`. Wait, where does the card render? "verify that the newly created card successfully renders in the UI. Assert that the rendered card is clickable..."
+
+Let me check `#more-view-container`.
