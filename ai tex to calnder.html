@@ -4725,18 +4725,19 @@ const LOCATION_DATA = {
                 color: color
             };
 
-            // Save to local storage
-            let customCards = [];
-            try {
-                const stored = localStorage.getItem('custom_cards');
-                if (stored) customCards = JSON.parse(stored);
-            } catch (e) { console.error("Error reading custom cards:", e); }
+            // Format syntax string
+            const syntaxString = `\n::: More tab\nHyperlink: [${linkRaw}]\nTitle: [${titleRaw}]\nDescription: [${descRaw}]\nImage Link: [${imageRaw}]\nCard Color: [${colorRaw}]\n:::\n`;
 
-            customCards.push(cardData);
-            localStorage.setItem('custom_cards', JSON.stringify(customCards));
+            // Append to editor
+            const editor = document.getElementById('editor');
+            if (editor) {
+                editor.value = editor.value + syntaxString;
+                // Trigger input event to re-parse and save to cache
+                editor.dispatchEvent(new Event('input', { bubbles: true }));
 
-            // Render it
-            renderCustomCard(cardData);
+                // Show a toast message to confirm addition
+                showToast("Custom Card syntax added to editor!");
+            }
 
             closeCustomCardModal();
         }
@@ -4766,18 +4767,6 @@ const LOCATION_DATA = {
 
             // Append the card to the grid
             gridContainer.insertAdjacentHTML('beforeend', cardHTML);
-        }
-
-        function loadCustomCards() {
-            try {
-                const stored = localStorage.getItem('custom_cards');
-                if (stored) {
-                    const customCards = JSON.parse(stored);
-                    customCards.forEach(card => renderCustomCard(card));
-                }
-            } catch (e) {
-                console.error("Error loading custom cards:", e);
-            }
         }
 
         function closeLinkModal() {
@@ -5569,9 +5558,6 @@ function getCDNUrl(originalUrl) {
         document.addEventListener('DOMContentLoaded', () => {
             // Sync the navigation UI with the loaded state (fixes caching issue)
             toggleView(appState.view || 'month');
-
-            // Load custom cards from local storage and render them
-            loadCustomCards();
         });
         
         initCalendarSwipe();
@@ -5710,6 +5696,8 @@ function getCDNUrl(originalUrl) {
             let currentDetailKey = null;
             let parsedSeasonDescs = {};
             let currentSeasonIdx = -1;
+            let parsedCustomCards = [];
+            let currentCustomCard = null;
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
             let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
@@ -5894,7 +5882,25 @@ function getCDNUrl(originalUrl) {
                 else if (currentBlock === 'panchang') {
                     const panMatch = line.match(/^@\s+(.+?)\s*:\s*(.+)/);
                     if (panMatch && currentMonthObj) currentMonthObj.panchang[panMatch[1]] = panMatch[2];
-                } 
+                }
+                else if (currentBlock === 'more tab') {
+                    // Start of a new card if Hyperlink is found
+                    const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
+                    const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
+                    const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
+                    const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
+                    const colorMatch = line.match(/^Card Color:\s*\[(.*?)\]/i);
+
+                    if (linkMatch) {
+                        currentCustomCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488' };
+                        parsedCustomCards.push(currentCustomCard);
+                    } else if (currentCustomCard) {
+                        if (titleMatch) currentCustomCard.title = titleMatch[1];
+                        else if (descMatch) currentCustomCard.desc = descMatch[1];
+                        else if (imgMatch) currentCustomCard.image = imgMatch[1];
+                        else if (colorMatch) currentCustomCard.color = colorMatch[1];
+                    }
+                }
             });
 
             // If parsedMonths is empty (no explicit calendar block), verify if we need a default one?
@@ -5907,6 +5913,7 @@ function getCDNUrl(originalUrl) {
             appState.details = parsedDetails;
             appState.customSeasonDescriptions = parsedSeasonDescs;
             appState.config = tempConfig;
+            appState.customCards = parsedCustomCards;
             
             findTodayIndex();
             
@@ -6164,6 +6171,22 @@ function getCDNUrl(originalUrl) {
             renderTimings(currentData);
             renderFestivals(currentData);
             renderMonthBanner(currentData);
+
+            // Render Custom Cards
+            const gridContainer = document.querySelector('#more-view-container section.grid.grid-cols-2');
+            if (gridContainer) {
+                // Clear out existing dynamic custom cards if we want to rebuild them.
+                // However, the grid contains static elements. We should only clear dynamic ones or
+                // selectively render them. A better approach is to remove elements with a specific class,
+                // but the existing static cards don't have a specific "static" vs "dynamic" class.
+                // Let's remove any card that has an "a" tag since our dynamic ones are links.
+                const existingLinks = gridContainer.querySelectorAll('a.block.h-full');
+                existingLinks.forEach(el => el.remove());
+
+                if (appState.customCards && appState.customCards.length > 0) {
+                    appState.customCards.forEach(card => renderCustomCard(card));
+                }
+            }
 
             // --- NEW LOGIC: Hide/Show Sections based on Config ---
             const secs = appState.config.sections || { festivals: true, panchang: true };
