@@ -1,0 +1,26 @@
+<<<<<<< SEARCH
+            const stateToSave = {
+                activeMonthIndex: appState.activeMonthIndex || 0,
+                monthsData: appState.monthsData || [],
+                todayIndex: appState.todayIndex || -1,
+                details: appState.details || {},
+                recurringDetails: appState.recurringDetails || {},
+                manualTithis: appState.manualTithis || {},
+                customSeasonDescriptions: appState.customSeasonDescriptions || {},
+                images: appState.images || {},
+                config: exportConfig
+            };
+=======
+            const stateToSave = {
+                activeMonthIndex: appState.activeMonthIndex || 0,
+                monthsData: appState.monthsData || [],
+                todayIndex: appState.todayIndex || -1,
+                details: appState.details || {},
+                recurringDetails: appState.recurringDetails || {},
+                manualTithis: appState.manualTithis || {},
+                customSeasonDescriptions: appState.customSeasonDescriptions || {},
+                images: appState.images || {},
+                customCards: appState.customCards || [],
+                config: exportConfig
+            };
+>>>>>>> REPLACE

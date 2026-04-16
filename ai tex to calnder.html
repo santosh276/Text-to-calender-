@@ -4742,6 +4742,8 @@ const LOCATION_DATA = {
             closeCustomCardModal();
         }
 
+        // --- EDITOR LOGIC END ---
+
         function renderCustomCard(cardData) {
             const gridContainer = document.querySelector('#more-view-container section.grid.grid-cols-2');
             if (!gridContainer) return;
@@ -4768,6 +4770,8 @@ const LOCATION_DATA = {
             // Append the card to the grid
             gridContainer.insertAdjacentHTML('beforeend', cardHTML);
         }
+
+        // --- EDITOR LOGIC START ---
 
         function closeLinkModal() {
             const modal = document.getElementById('link-modal');
@@ -9109,6 +9113,7 @@ function renderCalendarGrid(data) {
                 manualTithis: appState.manualTithis || {},
                 customSeasonDescriptions: appState.customSeasonDescriptions || {},
                 images: appState.images || {},
+                customCards: appState.customCards || [],
                 config: exportConfig
             };
 

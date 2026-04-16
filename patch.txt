@@ -1,0 +1,69 @@
+<<<<<<< SEARCH
+            closeCustomCardModal();
+        }
+
+        function renderCustomCard(cardData) {
+            const gridContainer = document.querySelector('#more-view-container section.grid.grid-cols-2');
+            if (!gridContainer) return;
+
+            const bgColor = cardData.color || '#0d9488';
+
+            const cardHTML = `
+            <a href="${cardData.link}" target="_blank" class="block h-full group">
+                <div style="background-color: ${bgColor};" class="rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                    <div class="relative z-10 flex-1 flex flex-col h-full w-full">
+                        <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
+                        </div>
+                        <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">${cardData.title}</h3>
+                        <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">${cardData.desc}</p>
+                        <div class="relative z-10 mt-4 md:mt-auto w-full">
+                            <button style="color: ${bgColor};" class="w-full bg-white font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            `;
+
+            // Append the card to the grid
+            gridContainer.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        function closeLinkModal() {
+=======
+            closeCustomCardModal();
+        }
+
+        // --- EDITOR LOGIC END ---
+
+        function renderCustomCard(cardData) {
+            const gridContainer = document.querySelector('#more-view-container section.grid.grid-cols-2');
+            if (!gridContainer) return;
+
+            const bgColor = cardData.color || '#0d9488';
+
+            const cardHTML = `
+            <a href="${cardData.link}" target="_blank" class="block h-full group">
+                <div style="background-color: ${bgColor};" class="rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                    <div class="relative z-10 flex-1 flex flex-col h-full w-full">
+                        <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
+                        </div>
+                        <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">${cardData.title}</h3>
+                        <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">${cardData.desc}</p>
+                        <div class="relative z-10 mt-4 md:mt-auto w-full">
+                            <button style="color: ${bgColor};" class="w-full bg-white font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            `;
+
+            // Append the card to the grid
+            gridContainer.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        // --- EDITOR LOGIC START ---
+
+        function closeLinkModal() {
+>>>>>>> REPLACE
