@@ -1,4 +1,0 @@
-1. Change the Trust Badges container (`div.flex.flex-wrap.items-center.justify-center.gap-3.md\:gap-4.mt-4`) to stack vertically on mobile and horizontally on desktop.
-   - Specifically, change `flex-wrap` to `flex-col md:flex-row`.
-   - The user requested "single line only mobile screen decreases size of badges". Wait, the screenshot shows them stacked vertically on mobile! So `flex-col` on mobile makes them stacked (each on a single line).
-2. Adjust the padding/margins if necessary to make them look like the screenshot. The screenshot has them centered, each taking up a single line.
