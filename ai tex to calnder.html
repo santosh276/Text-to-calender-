@@ -4649,12 +4649,25 @@ const LOCATION_DATA = {
             document.getElementById('cc-link').value = '';
         }
 
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g,
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
         function renderCustomCards() {
-            const gridContainer = document.querySelector('#more-view-container .grid');
-            if (!gridContainer) return;
+            const carouselContainer = document.querySelector('#more-view-container .flex.overflow-x-auto');
+            if (!carouselContainer) return;
 
             // First remove any existing dynamically added custom cards
-            const existingCustom = gridContainer.querySelectorAll('.custom-card-generated');
+            const existingCustom = carouselContainer.querySelectorAll('.custom-card-generated');
             existingCustom.forEach(el => el.remove());
 
             let cards = [];
@@ -4665,20 +4678,23 @@ const LOCATION_DATA = {
 
             cards.forEach(card => {
                 const cardHTML = `
-                <a href="${card.link}" target="_blank" class="custom-card-generated block bg-[#0f766e] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative group h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
-                    <div class="relative z-10 flex-1 flex flex-col h-full w-full">
-                        <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10 flex items-center justify-center bg-black/20">
-                            ${card.image ? `<img src="${card.image}" alt="${card.title}" class="w-full h-full object-cover" />` : `<i class="fa-solid fa-link text-4xl text-white/50"></i>`}
+                <a href="${card.link}" target="_blank" class="custom-card-generated snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md bg-[#1e213a]/85 shadow-lg shadow-black/5">
+                    <div class="flex items-center gap-3 w-full overflow-hidden">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden" style="background-color: #2e3459;">
+                            ${card.image ? `<img src="${card.image}" alt="${card.title}" class="w-full h-full object-cover" />` : `<i class="fa-solid fa-link text-xl text-white/70"></i>`}
                         </div>
-                        <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">${card.title}</h3>
-                        ${card.desc ? `<p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">${card.desc}</p>` : ''}
-                        <div class="relative z-10 mt-4 md:mt-auto w-full">
-                            <button class="w-full bg-white/10 text-white border border-white/20 font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-white/20 transition-colors backdrop-blur-sm">Open Link</button>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-headline text-base md:text-[17px] font-bold text-white tracking-tight truncate">${card.title}</h3>
+                            ${card.desc ? `<p class="text-[11px] md:text-xs text-indigo-200/80 mt-0.5 truncate">${card.desc}</p>` : ''}
                         </div>
+                    </div>
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center bg-white/10 shrink-0 ml-2 shadow-sm">
+                        <i class="fa-solid fa-arrow-right text-[10px] text-white"></i>
                     </div>
                 </a>`;
 
-                gridContainer.insertAdjacentHTML('beforeend', cardHTML);
+                // Insert after the existing Popular Tools cards (or before if we want them first, let's append)
+                carouselContainer.insertAdjacentHTML('beforeend', cardHTML);
             });
         }
 
