@@ -2698,6 +2698,13 @@ The word "Nua" means new and "Khai" means food.
                         <label class="block text-sm font-bold text-gray-700 mb-2">Hyperlink</label>
                         <input type="url" id="custom-card-link" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="https://example.com">
                     </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Card Color</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="custom-card-color" value="#0d9488" class="w-12 h-12 p-1 border border-gray-300 rounded-lg bg-white cursor-pointer shadow-sm">
+                            <span class="text-xs text-gray-500 font-medium">Choose a background color for your card.</span>
+                        </div>
+                    </div>
                     <div class="mt-4 flex justify-end gap-3">
                         <button type="button" onclick="closeCustomCardModal()" class="px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
                         <button type="submit" class="px-4 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition">Add Card</button>
@@ -4702,17 +4709,20 @@ const LOCATION_DATA = {
             const descRaw = document.getElementById('custom-card-desc').value;
             const imageRaw = document.getElementById('custom-card-image').value;
             const linkRaw = document.getElementById('custom-card-link').value;
+            const colorRaw = document.getElementById('custom-card-color').value;
 
             const title = sanitizeInput(titleRaw);
             const desc = sanitizeInput(descRaw);
             const image = sanitizeInput(imageRaw);
             const link = sanitizeInput(linkRaw);
+            const color = sanitizeInput(colorRaw) || '#0d9488';
 
             const cardData = {
                 title: title,
                 desc: desc,
                 image: image,
-                link: link
+                link: link,
+                color: color
             };
 
             // Save to local storage
@@ -4735,12 +4745,11 @@ const LOCATION_DATA = {
             const gridContainer = document.querySelector('#more-view-container section.grid.grid-cols-2');
             if (!gridContainer) return;
 
-            // Use a base color, could be random or fixed, we'll use a cool teal
-            const bgColor = '#0d9488';
+            const bgColor = cardData.color || '#0d9488';
 
             const cardHTML = `
             <a href="${cardData.link}" target="_blank" class="block h-full group">
-                <div class="bg-[${bgColor}] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                <div style="background-color: ${bgColor};" class="rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                     <div class="relative z-10 flex-1 flex flex-col h-full w-full">
                         <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
                             <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
@@ -4748,7 +4757,7 @@ const LOCATION_DATA = {
                         <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">${cardData.title}</h3>
                         <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">${cardData.desc}</p>
                         <div class="relative z-10 mt-4 md:mt-auto w-full">
-                            <button class="w-full bg-white text-[${bgColor}] font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
+                            <button style="color: ${bgColor};" class="w-full bg-white font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
                         </div>
                     </div>
                 </div>
