@@ -1869,6 +1869,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                     <button onclick="openClearModal()" class="header-btn flex-1"><i class="fa-solid fa-trash"></i> Clear Input</button>
                 </div>
                 <div class="mt-2 border-t border-gray-800 pt-3">
+                    <button onclick="openCustomCardModal()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-700 text-green-100 rounded-lg hover:bg-green-600 hover:text-white transition active:scale-95 transform duration-150 border border-green-600 mb-3 shadow-md font-bold">
+                        <i class="fa-solid fa-plus"></i> Add Custom Card
+                    </button>
                     <button onclick="toggleSyntaxGuide()" class="w-full flex items-center justify-between px-4 py-2 bg-indigo-900/40 text-indigo-300 rounded-lg hover:bg-indigo-900/60 hover:text-white transition active:scale-95 transform duration-150 border border-indigo-900/50 group">
                         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i> Formatting Guide</span>
                         <span class="text-xs bg-indigo-900 text-indigo-200 px-2 py-0.5 rounded group-hover:bg-indigo-700">Click to Expand</span>
@@ -1889,6 +1892,20 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                             <li><strong>Add Details:</strong> Use <code>::: details</code> and <code>>> Date</code> to add stories, images, and rituals.</li>
                             <li><strong>Customize:</strong> Add Panchang and Seasons to make it professional.</li>
                         </ol>
+                    </div>
+
+                    <!-- NEW: Custom Card Syntax -->
+                    <div class="guide-section">
+                        <div class="guide-title text-green-400"><i class="fa-solid fa-address-card"></i> Add Custom Card</div>
+                        <p class="text-gray-300 mb-2">Create custom clickable cards in the More tab:</p>
+                        <div class="code-block">
+::: More tab
+Hyperlink: [Your Link]
+Title: [Your Title]
+Description: [Your Description]
+Image Link: [Your Image URL]
+:::
+                        </div>
                     </div>
 
                     <div class="guide-section">
@@ -2651,6 +2668,41 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CARD MODAL -->
+    <div id="custom-card-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+        <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCustomCardModal()"></div>
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col">
+            <div class="bg-green-700 p-4 border-b border-green-800 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-white"><i class="fa-solid fa-plus mr-2 text-green-200"></i>Add Custom Card</h3>
+                <button onclick="closeCustomCardModal()" class="text-green-200 hover:text-white"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="p-6 flex flex-col gap-4 overflow-y-auto">
+                <form id="custom-card-form" onsubmit="handleCustomCardSubmit(event)" class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Title</label>
+                        <input type="text" id="custom-card-title" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="Card Title">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Description</label>
+                        <textarea id="custom-card-desc" required rows="2" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="A short description..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Image Link</label>
+                        <input type="url" id="custom-card-image" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Hyperlink</label>
+                        <input type="url" id="custom-card-link" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="https://example.com">
+                    </div>
+                    <div class="mt-4 flex justify-end gap-3">
+                        <button type="button" onclick="closeCustomCardModal()" class="px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition">Add Card</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -4618,6 +4670,107 @@ const LOCATION_DATA = {
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
         }
 
+        function openCustomCardModal() {
+            const modal = document.getElementById('custom-card-modal');
+            modal.style.display = 'flex';
+            // Small timeout to allow display:flex to apply before removing hidden class for transition
+            setTimeout(() => {
+                modal.classList.remove('modal-hidden');
+            }, 10);
+        }
+
+        function closeCustomCardModal() {
+            const modal = document.getElementById('custom-card-modal');
+            modal.classList.add('modal-hidden');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+            document.getElementById('custom-card-form').reset();
+        }
+
+        function sanitizeInput(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
+        }
+
+        function handleCustomCardSubmit(event) {
+            event.preventDefault();
+
+            const titleRaw = document.getElementById('custom-card-title').value;
+            const descRaw = document.getElementById('custom-card-desc').value;
+            const imageRaw = document.getElementById('custom-card-image').value;
+            const linkRaw = document.getElementById('custom-card-link').value;
+
+            const title = sanitizeInput(titleRaw);
+            const desc = sanitizeInput(descRaw);
+            const image = sanitizeInput(imageRaw);
+            const link = sanitizeInput(linkRaw);
+
+            const cardData = {
+                title: title,
+                desc: desc,
+                image: image,
+                link: link
+            };
+
+            // Save to local storage
+            let customCards = [];
+            try {
+                const stored = localStorage.getItem('custom_cards');
+                if (stored) customCards = JSON.parse(stored);
+            } catch (e) { console.error("Error reading custom cards:", e); }
+
+            customCards.push(cardData);
+            localStorage.setItem('custom_cards', JSON.stringify(customCards));
+
+            // Render it
+            renderCustomCard(cardData);
+
+            closeCustomCardModal();
+        }
+
+        function renderCustomCard(cardData) {
+            const gridContainer = document.querySelector('#more-view-container section.grid.grid-cols-2');
+            if (!gridContainer) return;
+
+            // Use a base color, could be random or fixed, we'll use a cool teal
+            const bgColor = '#0d9488';
+
+            const cardHTML = `
+            <a href="${cardData.link}" target="_blank" class="block h-full group">
+                <div class="bg-[${bgColor}] rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                    <div class="relative z-10 flex-1 flex flex-col h-full w-full">
+                        <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
+                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
+                        </div>
+                        <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">${cardData.title}</h3>
+                        <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">${cardData.desc}</p>
+                        <div class="relative z-10 mt-4 md:mt-auto w-full">
+                            <button class="w-full bg-white text-[${bgColor}] font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            `;
+
+            // Append the card to the grid
+            gridContainer.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        function loadCustomCards() {
+            try {
+                const stored = localStorage.getItem('custom_cards');
+                if (stored) {
+                    const customCards = JSON.parse(stored);
+                    customCards.forEach(card => renderCustomCard(card));
+                }
+            } catch (e) {
+                console.error("Error loading custom cards:", e);
+            }
+        }
+
         function closeLinkModal() {
             const modal = document.getElementById('link-modal');
             modal.classList.add('modal-hidden');
@@ -5407,6 +5560,9 @@ function getCDNUrl(originalUrl) {
         document.addEventListener('DOMContentLoaded', () => {
             // Sync the navigation UI with the loaded state (fixes caching issue)
             toggleView(appState.view || 'month');
+
+            // Load custom cards from local storage and render them
+            loadCustomCards();
         });
         
         initCalendarSwipe();
