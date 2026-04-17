@@ -1,5 +1,4 @@
 const { chromium } = require('playwright');
-const path = require('path');
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -24,7 +23,7 @@ const path = require('path');
   await page.evaluate("toggleView('more')");
 
   // Take a full-page screenshot
-  await page.screenshot({ path: '/app/screenshot_ui.png', fullPage: true });
+  await page.screenshot({ path: '/app/screenshot_ui_2.png', fullPage: true });
 
   await browser.close();
 })();
