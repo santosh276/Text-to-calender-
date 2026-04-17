@@ -2196,14 +2196,14 @@ The word "Nua" means new and "Khai" means food.
             </div>
 
             <!-- Trust Badges -->
-            <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4 mt-4">
-                <div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-full border border-orange-50 shadow-sm text-gray-600">
-                    <span class="material-symbols-outlined text-[18px] text-saffron flex items-center justify-center">check_circle</span>
-                    <span class="text-xs md:text-sm font-medium tracking-wide flex items-center justify-center leading-none mt-[2px]">No registration required</span>
+            <div class="flex flex-nowrap w-full overflow-hidden items-center justify-center gap-1.5 md:gap-4 mt-4 px-2">
+                <div class="flex items-center gap-1.5 md:gap-2 bg-white/80 backdrop-blur-sm px-2 md:px-4 py-2.5 rounded-full border border-orange-50 shadow-sm text-gray-600 whitespace-nowrap overflow-hidden">
+                    <span class="material-symbols-outlined text-[14px] md:text-[18px] text-saffron flex items-center justify-center shrink-0">check_circle</span>
+                    <span class="text-[9px] md:text-sm font-medium tracking-wide flex items-center justify-center leading-none mt-[2px] truncate">No registration required</span>
                 </div>
-                <div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-full border border-orange-50 shadow-sm text-gray-600">
-                    <span class="material-symbols-outlined text-[18px] text-saffron flex items-center justify-center">check_circle</span>
-                    <span class="text-xs md:text-sm font-medium tracking-wide flex items-center justify-center leading-none mt-[2px]">100% free Vaidik Margam</span>
+                <div class="flex items-center gap-1.5 md:gap-2 bg-white/80 backdrop-blur-sm px-2 md:px-4 py-2.5 rounded-full border border-orange-50 shadow-sm text-gray-600 whitespace-nowrap overflow-hidden">
+                    <span class="material-symbols-outlined text-[14px] md:text-[18px] text-saffron flex items-center justify-center shrink-0">check_circle</span>
+                    <span class="text-[9px] md:text-sm font-medium tracking-wide flex items-center justify-center leading-none mt-[2px] truncate">100% free Vaidik Margam</span>
                 </div>
             </div>
         </section>
@@ -4824,7 +4824,7 @@ const LOCATION_DATA = {
             tempLinkState.selectedType = type;
             document.querySelectorAll('#link-modal .radio-option').forEach(el => el.classList.remove('selected'));
             const selectedEl = document.querySelector(`#link-modal .radio-option[onclick="updateLinkType('${type}')"]`);
-                        if(selectedEl) selectedEl.classList.add('selected');
+                                    if(selectedEl) selectedEl.classList.add('selected');
             
             const dateContainer = document.getElementById('link-date-container');
             dateContainer.classList.add('hidden');
