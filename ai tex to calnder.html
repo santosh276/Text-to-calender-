@@ -43,6 +43,14 @@
             }
         }
 
+        .max-h-\[85dvh\] { max-height: 85dvh; }
+
+
+        .py-\[7px\] { padding-top: 7px; padding-bottom: 7px; }
+        @media (min-width: 768px) { .md\:py-\[9px\] { padding-top: 9px; padding-bottom: 9px; } }
+
+        .text-\[10px\] { font-size: 10px; }
+
         /* Desktop countdown badge sizing */
         @media (min-width: 768px) {
             .hero-cd-num { font-size: 1.5rem !important; }
@@ -2283,7 +2291,7 @@ The word "Nua" means new and "Khai" means food.
     <!-- THE GRAND WELCOME ARCH -->
     <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
         <section class="text-center mt-[-8px] md:mt-12 mb-0 md:mb-12 px-4">
-            <h2 class="font-headline text-[28px] md:text-5xl font-black tracking-tight mb-[-2px] md:mb-4 bg-gradient-to-r from-saffron to-deep-red bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(255,153,51,0.4)]">Discover Popular Tools</h2>
+            <h2 id="grid-cards-title" class="font-headline text-[28px] md:text-5xl font-black tracking-tight mb-[-2px] md:mb-4 bg-gradient-to-r from-saffron to-deep-red bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(255,153,51,0.4)]">Discover Popular Tools</h2>
             <p class="text-gray-600 text-[13px] md:text-base max-w-2xl mx-auto leading-relaxed">
                 Explore timeless wisdom and powerful tools designed to guide your spiritual journey and bring balance to your daily life.
             </p>
@@ -2296,7 +2304,7 @@ The word "Nua" means new and "Khai" means food.
         
         <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
             <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
-            <h2 class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Spiritual Tools</h2>
+            <h2 id="scroll-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Spiritual Tools</h2>
         </div>
 
         <div class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth">
@@ -2388,7 +2396,7 @@ The word "Nua" means new and "Khai" means food.
     <div class="mb-10 -mx-2 md:-mx-8">
         <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
             <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
-            <h2 class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Quick Links</h2>
+            <h2 id="bubble-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Quick Links</h2>
         </div>
         <div id="bubble-container" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth">
             <!-- Bubbles will be injected here -->
@@ -2708,47 +2716,52 @@ The word "Nua" means new and "Khai" means food.
     <!-- CUSTOM CARD MODAL -->
     <div id="custom-card-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCustomCardModal()"></div>
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col max-h-[85dvh]">
             <div class="bg-green-700 p-4 border-b border-green-800 flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-white"><i class="fa-solid fa-plus mr-2 text-green-200"></i>Add Custom Card</h3>
                 <button onclick="closeCustomCardModal()" class="text-green-200 hover:text-white"><i class="fa-solid fa-times"></i></button>
             </div>
-            <div class="p-6 flex flex-col gap-4 overflow-y-auto">
-                <form id="custom-card-form" onsubmit="handleCustomCardSubmit(event)" class="flex flex-col gap-4">
+            <div class="p-4 md:p-6 flex flex-col gap-3 md:gap-4 overflow-y-auto">
+                <form id="custom-card-form" onsubmit="handleCustomCardSubmit(event)" class="flex flex-col gap-3 md:gap-4 pb-4 md:pb-0">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Design Template</label>
-                        <select id="custom-card-design" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800 font-medium">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Design Template</label>
+                        <select id="custom-card-design" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800 font-medium" onchange="updateCustomCardPlaceholder()">
                             <option value="more tab">Design 1: Grid Card (Large Image)</option>
                             <option value="scroll tab">Design 2: Scrolling Card (Reading Mode)</option>
                             <option value="bubble tab">Design 3: Circular Bubble</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Title</label>
-                        <input type="text" id="custom-card-title" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="Card Title">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Main Section Title <span class="text-gray-400 font-normal">(Optional)</span></label>
+                        <input type="text" id="custom-card-main-title" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="e.g. Discover Popular Tools">
+                        <span class="text-[10px] md:text-xs text-gray-500 mt-1 block">Leave blank to use the default title for this section.</span>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Description</label>
-                        <textarea id="custom-card-desc" required rows="2" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="A short description..."></textarea>
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Title</label>
+                        <input type="text" id="custom-card-title" required class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="Card Title">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Image Link</label>
-                        <input type="url" id="custom-card-image" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="https://example.com/image.jpg">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Description</label>
+                        <textarea id="custom-card-desc" required rows="2" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="A short description..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Hyperlink</label>
-                        <input type="url" id="custom-card-link" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="https://example.com">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Image Link</label>
+                        <input type="url" id="custom-card-image" required class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="https://example.com/image.jpg">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Card Color</label>
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Hyperlink</label>
+                        <input type="url" id="custom-card-link" required class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="https://example.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Card Color</label>
                         <div class="flex items-center gap-3">
-                            <input type="color" id="custom-card-color" value="#0d9488" class="w-12 h-12 p-1 border border-gray-300 rounded-lg bg-white cursor-pointer shadow-sm">
-                            <span class="text-xs text-gray-500 font-medium">Choose a background color for your card.</span>
+                            <input type="color" id="custom-card-color" value="#0d9488" class="w-10 h-10 md:w-12 md:h-12 p-1 border border-gray-300 rounded-lg bg-white cursor-pointer shadow-sm">
+                            <span class="text-[10px] md:text-xs text-gray-500 font-medium">Choose a background color for your card.</span>
                         </div>
                     </div>
-                    <div class="mt-4 flex justify-end gap-3">
-                        <button type="button" onclick="closeCustomCardModal()" class="px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition">Add Card</button>
+                    <div class="mt-2 md:mt-4 flex justify-end gap-3">
+                        <button type="button" onclick="closeCustomCardModal()" class="px-3 py-[7px] md:px-4 md:py-[9px] bg-gray-100 text-gray-700 text-xs md:text-sm font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
+                        <button type="submit" class="px-3 py-[7px] md:px-4 md:py-[9px] bg-green-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-green-700 transition">Add Card</button>
                     </div>
                 </form>
             </div>
@@ -4747,12 +4760,14 @@ const LOCATION_DATA = {
             event.preventDefault();
             
             const designRaw = document.getElementById('custom-card-design').value;
+            const mainTitleRaw = document.getElementById('custom-card-main-title').value;
             const titleRaw = document.getElementById('custom-card-title').value;
             const descRaw = document.getElementById('custom-card-desc').value.replace(/\n/g, ' '); // remove newlines to not break syntax
             const imageRaw = document.getElementById('custom-card-image').value;
             const linkRaw = document.getElementById('custom-card-link').value;
             const colorRaw = document.getElementById('custom-card-color').value;
             
+            const mainTitle = sanitizeInput(mainTitleRaw);
             const title = sanitizeInput(titleRaw);
             const desc = sanitizeInput(descRaw);
             const image = sanitizeInput(imageRaw);
@@ -4767,7 +4782,10 @@ const LOCATION_DATA = {
             }
 
             // Format syntax string using sanitized variables
-            const syntaxString = `\n${syntaxHeader}\nHyperlink: [${link}]\nTitle: [${title}]\nDescription: [${desc}]\nImage Link: [${image}]\nCard Color: [${color}]\n:::\n`;
+            let syntaxString = `\n${syntaxHeader}\n`;
+            syntaxString += `Hyperlink: [${link}]\n`;
+            if (mainTitle) syntaxString += `Main Title: [${mainTitle}]\n`;
+            syntaxString += `Title: [${title}]\nDescription: [${desc}]\nImage Link: [${image}]\nCard Color: [${color}]\n:::\n`;
             
             // Append to editor
             const editor = document.getElementById('editor');
@@ -4783,6 +4801,14 @@ const LOCATION_DATA = {
             closeCustomCardModal();
         }
         
+        function updateCustomCardPlaceholder() {
+            const design = document.getElementById('custom-card-design').value;
+            const input = document.getElementById('custom-card-main-title');
+            if (design === 'more tab') input.placeholder = 'e.g. Discover Popular Tools';
+            else if (design === 'scroll tab') input.placeholder = 'e.g. Spiritual Tools';
+            else if (design === 'bubble tab') input.placeholder = 'e.g. Quick Links';
+        }
+
         // --- EDITOR LOGIC END ---
 
         function renderCustomCard(cardData) {
@@ -4928,7 +4954,7 @@ const LOCATION_DATA = {
         
         function downloadTxtFile() {
             const text = editor.value;
-            const blob = new Blob([text], { type: "text/plain" });
+                        const blob = new Blob([text], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
@@ -5982,6 +6008,7 @@ function getCDNUrl(originalUrl) {
                 else if (currentBlock === 'more tab') {
                     // Start of a new card if Hyperlink is found
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
                     const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
                     const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
                     const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
@@ -5991,7 +6018,8 @@ function getCDNUrl(originalUrl) {
                         currentCustomCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488' };
                         parsedCustomCards.push(currentCustomCard);
                     } else if (currentCustomCard) {
-                        if (titleMatch) currentCustomCard.title = titleMatch[1];
+                        if (mainTitleMatch) currentCustomCard.mainTitle = mainTitleMatch[1];
+                        else if (titleMatch) currentCustomCard.title = titleMatch[1];
                         else if (descMatch) currentCustomCard.desc = descMatch[1];
                         else if (imgMatch) currentCustomCard.image = imgMatch[1];
                         else if (colorMatch) currentCustomCard.color = colorMatch[1];
@@ -5999,6 +6027,7 @@ function getCDNUrl(originalUrl) {
                 }
                 else if (currentBlock === 'scroll tab') {
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
                     const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
                     const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
                     const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
@@ -6008,7 +6037,8 @@ function getCDNUrl(originalUrl) {
                         currentScrollCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#2e3459' };
                         parsedScrollCards.push(currentScrollCard);
                     } else if (currentScrollCard) {
-                        if (titleMatch) currentScrollCard.title = titleMatch[1];
+                        if (mainTitleMatch) currentScrollCard.mainTitle = mainTitleMatch[1];
+                        else if (titleMatch) currentScrollCard.title = titleMatch[1];
                         else if (descMatch) currentScrollCard.desc = descMatch[1];
                         else if (imgMatch) currentScrollCard.image = imgMatch[1];
                         else if (colorMatch) currentScrollCard.color = colorMatch[1];
@@ -6016,6 +6046,7 @@ function getCDNUrl(originalUrl) {
                 }
                 else if (currentBlock === 'bubble tab') {
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
                     const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
                     const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
                     const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
@@ -6025,7 +6056,8 @@ function getCDNUrl(originalUrl) {
                         currentBubbleCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488' };
                         parsedBubbleCards.push(currentBubbleCard);
                     } else if (currentBubbleCard) {
-                        if (titleMatch) currentBubbleCard.title = titleMatch[1];
+                        if (mainTitleMatch) currentBubbleCard.mainTitle = mainTitleMatch[1];
+                        else if (titleMatch) currentBubbleCard.title = titleMatch[1];
                         else if (descMatch) currentBubbleCard.desc = descMatch[1];
                         else if (imgMatch) currentBubbleCard.image = imgMatch[1];
                         else if (colorMatch) currentBubbleCard.color = colorMatch[1];
@@ -6331,6 +6363,22 @@ function getCDNUrl(originalUrl) {
                 }
             }
 
+            // Update Main Titles if configured by any custom card
+            if (appState.customCards && appState.customCards.length > 0) {
+                const customMainTitle = appState.customCards.find(c => c.mainTitle)?.mainTitle;
+                if (customMainTitle) {
+                    const gridTitle = document.getElementById('grid-cards-title');
+                    if (gridTitle) gridTitle.innerText = customMainTitle;
+                }
+            }
+            if (appState.scrollCards && appState.scrollCards.length > 0) {
+                const scrollMainTitle = appState.scrollCards.find(c => c.mainTitle)?.mainTitle;
+                if (scrollMainTitle) {
+                    const scrollTitle = document.getElementById('scroll-cards-title');
+                    if (scrollTitle) scrollTitle.innerText = scrollMainTitle;
+                }
+            }
+
             // Render Bubble Cards
             const bubbleContainer = document.getElementById('bubble-container');
             if (bubbleContainer) {
@@ -6340,6 +6388,12 @@ function getCDNUrl(originalUrl) {
 
                 if (appState.bubbleCards && appState.bubbleCards.length > 0) {
                     appState.bubbleCards.forEach(card => renderBubbleCard(card));
+                    
+                    const bubbleMainTitle = appState.bubbleCards.find(c => c.mainTitle)?.mainTitle;
+                    if (bubbleMainTitle) {
+                        const bubbleTitle = document.getElementById('bubble-cards-title');
+                        if (bubbleTitle) bubbleTitle.innerText = bubbleMainTitle;
+                    }
                 }
             }
 
@@ -9610,9 +9664,9 @@ function renderCalendarGrid(data) {
                     let titleEl = el.querySelector('h3, span.font-bold, .font-headline, .font-bold.text-\\[15px\\]');
                     let descEl = el.querySelector('p, span.text-\\[11px\\]');
 
-                    if (titleEl && descEl) {
+                    if (titleEl) {
                         let title = titleEl.innerText.trim();
-                        let desc = descEl.innerText.trim();
+                        let desc = descEl ? descEl.innerText.trim() : '';
                         let href = el.getAttribute('href');
 
                         if (!href && el.tagName.toLowerCase() !== 'a') {
@@ -9622,8 +9676,20 @@ function renderCalendarGrid(data) {
 
                         if (!href) href = '#'; // Fallback if no href found
 
-                        if (title.toLowerCase().includes(query) || desc.toLowerCase().includes(query)) {
-                            results.push({ title, desc, href });
+                        let mainTitle = '';
+                        if (el.closest('#bubble-container')) {
+                            const h2 = document.getElementById('bubble-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        } else if (el.closest('.flex.overflow-x-auto')) {
+                            const h2 = document.getElementById('scroll-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        } else if (el.closest('section.grid')) {
+                            const h2 = document.getElementById('grid-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        }
+
+                        if (title.toLowerCase().includes(query) || (desc && desc.toLowerCase().includes(query)) || (mainTitle && mainTitle.toLowerCase().includes(query))) {
+                            results.push({ title, desc, href, mainTitle });
                         }
                     }
                 });
@@ -9649,16 +9715,29 @@ function renderCalendarGrid(data) {
 
                     toolsSearchDropdown.innerHTML = results.map(item => {
                         const safeTitle = escapeHTML(item.title);
-                        const safeDesc = escapeHTML(item.desc);
                         const safeHref = escapeHTML(item.href);
                         
                         const highlightedTitle = safeTitle.replace(regex, '<strong>$1</strong>');
-                        const highlightedDesc = safeDesc.replace(regex, '<strong>$1</strong>');
+                        let highlightedDescHTML = '';
+                        
+                        if (item.desc) {
+                            const safeDesc = escapeHTML(item.desc);
+                            const highlightedDesc = safeDesc.replace(regex, '<strong>$1</strong>');
+                            highlightedDescHTML = `<div class="text-xs text-gray-500 line-clamp-1">${highlightedDesc}</div>`;
+                        }
+
+                        let highlightedMainTitleHTML = '';
+                        if (item.mainTitle) {
+                            const safeMainTitle = escapeHTML(item.mainTitle);
+                            const highlightedMainTitle = safeMainTitle.replace(regex, '<strong>$1</strong>');
+                            highlightedMainTitleHTML = `<div class="mb-0.5"><span class="bg-gray-100 text-[10px] px-1.5 py-0.5 rounded text-gray-500 font-medium inline-block">${highlightedMainTitle}</span></div>`;
+                        }
                         
                         return `
                             <div class="px-4 py-3 hover:bg-orange-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors" onclick="if('${safeHref}' !== '#') { window.open('${safeHref}', '_blank'); } else { window.location.href = '#'; }">
+                                ${highlightedMainTitleHTML}
                                 <div class="font-bold text-sm text-gray-800">${highlightedTitle}</div>
-                                <div class="text-xs text-gray-500 line-clamp-1">${highlightedDesc}</div>
+                                ${highlightedDescHTML}
                             </div>
                         `;
                     }).join('');
