@@ -2384,6 +2384,18 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
 
+    <!-- CIRCULAR BUBBLE CAROUSEL -->
+    <div class="mb-10 -mx-2 md:-mx-8">
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+            <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
+            <h2 class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Quick Links</h2>
+        </div>
+        <div id="bubble-container" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth">
+            <!-- Bubbles will be injected here -->
+            <div class="shrink-0 w-1 md:w-4"></div>
+        </div>
+    </div>
+
     <!-- BIG FEATURED CARDS GRID -->
     <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
 
@@ -2708,6 +2720,7 @@ The word "Nua" means new and "Khai" means food.
                         <select id="custom-card-design" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800 font-medium">
                             <option value="more tab">Design 1: Grid Card (Large Image)</option>
                             <option value="scroll tab">Design 2: Scrolling Card (Reading Mode)</option>
+                            <option value="bubble tab">Design 3: Circular Bubble</option>
                         </select>
                     </div>
                     <div>
@@ -4749,6 +4762,8 @@ const LOCATION_DATA = {
             let syntaxHeader = '::: More tab';
             if (designRaw === 'scroll tab') {
                 syntaxHeader = '::: Scroll tab';
+            } else if (designRaw === 'bubble tab') {
+                syntaxHeader = '::: Bubble tab';
             }
 
             // Format syntax string using sanitized variables
@@ -4821,6 +4836,30 @@ const LOCATION_DATA = {
             `;
             
             scrollContainer.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        function renderBubbleCard(cardData) {
+            const container = document.getElementById('bubble-container');
+            if (!container) return;
+
+            const bgColor = cardData.color || '#0d9488';
+
+            const cardHTML = `
+            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 group">
+                <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-md border-2 border-white/50 overflow-hidden mb-2 group-hover:shadow-lg transition-all" style="background-color: ${bgColor};">
+                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-cover rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
+                </div>
+                <span class="text-center text-xs md:text-sm font-bold text-gray-800 tracking-tight max-w-[80px] md:max-w-[100px] leading-tight group-hover:text-orange-600 transition-colors">${cardData.title}</span>
+            </a>
+            `;
+
+            // Insert before the empty space div
+            const spacer = container.querySelector('.shrink-0.w-1.md\\:w-4');
+            if (spacer) {
+                spacer.insertAdjacentHTML('beforebegin', cardHTML);
+            } else {
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            }
         }
 
         // --- EDITOR LOGIC START ---
@@ -5754,6 +5793,8 @@ function getCDNUrl(originalUrl) {
             let currentCustomCard = null;
             let parsedScrollCards = [];
             let currentScrollCard = null;
+            let parsedBubbleCards = [];
+            let currentBubbleCard = null;
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
             let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
@@ -5974,6 +6015,23 @@ function getCDNUrl(originalUrl) {
                         else if (colorMatch) currentScrollCard.color = colorMatch[1];
                     }
                 }
+                else if (currentBlock === 'bubble tab') {
+                    const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
+                    const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
+                    const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
+                    const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
+                    const colorMatch = line.match(/^Card Color:\s*\[(.*?)\]/i);
+
+                    if (linkMatch) {
+                        currentBubbleCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488' };
+                        parsedBubbleCards.push(currentBubbleCard);
+                    } else if (currentBubbleCard) {
+                        if (titleMatch) currentBubbleCard.title = titleMatch[1];
+                        else if (descMatch) currentBubbleCard.desc = descMatch[1];
+                        else if (imgMatch) currentBubbleCard.image = imgMatch[1];
+                        else if (colorMatch) currentBubbleCard.color = colorMatch[1];
+                    }
+                }
             });
 
             // If parsedMonths is empty (no explicit calendar block), verify if we need a default one?
@@ -5988,6 +6046,7 @@ function getCDNUrl(originalUrl) {
             appState.config = tempConfig;
             appState.customCards = parsedCustomCards;
             appState.scrollCards = parsedScrollCards;
+            appState.bubbleCards = parsedBubbleCards;
             
             findTodayIndex();
             
@@ -6270,6 +6329,18 @@ function getCDNUrl(originalUrl) {
 
                 if (appState.scrollCards && appState.scrollCards.length > 0) {
                     appState.scrollCards.forEach(card => renderScrollCard(card));
+                }
+            }
+
+            // Render Bubble Cards
+            const bubbleContainer = document.getElementById('bubble-container');
+            if (bubbleContainer) {
+                // Remove existing dynamic bubble cards (they are <a> tags)
+                const existingBubbleLinks = bubbleContainer.querySelectorAll('a.snap-start');
+                existingBubbleLinks.forEach(el => el.remove());
+
+                if (appState.bubbleCards && appState.bubbleCards.length > 0) {
+                    appState.bubbleCards.forEach(card => renderBubbleCard(card));
                 }
             }
 
@@ -9196,6 +9267,7 @@ function renderCalendarGrid(data) {
                 images: appState.images || {},
                 customCards: appState.customCards || [],
                 scrollCards: appState.scrollCards || [],
+                bubbleCards: appState.bubbleCards || [],
                 config: exportConfig
             };
 
