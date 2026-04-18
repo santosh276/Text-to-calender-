@@ -9676,8 +9676,20 @@ function renderCalendarGrid(data) {
 
                         if (!href) href = '#'; // Fallback if no href found
 
-                        if (title.toLowerCase().includes(query) || (desc && desc.toLowerCase().includes(query))) {
-                            results.push({ title, desc, href });
+                        let mainTitle = '';
+                        if (el.closest('#bubble-container')) {
+                            const h2 = document.getElementById('bubble-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        } else if (el.closest('.flex.overflow-x-auto')) {
+                            const h2 = document.getElementById('scroll-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        } else if (el.closest('section.grid')) {
+                            const h2 = document.getElementById('grid-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        }
+
+                        if (title.toLowerCase().includes(query) || (desc && desc.toLowerCase().includes(query)) || (mainTitle && mainTitle.toLowerCase().includes(query))) {
+                            results.push({ title, desc, href, mainTitle });
                         }
                     }
                 });
@@ -9713,9 +9725,17 @@ function renderCalendarGrid(data) {
                             const highlightedDesc = safeDesc.replace(regex, '<strong>$1</strong>');
                             highlightedDescHTML = `<div class="text-xs text-gray-500 line-clamp-1">${highlightedDesc}</div>`;
                         }
+
+                        let highlightedMainTitleHTML = '';
+                        if (item.mainTitle) {
+                            const safeMainTitle = escapeHTML(item.mainTitle);
+                            const highlightedMainTitle = safeMainTitle.replace(regex, '<strong>$1</strong>');
+                            highlightedMainTitleHTML = `<div class="mb-0.5"><span class="bg-gray-100 text-[10px] px-1.5 py-0.5 rounded text-gray-500 font-medium inline-block">${highlightedMainTitle}</span></div>`;
+                        }
                         
                         return `
                             <div class="px-4 py-3 hover:bg-orange-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors" onclick="if('${safeHref}' !== '#') { window.open('${safeHref}', '_blank'); } else { window.location.href = '#'; }">
+                                ${highlightedMainTitleHTML}
                                 <div class="font-bold text-sm text-gray-800">${highlightedTitle}</div>
                                 ${highlightedDescHTML}
                             </div>
