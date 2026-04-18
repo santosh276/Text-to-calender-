@@ -2393,7 +2393,7 @@ The word "Nua" means new and "Khai" means food.
 
 
     <!-- CIRCULAR BUBBLE CAROUSEL -->
-    <div class="mb-10 -mx-2 md:-mx-8">
+    <div id="bubble-section" class="mb-10 -mx-2 md:-mx-8" style="display: none;">
         <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
             <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
             <h2 id="bubble-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Quick Links</h2>
@@ -6381,12 +6381,14 @@ function getCDNUrl(originalUrl) {
 
             // Render Bubble Cards
             const bubbleContainer = document.getElementById('bubble-container');
+            const bubbleSection = document.getElementById('bubble-section');
             if (bubbleContainer) {
                 // Remove existing dynamic bubble cards (they are <a> tags)
                 const existingBubbleLinks = bubbleContainer.querySelectorAll('a.snap-start');
                 existingBubbleLinks.forEach(el => el.remove());
 
                 if (appState.bubbleCards && appState.bubbleCards.length > 0) {
+                    if (bubbleSection) bubbleSection.style.display = 'block';
                     appState.bubbleCards.forEach(card => renderBubbleCard(card));
                     
                     const bubbleMainTitle = appState.bubbleCards.find(c => c.mainTitle)?.mainTitle;
@@ -6394,6 +6396,8 @@ function getCDNUrl(originalUrl) {
                         const bubbleTitle = document.getElementById('bubble-cards-title');
                         if (bubbleTitle) bubbleTitle.innerText = bubbleMainTitle;
                     }
+                } else {
+                    if (bubbleSection) bubbleSection.style.display = 'none';
                 }
             }
 
