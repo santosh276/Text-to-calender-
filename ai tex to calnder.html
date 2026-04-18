@@ -2708,47 +2708,47 @@ The word "Nua" means new and "Khai" means food.
     <!-- CUSTOM CARD MODAL -->
     <div id="custom-card-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCustomCardModal()"></div>
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col max-h-[85dvh]">
             <div class="bg-green-700 p-4 border-b border-green-800 flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-white"><i class="fa-solid fa-plus mr-2 text-green-200"></i>Add Custom Card</h3>
                 <button onclick="closeCustomCardModal()" class="text-green-200 hover:text-white"><i class="fa-solid fa-times"></i></button>
             </div>
-            <div class="p-6 flex flex-col gap-4 overflow-y-auto">
-                <form id="custom-card-form" onsubmit="handleCustomCardSubmit(event)" class="flex flex-col gap-4">
+            <div class="p-4 md:p-6 flex flex-col gap-3 md:gap-4 overflow-y-auto">
+                <form id="custom-card-form" onsubmit="handleCustomCardSubmit(event)" class="flex flex-col gap-3 md:gap-4 pb-4 md:pb-0">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Design Template</label>
-                        <select id="custom-card-design" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800 font-medium">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Design Template</label>
+                        <select id="custom-card-design" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800 font-medium">
                             <option value="more tab">Design 1: Grid Card (Large Image)</option>
                             <option value="scroll tab">Design 2: Scrolling Card (Reading Mode)</option>
                             <option value="bubble tab">Design 3: Circular Bubble</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Title</label>
-                        <input type="text" id="custom-card-title" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="Card Title">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Title</label>
+                        <input type="text" id="custom-card-title" required class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="Card Title">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Description</label>
-                        <textarea id="custom-card-desc" required rows="2" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="A short description..."></textarea>
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Description</label>
+                        <textarea id="custom-card-desc" required rows="2" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="A short description..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Image Link</label>
-                        <input type="url" id="custom-card-image" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="https://example.com/image.jpg">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Image Link</label>
+                        <input type="url" id="custom-card-image" required class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="https://example.com/image.jpg">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Hyperlink</label>
-                        <input type="url" id="custom-card-link" required class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm text-gray-800" placeholder="https://example.com">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Hyperlink</label>
+                        <input type="url" id="custom-card-link" required class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="https://example.com">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Card Color</label>
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Card Color</label>
                         <div class="flex items-center gap-3">
-                            <input type="color" id="custom-card-color" value="#0d9488" class="w-12 h-12 p-1 border border-gray-300 rounded-lg bg-white cursor-pointer shadow-sm">
-                            <span class="text-xs text-gray-500 font-medium">Choose a background color for your card.</span>
+                            <input type="color" id="custom-card-color" value="#0d9488" class="w-10 h-10 md:w-12 md:h-12 p-1 border border-gray-300 rounded-lg bg-white cursor-pointer shadow-sm">
+                            <span class="text-[10px] md:text-xs text-gray-500 font-medium">Choose a background color for your card.</span>
                         </div>
                     </div>
-                    <div class="mt-4 flex justify-end gap-3">
-                        <button type="button" onclick="closeCustomCardModal()" class="px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition">Add Card</button>
+                    <div class="mt-2 md:mt-4 flex justify-end gap-3">
+                        <button type="button" onclick="closeCustomCardModal()" class="px-3 py-1.5 md:px-4 md:py-2 bg-gray-100 text-gray-700 text-xs md:text-sm font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
+                        <button type="submit" class="px-3 py-1.5 md:px-4 md:py-2 bg-green-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-green-700 transition">Add Card</button>
                     </div>
                 </form>
             </div>
