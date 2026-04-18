@@ -9664,9 +9664,9 @@ function renderCalendarGrid(data) {
                     let titleEl = el.querySelector('h3, span.font-bold, .font-headline, .font-bold.text-\\[15px\\]');
                     let descEl = el.querySelector('p, span.text-\\[11px\\]');
 
-                    if (titleEl && descEl) {
+                    if (titleEl) {
                         let title = titleEl.innerText.trim();
-                        let desc = descEl.innerText.trim();
+                        let desc = descEl ? descEl.innerText.trim() : '';
                         let href = el.getAttribute('href');
 
                         if (!href && el.tagName.toLowerCase() !== 'a') {
@@ -9676,7 +9676,7 @@ function renderCalendarGrid(data) {
 
                         if (!href) href = '#'; // Fallback if no href found
 
-                        if (title.toLowerCase().includes(query) || desc.toLowerCase().includes(query)) {
+                        if (title.toLowerCase().includes(query) || (desc && desc.toLowerCase().includes(query))) {
                             results.push({ title, desc, href });
                         }
                     }
@@ -9703,16 +9703,21 @@ function renderCalendarGrid(data) {
 
                     toolsSearchDropdown.innerHTML = results.map(item => {
                         const safeTitle = escapeHTML(item.title);
-                        const safeDesc = escapeHTML(item.desc);
                         const safeHref = escapeHTML(item.href);
                         
                         const highlightedTitle = safeTitle.replace(regex, '<strong>$1</strong>');
-                        const highlightedDesc = safeDesc.replace(regex, '<strong>$1</strong>');
+                        let highlightedDescHTML = '';
+
+                        if (item.desc) {
+                            const safeDesc = escapeHTML(item.desc);
+                            const highlightedDesc = safeDesc.replace(regex, '<strong>$1</strong>');
+                            highlightedDescHTML = `<div class="text-xs text-gray-500 line-clamp-1">${highlightedDesc}</div>`;
+                        }
                         
                         return `
                             <div class="px-4 py-3 hover:bg-orange-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors" onclick="if('${safeHref}' !== '#') { window.open('${safeHref}', '_blank'); } else { window.location.href = '#'; }">
                                 <div class="font-bold text-sm text-gray-800">${highlightedTitle}</div>
-                                <div class="text-xs text-gray-500 line-clamp-1">${highlightedDesc}</div>
+                                ${highlightedDescHTML}
                             </div>
                         `;
                     }).join('');
