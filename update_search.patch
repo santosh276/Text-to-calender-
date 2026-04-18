@@ -1,0 +1,21 @@
+<<<<<<< SEARCH
+                        let mainTitle = '';
+                        if (el.closest('#bubble-container')) {
+                            const h2 = document.getElementById('bubble-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        } else if (el.closest('.flex.overflow-x-auto')) {
+                            const h2 = document.getElementById('scroll-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        } else if (el.closest('section.grid')) {
+                            const h2 = document.getElementById('grid-cards-title');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        }
+=======
+                        let mainTitle = '';
+                        // Find the closest wrapper container that also contains the h2 title
+                        const wrapper = el.closest('.mb-10, .px-4.md\\:px-6.lg\\:px-12, #more-view-container > div');
+                        if (wrapper) {
+                            const h2 = wrapper.querySelector('h2.font-headline');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        }
+>>>>>>> REPLACE
