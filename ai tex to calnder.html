@@ -46,6 +46,11 @@
         .max-h-\[85dvh\] { max-height: 85dvh; }
 
 
+        .py-\[7px\] { padding-top: 7px; padding-bottom: 7px; }
+        @media (min-width: 768px) { .md\:py-\[9px\] { padding-top: 9px; padding-bottom: 9px; } }
+
+        .text-\[10px\] { font-size: 10px; }
+
         /* Desktop countdown badge sizing */
         @media (min-width: 768px) {
             .hero-cd-num { font-size: 1.5rem !important; }
@@ -2750,8 +2755,8 @@ The word "Nua" means new and "Khai" means food.
                         </div>
                     </div>
                     <div class="mt-2 md:mt-4 flex justify-end gap-3">
-                        <button type="button" onclick="closeCustomCardModal()" class="px-3 py-1.5 md:px-4 md:py-2 bg-gray-100 text-gray-700 text-xs md:text-sm font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
-                        <button type="submit" class="px-3 py-1.5 md:px-4 md:py-2 bg-green-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-green-700 transition">Add Card</button>
+                        <button type="button" onclick="closeCustomCardModal()" class="px-3 py-[7px] md:px-4 md:py-[9px] bg-gray-100 text-gray-700 text-xs md:text-sm font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
+                        <button type="submit" class="px-3 py-[7px] md:px-4 md:py-[9px] bg-green-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-green-700 transition">Add Card</button>
                     </div>
                 </form>
             </div>
