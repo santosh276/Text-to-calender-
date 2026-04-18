@@ -2195,12 +2195,15 @@ The word "Nua" means new and "Khai" means food.
             </h2>
 
             <!-- Search Bar -->
-            <div class="max-w-2xl mx-auto relative group mb-4 mt-6 md:mt-8">
+            <div class="max-w-2xl mx-auto relative group mb-4 mt-6 md:mt-8" style="z-index: 101;">
                 <div class="absolute -inset-1 bg-gradient-to-r from-saffron to-deep-red rounded-full blur-2xl opacity-40 transition duration-500 group-hover:opacity-60"></div>
                 <div class="relative flex items-center bg-white rounded-full py-[5px] px-2 shadow-xl shadow-orange-900/5">
                 <span class="material-symbols-outlined pl-4 text-gray-400 flex items-center justify-center">search</span>
-                <input class="w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-base md:text-lg px-4 py-2.5 md:py-3.5 font-medium placeholder-gray-400 text-gray-800" placeholder="Search tools..." type="text"/>
+                <input id="tools-search-input" class="w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-base md:text-lg px-4 py-2.5 md:py-3.5 font-medium placeholder-gray-400 text-gray-800" placeholder="Search tools..." type="text" autocomplete="off"/>
                 <button class="bg-gradient-to-r from-saffron to-deep-red text-white px-6 md:px-8 py-2.5 md:py-3.5 rounded-full font-bold hover:shadow-lg transition-all flex items-center justify-center"><span class="flex items-center justify-center leading-none mt-[2px]">Search</span></button>
+                </div>
+                <!-- Autocomplete Dropdown -->
+                <div id="tools-search-dropdown" class="absolute w-full mt-2 z-[100] bg-white border border-gray-100 rounded-xl shadow-xl max-h-60 overflow-y-auto hidden">
                 </div>
             </div>
 
@@ -9510,6 +9513,105 @@ function renderCalendarGrid(data) {
                 showToast("Invalid location selected", "error");
             }
         }
+
+        // --- TOOLS AUTOCOMPLETE SEARCH ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const toolsSearchInput = document.getElementById('tools-search-input');
+            const toolsSearchDropdown = document.getElementById('tools-search-dropdown');
+
+            if (!toolsSearchInput || !toolsSearchDropdown) return;
+
+            toolsSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim().toLowerCase();
+
+                if (!query) {
+                    toolsSearchDropdown.classList.add('hidden');
+                    return;
+                }
+
+                // Get all cards in the more-view-container
+                const moreContainer = document.getElementById('more-view-container');
+                if (!moreContainer) return;
+
+                const cardElements = moreContainer.querySelectorAll('.snap-start, .grid > div, .grid > a');
+                let results = [];
+
+                cardElements.forEach(el => {
+                    let titleEl = el.querySelector('h3, span.font-bold, .font-headline, .font-bold.text-\\[15px\\]');
+                    let descEl = el.querySelector('p, span.text-\\[11px\\]');
+
+                    if (titleEl && descEl) {
+                        let title = titleEl.innerText.trim();
+                        let desc = descEl.innerText.trim();
+                        let href = el.getAttribute('href');
+
+                        if (!href && el.tagName.toLowerCase() !== 'a') {
+                            const aTag = el.querySelector('a');
+                            if (aTag) href = aTag.getAttribute('href');
+                        }
+
+                        if (!href) href = '#'; // Fallback if no href found
+
+                        if (title.toLowerCase().includes(query) || desc.toLowerCase().includes(query)) {
+                            results.push({ title, desc, href });
+                        }
+                    }
+                });
+
+                if (results.length > 0) {
+                    // Render results
+                    // Escape query for regex
+                    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+
+                    // Simple HTML escape function to prevent XSS
+                    const escapeHTML = (str) => {
+                        return str.replace(/[&<>'"]/g,
+                            tag => ({
+                                '&': '&amp;',
+                                '<': '&lt;',
+                                '>': '&gt;',
+                                "'": '&#39;',
+                                '"': '&quot;'
+                            }[tag] || tag)
+                        );
+                    };
+
+                    toolsSearchDropdown.innerHTML = results.map(item => {
+                        const safeTitle = escapeHTML(item.title);
+                        const safeDesc = escapeHTML(item.desc);
+                        const safeHref = escapeHTML(item.href);
+
+                        const highlightedTitle = safeTitle.replace(regex, '<strong>$1</strong>');
+                        const highlightedDesc = safeDesc.replace(regex, '<strong>$1</strong>');
+
+                        return `
+                            <div class="px-4 py-3 hover:bg-orange-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors" onclick="if('${safeHref}' !== '#') { window.open('${safeHref}', '_blank'); } else { window.location.href = '#'; }">
+                                <div class="font-bold text-sm text-gray-800">${highlightedTitle}</div>
+                                <div class="text-xs text-gray-500 line-clamp-1">${highlightedDesc}</div>
+                            </div>
+                        `;
+                    }).join('');
+                    toolsSearchDropdown.classList.remove('hidden');
+                } else {
+                    toolsSearchDropdown.innerHTML = `
+                        <div class="px-4 py-4 text-center text-sm text-gray-500">
+                            No tools found matching "${e.target.value}"
+                        </div>
+                    `;
+                    toolsSearchDropdown.classList.remove('hidden');
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!toolsSearchDropdown.contains(e.target) && e.target !== toolsSearchInput) {
+                    toolsSearchDropdown.classList.add('hidden');
+                }
+            });
+
+            // Note: We intentionally do NOT manipulate the display state of grid cards here to prevent grid filtering.
+        });
 
 </script>
 
