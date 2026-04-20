@@ -2608,7 +2608,8 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                     <div>
                         <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Main Section Title <span class="text-gray-400 font-normal">(Optional)</span></label>
-                        <input type="text" id="custom-card-main-title" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="e.g. Discover Popular Tools">
+                        <input type="text" id="custom-card-main-title" list="section-titles-list" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="e.g. Discover Popular Tools">
+                        <datalist id="section-titles-list"></datalist>
                         <span class="text-[10px] md:text-xs text-gray-500 mt-1 block">Leave blank to use the default title for this section.</span>
                     </div>
                     <div>
@@ -4608,6 +4609,30 @@ const LOCATION_DATA = {
 
         function openCustomCardModal() {
             const modal = document.getElementById('custom-card-modal');
+
+            // Populate datalist with unique section titles
+            const datalist = document.getElementById('section-titles-list');
+            if (datalist) {
+                const uniqueTitles = new Set([
+                    "Discover Popular Tools",
+                    "Spiritual Tools",
+                    "Quick Links"
+                ]);
+
+                const allCards = [
+                    ...(appState.customCards || []),
+                    ...(appState.scrollCards || []),
+                    ...(appState.bubbleCards || [])
+                ];
+
+                allCards.forEach(card => {
+                    if (card.sectionTitle) uniqueTitles.add(card.sectionTitle);
+                    else if (card.mainTitle) uniqueTitles.add(card.mainTitle); // legacy support
+                });
+
+                datalist.innerHTML = Array.from(uniqueTitles).map(title => `<option value="${title}"></option>`).join('');
+            }
+
             modal.style.display = 'flex';
             // Small timeout to allow display:flex to apply before removing hidden class for transition
             setTimeout(() => {
@@ -4659,7 +4684,7 @@ const LOCATION_DATA = {
             // Format syntax string using sanitized variables
             let syntaxString = `\n${syntaxHeader}\n`;
             syntaxString += `Hyperlink: [${link}]\n`;
-            if (mainTitle) syntaxString += `Main Title: [${mainTitle}]\n`;
+            if (mainTitle) syntaxString += `Section Title: [${mainTitle}]\n`;
             syntaxString += `Title: [${title}]\nDescription: [${desc}]\nImage Link: [${image}]\nCard Color: [${color}]\n:::\n`;
             
             // Append to editor
@@ -4686,8 +4711,8 @@ const LOCATION_DATA = {
 
         // --- EDITOR LOGIC END ---
 
-        function renderCustomCard(cardData) {
-            const gridContainer = document.querySelector('#more-view-container #grid-cards-section section.grid');
+        function renderCustomCard(cardData, targetContainer = null) {
+            const gridContainer = targetContainer || document.querySelector('#more-view-container #grid-cards-section section.grid');
             if (!gridContainer) return;
             
             const bgColor = cardData.color || '#0d9488';
@@ -4713,8 +4738,8 @@ const LOCATION_DATA = {
             gridContainer.insertAdjacentHTML('beforeend', cardHTML);
         }
 
-        function renderScrollCard(cardData) {
-            const scrollContainer = document.querySelector('#more-view-container #scroll-cards-section .flex.overflow-x-auto');
+        function renderScrollCard(cardData, targetContainer = null) {
+            const scrollContainer = targetContainer || document.querySelector('#more-view-container #scroll-cards-section .flex.overflow-x-auto');
             if (!scrollContainer) return;
             
             const bgColor = cardData.color || '#2e3459';
@@ -4739,8 +4764,8 @@ const LOCATION_DATA = {
             scrollContainer.insertAdjacentHTML('beforeend', cardHTML);
         }
 
-        function renderBubbleCard(cardData) {
-            const container = document.getElementById('bubble-container');
+        function renderBubbleCard(cardData, targetContainer = null) {
+            const container = targetContainer || document.getElementById('bubble-container');
             if (!container) return;
             
             const bgColor = cardData.color || '#0d9488';
@@ -5883,7 +5908,7 @@ function getCDNUrl(originalUrl) {
                 else if (currentBlock === 'more tab') {
                     // Start of a new card if Hyperlink is found
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
-                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^(?:Main Title|Section Title):\s*\[(.*?)\]/i);
                     const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
                     const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
                     const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
@@ -5893,7 +5918,7 @@ function getCDNUrl(originalUrl) {
                         currentCustomCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488' };
                         parsedCustomCards.push(currentCustomCard);
                     } else if (currentCustomCard) {
-                        if (mainTitleMatch) currentCustomCard.mainTitle = mainTitleMatch[1];
+                        if (mainTitleMatch) currentCustomCard.sectionTitle = mainTitleMatch[1];
                         else if (titleMatch) currentCustomCard.title = titleMatch[1];
                         else if (descMatch) currentCustomCard.desc = descMatch[1];
                         else if (imgMatch) currentCustomCard.image = imgMatch[1];
@@ -5902,7 +5927,7 @@ function getCDNUrl(originalUrl) {
                 }
                 else if (currentBlock === 'scroll tab') {
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
-                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^(?:Main Title|Section Title):\s*\[(.*?)\]/i);
                     const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
                     const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
                     const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
@@ -5912,7 +5937,7 @@ function getCDNUrl(originalUrl) {
                         currentScrollCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#2e3459' };
                         parsedScrollCards.push(currentScrollCard);
                     } else if (currentScrollCard) {
-                        if (mainTitleMatch) currentScrollCard.mainTitle = mainTitleMatch[1];
+                        if (mainTitleMatch) currentScrollCard.sectionTitle = mainTitleMatch[1];
                         else if (titleMatch) currentScrollCard.title = titleMatch[1];
                         else if (descMatch) currentScrollCard.desc = descMatch[1];
                         else if (imgMatch) currentScrollCard.image = imgMatch[1];
@@ -5921,7 +5946,7 @@ function getCDNUrl(originalUrl) {
                 }
                 else if (currentBlock === 'bubble tab') {
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
-                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^(?:Main Title|Section Title):\s*\[(.*?)\]/i);
                     const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
                     const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
                     const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
@@ -5931,7 +5956,7 @@ function getCDNUrl(originalUrl) {
                         currentBubbleCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488' };
                         parsedBubbleCards.push(currentBubbleCard);
                     } else if (currentBubbleCard) {
-                        if (mainTitleMatch) currentBubbleCard.mainTitle = mainTitleMatch[1];
+                        if (mainTitleMatch) currentBubbleCard.sectionTitle = mainTitleMatch[1];
                         else if (titleMatch) currentBubbleCard.title = titleMatch[1];
                         else if (descMatch) currentBubbleCard.desc = descMatch[1];
                         else if (imgMatch) currentBubbleCard.image = imgMatch[1];
@@ -6211,75 +6236,120 @@ function getCDNUrl(originalUrl) {
             renderFestivals(currentData);
             renderMonthBanner(currentData);
             
-            // Render Custom Cards
-            const gridContainer = document.querySelector('#more-view-container #grid-cards-section section.grid');
-            const gridHeaderContainer = document.getElementById('grid-cards-header-container');
-            const gridSectionContainer = document.getElementById('grid-cards-section');
-            if (gridContainer) {
-                // Let's remove any card that has an "a" tag since our dynamic ones are links.
-                const existingLinks = gridContainer.querySelectorAll('a.block.h-full');
-                existingLinks.forEach(el => el.remove());
-                
-                if (appState.customCards && appState.customCards.length > 0) {
-                    appState.customCards.forEach(card => renderCustomCard(card));
-                    if(gridSectionContainer) gridSectionContainer.style.display = 'block';
-                } else {
-                    if(gridSectionContainer) gridSectionContainer.style.display = 'none';
-                }
+            // --- NEW: Smart Section Grouping ---
+
+            // Remove dynamically created sections
+            const moreViewContainer = document.getElementById('more-view-container');
+            if (moreViewContainer) {
+                const dynamicSections = moreViewContainer.querySelectorAll('.dynamic-custom-section');
+                dynamicSections.forEach(el => el.remove());
             }
+
+            // Clear Default Card Containers
+            const gridContainer = document.querySelector('#more-view-container #grid-cards-section section.grid');
+            const gridSectionContainer = document.getElementById('grid-cards-section');
+            const gridHeaderContainer = document.getElementById('grid-cards-header-container');
+            if (gridContainer) gridContainer.querySelectorAll('a.block.h-full').forEach(el => el.remove());
 
             const scrollContainer = document.querySelector('#more-view-container #scroll-cards-section .flex.overflow-x-auto');
             const scrollSectionContainer = document.getElementById('scroll-cards-section');
-            if (scrollContainer) {
-                // Remove existing dynamic scroll cards (they are <a> tags)
-                const existingScrollLinks = scrollContainer.querySelectorAll('a.snap-start');
-                existingScrollLinks.forEach(el => el.remove());
+            if (scrollContainer) scrollContainer.querySelectorAll('a.snap-start').forEach(el => el.remove());
 
-                if (appState.scrollCards && appState.scrollCards.length > 0) {
-                    appState.scrollCards.forEach(card => renderScrollCard(card));
-                    if(scrollSectionContainer) scrollSectionContainer.style.display = 'block';
-                } else {
-                    if(scrollSectionContainer) scrollSectionContainer.style.display = 'none';
-                }
-            }
-
-            // Update Main Titles if configured by any custom card
-            if (appState.customCards && appState.customCards.length > 0) {
-                const customMainTitle = appState.customCards.find(c => c.mainTitle)?.mainTitle;
-                if (customMainTitle) {
-                    const gridTitle = document.getElementById('grid-cards-title');
-                    if (gridTitle) gridTitle.innerText = customMainTitle;
-                }
-            }
-            if (appState.scrollCards && appState.scrollCards.length > 0) {
-                const scrollMainTitle = appState.scrollCards.find(c => c.mainTitle)?.mainTitle;
-                if (scrollMainTitle) {
-                    const scrollTitle = document.getElementById('scroll-cards-title');
-                    if (scrollTitle) scrollTitle.innerText = scrollMainTitle;
-                }
-            }
-
-            // Render Bubble Cards
             const bubbleContainer = document.getElementById('bubble-container');
             const bubbleSection = document.getElementById('bubble-section');
-            if (bubbleContainer) {
-                // Remove existing dynamic bubble cards (they are <a> tags)
-                const existingBubbleLinks = bubbleContainer.querySelectorAll('a.snap-start');
-                existingBubbleLinks.forEach(el => el.remove());
+            if (bubbleContainer) bubbleContainer.querySelectorAll('a.snap-start').forEach(el => el.remove());
 
-                if (appState.bubbleCards && appState.bubbleCards.length > 0) {
-                    if (bubbleSection) bubbleSection.style.display = 'block';
-                    appState.bubbleCards.forEach(card => renderBubbleCard(card));
-                    
-                    const bubbleMainTitle = appState.bubbleCards.find(c => c.mainTitle)?.mainTitle;
-                    if (bubbleMainTitle) {
-                        const bubbleTitle = document.getElementById('bubble-cards-title');
-                        if (bubbleTitle) bubbleTitle.innerText = bubbleMainTitle;
+            // Render Function with Grouping Logic
+            function renderGroupedCards(cardsArray, layoutType, defaultTitle, defaultContainer, defaultSection, renderFunc) {
+                if (!cardsArray || cardsArray.length === 0) {
+                    if (defaultSection) defaultSection.style.display = 'none';
+                    return;
+                }
+
+                // Group cards by sectionTitle (or mainTitle)
+                const groups = {};
+                cardsArray.forEach(card => {
+                    const title = card.sectionTitle || card.mainTitle;
+                    const key = title ? title : defaultTitle;
+                    if (!groups[key]) groups[key] = [];
+                    groups[key].push(card);
+                });
+
+                let hasDefaultCards = false;
+
+                Object.keys(groups).forEach(groupTitle => {
+                    if (groupTitle === defaultTitle) {
+                        hasDefaultCards = true;
+                        groups[groupTitle].forEach(card => renderFunc(card, defaultContainer));
+                    } else {
+                        // Create Dynamic Section
+                        const sectionDiv = document.createElement('div');
+                        let innerHTML = '';
+                        let targetContainerId = `dynamic-${layoutType}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
+                        if (layoutType === 'grid') {
+                            sectionDiv.className = 'dynamic-custom-section px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto';
+                            innerHTML = `
+                                <section class="text-center mt-[-8px] md:mt-12 mb-4 md:mb-12 px-4">
+                                    <h2 class="font-headline text-[28px] md:text-5xl font-black tracking-tight mb-[-2px] md:mb-4 bg-gradient-to-r from-saffron to-deep-red bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(255,153,51,0.4)] text-center">${groupTitle}</h2>
+                                </section>
+                                <section id="${targetContainerId}" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16"></section>
+                            `;
+                        } else if (layoutType === 'scroll') {
+                            sectionDiv.className = 'dynamic-custom-section mb-10 -mx-2 md:-mx-8';
+                            innerHTML = `
+                                <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+                                    <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
+                                    <h2 class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">${groupTitle}</h2>
+                                </div>
+                                <div id="${targetContainerId}" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth">
+                                    <div class="shrink-0 w-1 md:w-4"></div>
+                                </div>
+                            `;
+                        } else if (layoutType === 'bubble') {
+                            sectionDiv.className = 'dynamic-custom-section mb-10 -mx-2 md:-mx-8';
+                            innerHTML = `
+                                <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+                                    <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
+                                    <h2 class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">${groupTitle}</h2>
+                                </div>
+                                <div id="${targetContainerId}" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth">
+                                    <div class="shrink-0 w-1 md:w-4"></div>
+                                </div>
+                            `;
+                        }
+
+                        sectionDiv.innerHTML = innerHTML;
+
+                        // Append dynamically generated sections before the scroll-cards-section for specific visual ordering
+                        if (layoutType === 'grid') {
+                            moreViewContainer.appendChild(sectionDiv);
+                        } else if (layoutType === 'scroll') {
+                            if(scrollSectionContainer) scrollSectionContainer.parentNode.insertBefore(sectionDiv, scrollSectionContainer.nextSibling);
+                            else moreViewContainer.appendChild(sectionDiv);
+                        } else {
+                            if(bubbleSection) bubbleSection.parentNode.insertBefore(sectionDiv, bubbleSection.nextSibling);
+                            else moreViewContainer.appendChild(sectionDiv);
+                        }
+
+                        const newContainer = document.getElementById(targetContainerId);
+                        groups[groupTitle].forEach(card => renderFunc(card, newContainer));
                     }
+                });
+
+                if (hasDefaultCards) {
+                    if (defaultSection) defaultSection.style.display = 'block';
+                    if (layoutType === 'grid' && gridHeaderContainer) gridHeaderContainer.style.display = 'block';
                 } else {
-                    if (bubbleSection) bubbleSection.style.display = 'none';
+                    if (defaultSection) defaultSection.style.display = 'none';
+                    if (layoutType === 'grid' && gridHeaderContainer) gridHeaderContainer.style.display = 'none';
                 }
             }
+
+            renderGroupedCards(appState.customCards, 'grid', 'Discover Popular Tools', gridContainer, gridSectionContainer, renderCustomCard);
+            renderGroupedCards(appState.scrollCards, 'scroll', 'Spiritual Tools', scrollContainer, scrollSectionContainer, renderScrollCard);
+            renderGroupedCards(appState.bubbleCards, 'bubble', 'Quick Links', bubbleContainer, bubbleSection, renderBubbleCard);
+            // --- END NEW LOGIC ---
 
             // --- NEW LOGIC: Hide/Show Sections based on Config ---
             const secs = appState.config.sections || { festivals: true, panchang: true };
@@ -9561,7 +9631,11 @@ function renderCalendarGrid(data) {
                         if (!href) href = '#'; // Fallback if no href found
 
                         let mainTitle = '';
-                        if (el.closest('#bubble-container')) {
+                        const dynamicSection = el.closest('.dynamic-custom-section');
+                        if (dynamicSection) {
+                            const h2 = dynamicSection.querySelector('h2');
+                            if (h2) mainTitle = h2.innerText.trim();
+                        } else if (el.closest('#bubble-container')) {
                             const h2 = document.getElementById('bubble-cards-title');
                             if (h2) mainTitle = h2.innerText.trim();
                         } else if (el.closest('#scroll-cards-section .flex.overflow-x-auto')) {
