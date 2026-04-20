@@ -2608,7 +2608,8 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                     <div>
                         <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Main Section Title <span class="text-gray-400 font-normal">(Optional)</span></label>
-                        <input type="text" id="custom-card-main-title" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="e.g. Discover Popular Tools">
+                        <input type="text" id="custom-card-main-title" list="section-titles-datalist" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="e.g. Discover Popular Tools">
+                        <datalist id="section-titles-datalist"></datalist>
                         <span class="text-[10px] md:text-xs text-gray-500 mt-1 block">Leave blank to use the default title for this section.</span>
                     </div>
                     <div>
@@ -4606,7 +4607,43 @@ const LOCATION_DATA = {
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
         }
 
+        function populateSectionTitlesDatalist() {
+            const datalist = document.getElementById('section-titles-datalist');
+            if (!datalist) return;
+
+            // Clear existing options
+            datalist.innerHTML = '';
+
+            // Use a Set to store unique titles, starting with the primary default
+            const titles = new Set();
+            titles.add("Discover Popular Tools");
+
+            // Helper to extract mainTitle from card arrays
+            const extractTitles = (cardsArray) => {
+                if (cardsArray && Array.isArray(cardsArray)) {
+                    cardsArray.forEach(card => {
+                        if (card.mainTitle && card.mainTitle.trim() !== '') {
+                            titles.add(card.mainTitle.trim());
+                        }
+                    });
+                }
+            };
+
+            // Extract from all custom card types
+            extractTitles(appState.customCards);
+            extractTitles(appState.scrollCards);
+            extractTitles(appState.bubbleCards);
+
+            // Create options
+            titles.forEach(title => {
+                const option = document.createElement('option');
+                option.value = title;
+                datalist.appendChild(option);
+            });
+        }
+
         function openCustomCardModal() {
+            populateSectionTitlesDatalist();
             const modal = document.getElementById('custom-card-modal');
             modal.style.display = 'flex';
             // Small timeout to allow display:flex to apply before removing hidden class for transition
