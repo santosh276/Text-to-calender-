@@ -1,0 +1,272 @@
+
+
+    <!-- HERO SECTION -->
+    <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
+        <section class="pt-4 md:pt-6 pb-2 md:pb-8 text-center">
+
+            <!-- Notification Badge -->
+            <div class="inline-flex items-center justify-center px-3.5 md:px-4 py-2.5 rounded-full bg-orange-100 border border-orange-200 text-deep-red font-semibold text-[12px] md:text-sm mb-2 md:mb-8 animate-bounce cursor-default shadow-sm mt-2 md:mt-4">
+                <span class="flex items-center justify-center">
+                    <i class="fas fa-bolt mr-2 flex items-center justify-center" style="color: #FF9933;"></i>
+                    <span class="flex items-center justify-center leading-none mt-[2px]">Premium Tools • Always Free</span>
+                </span>
+            </div>
+
+            <!-- MAIN TITLE -->
+            <h1 class="font-headline tracking-tight text-black flex flex-wrap items-baseline justify-center mb-2 md:mb-3 leading-none" style="font-size: clamp(2.2rem,10vw,6rem); font-weight: 850;">
+                <span class="whitespace-nowrap">Vaidik Margam<span class="font-normal tracking-normal ml-1 mb-[0.2em]" style="font-size: clamp(0.6rem,1.5vw,1.2rem); -webkit-text-stroke: 0px;">.com</span></span>
+            </h1>
+
+            <!-- SUBTITLE -->
+            <h2 class="font-body font-bold tracking-normal whitespace-nowrap mb-4 md:mb-6" style="font-size: clamp(1.05rem, 4.5vw, 2.4rem); background-image: linear-gradient(to right, #D92D20, #FF9933); -webkit-background-clip: text; color: transparent;">
+                Your Daily Vedic Companion
+            </h2>
+
+            <!-- Search Bar -->
+            <div class="max-w-2xl mx-auto relative group mb-4 mt-6 md:mt-8" style="z-index: 101;">
+                <div class="absolute -inset-1 bg-gradient-to-r from-saffron to-deep-red rounded-full blur-2xl opacity-40 transition duration-500 group-hover:opacity-60"></div>
+                <div class="relative flex items-center bg-white rounded-full py-[5px] px-2 shadow-xl shadow-orange-900/5">
+                <span class="material-symbols-outlined pl-4 text-gray-400 flex items-center justify-center">search</span>
+                <input id="tools-search-input" class="w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-base md:text-lg px-4 py-2.5 md:py-3.5 font-medium placeholder-gray-400 text-gray-800" placeholder="Search tools..." type="text" autocomplete="off">
+                <button class="bg-gradient-to-r from-saffron to-deep-red text-white px-6 md:px-8 py-2.5 md:py-3.5 rounded-full font-bold hover:shadow-lg transition-all flex items-center justify-center"><span class="flex items-center justify-center leading-none mt-[2px]">Search</span></button>
+                </div>
+                <!-- Autocomplete Dropdown -->
+                <div id="tools-search-dropdown" class="absolute w-full mt-2 z-[100] bg-white border border-gray-100 rounded-xl shadow-xl max-h-60 overflow-y-auto hidden">
+                </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="flex flex-nowrap w-full overflow-hidden items-center justify-center gap-1.5 md:gap-4 mt-4 px-2 pb-2">
+                <div class="flex items-center gap-1.5 md:gap-2 bg-white/80 backdrop-blur-sm px-2 md:px-4 py-2.5 rounded-full border border-orange-50 shadow-sm text-gray-600 whitespace-nowrap overflow-hidden">
+                    <span class="material-symbols-outlined text-[14px] md:text-[18px] text-saffron flex items-center justify-center shrink-0">check_circle</span>
+                    <span class="text-[9px] md:text-sm font-medium tracking-wide flex items-center justify-center leading-none mt-[2px] truncate">No registration required</span>
+                </div>
+                <div class="flex items-center gap-1.5 md:gap-2 bg-white/80 backdrop-blur-sm px-2 md:px-4 py-2.5 rounded-full border border-orange-50 shadow-sm text-gray-600 whitespace-nowrap overflow-hidden">
+                    <span class="material-symbols-outlined text-[14px] md:text-[18px] text-saffron flex items-center justify-center shrink-0">check_circle</span>
+                    <span class="text-[9px] md:text-sm font-medium tracking-wide flex items-center justify-center leading-none mt-[2px] truncate">100% free Vaidik Margam</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <!-- THE TAILORED SCROLLING PANCHANG BANNER -->
+    <div class="bg-deep-red py-2.5 overflow-hidden flex items-center mb-[18px] md:mb-4 -mx-2 md:-mx-8">
+        <div id="panchang-ticker" class="animate-seamless-scroll flex items-center whitespace-nowrap">
+            <div class="flex items-center gap-8 px-4 whitespace-nowrap flex-nowrap">
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Tithi:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Shukla Paksha Panchami</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-star text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Nakshatra:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Mrigashirsha</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-om text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Yoga:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Shobhana</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-circle-notch text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Karana:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Bava</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">11:55 PM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-cloud-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunset:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">12:37 PM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Moonrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">02:57 AM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-cloud-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Moonset:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">05:05 PM</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-8 px-4 whitespace-nowrap flex-nowrap">
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Tithi:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Shukla Paksha Panchami</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-star text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Nakshatra:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Mrigashirsha</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-om text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Yoga:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Shobhana</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-circle-notch text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Karana:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Bava</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">11:55 PM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-cloud-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunset:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">12:37 PM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Moonrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">02:57 AM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-cloud-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Moonset:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">05:05 PM</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-8 px-4 whitespace-nowrap flex-nowrap">
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Tithi:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Shukla Paksha Panchami</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-star text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Nakshatra:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Mrigashirsha</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-om text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Yoga:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Shobhana</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-circle-notch text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Karana:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Bava</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">11:55 PM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-cloud-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunset:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">12:37 PM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Moonrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">02:57 AM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-cloud-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Moonset:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">05:05 PM</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-8 px-4 whitespace-nowrap flex-nowrap">
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Tithi:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Shukla Paksha Panchami</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-star text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Nakshatra:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Mrigashirsha</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-om text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Yoga:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Shobhana</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-circle-notch text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Karana:</span>
+                    <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">Bava</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">11:55 PM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-cloud-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunset:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">12:37 PM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Moonrise:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">02:57 AM</span>
+                </div>
+                <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
+                    <i class="fa-solid fa-cloud-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Moonset:</span>
+                    <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">05:05 PM</span>
+                </div>
+            </div></div>
+    </div>
+
+    <!-- THE GRAND WELCOME ARCH -->
+    <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto" id="grid-cards-header-container">
+        <section class="text-center mt-[-8px] md:mt-12 mb-0 md:mb-12 px-4">
+            <h2 id="grid-cards-title" class="font-headline text-[28px] md:text-5xl font-black tracking-tight mb-[-2px] md:mb-4 bg-gradient-to-r from-saffron to-deep-red bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(255,153,51,0.4)]">Discover Popular Tools</h2>
+            <p class="text-gray-600 text-[13px] md:text-base max-w-2xl mx-auto leading-relaxed" id="grid-cards-desc">
+                Explore timeless wisdom and powerful tools designed to guide your spiritual journey and bring balance to your daily life.
+            </p>
+        </section>
+    </div>
+
+
+
+    <!-- CIRCULAR BUBBLE CAROUSEL -->
+    <div id="bubble-section" class="mb-10 -mx-2 md:-mx-8" style="display: none;">
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+            <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
+            <h2 id="bubble-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Quick Links</h2>
+        </div>
+        <div id="bubble-container" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth">
+            <!-- Bubbles will be injected here -->
+            <div class="shrink-0 w-1 md:w-4"></div>
+        </div>
+    </div>
+
+    <!-- THE SPIRITUAL TOOLS SWIPEABLE CAROUSEL -->
+    <div class="mb-10 -mx-2 md:-mx-8" id="scroll-cards-section" style="display: none;">
+
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+            <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
+            <h2 id="scroll-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Spiritual Tools</h2>
+        </div>
+
+        <div class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth">
+
+            <div class="shrink-0 w-1 md:w-4"></div>
+        </div>
+    </div>
+
+
+    <!-- BIG FEATURED CARDS GRID -->
+    <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto" id="grid-cards-section" style="display: none;">
+
+        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
+
+        </section>
+
+    </div>
