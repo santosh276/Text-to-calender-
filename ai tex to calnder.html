@@ -2302,9 +2302,12 @@ The word "Nua" means new and "Khai" means food.
 
     <!-- CIRCULAR BUBBLE CAROUSEL -->
     <div id="bubble-section" class="mb-10 -mx-2 md:-mx-8" style="display: none;">
-        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
-            <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
-            <h2 id="bubble-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Quick Links</h2>
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-4 flex items-center relative z-10">
+            <div class="relative inline-block pb-2 w-full">
+                <h2 id="bubble-cards-title" class="text-xl font-bold text-gray-800 dark:text-gray-100 pr-6">Quick Links</h2>
+                <div id="bubble-cards-title-underline-blur" class="absolute bottom-0 left-0 h-1.5 w-16 rounded-full blur-[3px] opacity-70" style="background-color: #ef4444;"></div>
+                <div id="bubble-cards-title-underline-solid" class="absolute bottom-0 left-0 h-1.5 w-12 rounded-full z-10" style="background-color: #ef4444;"></div>
+            </div>
         </div>
         <div id="bubble-container" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth">
             <!-- Bubbles will be injected here -->
@@ -2315,9 +2318,12 @@ The word "Nua" means new and "Khai" means food.
     <!-- THE SPIRITUAL TOOLS SWIPEABLE CAROUSEL -->
     <div class="mb-10 -mx-2 md:-mx-8" id="scroll-cards-section" style="display: none;">
         
-        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
-            <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
-            <h2 id="scroll-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Spiritual Tools</h2>
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-4 flex items-center relative z-10">
+            <div class="relative inline-block pb-2 w-full">
+                <h2 id="scroll-cards-title" class="text-xl font-bold text-gray-800 dark:text-gray-100 pr-6">Spiritual Tools</h2>
+                <div id="scroll-cards-title-underline-blur" class="absolute bottom-0 left-0 h-1.5 w-16 rounded-full blur-[3px] opacity-70" style="background-color: #ef4444;"></div>
+                <div id="scroll-cards-title-underline-solid" class="absolute bottom-0 left-0 h-1.5 w-12 rounded-full z-10" style="background-color: #ef4444;"></div>
+            </div>
         </div>
 
         <div class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth">
@@ -6282,9 +6288,18 @@ function getCDNUrl(originalUrl) {
                     
                     for (const [title, cards] of Object.entries(groupedCards)) {
                         // Create Section Header
+                        const firstCardColor = (cards[0] && cards[0].color) ? cards[0].color : '#ef4444'; // fallback to deep-red
                         const sectionHeaderHTML = `
                             <div class="max-w-screen-2xl mx-auto dynamic-grid-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
-                                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 px-4 mb-4">${title}</h2>
+                                <div class="px-4 mb-4">
+                                    <div class="relative inline-block pb-2">
+                                        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 pr-6">
+                                            ${title}
+                                        </h2>
+                                        <div class="absolute bottom-0 left-0 h-1.5 w-16 rounded-full blur-[3px] opacity-70" style="background-color: ${firstCardColor};"></div>
+                                        <div class="absolute bottom-0 left-0 h-1.5 w-12 rounded-full z-10" style="background-color: ${firstCardColor};"></div>
+                                    </div>
+                                </div>
                                 <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 dynamic-grid-container"></section>
                             </div>
                         `;
@@ -6325,6 +6340,11 @@ function getCDNUrl(originalUrl) {
                     const scrollTitle = document.getElementById('scroll-cards-title');
                     if (scrollTitle) scrollTitle.innerText = scrollMainTitle;
                 }
+                const firstColor = appState.scrollCards[0].color || '#ef4444';
+                const underlineBlur = document.getElementById('scroll-cards-title-underline-blur');
+                const underlineSolid = document.getElementById('scroll-cards-title-underline-solid');
+                if (underlineBlur) underlineBlur.style.backgroundColor = firstColor;
+                if (underlineSolid) underlineSolid.style.backgroundColor = firstColor;
             }
 
             // Render Bubble Cards
@@ -6344,6 +6364,11 @@ function getCDNUrl(originalUrl) {
                         const bubbleTitle = document.getElementById('bubble-cards-title');
                         if (bubbleTitle) bubbleTitle.innerText = bubbleMainTitle;
                     }
+                    const firstColor = appState.bubbleCards[0].color || '#ef4444';
+                    const underlineBlur = document.getElementById('bubble-cards-title-underline-blur');
+                    const underlineSolid = document.getElementById('bubble-cards-title-underline-solid');
+                    if (underlineBlur) underlineBlur.style.backgroundColor = firstColor;
+                    if (underlineSolid) underlineSolid.style.backgroundColor = firstColor;
                 } else {
                     if (bubbleSection) bubbleSection.style.display = 'none';
                 }
