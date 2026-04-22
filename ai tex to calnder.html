@@ -2598,16 +2598,15 @@ The word "Nua" means new and "Khai" means food.
                     <div>
                         <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Design Template</label>
                         <select id="custom-card-design" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800 font-medium" onchange="updateCustomCardPlaceholder()">
-                            <option value="more tab">Design 1: Grid Card (Large Image)</option>
-                            <option value="scroll tab">Design 2: Scrolling Card (Reading Mode)</option>
-                            <option value="bubble tab">Design 3: Circular Bubble</option>
+                            <option value="grid">Design 1: Grid Layout</option>
+                            <option value="scroll">Design 2: Horizontal Scroll</option>
+                            <option value="bubble">Design 3: Circular Bubbles</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Main Section Title <span class="text-gray-400 font-normal">(Optional)</span></label>
-                        <input type="text" id="custom-card-main-title" list="section-titles-datalist" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="e.g. Discover Popular Tools">
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Main Section Title</label>
+                        <input type="text" id="custom-card-main-title" required list="section-titles-datalist" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="e.g. Discover Popular Tools">
                         <datalist id="section-titles-datalist"></datalist>
-                        <span class="text-[10px] md:text-xs text-gray-500 mt-1 block">Leave blank to use the default title for this section.</span>
                     </div>
                     <div>
                         <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Title</label>
@@ -4671,16 +4670,12 @@ const LOCATION_DATA = {
             const color = sanitizeInput(colorRaw) || '#0d9488';
             
             let syntaxHeader = '::: More tab';
-            if (designRaw === 'scroll tab') {
-                syntaxHeader = '::: Scroll tab';
-            } else if (designRaw === 'bubble tab') {
-                syntaxHeader = '::: Bubble tab';
-            }
 
             // Format syntax string using sanitized variables
             let syntaxString = `\n${syntaxHeader}\n`;
             syntaxString += `Hyperlink: [${link}]\n`;
             if (mainTitle) syntaxString += `Main Title: [${mainTitle}]\n`;
+            syntaxString += `Style: [${designRaw}]\n`;
             syntaxString += `Title: [${title}]\nDescription: [${desc}]\nImage Link: [${image}]\nCard Color: [${color}]\n:::\n`;
             
             // Append to editor
@@ -4700,9 +4695,9 @@ const LOCATION_DATA = {
         function updateCustomCardPlaceholder() {
             const design = document.getElementById('custom-card-design').value;
             const input = document.getElementById('custom-card-main-title');
-            if (design === 'more tab') input.placeholder = 'e.g. Discover Popular Tools';
-            else if (design === 'scroll tab') input.placeholder = 'e.g. Spiritual Tools';
-            else if (design === 'bubble tab') input.placeholder = 'e.g. Quick Links';
+            if (design === 'grid') input.placeholder = 'e.g. Discover Popular Tools';
+            else if (design === 'scroll') input.placeholder = 'e.g. Spiritual Tools';
+            else if (design === 'bubble') input.placeholder = 'e.g. Quick Links';
         }
 
         // --- EDITOR LOGIC END ---
@@ -4734,16 +4729,15 @@ const LOCATION_DATA = {
             gridContainer.insertAdjacentHTML('beforeend', cardHTML);
         }
 
-        function renderScrollCard(cardData) {
-            const scrollContainer = document.querySelector('#more-view-container #scroll-cards-section .flex.overflow-x-auto');
-            if (!scrollContainer) return;
+        function renderScrollCard(cardData, targetContainer) {
+            if (!targetContainer) return;
             
             const bgColor = cardData.color || '#2e3459';
             // Darken it slightly for the background
             const outerBg = bgColor + 'd9'; // approx 85% opacity
             
             const cardHTML = `
-            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md shadow-lg shadow-black/5" style="background-color: ${outerBg};">
+            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between min-w-[160px] w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md shadow-lg shadow-black/5" style="background-color: ${outerBg};">
                 <div class="flex items-center gap-3 w-[85%]">
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden aspect-square" style="background-color: ${bgColor};">
                         ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-cover aspect-square" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
@@ -4757,12 +4751,11 @@ const LOCATION_DATA = {
             </a>
             `;
             
-            scrollContainer.insertAdjacentHTML('beforeend', cardHTML);
+            targetContainer.insertAdjacentHTML('beforeend', cardHTML);
         }
 
-        function renderBubbleCard(cardData) {
-            const container = document.getElementById('bubble-container');
-            if (!container) return;
+        function renderBubbleCard(cardData, targetContainer) {
+            if (!targetContainer) return;
             
             const bgColor = cardData.color || '#0d9488';
             
@@ -4775,12 +4768,12 @@ const LOCATION_DATA = {
             </a>
             `;
             
-            // Insert before the empty space div
-            const spacer = container.querySelector('.shrink-0.w-1.md\\:w-4');
+            // Insert before the empty space div if it exists
+            const spacer = targetContainer.querySelector('.shrink-0.w-1.md\\:w-4');
             if (spacer) {
                 spacer.insertAdjacentHTML('beforebegin', cardHTML);
             } else {
-                container.insertAdjacentHTML('beforeend', cardHTML);
+                targetContainer.insertAdjacentHTML('beforeend', cardHTML);
             }
         }
 
@@ -5901,17 +5894,23 @@ function getCDNUrl(originalUrl) {
                     const panMatch = line.match(/^@\s+(.+?)\s*:\s*(.+)/);
                     if (panMatch && currentMonthObj) currentMonthObj.panchang[panMatch[1]] = panMatch[2];
                 }
-                else if (currentBlock === 'more tab') {
-                    // Start of a new card if Hyperlink is found
+                else if (currentBlock === 'more tab' || currentBlock === 'scroll tab' || currentBlock === 'bubble tab') {
+                    // We consolidate parsing for all custom card blocks into parsedCustomCards
+                    // and infer the 'style' from the block type if not explicitly set.
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
                     const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
                     const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
                     const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
                     const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
                     const colorMatch = line.match(/^Card Color:\s*\[(.*?)\]/i);
+                    const styleMatch = line.match(/^Style:\s*\[(.*?)\]/i);
 
                     if (linkMatch) {
-                        currentCustomCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488' };
+                        let defaultStyle = 'grid';
+                        if (currentBlock === 'scroll tab') defaultStyle = 'scroll';
+                        if (currentBlock === 'bubble tab') defaultStyle = 'bubble';
+
+                        currentCustomCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488', style: defaultStyle };
                         parsedCustomCards.push(currentCustomCard);
                     } else if (currentCustomCard) {
                         if (mainTitleMatch) currentCustomCard.mainTitle = mainTitleMatch[1];
@@ -5919,44 +5918,7 @@ function getCDNUrl(originalUrl) {
                         else if (descMatch) currentCustomCard.desc = descMatch[1];
                         else if (imgMatch) currentCustomCard.image = imgMatch[1];
                         else if (colorMatch) currentCustomCard.color = colorMatch[1];
-                    }
-                }
-                else if (currentBlock === 'scroll tab') {
-                    const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
-                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
-                    const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
-                    const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
-                    const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
-                    const colorMatch = line.match(/^Card Color:\s*\[(.*?)\]/i);
-
-                    if (linkMatch) {
-                        currentScrollCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#2e3459' };
-                        parsedScrollCards.push(currentScrollCard);
-                    } else if (currentScrollCard) {
-                        if (mainTitleMatch) currentScrollCard.mainTitle = mainTitleMatch[1];
-                        else if (titleMatch) currentScrollCard.title = titleMatch[1];
-                        else if (descMatch) currentScrollCard.desc = descMatch[1];
-                        else if (imgMatch) currentScrollCard.image = imgMatch[1];
-                        else if (colorMatch) currentScrollCard.color = colorMatch[1];
-                    }
-                }
-                else if (currentBlock === 'bubble tab') {
-                    const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
-                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
-                    const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
-                    const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
-                    const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
-                    const colorMatch = line.match(/^Card Color:\s*\[(.*?)\]/i);
-
-                    if (linkMatch) {
-                        currentBubbleCard = { link: linkMatch[1], title: '', desc: '', image: '', color: '#0d9488' };
-                        parsedBubbleCards.push(currentBubbleCard);
-                    } else if (currentBubbleCard) {
-                        if (mainTitleMatch) currentBubbleCard.mainTitle = mainTitleMatch[1];
-                        else if (titleMatch) currentBubbleCard.title = titleMatch[1];
-                        else if (descMatch) currentBubbleCard.desc = descMatch[1];
-                        else if (imgMatch) currentBubbleCard.image = imgMatch[1];
-                        else if (colorMatch) currentBubbleCard.color = colorMatch[1];
+                        else if (styleMatch) currentCustomCard.style = styleMatch[1].toLowerCase();
                     }
                 }
             });
@@ -6240,7 +6202,7 @@ function getCDNUrl(originalUrl) {
             
             if (gridContainer) {
                 // Clear existing dynamic groups (custom sections)
-                const dynamicSections = moreViewContainer.querySelectorAll('.dynamic-grid-section');
+                const dynamicSections = moreViewContainer.querySelectorAll('.dynamic-custom-section, .dynamic-grid-section');
                 dynamicSections.forEach(el => el.remove());
 
                 // Clear main Hero grid cards
@@ -6278,101 +6240,82 @@ function getCDNUrl(originalUrl) {
                     let lastInsertedNode = gridSectionContainer;
                     
                     for (const [title, cards] of Object.entries(groupedCards)) {
-                        // Create Section Header
-                        const firstCardColor = (cards && cards.length > 0 && cards[0].color) ? cards[0].color : '#ef4444';
-                        const sectionHeaderHTML = `
-                            <div class="max-w-screen-2xl mx-auto dynamic-grid-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
-                                <div class="px-4 mb-4 tools-section-container">
-                                    <div class="inline-flex flex-col w-full">
-                                        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${title}</h2>
-                                        <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
-                                            <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                            <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                        if (!cards || cards.length === 0) continue;
+
+                        const firstCardStyle = cards[0].style || 'grid';
+                        const firstCardColor = cards[0].color || '#ef4444';
+
+                        let sectionContainerHTML = '';
+                        let innerContainerSelector = '';
+
+                        if (firstCardStyle === 'grid') {
+                            sectionContainerHTML = `
+                                <div class="max-w-screen-2xl mx-auto dynamic-custom-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
+                                    <div class="px-4 mb-4 tools-section-container">
+                                        <div class="inline-flex flex-col w-full">
+                                            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${title}</h2>
+                                            <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
+                                                <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                                <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 dynamic-inner-container"></section>
                                 </div>
-                                <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 dynamic-grid-container"></section>
-                            </div>
-                        `;
+                            `;
+                            innerContainerSelector = '.dynamic-inner-container';
+                        } else if (firstCardStyle === 'scroll') {
+                            sectionContainerHTML = `
+                                <div class="max-w-screen-2xl mx-auto dynamic-custom-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
+                                    <div class="px-4 mb-4 tools-section-container">
+                                        <div class="inline-flex flex-col w-full">
+                                            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${title}</h2>
+                                            <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
+                                                <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                                <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth dynamic-inner-container">
+                                        <div class="shrink-0 w-1 md:w-4"></div>
+                                    </div>
+                                </div>
+                            `;
+                            innerContainerSelector = '.dynamic-inner-container';
+                        } else if (firstCardStyle === 'bubble') {
+                            sectionContainerHTML = `
+                                <div class="max-w-screen-2xl mx-auto dynamic-custom-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
+                                    <div class="px-4 mb-4 tools-section-container">
+                                        <div class="inline-flex flex-col w-full">
+                                            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${title}</h2>
+                                            <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
+                                                <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                                <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth dynamic-inner-container">
+                                        <div class="shrink-0 w-1 md:w-4"></div>
+                                    </div>
+                                </div>
+                            `;
+                            innerContainerSelector = '.dynamic-inner-container';
+                        }
                         
-                        if (lastInsertedNode && lastInsertedNode.parentNode) {
-                            lastInsertedNode.insertAdjacentHTML('afterend', sectionHeaderHTML);
+                        if (lastInsertedNode && lastInsertedNode.parentNode && sectionContainerHTML) {
+                            lastInsertedNode.insertAdjacentHTML('afterend', sectionContainerHTML);
                             lastInsertedNode = lastInsertedNode.nextElementSibling;
                             
-                            const newGridContainer = lastInsertedNode.querySelector('.dynamic-grid-container');
-                            cards.forEach(card => renderCustomCard(card, newGridContainer));
+                            const newInnerContainer = lastInsertedNode.querySelector(innerContainerSelector);
+                            cards.forEach(card => {
+                                if (firstCardStyle === 'grid') renderCustomCard(card, newInnerContainer);
+                                else if (firstCardStyle === 'scroll') renderScrollCard(card, newInnerContainer);
+                                else if (firstCardStyle === 'bubble') renderBubbleCard(card, newInnerContainer);
+                            });
                         }
                     }
                 } else {
                     if(gridSectionContainer) gridSectionContainer.style.display = 'none';
-                }
-            }
-
-            const scrollContainer = document.querySelector('#more-view-container #scroll-cards-section .flex.overflow-x-auto');
-            const scrollSectionContainer = document.getElementById('scroll-cards-section');
-            if (scrollContainer) {
-                // Remove existing dynamic scroll cards (they are <a> tags)
-                const existingScrollLinks = scrollContainer.querySelectorAll('a.snap-start');
-                existingScrollLinks.forEach(el => el.remove());
-
-                if (appState.scrollCards && appState.scrollCards.length > 0) {
-                    appState.scrollCards.forEach(card => renderScrollCard(card));
-                    if(scrollSectionContainer) scrollSectionContainer.style.display = 'block';
-                } else {
-                    if(scrollSectionContainer) scrollSectionContainer.style.display = 'none';
-                }
-            }
-
-            // Update Main Titles if configured by any custom card
-            if (appState.scrollCards && appState.scrollCards.length > 0) {
-                const scrollMainTitle = appState.scrollCards.find(c => c.mainTitle)?.mainTitle || "Spiritual Tools";
-                const firstCardColor = appState.scrollCards[0].color || '#ef4444';
-                const wrapper = document.getElementById('scroll-header-wrapper');
-                if (wrapper) {
-                    wrapper.innerHTML = `
-                        <div class="px-4 mb-4 tools-section-container">
-                            <div class="inline-flex flex-col w-full">
-                                <h2 id="scroll-cards-title" class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${scrollMainTitle}</h2>
-                                <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
-                                    <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                    <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            // Render Bubble Cards
-            const bubbleContainer = document.getElementById('bubble-container');
-            const bubbleSection = document.getElementById('bubble-section');
-            if (bubbleContainer) {
-                // Remove existing dynamic bubble cards (they are <a> tags)
-                const existingBubbleLinks = bubbleContainer.querySelectorAll('a.snap-start');
-                existingBubbleLinks.forEach(el => el.remove());
-
-                if (appState.bubbleCards && appState.bubbleCards.length > 0) {
-                    if (bubbleSection) bubbleSection.style.display = 'block';
-                    appState.bubbleCards.forEach(card => renderBubbleCard(card));
-                    
-                    const bubbleMainTitle = appState.bubbleCards.find(c => c.mainTitle)?.mainTitle || "Quick Links";
-                    const firstCardColor = appState.bubbleCards[0].color || '#ef4444';
-                    const wrapper = document.getElementById('bubble-header-wrapper');
-                    if (wrapper) {
-                        wrapper.innerHTML = `
-                            <div class="px-4 mb-4 tools-section-container">
-                                <div class="inline-flex flex-col w-full">
-                                    <h2 id="bubble-cards-title" class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${bubbleMainTitle}</h2>
-                                    <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
-                                        <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                        <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                } else {
-                    if (bubbleSection) bubbleSection.style.display = 'none';
                 }
             }
 
