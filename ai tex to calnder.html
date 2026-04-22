@@ -2323,7 +2323,7 @@ The word "Nua" means new and "Khai" means food.
         
         <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
             <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
-            <h2 id="scroll-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Spiritual Tools</h2>
+            <h2 id="scroll-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left inline-block relative">Spiritual Tools<span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-red-500 to-transparent rounded-full opacity-80 h-0.5" style="width: 120%; filter: blur(0.5px);"></span></h2>
         </div>
 
         <div class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth">
@@ -6258,7 +6258,7 @@ function getCDNUrl(originalUrl) {
 
                 // Reset Hero grid title to default. We don't overwrite it with random cards anymore.
                 const gridTitle = document.getElementById('grid-cards-title');
-                if (gridTitle) gridTitle.innerText = "Discover Popular Tools";
+                if (gridTitle) gridTitle.innerHTML = `Discover Popular Tools<span class="absolute -bottom-1.5 md:-bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-red-500 to-transparent rounded-full opacity-80 h-0.5 md:h-[3px]" style="width: 120%; filter: blur(0.5px);"></span>`;
                 
                 if (appState.customCards && appState.customCards.length > 0) {
                     const defaultCards = [];
@@ -6329,7 +6329,7 @@ function getCDNUrl(originalUrl) {
                 const scrollMainTitle = appState.scrollCards.find(c => c.mainTitle)?.mainTitle;
                 if (scrollMainTitle) {
                     const scrollTitle = document.getElementById('scroll-cards-title');
-                    if (scrollTitle) scrollTitle.innerText = scrollMainTitle;
+                    if (scrollTitle) scrollTitle.innerHTML = `${scrollMainTitle}<span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-red-500 to-transparent rounded-full opacity-80 h-0.5" style="width: 120%; filter: blur(0.5px);"></span>`;
                 }
             }
 
