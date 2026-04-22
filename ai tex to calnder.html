@@ -2302,7 +2302,7 @@ The word "Nua" means new and "Khai" means food.
 
     <!-- CIRCULAR BUBBLE CAROUSEL -->
     <div id="bubble-section" class="mb-10 -mx-2 md:-mx-8" style="display: none;">
-        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+        <div id="bubble-header-wrapper" class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
             <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
             <h2 id="bubble-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Quick Links</h2>
         </div>
@@ -2315,7 +2315,7 @@ The word "Nua" means new and "Khai" means food.
     <!-- THE SPIRITUAL TOOLS SWIPEABLE CAROUSEL -->
     <div class="mb-10 -mx-2 md:-mx-8" id="scroll-cards-section" style="display: none;">
         
-        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
+        <div id="scroll-header-wrapper" class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
             <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
             <h2 id="scroll-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Spiritual Tools</h2>
         </div>
@@ -6281,10 +6281,22 @@ function getCDNUrl(originalUrl) {
                     let lastInsertedNode = gridSectionContainer;
                     
                     for (const [title, cards] of Object.entries(groupedCards)) {
+                        const firstCardColor = cards[0]?.color || '#ef4444';
                         // Create Section Header
                         const sectionHeaderHTML = `
                             <div class="max-w-screen-2xl mx-auto dynamic-grid-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
-                                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 px-4 mb-4">${title}</h2>
+                                <div class="px-4 mb-4 tools-section-container">
+                                    <div class="inline-flex flex-col w-full">
+                                        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">
+                                            ${title}
+                                        </h2>
+
+                                        <div class="relative flex justify-center mt-3 h-[2px] w-[60%] self-center mx-auto">
+                                            <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                            <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 dynamic-grid-container"></section>
                             </div>
                         `;
@@ -6320,10 +6332,24 @@ function getCDNUrl(originalUrl) {
             // Update Main Titles if configured by any custom card
             // ONLY DO THIS FOR SCROLL CARDS NOW, grid main title is "Discover Popular Tools" and other are grouped
             if (appState.scrollCards && appState.scrollCards.length > 0) {
-                const scrollMainTitle = appState.scrollCards.find(c => c.mainTitle)?.mainTitle;
-                if (scrollMainTitle) {
-                    const scrollTitle = document.getElementById('scroll-cards-title');
-                    if (scrollTitle) scrollTitle.innerText = scrollMainTitle;
+                const scrollMainTitle = appState.scrollCards.find(c => c.mainTitle)?.mainTitle || "Spiritual Tools";
+                const firstCardColor = appState.scrollCards[0]?.color || '#ef4444';
+                const scrollHeaderWrapper = document.getElementById('scroll-header-wrapper');
+                if (scrollHeaderWrapper) {
+                    scrollHeaderWrapper.innerHTML = `
+                        <div class="px-4 mb-4 tools-section-container w-full">
+                            <div class="inline-flex flex-col w-full">
+                                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">
+                                    ${scrollMainTitle}
+                                </h2>
+
+                                <div class="relative flex justify-center mt-3 h-[2px] w-[60%] self-center mx-auto">
+                                    <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                    <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 }
             }
 
@@ -6339,10 +6365,24 @@ function getCDNUrl(originalUrl) {
                     if (bubbleSection) bubbleSection.style.display = 'block';
                     appState.bubbleCards.forEach(card => renderBubbleCard(card));
                     
-                    const bubbleMainTitle = appState.bubbleCards.find(c => c.mainTitle)?.mainTitle;
-                    if (bubbleMainTitle) {
-                        const bubbleTitle = document.getElementById('bubble-cards-title');
-                        if (bubbleTitle) bubbleTitle.innerText = bubbleMainTitle;
+                    const bubbleMainTitle = appState.bubbleCards.find(c => c.mainTitle)?.mainTitle || "Quick Links";
+                    const firstCardColor = appState.bubbleCards[0]?.color || '#ef4444';
+                    const bubbleHeaderWrapper = document.getElementById('bubble-header-wrapper');
+                    if (bubbleHeaderWrapper) {
+                        bubbleHeaderWrapper.innerHTML = `
+                            <div class="px-4 mb-4 tools-section-container w-full">
+                                <div class="inline-flex flex-col w-full">
+                                    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">
+                                        ${bubbleMainTitle}
+                                    </h2>
+
+                                    <div class="relative flex justify-center mt-3 h-[2px] w-[60%] self-center mx-auto">
+                                        <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                        <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                     }
                 } else {
                     if (bubbleSection) bubbleSection.style.display = 'none';
