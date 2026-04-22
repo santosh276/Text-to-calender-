@@ -2291,7 +2291,10 @@ The word "Nua" means new and "Khai" means food.
     <!-- THE GRAND WELCOME ARCH -->
     <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto" id="grid-cards-header-container">
         <section class="text-center mt-[-8px] md:mt-12 mb-0 md:mb-12 px-4">
-            <h2 id="grid-cards-title" class="font-headline text-[28px] md:text-5xl font-black tracking-tight mb-[-2px] md:mb-4 bg-gradient-to-r from-saffron to-deep-red bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(255,153,51,0.4)]">Discover Popular Tools</h2>
+            <h2 id="grid-cards-title" class="font-headline text-[28px] md:text-5xl font-black tracking-tight mb-2 md:mb-6 bg-gradient-to-r from-saffron to-deep-red bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(255,153,51,0.4)] inline-block relative">
+                Discover Popular Tools
+                <span class="absolute -bottom-1.5 md:-bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-red-500 to-transparent rounded-full opacity-80 h-0.5 md:h-[3px]" style="width: 120%; filter: blur(0.5px);"></span>
+            </h2>
             <p class="text-gray-600 text-[13px] md:text-base max-w-2xl mx-auto leading-relaxed" id="grid-cards-desc">
                 Explore timeless wisdom and powerful tools designed to guide your spiritual journey and bring balance to your daily life.
             </p>
@@ -2304,7 +2307,10 @@ The word "Nua" means new and "Khai" means food.
     <div id="bubble-section" class="mb-10 -mx-2 md:-mx-8" style="display: none;">
         <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-0 flex items-center gap-2 relative z-10">
             <div class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-deep-red shadow-[0_0_8px_rgba(217,45,32,0.5)] shrink-0"></div>
-            <h2 id="bubble-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left">Quick Links</h2>
+            <h2 id="bubble-cards-title" class="font-headline text-lg md:text-xl font-black tracking-tight text-gray-800 text-left inline-block relative">
+                Quick Links
+                <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-red-500 to-transparent rounded-full opacity-80 h-0.5" style="width: 120%; filter: blur(0.5px);"></span>
+            </h2>
         </div>
         <div id="bubble-container" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth">
             <!-- Bubbles will be injected here -->
@@ -6284,7 +6290,7 @@ function getCDNUrl(originalUrl) {
                         // Create Section Header
                         const sectionHeaderHTML = `
                             <div class="max-w-screen-2xl mx-auto dynamic-grid-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
-                                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 px-4 mb-4">${title}</h2>
+                                <div class="px-4 mb-4"><h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 inline-block relative">${title}<span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-red-500 to-transparent rounded-full opacity-80 h-0.5" style="width: 120%; filter: blur(0.5px);"></span></h2></div>
                                 <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 dynamic-grid-container"></section>
                             </div>
                         `;
