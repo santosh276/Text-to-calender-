@@ -2302,11 +2302,13 @@ The word "Nua" means new and "Khai" means food.
 
     <!-- CIRCULAR BUBBLE CAROUSEL -->
     <div id="bubble-section" class="mb-10 -mx-2 md:-mx-8" style="display: none;">
-        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-4 flex items-center relative z-10">
-            <div class="relative inline-block pb-1">
-                <h2 id="bubble-cards-title" class="text-[28px] md:text-[32px] font-bold text-gray-800 dark:text-gray-100 tracking-tight">Quick Links</h2>
-                <div id="bubble-cards-title-underline-blur" class="absolute bottom-0 left-0 w-full h-[2px] blur-[3px] opacity-60" style="background-color: #ef4444;"></div>
-                <div id="bubble-cards-title-underline-solid" class="absolute bottom-0 left-[2%] w-[96%] h-[2px] z-10 rounded-full" style="background: linear-gradient(90deg, transparent 0%, #ef4444 15%, #ef4444 85%, transparent 100%);"></div>
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-4 flex relative z-10">
+            <div class="inline-flex flex-col">
+                <h2 id="bubble-cards-title" class="text-[28px] md:text-[32px] font-bold text-gray-800 dark:text-gray-100 tracking-tight text-left">Quick Links</h2>
+                <div class="relative flex mt-1 h-[2px] w-[110%] self-start">
+                    <div id="bubble-cards-title-underline-solid" class="absolute inset-0 z-10 opacity-90 rounded-full" style="background: linear-gradient(to right, transparent, #ef4444, transparent);"></div>
+                    <div id="bubble-cards-title-underline-blur" class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background: linear-gradient(to right, transparent, #ef4444, transparent);"></div>
+                </div>
             </div>
         </div>
         <div id="bubble-container" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth">
@@ -2318,11 +2320,13 @@ The word "Nua" means new and "Khai" means food.
     <!-- THE SPIRITUAL TOOLS SWIPEABLE CAROUSEL -->
     <div class="mb-10 -mx-2 md:-mx-8" id="scroll-cards-section" style="display: none;">
         
-        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-4 flex items-center relative z-10">
-            <div class="relative inline-block pb-1">
-                <h2 id="scroll-cards-title" class="text-[28px] md:text-[32px] font-bold text-gray-800 dark:text-gray-100 tracking-tight">Spiritual Tools</h2>
-                <div id="scroll-cards-title-underline-blur" class="absolute bottom-0 left-0 w-full h-[2px] blur-[3px] opacity-60" style="background-color: #ef4444;"></div>
-                <div id="scroll-cards-title-underline-solid" class="absolute bottom-0 left-[2%] w-[96%] h-[2px] z-10 rounded-full" style="background: linear-gradient(90deg, transparent 0%, #ef4444 15%, #ef4444 85%, transparent 100%);"></div>
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-12 lg:px-10 mb-4 flex relative z-10">
+            <div class="inline-flex flex-col">
+                <h2 id="scroll-cards-title" class="text-[28px] md:text-[32px] font-bold text-gray-800 dark:text-gray-100 tracking-tight text-left">Spiritual Tools</h2>
+                <div class="relative flex mt-1 h-[2px] w-[110%] self-start">
+                    <div id="scroll-cards-title-underline-solid" class="absolute inset-0 z-10 opacity-90 rounded-full" style="background: linear-gradient(to right, transparent, #ef4444, transparent);"></div>
+                    <div id="scroll-cards-title-underline-blur" class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background: linear-gradient(to right, transparent, #ef4444, transparent);"></div>
+                </div>
             </div>
         </div>
 
@@ -6292,12 +6296,14 @@ function getCDNUrl(originalUrl) {
                         const sectionHeaderHTML = `
                             <div class="max-w-screen-2xl mx-auto dynamic-grid-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
                                 <div class="px-4 mb-4">
-                                    <div class="relative inline-block pb-1">
-                                        <h2 class="text-[28px] md:text-[32px] font-bold text-gray-800 dark:text-gray-100 tracking-tight">
+                                    <div class="inline-flex flex-col">
+                                        <h2 class="text-[28px] md:text-[32px] font-bold text-gray-800 dark:text-gray-100 tracking-tight text-left">
                                             ${title}
                                         </h2>
-                                        <div class="absolute bottom-0 left-0 w-full h-[2px] blur-[3px] opacity-60" style="background-color: ${firstCardColor};"></div>
-                                        <div class="absolute bottom-0 left-[2%] w-[96%] h-[2px] z-10 rounded-full" style="background: linear-gradient(90deg, transparent 0%, ${firstCardColor} 15%, ${firstCardColor} 85%, transparent 100%);"></div>
+                                        <div class="relative flex mt-1 h-[2px] w-[110%] self-start">
+                                            <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                            <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 dynamic-grid-container"></section>
@@ -6343,8 +6349,8 @@ function getCDNUrl(originalUrl) {
                 const firstColor = appState.scrollCards[0].color || '#ef4444';
                 const underlineBlur = document.getElementById('scroll-cards-title-underline-blur');
                 const underlineSolid = document.getElementById('scroll-cards-title-underline-solid');
-                if (underlineBlur) underlineBlur.style.backgroundColor = firstColor;
-                if (underlineSolid) underlineSolid.style.background = `linear-gradient(90deg, transparent 0%, ${firstColor} 15%, ${firstColor} 85%, transparent 100%)`;
+                if (underlineBlur) underlineBlur.style.background = `linear-gradient(to right, transparent, ${firstColor}, transparent)`;
+                if (underlineSolid) underlineSolid.style.background = `linear-gradient(to right, transparent, ${firstColor}, transparent)`;
             }
 
             // Render Bubble Cards
@@ -6367,8 +6373,8 @@ function getCDNUrl(originalUrl) {
                     const firstColor = appState.bubbleCards[0].color || '#ef4444';
                     const underlineBlur = document.getElementById('bubble-cards-title-underline-blur');
                     const underlineSolid = document.getElementById('bubble-cards-title-underline-solid');
-                    if (underlineBlur) underlineBlur.style.backgroundColor = firstColor;
-                    if (underlineSolid) underlineSolid.style.background = `linear-gradient(90deg, transparent 0%, ${firstColor} 15%, ${firstColor} 85%, transparent 100%)`;
+                    if (underlineBlur) underlineBlur.style.background = `linear-gradient(to right, transparent, ${firstColor}, transparent)`;
+                    if (underlineSolid) underlineSolid.style.background = `linear-gradient(to right, transparent, ${firstColor}, transparent)`;
                 } else {
                     if (bubbleSection) bubbleSection.style.display = 'none';
                 }
