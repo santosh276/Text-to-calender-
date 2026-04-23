@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Japa Mala Counter | 108 Japa Tracker</title>
+    <meta name="description" content="A premium, offline-first Digital Japa Mala Counter to track your daily 108 chanting mantras. Features haptic feedback, auto-save, and beautiful glassmorphism design.">
+    <meta name="keywords" content="Digital Japa Mala Counter, 108 Japa Tracker, Vaidik tools, Mantra counting, Hindu prayer app, Japamala">
+    <meta name="author" content="SANTOSH KUMAR">
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        roboto: ['Roboto', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bgLight: '#fdfbf7',
+                        accentRed: '#D92D20',
+                        accentSaffron: '#FF9933',
+                        highlightGold: '#FFD700',
+                    },
+                    boxShadow: {
+                        'neumorph': '8px 8px 16px #e6e4d9, -8px -8px 16px #ffffff',
+                        'neumorph-inset': 'inset 8px 8px 16px #e6e4d9, inset -8px -8px 16px #ffffff',
+                        'glass': '0 8px 32px 0 rgba(255, 153, 51, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fdfbf7;
+            /* Radial gradient glowing effect using light saffron */
+            background-image: radial-gradient(circle at 50% 30%, rgba(255, 153, 51, 0.08) 0%, rgba(253, 251, 247, 1) 70%);
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #D92D20, #FF9933);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* SVG Progress Ring */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.1s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Prevent tap highlight on mobile */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 153, 51, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 153, 51, 0.5);
+        }
+    </style>
+</head>
+<body class="font-inter text-gray-800 antialiased flex flex-col items-center w-full">
+
+    <!-- Mobile Container mimicking the 'More' tab tool wrapper -->
+    <div class="w-full max-w-md min-h-screen flex flex-col relative shadow-2xl bg-bgLight/30 sm:border-x border-white/50 overflow-hidden">
+
+        <!-- Header -->
+        <header class="sticky top-0 z-50 glass-panel shadow-glass px-4 py-3 flex items-center justify-between">
+            <button class="p-2 text-gray-600 hover:text-accentRed transition-colors rounded-full" aria-label="Go back">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </button>
+            <h1 class="font-roboto font-bold text-xl tracking-wide">
+                <span class="text-accentRed">Mala</span> <span class="text-accentSaffron">Counter</span>
+            </h1>
+            <button class="p-2 text-gray-600 hover:text-accentRed transition-colors rounded-full" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow flex flex-col items-center justify-start pt-8 pb-12 px-6">
+
+            <!-- Stats Dashboard -->
+            <div class="w-full grid grid-cols-2 gap-4 mb-10">
+                <div class="glass-panel rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Mala Count</span>
+                    <span id="malaCountDisplay" class="font-roboto font-bold text-3xl text-accentRed">0</span>
+                </div>
+                <div class="glass-panel rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Total Beads</span>
+                    <span id="totalBeadsDisplay" class="font-roboto font-bold text-3xl text-accentSaffron">0</span>
+                </div>
+            </div>
+
+            <!-- Central Counter Area -->
+            <div class="relative flex items-center justify-center my-6 group">
+                <!-- SVG Ring -->
+                <svg class="absolute w-72 h-72 pointer-events-none drop-shadow-md" viewBox="0 0 120 120">
+                    <!-- Background Ring -->
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255, 153, 51, 0.15)" stroke-width="4" />
+                    <!-- Progress Ring -->
+                    <circle id="progressRing" class="progress-ring__circle" cx="60" cy="60" r="54" fill="none" stroke="url(#gradient)" stroke-width="5" stroke-linecap="round" />
+                    <!-- Gradient Definition -->
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#FF9933" />
+                            <stop offset="100%" stop-color="#D92D20" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <!-- 3D Neumorphic Button -->
+                <button id="counterBtn" class="w-56 h-56 rounded-full bg-bgLight shadow-neumorph active:shadow-neumorph-inset transition-all duration-75 flex flex-col items-center justify-center z-10 border-4 border-white/60 focus:outline-none">
+                    <span class="text-sm font-medium text-gray-400 mb-1">Current Bead</span>
+                    <span id="beadCountDisplay" class="font-roboto font-black text-6xl text-gray-800 drop-shadow-sm select-none">0</span>
+                    <span class="text-xs font-semibold text-accentSaffron mt-2 tracking-widest uppercase">Tap Here</span>
+                </button>
+            </div>
+
+            <!-- Goal Indicator -->
+            <div class="mt-6 mb-12 text-center glass-panel px-6 py-2 rounded-full shadow-sm border border-accentSaffron/20">
+                <p class="text-sm font-medium text-gray-600">Goal: <span class="font-bold text-accentRed">108</span></p>
+            </div>
+
+            <!-- Controls -->
+            <div class="w-full flex justify-center gap-6 mt-auto">
+                <button id="undoBtn" class="glass-panel px-6 py-3 rounded-xl shadow-sm text-gray-600 font-medium flex items-center gap-2 hover:bg-white/80 active:scale-95 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                    </svg>
+                    Undo
+                </button>
+                <button id="resetBtn" class="glass-panel px-6 py-3 rounded-xl shadow-sm text-accentRed font-medium flex items-center gap-2 hover:bg-white/80 active:scale-95 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    Reset
+                </button>
+            </div>
+
+        </main>
+
+        <!-- SEO Article Section -->
+        <article class="w-full bg-white px-6 py-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)] z-10 border-t border-gray-100">
+            <div class="max-w-prose mx-auto">
+                <h2 class="font-roboto text-2xl font-bold text-gray-900 mb-4 text-gradient">The Benefits of 108 Japa Mala Chanting</h2>
+
+                <p class="text-gray-600 leading-relaxed mb-6 text-sm">
+                    Japa Mala, a traditional string of prayer beads, has been used for centuries across various spiritual paths to aid in meditation and mantra chanting. A standard mala consists of 108 beads, a number with profound significance in Vedic cosmology, mathematics, and spirituality. This digital Japa Mala counter is designed to bring that ancient practice into the modern era.
+                </p>
+
+                <h3 class="font-roboto text-lg font-semibold text-gray-800 mb-3 border-l-4 border-accentSaffron pl-3">Why 108?</h3>
+                <p class="text-gray-600 leading-relaxed mb-6 text-sm">
+                    The number 108 is considered sacred in Hinduism, Buddhism, and yogic traditions. The Sun's diameter is roughly 108 times that of the Earth, and the distance from the Sun to the Earth is approximately 108 times the Sun's diameter. In Ayurveda, there are 108 'Marmas' or vital life force points in the human body. Chanting a mantra 108 times aligns the practitioner with the rhythm of the universe.
+                </p>
+
+                <h3 class="font-roboto text-lg font-semibold text-gray-800 mb-3 border-l-4 border-accentRed pl-3">Spiritual & Mental Benefits</h3>
+                <ul class="list-disc list-outside ml-5 text-gray-600 space-y-2 mb-6 text-sm marker:text-accentSaffron">
+                    <li><strong>Enhanced Focus:</strong> The tactile or digital act of counting keeps the wandering mind tethered to the present moment, deepening concentration.</li>
+                    <li><strong>Stress Reduction:</strong> Rhythmic chanting triggers the parasympathetic nervous system, lowering cortisol levels and promoting deep relaxation.</li>
+                    <li><strong>Mantra Absorption:</strong> Repetition allows the vibrational quality of the mantra to penetrate the subconscious mind, fostering inner peace.</li>
+                    <li><strong>Discipline:</strong> Tracking your daily malas builds spiritual discipline and a consistent routine.</li>
+                </ul>
+
+                <p class="text-gray-500 text-xs italic mt-8 border-t border-gray-100 pt-4">
+                    Using this offline-first digital counter ensures your focus remains on your spiritual practice without distractions, saving your progress automatically so you never lose count.
+                </p>
+            </div>
+        </article>
+
+        <!-- Footer -->
+        <footer class="bg-gray-50 py-4 text-center border-t border-gray-200">
+            <p class="text-xs text-gray-400">&copy; <script>document.write(new Date().getFullYear())</script> Vaidik Calendar App. Designed by SANTOSH KUMAR.</p>
+        </footer>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // State
+            let beadCount = 0;
+            let malaCount = 0;
+            let totalBeads = 0;
+
+            // DOM Elements
+            const beadCountDisplay = document.getElementById('beadCountDisplay');
+            const malaCountDisplay = document.getElementById('malaCountDisplay');
+            const totalBeadsDisplay = document.getElementById('totalBeadsDisplay');
+            const counterBtn = document.getElementById('counterBtn');
+            const undoBtn = document.getElementById('undoBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const progressRing = document.getElementById('progressRing');
+
+            // Progress Ring Setup
+            const radius = progressRing.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
+            progressRing.style.strokeDashoffset = circumference;
+
+            // Initialize from LocalStorage
+            const loadData = () => {
+                const storedBeads = localStorage.getItem('japa_beadCount');
+                const storedMalas = localStorage.getItem('japa_malaCount');
+                const storedTotal = localStorage.getItem('japa_totalBeads');
+
+                if (storedBeads) beadCount = parseInt(storedBeads);
+                if (storedMalas) malaCount = parseInt(storedMalas);
+                if (storedTotal) totalBeads = parseInt(storedTotal);
+
+                updateUI();
+            };
+
+            // Save to LocalStorage
+            const saveData = () => {
+                localStorage.setItem('japa_beadCount', beadCount);
+                localStorage.setItem('japa_malaCount', malaCount);
+                localStorage.setItem('japa_totalBeads', totalBeads);
+            };
+
+            // Update UI
+            const updateUI = () => {
+                beadCountDisplay.textContent = beadCount;
+                malaCountDisplay.textContent = malaCount;
+                totalBeadsDisplay.textContent = totalBeads;
+                updateProgress();
+            };
+
+            // Update Progress Ring
+            const updateProgress = () => {
+                const percent = beadCount / 108;
+                const offset = circumference - (percent * circumference);
+                progressRing.style.strokeDashoffset = offset;
+            };
+
+            // Haptic Feedback
+            const vibrate = (pattern) => {
+                if (navigator.vibrate) {
+                    try {
+                        navigator.vibrate(pattern);
+                    } catch (e) {
+                        console.warn('Vibration API error:', e);
+                    }
+                }
+            };
+
+            // Count logic
+            const incrementCount = () => {
+                beadCount++;
+                totalBeads++;
+
+                if (beadCount >= 108) {
+                    beadCount = 0;
+                    malaCount++;
+                    vibrate([100, 50, 100, 50, 300]); // Distinct longer vibration for Mala completion
+                } else {
+                    vibrate(15); // Light tap vibration
+                }
+
+                updateUI();
+                saveData();
+            };
+
+            // Undo logic
+            const undoCount = () => {
+                if (beadCount > 0) {
+                    beadCount--;
+                    totalBeads--;
+                    vibrate(10);
+                    updateUI();
+                    saveData();
+                } else if (malaCount > 0) {
+                    malaCount--;
+                    beadCount = 107;
+                    totalBeads--;
+                    vibrate(10);
+                    updateUI();
+                    saveData();
+                }
+            };
+
+            // Reset logic
+            const resetCounts = () => {
+                if (confirm('Are you sure you want to reset today\\'s Mala and Bead counts? Total beads will not be reset.')) {
+                    beadCount = 0;
+                    malaCount = 0;
+                    vibrate([50, 50, 50]);
+                    updateUI();
+                    saveData();
+                }
+            };
+
+            // Event Listeners
+            counterBtn.addEventListener('click', (e) => {
+                incrementCount();
+            });
+
+            // Prevent zoom on double tap on counter button
+            counterBtn.addEventListener('dblclick', (e) => {
+                e.preventDefault();
+            });
+
+            undoBtn.addEventListener('click', undoCount);
+            resetBtn.addEventListener('click', resetCounts);
+
+            // Handle keyboard spacebar for counting
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && e.target === document.body) {
+                    e.preventDefault(); // Prevent scrolling
+                    incrementCount();
+                }
+            });
+
+            // Init
+            loadData();
+        });
+    </script>
+</body>
+</html>
