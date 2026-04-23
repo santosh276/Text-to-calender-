@@ -2291,47 +2291,8 @@ The word "Nua" means new and "Khai" means food.
         </div>
     </div>
 
-    <!-- THE GRAND WELCOME ARCH -->
-    <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto" id="grid-cards-header-container">
-        <section class="text-center mt-[-8px] md:mt-12 mb-0 md:mb-12 px-4">
-            <h2 id="grid-cards-title" class="font-headline text-[28px] md:text-5xl font-black tracking-tight mb-[-2px] md:mb-4 bg-gradient-to-r from-saffron to-deep-red bg-clip-text text-transparent drop-shadow-[0_0_5px_rgba(255,153,51,0.4)]">Discover Popular Tools</h2>
-            <p class="text-gray-600 text-[13px] md:text-base max-w-2xl mx-auto leading-relaxed" id="grid-cards-desc">
-                Explore timeless wisdom and powerful tools designed to guide your spiritual journey and bring balance to your daily life.
-            </p>
-        </section>
-    </div>
-
-
-
-    <!-- CIRCULAR BUBBLE CAROUSEL -->
-    <div id="bubble-section" class="mb-10 -mx-2 md:-mx-8" style="display: none;">
-        <div id="bubble-header-wrapper"></div>
-        <div id="bubble-container" class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth">
-            <!-- Bubbles will be injected here -->
-            <div class="shrink-0 w-1 md:w-4"></div>
-        </div>
-    </div>
-
-    <!-- THE SPIRITUAL TOOLS SWIPEABLE CAROUSEL -->
-    <div class="mb-10 -mx-2 md:-mx-8" id="scroll-cards-section" style="display: none;">
-        
-        <div id="scroll-header-wrapper"></div>
-
-        <div class="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth">
-            
-            <div class="shrink-0 w-1 md:w-4"></div>
-        </div>
-    </div>
-
-
-    <!-- BIG FEATURED CARDS GRID -->
-    <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto" id="grid-cards-section" style="display: none;">
-
-        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
-            
-        </section>
-
-    </div>
+    <!-- DYNAMIC CARDS CONTAINER -->
+    <div id="dynamic-cards-container" class="w-full"></div>
 
 </div>
 
@@ -2598,13 +2559,13 @@ The word "Nua" means new and "Khai" means food.
                     <div>
                         <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Design Template</label>
                         <select id="custom-card-design" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800 font-medium" onchange="updateCustomCardPlaceholder()">
-                            <option value="more tab">Design 1: Grid Card (Large Image)</option>
-                            <option value="scroll tab">Design 2: Scrolling Card (Reading Mode)</option>
-                            <option value="bubble tab">Design 3: Circular Bubble</option>
+                            <option value="bubble tab">Bubble (Top)</option>
+                            <option value="scroll tab">Scrolling (Middle)</option>
+                            <option value="more tab">Grid (Bottom)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Main Section Title <span class="text-gray-400 font-normal">(Optional)</span></label>
+                        <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1 md:mb-2">Group / Main Title <span class="text-gray-400 font-normal">(Optional)</span></label>
                         <input type="text" id="custom-card-main-title" list="section-titles-datalist" class="w-full p-2 md:p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-xs md:text-sm text-gray-800" placeholder="e.g. Discover Popular Tools">
                         <datalist id="section-titles-datalist"></datalist>
                         <span class="text-[10px] md:text-xs text-gray-500 mt-1 block">Leave blank to use the default title for this section.</span>
@@ -4707,13 +4668,9 @@ const LOCATION_DATA = {
 
         // --- EDITOR LOGIC END ---
 
-        function renderCustomCard(cardData, targetContainer = null) {
-            const gridContainer = targetContainer || document.querySelector('#more-view-container #grid-cards-section section.grid');
-            if (!gridContainer) return;
-            
+        function renderCustomCard(cardData) {
             const bgColor = cardData.color || '#0d9488';
-            
-            const cardHTML = `
+            return `
             <a href="${cardData.link}" target="_blank" class="block h-full group">
                 <div style="background-color: ${bgColor};" class="rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                     <div class="relative z-10 flex-1 flex flex-col h-full w-full">
@@ -4729,20 +4686,13 @@ const LOCATION_DATA = {
                 </div>
             </a>
             `;
-            
-            // Append the card to the grid
-            gridContainer.insertAdjacentHTML('beforeend', cardHTML);
         }
 
         function renderScrollCard(cardData) {
-            const scrollContainer = document.querySelector('#more-view-container #scroll-cards-section .flex.overflow-x-auto');
-            if (!scrollContainer) return;
-            
             const bgColor = cardData.color || '#2e3459';
             // Darken it slightly for the background
             const outerBg = bgColor + 'd9'; // approx 85% opacity
-            
-            const cardHTML = `
+            return `
             <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md shadow-lg shadow-black/5" style="background-color: ${outerBg};">
                 <div class="flex items-center gap-3 w-[85%]">
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden aspect-square" style="background-color: ${bgColor};">
@@ -4756,17 +4706,11 @@ const LOCATION_DATA = {
                 <i class="fa-solid fa-chevron-right text-xs text-white/50"></i>
             </a>
             `;
-            
-            scrollContainer.insertAdjacentHTML('beforeend', cardHTML);
         }
 
         function renderBubbleCard(cardData) {
-            const container = document.getElementById('bubble-container');
-            if (!container) return;
-            
             const bgColor = cardData.color || '#0d9488';
-            
-            const cardHTML = `
+            return `
             <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 group">
                 <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-md border-2 border-white/50 overflow-hidden mb-2 group-hover:shadow-lg transition-all" style="background-color: ${bgColor};">
                     ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-cover rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
@@ -4774,14 +4718,6 @@ const LOCATION_DATA = {
                 <span class="text-center text-xs md:text-sm font-bold text-gray-800 tracking-tight max-w-[80px] md:max-w-[100px] leading-tight group-hover:text-orange-600 transition-colors">${cardData.title}</span>
             </a>
             `;
-            
-            // Insert before the empty space div
-            const spacer = container.querySelector('.shrink-0.w-1.md\\:w-4');
-            if (spacer) {
-                spacer.insertAdjacentHTML('beforebegin', cardHTML);
-            } else {
-                container.insertAdjacentHTML('beforeend', cardHTML);
-            }
         }
 
         // --- EDITOR LOGIC START ---
@@ -6232,148 +6168,63 @@ function getCDNUrl(originalUrl) {
             renderFestivals(currentData);
             renderMonthBanner(currentData);
             
-            // Render Custom Cards
-            const gridContainer = document.querySelector('#more-view-container #grid-cards-section section.grid');
-            const gridHeaderContainer = document.getElementById('grid-cards-header-container');
-            const gridSectionContainer = document.getElementById('grid-cards-section');
-            const moreViewContainer = document.getElementById('more-view-container');
-            
-            if (gridContainer) {
-                // Clear existing dynamic groups (custom sections)
-                const dynamicSections = moreViewContainer.querySelectorAll('.dynamic-grid-section');
-                dynamicSections.forEach(el => el.remove());
-
-                // Clear main Hero grid cards
-                const existingLinks = gridContainer.querySelectorAll('a.block.h-full');
-                existingLinks.forEach(el => el.remove());
-
-                // Reset Hero grid title to default. We don't overwrite it with random cards anymore.
-                const gridTitle = document.getElementById('grid-cards-title');
-                if (gridTitle) gridTitle.innerText = "Discover Popular Tools";
+            // Render Dynamic Custom Cards
+            const dynamicContainer = document.getElementById('dynamic-cards-container');
+            if (dynamicContainer) {
+                dynamicContainer.innerHTML = '';
                 
-                if (appState.customCards && appState.customCards.length > 0) {
-                    const defaultCards = [];
-                    const groupedCards = {};
-
-                    appState.customCards.forEach(card => {
-                        const title = (card.mainTitle || "").trim();
-                        // If no title, or exactly "Discover Popular Tools"
-                        if (!title || title.toLowerCase() === "discover popular tools") {
-                            defaultCards.push(card);
-                        } else {
-                            if (!groupedCards[title]) groupedCards[title] = [];
-                            groupedCards[title].push(card);
-                        }
+                const groupCards = (cards) => {
+                    const grouped = {};
+                    (cards || []).forEach(card => {
+                        const title = (card.mainTitle || "Custom Tools").trim();
+                        if (!grouped[title]) grouped[title] = [];
+                        grouped[title].push(card);
                     });
+                    return grouped;
+                };
 
-                    // Render Default (Hero) Cards
-                    defaultCards.forEach(card => renderCustomCard(card, gridContainer));
-                    if (gridSectionContainer) gridSectionContainer.style.display = defaultCards.length > 0 ? 'block' : 'none';
+                const groupedBubbles = groupCards(appState.bubbleCards);
+                const groupedScrolls = groupCards(appState.scrollCards);
+                const groupedGrids = groupCards(appState.customCards);
 
-                    // Render Grouped Sections
-                    // We append them to the moreViewContainer to maintain document order correctly.
-                    // Instead of insertAdjacentHTML after gridSectionContainer over and over, we can find a spot or just append.
-                    // The easiest and safest way is to insert them sequentially after gridSectionContainer.
-                    // We can keep track of the 'last inserted' node to insert after it.
-                    let lastInsertedNode = gridSectionContainer;
-                    
-                    for (const [title, cards] of Object.entries(groupedCards)) {
-                        // Create Section Header
-                        const firstCardColor = (cards && cards.length > 0 && cards[0].color) ? cards[0].color : '#ef4444';
-                        const sectionHeaderHTML = `
-                            <div class="max-w-screen-2xl mx-auto dynamic-grid-section tools-section-container mt-8 first-of-type:mt-4 md:mt-10 mb-4">
-                                <div class="px-4 mb-4 tools-section-container">
-                                    <div class="inline-flex flex-col w-full">
-                                        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${title}</h2>
-                                        <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
-                                            <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                            <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 dynamic-grid-container"></section>
-                            </div>
-                        `;
-                        
-                        if (lastInsertedNode && lastInsertedNode.parentNode) {
-                            lastInsertedNode.insertAdjacentHTML('afterend', sectionHeaderHTML);
-                            lastInsertedNode = lastInsertedNode.nextElementSibling;
-                            
-                            const newGridContainer = lastInsertedNode.querySelector('.dynamic-grid-container');
-                            cards.forEach(card => renderCustomCard(card, newGridContainer));
-                        }
-                    }
-                } else {
-                    if(gridSectionContainer) gridSectionContainer.style.display = 'none';
-                }
-            }
-
-            const scrollContainer = document.querySelector('#more-view-container #scroll-cards-section .flex.overflow-x-auto');
-            const scrollSectionContainer = document.getElementById('scroll-cards-section');
-            if (scrollContainer) {
-                // Remove existing dynamic scroll cards (they are <a> tags)
-                const existingScrollLinks = scrollContainer.querySelectorAll('a.snap-start');
-                existingScrollLinks.forEach(el => el.remove());
-
-                if (appState.scrollCards && appState.scrollCards.length > 0) {
-                    appState.scrollCards.forEach(card => renderScrollCard(card));
-                    if(scrollSectionContainer) scrollSectionContainer.style.display = 'block';
-                } else {
-                    if(scrollSectionContainer) scrollSectionContainer.style.display = 'none';
-                }
-            }
-
-            // Update Main Titles if configured by any custom card
-            if (appState.scrollCards && appState.scrollCards.length > 0) {
-                const scrollMainTitle = appState.scrollCards.find(c => c.mainTitle)?.mainTitle || "Spiritual Tools";
-                const firstCardColor = appState.scrollCards[0].color || '#ef4444';
-                const wrapper = document.getElementById('scroll-header-wrapper');
-                if (wrapper) {
-                    wrapper.innerHTML = `
-                        <div class="px-4 mb-4 tools-section-container">
-                            <div class="inline-flex flex-col w-full">
-                                <h2 id="scroll-cards-title" class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${scrollMainTitle}</h2>
-                                <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
-                                    <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                    <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            // Render Bubble Cards
-            const bubbleContainer = document.getElementById('bubble-container');
-            const bubbleSection = document.getElementById('bubble-section');
-            if (bubbleContainer) {
-                // Remove existing dynamic bubble cards (they are <a> tags)
-                const existingBubbleLinks = bubbleContainer.querySelectorAll('a.snap-start');
-                existingBubbleLinks.forEach(el => el.remove());
-
-                if (appState.bubbleCards && appState.bubbleCards.length > 0) {
-                    if (bubbleSection) bubbleSection.style.display = 'block';
-                    appState.bubbleCards.forEach(card => renderBubbleCard(card));
-                    
-                    const bubbleMainTitle = appState.bubbleCards.find(c => c.mainTitle)?.mainTitle || "Quick Links";
-                    const firstCardColor = appState.bubbleCards[0].color || '#ef4444';
-                    const wrapper = document.getElementById('bubble-header-wrapper');
-                    if (wrapper) {
-                        wrapper.innerHTML = `
+                const renderGroup = (title, cards, renderFunc, containerClasses, innerWrapperClasses = '') => {
+                    if (!cards || cards.length === 0) return '';
+                    const firstCardColor = cards[0].color || '#ef4444';
+                    const cardsHtml = cards.map(c => renderFunc(c)).join('');
+                    return `
+                        <div class="max-w-screen-2xl mx-auto dynamic-custom-section mb-10 -mx-2 md:-mx-8 w-full first-of-type:mt-4 md:mt-10">
                             <div class="px-4 mb-4 tools-section-container">
                                 <div class="inline-flex flex-col w-full">
-                                    <h2 id="bubble-cards-title" class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${bubbleMainTitle}</h2>
+                                    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 text-center w-full">${title}</h2>
                                     <div class="relative flex justify-center mt-2 h-[2px] w-[60%] self-center mx-auto">
                                         <div class="absolute inset-0 z-10 opacity-90 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
                                         <div class="absolute inset-0 blur-[6px] z-0 opacity-80 rounded-full" style="background-image: linear-gradient(to right, transparent, ${firstCardColor}, transparent);"></div>
                                     </div>
                                 </div>
                             </div>
-                        `;
-                    }
-                } else {
-                    if (bubbleSection) bubbleSection.style.display = 'none';
+                            <div class="${containerClasses}">
+                                ${cardsHtml}
+                                ${innerWrapperClasses ? '<div class="' + innerWrapperClasses + '"></div>' : ''}
+                            </div>
+                        </div>
+                    `;
+                };
+
+                let finalHtml = '';
+
+                for (const [title, cards] of Object.entries(groupedBubbles)) {
+                    finalHtml += renderGroup(title, cards, renderBubbleCard, 'flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-6 md:gap-8 max-w-screen-2xl mx-auto w-full scroll-smooth', 'shrink-0 w-1 md:w-4');
                 }
+
+                for (const [title, cards] of Object.entries(groupedScrolls)) {
+                    finalHtml += renderGroup(title, cards, renderScrollCard, 'flex overflow-x-auto no-scrollbar snap-x snap-mandatory pt-3 pb-6 px-4 md:px-6 lg:px-12 gap-3 md:gap-4 max-w-screen-2xl mx-auto w-full scroll-smooth', 'shrink-0 w-1 md:w-4');
+                }
+
+                for (const [title, cards] of Object.entries(groupedGrids)) {
+                    finalHtml += renderGroup(title, cards, renderCustomCard, 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4');
+                }
+
+                dynamicContainer.innerHTML = finalHtml;
             }
 
             // --- NEW LOGIC: Hide/Show Sections based on Config ---
@@ -9656,14 +9507,9 @@ function renderCalendarGrid(data) {
                         if (!href) href = '#'; // Fallback if no href found
 
                         let mainTitle = '';
-                        if (el.closest('#bubble-container')) {
-                            const h2 = document.getElementById('bubble-cards-title');
-                            if (h2) mainTitle = h2.innerText.trim();
-                        } else if (el.closest('#scroll-cards-section .flex.overflow-x-auto')) {
-                            const h2 = document.getElementById('scroll-cards-title');
-                            if (h2) mainTitle = h2.innerText.trim();
-                        } else if (el.closest('#grid-cards-section section.grid')) {
-                            const h2 = document.getElementById('grid-cards-title');
+                        const sectionWrapper = el.closest('.dynamic-custom-section');
+                        if (sectionWrapper) {
+                            const h2 = sectionWrapper.querySelector('h2');
                             if (h2) mainTitle = h2.innerText.trim();
                         }
 
