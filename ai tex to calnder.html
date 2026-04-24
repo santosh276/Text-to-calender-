@@ -4682,16 +4682,18 @@ const LOCATION_DATA = {
             const bgColor = cardData.color || '#0d9488';
             return `
             <a href="${cardData.link}" target="_blank" class="block h-full group">
-                <div style="background-color: ${bgColor};" class="rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
-                    <div class="relative z-10 flex-1 flex flex-col h-full w-full">
-                        <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
-                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
+                <div style="background-color: ${bgColor};" class="rounded-xl p-3 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                    <div class="relative z-10 flex gap-3 items-center w-full mb-3">
+                        <div class="w-12 h-12 aspect-square shrink-0 rounded-md overflow-hidden bg-white/20 shadow-sm border border-white/10">
+                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
                         </div>
-                        <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">${cardData.title}</h3>
-                        <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">${cardData.desc}</p>
-                        <div class="relative z-10 mt-4 md:mt-auto w-full">
-                            <button style="color: ${bgColor};" class="w-full bg-white font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
+                        <div class="flex flex-col overflow-hidden">
+                            <h3 class="font-headline text-base md:text-lg font-extrabold text-white tracking-tight leading-tight truncate">${cardData.title}</h3>
+                            <p class="text-white/80 text-xs leading-snug line-clamp-2">${cardData.desc}</p>
                         </div>
+                    </div>
+                    <div class="relative z-10 mt-auto w-full">
+                        <button style="color: ${bgColor};" class="w-full bg-white font-bold text-xs py-2 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
                     </div>
                 </div>
             </a>
