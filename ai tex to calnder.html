@@ -4705,14 +4705,14 @@ const LOCATION_DATA = {
             // Darken it slightly for the background
             const outerBg = bgColor + 'd9'; // approx 85% opacity
             return `
-            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md shadow-lg shadow-black/5" style="background-color: ${outerBg};">
-                <div class="flex items-center gap-3 w-[85%]">
-                    <div class="w-20 h-20 shrink-0 flex-none aspect-square flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm">
+            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-48 p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md shadow-lg shadow-black/5" style="background-color: ${outerBg};">
+                <div class="flex items-center gap-2 w-[85%]">
+                    <div class="w-14 h-14 shrink-0 flex-none aspect-square flex items-center justify-center p-1.5 rounded-xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm">
                         ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-xl" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
                     </div>
                     <div class="flex flex-col justify-center overflow-hidden w-full">
-                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm truncate">${cardData.title}</span>
-                        <span class="text-[11px] mt-0.5 truncate text-white/70">${cardData.desc}</span>
+                        <span class="text-white text-sm font-bold leading-tight tracking-wide drop-shadow-sm truncate">${cardData.title}</span>
+                        <span class="text-[11px] mt-0.5 leading-tight line-clamp-2 text-white/70">${cardData.desc}</span>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-right text-xs text-white/50"></i>
