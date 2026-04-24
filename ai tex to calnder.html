@@ -4725,7 +4725,7 @@ const LOCATION_DATA = {
             return `
             <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 group">
                 <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-md border-2 border-white/50 overflow-hidden mb-2 group-hover:shadow-lg transition-all" style="background-color: ${bgColor};">
-                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-cover rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
+                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
                 </div>
                 <span class="text-center text-xs md:text-sm font-bold text-gray-800 tracking-tight max-w-[80px] md:max-w-[100px] leading-tight group-hover:text-orange-600 transition-colors">${cardData.title}</span>
             </a>
