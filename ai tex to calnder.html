@@ -4682,16 +4682,18 @@ const LOCATION_DATA = {
             const bgColor = cardData.color || '#0d9488';
             return `
             <a href="${cardData.link}" target="_blank" class="block h-full group">
-                <div style="background-color: ${bgColor};" class="rounded-xl p-4 md:p-6 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
-                    <div class="relative z-10 flex-1 flex flex-col h-full w-full">
-                        <div class="w-full h-32 md:h-40 mb-3 md:mb-4 rounded-lg overflow-hidden shadow-sm relative shrink-0 border border-white/10">
-                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
+                <div style="background-color: ${bgColor};" class="rounded-xl p-3 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
+                    <div class="relative z-10 flex flex-col items-center text-center md:flex-row md:items-start md:text-left gap-3 w-full mb-3">
+                        <div class="w-16 h-16  shrink-0 flex-none aspect-square flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm">
+                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-contain rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
                         </div>
-                        <h3 class="font-headline text-lg md:text-2xl font-extrabold text-white mb-2 tracking-tight leading-tight">${cardData.title}</h3>
-                        <p class="text-white/80 text-xs md:text-sm leading-snug line-clamp-2">${cardData.desc}</p>
-                        <div class="relative z-10 mt-4 md:mt-auto w-full">
-                            <button style="color: ${bgColor};" class="w-full bg-white font-bold text-xs md:text-sm py-2.5 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
+                        <div class="flex flex-col overflow-hidden w-full">
+                            <h3 class="font-headline text-base md:text-lg font-extrabold text-white tracking-tight leading-tight truncate">${cardData.title}</h3>
+                            <p class="text-white/80 text-xs leading-snug line-clamp-2 mt-1">${cardData.desc}</p>
                         </div>
+                    </div>
+                    <div class="relative z-10 mt-auto w-full">
+                        <button style="color: ${bgColor};" class="w-full bg-white font-bold text-xs py-2 rounded-lg text-center shadow-sm hover:bg-gray-50 transition-colors">Open Link</button>
                     </div>
                 </div>
             </a>
@@ -4705,8 +4707,8 @@ const LOCATION_DATA = {
             return `
             <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md shadow-lg shadow-black/5" style="background-color: ${outerBg};">
                 <div class="flex items-center gap-3 w-[85%]">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden aspect-square" style="background-color: ${bgColor};">
-                        ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-cover aspect-square" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
+                    <div class="w-16 h-16  shrink-0 flex-none aspect-square flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm">
+                        ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-xl" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
                     </div>
                     <div class="flex flex-col justify-center overflow-hidden w-full">
                         <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm truncate">${cardData.title}</span>
@@ -4722,8 +4724,8 @@ const LOCATION_DATA = {
             const bgColor = cardData.color || '#0d9488';
             return `
             <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 group">
-                <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-md border-2 border-white/50 overflow-hidden mb-2 group-hover:shadow-lg transition-all" style="background-color: ${bgColor};">
-                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-cover rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
+                <div class="w-16 h-16  rounded-full flex items-center justify-center shadow-md border-2 border-white/50 overflow-hidden mb-2 group-hover:shadow-lg transition-all" style="background-color: ${bgColor};">
+                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
                 </div>
                 <span class="text-center text-xs md:text-sm font-bold text-gray-800 tracking-tight max-w-[80px] md:max-w-[100px] leading-tight group-hover:text-orange-600 transition-colors">${cardData.title}</span>
             </a>
@@ -4870,7 +4872,8 @@ const LOCATION_DATA = {
                 else if (url.includes('docs.google.com') && !url.includes('/pub')) {
                     alert("Warning: Google Doc link does not look like a 'Published to Web' link (should end in /pub).");
                 }
-                                                  // Save to App State (So it persists in Downloaded File)
+                                  
+                // Save to App State (So it persists in Downloaded File)
                 appState.config.liveUrl = url;
                                                   if (!url.includes('github') && !url.includes('jsdelivr.net')) {
                                         appState.config.syncDocsUrl = url;
