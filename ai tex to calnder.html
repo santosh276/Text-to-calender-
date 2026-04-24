@@ -4693,7 +4693,7 @@ const LOCATION_DATA = {
                             <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-contain rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
                         </div>
                         <div class="flex flex-col overflow-hidden w-full">
-                            <h3 class="font-headline text-base md:text-lg font-extrabold text-white tracking-tight leading-tight truncate">${cardData.title}</h3>
+                            <h3 class="font-headline text-base md:text-lg font-extrabold text-black tracking-tight leading-tight truncate">${cardData.title}</h3>
                             <p class="text-white/80 text-xs leading-snug line-clamp-2 mt-1">${cardData.desc}</p>
                         </div>
                     </div>
@@ -4715,7 +4715,7 @@ const LOCATION_DATA = {
                         ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-xl" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
                     </div>
                     <div class="flex flex-col justify-center overflow-hidden w-full">
-                        <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm truncate">${cardData.title}</span>
+                        <span class="text-black font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm truncate">${cardData.title}</span>
                         <span class="text-[11px] mt-0.5 truncate text-white/70">${cardData.desc}</span>
                     </div>
                 </div>
@@ -4732,7 +4732,7 @@ const LOCATION_DATA = {
                 <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square mb-2 relative z-10">
                     ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
                 </div>
-                <span class="text-center text-xs md:text-sm font-bold text-white relative z-10 tracking-tight max-w-[80px] md:max-w-[100px] leading-tight transition-colors">${cardData.title}</span>
+                <span class="text-center text-xs md:text-sm font-bold text-black relative z-10 tracking-tight max-w-[80px] md:max-w-[100px] leading-tight transition-colors">${cardData.title}</span>
             </a>
             `;
         }
