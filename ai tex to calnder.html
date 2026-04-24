@@ -4683,13 +4683,13 @@ const LOCATION_DATA = {
             return `
             <a href="${cardData.link}" target="_blank" class="block h-full group">
                 <div style="background-color: ${bgColor};" class="rounded-xl p-3 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
-                    <div class="relative z-10 flex gap-3 items-center w-full mb-3">
-                        <div class="w-12 h-12 aspect-square shrink-0 rounded-md overflow-hidden bg-white/20 shadow-sm border border-white/10">
-                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
+                    <div class="relative z-10 flex flex-col items-center text-center md:flex-row md:items-start md:text-left gap-3 w-full mb-3">
+                        <div class="w-16 h-16 aspect-square shrink-0 rounded-xl overflow-hidden bg-white/20 shadow-sm border border-white/10">
+                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-contain rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
                         </div>
-                        <div class="flex flex-col overflow-hidden">
+                        <div class="flex flex-col overflow-hidden w-full">
                             <h3 class="font-headline text-base md:text-lg font-extrabold text-white tracking-tight leading-tight truncate">${cardData.title}</h3>
-                            <p class="text-white/80 text-xs leading-snug line-clamp-2">${cardData.desc}</p>
+                            <p class="text-white/80 text-xs leading-snug line-clamp-2 mt-1">${cardData.desc}</p>
                         </div>
                     </div>
                     <div class="relative z-10 mt-auto w-full">
