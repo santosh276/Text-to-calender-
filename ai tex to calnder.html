@@ -63,6 +63,10 @@
 .mb-5{margin-bottom:1.25rem}
 </style>
     <style id="tailwindcss">
+        .bg-white\/30 { background-color: rgba(255, 255, 255, 0.3); }
+        .border-gray-300\/50 { border-color: rgba(209, 213, 219, 0.5); }
+        .dark .dark\:bg-white\/5 { background-color: rgba(255, 255, 255, 0.05); }
+        .dark .dark\:border-white\/10 { border-color: rgba(255, 255, 255, 0.1); }
         /* Missing Global Utilities */
         .-mx-2 { margin-left: -0.5rem; margin-right: -0.5rem; }
         @media (min-width: 768px) {
@@ -4684,7 +4688,7 @@ const LOCATION_DATA = {
             <a href="${cardData.link}" target="_blank" class="block h-full group">
                 <div style="background-color: ${bgColor};" class="rounded-xl p-3 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                     <div class="relative z-10 flex flex-col items-center text-center md:flex-row md:items-start md:text-left gap-3 w-full mb-3">
-                        <div class="w-16 h-16 aspect-square shrink-0 rounded-xl overflow-hidden bg-white/20 shadow-sm border border-white/10">
+                        <div class="w-16 h-16 flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square">
                             <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-contain rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
                         </div>
                         <div class="flex flex-col overflow-hidden w-full">
@@ -4707,8 +4711,8 @@ const LOCATION_DATA = {
             return `
             <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 border border-white/20 backdrop-blur-md shadow-lg shadow-black/5" style="background-color: ${outerBg};">
                 <div class="flex items-center gap-3 w-[85%]">
-                    <div class="w-12 h-12 min-w-[3rem] rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden aspect-square" style="background-color: ${bgColor};">
-                        ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain aspect-square shrink-0" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
+                    <div class="w-12 h-12 min-w-[3rem] flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square">
+                        ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-xl" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
                     </div>
                     <div class="flex flex-col justify-center overflow-hidden w-full">
                         <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm truncate">${cardData.title}</span>
