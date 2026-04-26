@@ -1810,63 +1810,65 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 <body class="h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
-    <header class="bg-deep-red px-5 py-4 flex items-center justify-between shadow-md relative overflow-hidden shrink-0 z-50">
-        <div class="flex items-center gap-3">
+    <header class="bg-deep-red px-5 py-4 flex justify-center items-center shadow-md relative overflow-hidden shrink-0 z-50">
+        <div class="absolute left-5 flex items-center gap-3">
           <div id="logo-container" class="flex-shrink-0">
              <!-- Content handled by JS -->
           </div>
-          <div class="flex flex-col">
-            <h1 id="app-title" class="text-white font-sans text-[25px] font-extrabold leading-none tracking-tight whitespace-nowrap">
-              Vaidik Calendar
-            </h1>
-            <p class="text-gold-light font-sans text-[10px] font-bold tracking-widest mt-0.5">
-              The Heart of Sanatan Dharma...
-            </p>
+        </div>
+
+        <!-- NEW BRANDING TITLE (CENTERED) -->
+        <div class="flex items-center justify-center">
+          <span class="text-2xl font-black tracking-tight text-gray-900 dark:text-white">Vaidik Margam</span>
+          <div class="relative w-0 flex self-end">
+            <span class="text-sm font-bold text-orange-600 dark:text-orange-400 self-end mb-1 ml-0.5 absolute left-0 bottom-0 whitespace-nowrap">.com</span>
           </div>
         </div>
 
-        <div id="desktop-top-nav" class="hidden md:flex items-center gap-6">
-            <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer" onclick="toggleView('month')">
-                <svg viewBox="0 0 24 24" width="20" height="20" class="fa-calendar text-xl" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
-                <span class="text-[10px] font-bold">Calendar</span>
-            </button>
-            <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer" onclick="toggleView('festivals')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="festivals-icon w-5 h-5 mb-0.5 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5.8 11.3 2 22l10.7-3.79" />
-                    <path d="M4 3h.01" />
-                    <path d="M22 8h.01" />
-                    <path d="M15 2h.01" />
-                    <path d="M22 20h.01" />
-                    <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12v0c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" />
-                    <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11v0c-.11.7-.72 1.22-1.43 1.22H17" />
-                    <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98v0C9.52 4.9 9 5.52 9 6.23V7" />
-                    <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" />
-                </svg>
-                <span class="text-[10px] font-bold">Festivals</span>
-            </button>
-            <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
-                <i class="fa-solid fa-headphones text-xl"></i>
-                <span class="text-[10px] font-bold">Listen</span>
-            </button>
-            <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
-                <i class="fa-regular fa-comment-dots text-xl"></i>
-                <span class="text-[10px] font-bold">Chat</span>
-            </button>
-            <button onclick="toggleView('more')" class="menu-icon-btn flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-                    <rect x="3" y="3" width="7" height="7" rx="2" ry="2"></rect>
-                    <rect x="14" y="3" width="7" height="7" rx="2" ry="2"></rect>
-                    <rect x="3" y="14" width="7" height="7" rx="2" ry="2"></rect>
-                    <circle cx="17.5" cy="17.5" r="3.5"></circle>
-                </svg>
-                <span class="text-[10px] font-bold">More</span>
-            </button>
-        </div>
+        <div class="absolute right-5 flex items-center gap-3 md:gap-6">
+            <div id="desktop-top-nav" class="hidden md:flex items-center gap-6">
+                <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer" onclick="toggleView('month')">
+                    <svg viewBox="0 0 24 24" width="20" height="20" class="fa-calendar text-xl" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
+                    <span class="text-[10px] font-bold">Calendar</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer" onclick="toggleView('festivals')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="festivals-icon w-5 h-5 mb-0.5 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5.8 11.3 2 22l10.7-3.79" />
+                        <path d="M4 3h.01" />
+                        <path d="M22 8h.01" />
+                        <path d="M15 2h.01" />
+                        <path d="M22 20h.01" />
+                        <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12v0c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" />
+                        <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11v0c-.11.7-.72 1.22-1.43 1.22H17" />
+                        <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98v0C9.52 4.9 9 5.52 9 6.23V7" />
+                        <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" />
+                    </svg>
+                    <span class="text-[10px] font-bold">Festivals</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
+                    <i class="fa-solid fa-headphones text-xl"></i>
+                    <span class="text-[10px] font-bold">Listen</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
+                    <i class="fa-regular fa-comment-dots text-xl"></i>
+                    <span class="text-[10px] font-bold">Chat</span>
+                </button>
+                <button onclick="toggleView('more')" class="menu-icon-btn flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+                        <rect x="3" y="3" width="7" height="7" rx="2" ry="2"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="2" ry="2"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="2" ry="2"></rect>
+                        <circle cx="17.5" cy="17.5" r="3.5"></circle>
+                    </svg>
+                    <span class="text-[10px] font-bold">More</span>
+                </button>
+            </div>
 
-        <div class="flex gap-3">
-          <button onclick="openSettingsSidebar()" title="Settings" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
-            <i class="fa-solid fa-gear text-[24px]"></i>
-          </button>
+            <div class="flex gap-3">
+                <button onclick="openSettingsSidebar()" title="Settings" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95">
+                    <i class="fa-solid fa-gear text-[24px]"></i>
+                </button>
+            </div>
         </div>
     </header>
 
