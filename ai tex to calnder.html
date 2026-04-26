@@ -1810,21 +1810,30 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 <body class="h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
-    <header class="bg-deep-red px-5 py-4 flex items-center justify-between shadow-md relative overflow-hidden shrink-0 z-50">
-        <div class="flex items-center gap-3">
+    <header class="bg-deep-red px-5 py-4 flex items-center shadow-md relative overflow-hidden shrink-0 z-50">
+        <div class="flex items-center gap-3 z-10">
           <div id="logo-container" class="flex-shrink-0">
              <!-- Content handled by JS -->
           </div>
-          <div class="flex flex-col">
-            <h1 id="app-title" class="text-white font-sans text-[25px] font-extrabold leading-none tracking-tight whitespace-nowrap">
-              Vaidik Calendar
-            </h1>
+        </div>
+
+        <div class="absolute left-1/2 -translate-x-1/2 flex justify-center items-center pointer-events-none z-0">
+          <div class="flex flex-col items-center pointer-events-auto">
+            <div class="flex justify-center items-center">
+                <h1 class="text-white font-sans text-[25px] font-extrabold leading-none tracking-tight whitespace-nowrap flex justify-center items-center">
+                    <span id="app-title">Vaidik Margam</span>
+                    <div class="w-0 relative flex self-end">
+                        <span class="text-[12px] font-bold text-white/80 self-end mb-1 ml-0.5 absolute left-0 bottom-0 whitespace-nowrap">.com</span>
+                    </div>
+                </h1>
+            </div>
             <p class="text-gold-light font-sans text-[10px] font-bold tracking-widest mt-0.5">
               The Heart of Sanatan Dharma...
             </p>
           </div>
         </div>
 
+        <div class="flex flex-1 justify-end items-center gap-3 z-10">
         <div id="desktop-top-nav" class="hidden md:flex items-center gap-6">
             <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer" onclick="toggleView('month')">
                 <svg viewBox="0 0 24 24" width="20" height="20" class="fa-calendar text-xl" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
@@ -1867,6 +1876,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
           <button onclick="openSettingsSidebar()" title="Settings" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm text-white focus:outline-none active:scale-95 translate-x-3">
             <i class="fa-solid fa-gear text-[24px]"></i>
           </button>
+        </div>
         </div>
     </header>
 
@@ -2079,7 +2089,7 @@ It marks the sun's transit into *Makara* (Capricorn).
 
             <textarea id="editor" class="flex-grow w-full h-full bg-gray-900 text-gray-100 p-4 font-mono text-sm resize-none focus:outline-none leading-relaxed z-0" spellcheck="false">
 ::: config
-@ Title : Vaidik Calendar
+@ Title : Vaidik Margam
 :::
 
 ::: calendar
@@ -3896,7 +3906,7 @@ const LOCATION_DATA = {
             activeMonthDetails: {}, // Cache for pre-rendered Day Detail HTML
             view: window.innerWidth < 768 ? 'month' : 'month',
             config: { 
-                title: 'Vaidik Calendar', 
+                title: 'Vaidik Margam',
                 logoUrl: null, 
                 language: 'en', 
                 location: null,
