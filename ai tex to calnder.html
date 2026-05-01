@@ -2203,7 +2203,7 @@ The word "Nua" means new and "Khai" means food.
 
             <!-- MAIN TITLE -->
             <h1 class="font-headline tracking-tight text-black flex flex-wrap items-baseline justify-center mb-2 md:mb-3 leading-none" style="font-size: clamp(1.9rem,9.0vw,5.3rem); font-weight: 850;">
-                <span class="whitespace-nowrap">Vaidik Margam<span class="font-semibold tracking-normal ml-1 mb-[0.2em]" style="font-size: clamp(0.6rem,1.5vw,1.2rem); -webkit-text-stroke: 0px;">.com</span></span>
+                <span class="relative inline-flex items-baseline whitespace-nowrap">Vaidik Margam<span class="absolute ml-0.5 font-semibold tracking-normal text-black" style="left: 100%; bottom: 0.1em; font-size: clamp(0.6rem,1.5vw,1.2rem); -webkit-text-stroke: 0px;">.com</span></span>
             </h1>
             
             <!-- SUBTITLE -->
@@ -4876,7 +4876,7 @@ const LOCATION_DATA = {
                                         if (url.includes('github.com') && url.includes('/blob/')) {
                                                                      url = url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
                     }
-                                                                            }
+                                                                                                }
                 // Google Doc Logic: Validation
                                                       else if (url.includes('docs.google.com') && !url.includes('/pub')) {                                        alert("Warning: Google Doc link does not look like a 'Published to Web' link (should end in /pub).");
                 }
