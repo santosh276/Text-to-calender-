@@ -1920,6 +1920,19 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                         </ol>
                     </div>
 
+                    <!-- NEW: Custom Months Syntax -->
+                    <div class="guide-section">
+                        <div class="guide-title text-green-400"><i class="fa-solid fa-calendar-days"></i> Custom Months</div>
+                        <p class="text-gray-300 mb-2">Replaces the default Month and Year header. The year will be calculated and appended automatically:</p>
+                        <div class="code-block">
+::: months
+01 : ଜାନୁଆରୀ
+04 : ଏପ୍ରିଲ
+12 : ଡିସେମ୍ବର
+:::
+                        </div>
+                    </div>
+
                     <!-- NEW: Custom Card Syntax -->
                     <div class="guide-section">
                         <div class="guide-title text-green-400"><i class="fa-solid fa-address-card"></i> Add Custom Card</div>
@@ -2334,12 +2347,12 @@ The word "Nua" means new and "Khai" means food.
                                 
                                 <div class="text-center flex-grow px-2 flex flex-col items-center justify-center">
                                     <!-- Adaptive Month/Year Container -->
-                                    <div class="flex flex-wrap justify-center items-baseline gap-x-2.5">
-                                        <span id="cal-month" class="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md"></span>
-                                        <span id="cal-year" class="text-2xl md:text-3xl font-light text-gray-600"></span>
+                                    <div class="flex flex-nowrap justify-center items-baseline gap-x-1.5 md:gap-x-2.5 whitespace-nowrap">
+                                        <span id="cal-month" class="text-xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md"></span>
+                                        <span id="cal-year" class="text-xl md:text-3xl font-light text-gray-600"></span>
                                     </div>
 
-                                    <p id="cal-indian-month" class="text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
+                                    <p id="cal-indian-month" class="text-sm md:text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
                                     
                                     <button onclick="jumpToToday()" id="btn-today" class="hidden mt-3 px-3 rounded-full text-[10px] font-extrabold transition-all duration-300 items-center justify-center gap-1 border hover:scale-105 active:scale-95" style="line-height: normal; padding-top: 0; padding-bottom: 0; height: 24px; color: #f97316; background-color: rgba(249, 115, 22, 0.15); border-color: rgba(249, 115, 22, 0.3); letter-spacing: 0.1em; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);">
                                         <i class="fa-regular fa-calendar"></i> TODAY
@@ -3884,6 +3897,7 @@ const LOCATION_DATA = {
 
         let appState = {
             activeMonthIndex: 0,
+            customMonths: {},
             monthsData: [],
             recurringEvents: [],
             recurringDetails: {},
@@ -4315,6 +4329,7 @@ const LOCATION_DATA = {
 
             // 1. Clear Data State
             appState.monthsData = [];
+            appState.customMonths = {};
             appState.recurringEvents = [];
             appState.details = {};
             appState.recurringDetails = {};
@@ -4878,7 +4893,7 @@ const LOCATION_DATA = {
                     }
                                                                                                 }
                 // Google Doc Logic: Validation
-                                                      else if (url.includes('docs.google.com') && !url.includes('/pub')) {                                        alert("Warning: Google Doc link does not look like a 'Published to Web' link (should end in /pub).");
+                                                                                            else if (url.includes('docs.google.com') && !url.includes('/pub')) {                                        alert("Warning: Google Doc link does not look like a 'Published to Web' link (should end in /pub).");
                 }
                                   
                 // Save to App State (So it persists in Downloaded File)
@@ -5657,6 +5672,7 @@ function getCDNUrl(originalUrl) {
         function parseInput(text) {
             const lines = text.split('\n');
             let currentBlock = null;
+            let parsedCustomMonths = {};
             let parsedMonths = [];
             let parsedRecurring = [];
             let currentMonthObj = null;
@@ -5709,6 +5725,12 @@ function getCDNUrl(originalUrl) {
                          if (unit.startsWith('minute')) multiplier = 1000 * 60;
                          if (unit.startsWith('hour')) multiplier = 1000 * 60 * 60;
                          tempConfig.syncInterval = val * multiplier;
+                    }
+                }
+                else if (currentBlock === 'months') {
+                    const monthMatch = line.match(/^(\d{1,2})\s*:\s*(.+)/);
+                    if (monthMatch) {
+                        parsedCustomMonths[parseInt(monthMatch[1]) - 1] = monthMatch[2].trim();
                     }
                 }
                 else if (currentBlock === 'calendar') {
@@ -5921,6 +5943,7 @@ function getCDNUrl(originalUrl) {
             // Actually, if infinite nav is enabled, we don't *need* any explicit months.
             
             appState.monthsData = parsedMonths;
+            appState.customMonths = parsedCustomMonths;
             appState.recurringEvents = parsedRecurring;
             appState.recurringDetails = parsedRecurringDetails;
             appState.manualTithis = parsedManualTithis;
@@ -6158,8 +6181,19 @@ function getCDNUrl(originalUrl) {
             }
 
             // Updated for new Header
-            document.getElementById('cal-month').innerText = months[currentData.month];
-            document.getElementById('cal-year').innerText = currentData.year;
+            const customMonthName = appState.customMonths ? appState.customMonths[currentData.month] : null;
+            const calMonthEl = document.getElementById('cal-month');
+            const calYearEl = document.getElementById('cal-year');
+            
+            if (customMonthName) {
+                calMonthEl.innerText = customMonthName;
+                calYearEl.innerText = "-" + currentData.year;
+                calYearEl.style.display = ''; 
+            } else {
+                calMonthEl.innerText = months[currentData.month];
+                calYearEl.innerText = currentData.year;
+                calYearEl.style.display = ''; 
+            }
             
             const indianMonthEl = document.getElementById('cal-indian-month');
             const currentLang = appState.config.language || 'en';
