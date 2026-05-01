@@ -1923,12 +1923,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                     <!-- NEW: Custom Months Syntax -->
                     <div class="guide-section">
                         <div class="guide-title text-green-400"><i class="fa-solid fa-calendar-days"></i> Custom Months</div>
-                        <p class="text-gray-300 mb-2">Replaces the default Month and Year header:</p>
+                        <p class="text-gray-300 mb-2">Replaces the default Month and Year header. The year will be calculated and appended automatically:</p>
                         <div class="code-block">
 ::: months
-01 : ଜାନୁଆରୀ ୨୦୨୬
-04 : ଏପ୍ରିଲ ୨୦୨୬
-12 : ଡିସେମ୍ବର ୨୦୨୬
+01 : ଜାନୁଆରୀ
+04 : ଏପ୍ରିଲ
+12 : ଡିସେମ୍ବର
 :::
                         </div>
                     </div>
@@ -6187,11 +6187,12 @@ function getCDNUrl(originalUrl) {
 
             if (customMonthName) {
                 calMonthEl.innerText = customMonthName;
-                calYearEl.style.display = 'none'; // Hide default year to avoid "ଏପ୍ରିଲ ୨୦୨୬ 2026"
+                calYearEl.innerText = "- " + currentData.year;
+                calYearEl.style.display = '';
             } else {
                 calMonthEl.innerText = months[currentData.month];
                 calYearEl.innerText = currentData.year;
-                calYearEl.style.display = ''; // Restore default display
+                calYearEl.style.display = '';
             }
             
             const indianMonthEl = document.getElementById('cal-indian-month');
