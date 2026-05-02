@@ -7648,7 +7648,7 @@ function renderCalendarGrid(data) {
                 gridDiv.innerHTML += `
                     <div class="panchang-item">
                         <div class="panchang-label ${color}">
-                            <i class="fa-solid ${icon}"></i> ${key}
+                            <i class="fa-solid ${icon}"></i> <span data-i18n="${key.toLowerCase()}">${key}</span>
                         </div>
                         <div class="panchang-value truncate" title="${val.replace(/<[^>]*>/g, '')}">
                             ${val}
@@ -8049,8 +8049,8 @@ function renderCalendarGrid(data) {
                                 <div class="relative w-full h-full overflow-hidden rounded-xl">
                                     <div class="card-content relative pt-4">
                                         <div class="card-text-area mt-1">
-                                            <h2 class="card-title" data-i18n="${m.name.toLowerCase().replace(/\s+/g, '_')}_title">${m.name}</h2>
-                                            <p class="card-desc" style="color: rgba(255,255,255,0.9);" data-i18n="${m.name.toLowerCase().replace(/\s+/g, '_')}_desc">${m.description}</p>
+                                            <h2 class="card-title" data-i18n="${m.name.trim().toLowerCase().replace(/\s+/g, '_')}_title">${m.name}</h2>
+                                            <p class="card-desc" style="color: rgba(255,255,255,0.9);" data-i18n="${m.name.trim().toLowerCase().replace(/\s+/g, '_')}_desc">${m.description}</p>
                                         </div>
                                         
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
