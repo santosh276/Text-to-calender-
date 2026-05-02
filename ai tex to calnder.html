@@ -7705,7 +7705,7 @@ function renderCalendarGrid(data) {
                     upcomingHtml += `
                         <div class="${bgColor} rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
                             <div class="w-6 h-6 mb-1 drop-shadow-sm">${iconHtml}</div>
-                            <div class="font-bold text-xs mb-0.5">${title}</div>
+                            <div class="font-bold text-xs mb-0.5" data-i18n="${title.toLowerCase().replace(/\s+/g, '_')}">${title}</div>
                             <div class="text-[9px] opacity-80 uppercase font-bold leading-tight">${dateStr}</div>
                         </div>
                     `;
@@ -7780,7 +7780,7 @@ function renderCalendarGrid(data) {
 
                 } else {
                     // COMPLETED
-                    badge.innerText = "Completed";
+                    badge.innerText = (appState.customLabels && appState.customLabels["completed_badge"]) ? appState.customLabels["completed_badge"] : "Completed";
                     badge.classList.remove('badge-ending-soon');
                     if (pulseText) pulseText.style.display = 'none';
                     card.classList.add('completed');
@@ -7916,7 +7916,7 @@ function renderCalendarGrid(data) {
                 timingAnalysisHtml = `
                 <div class="timing-analysis-wrapper">
                     <div class="timing-analysis-header">
-                        <div class="timing-analysis-title">TIMING ANALYSIS</div>
+                        <div class="timing-analysis-title" data-i18n="timing_analysis">TIMING ANALYSIS</div>
                         <div class="timing-analysis-live">LIVE</div>
                     </div>
                     <div class="timing-track-container">
@@ -7937,7 +7937,7 @@ function renderCalendarGrid(data) {
 
                         <!-- NOW Indicator -->
                         <div class="timing-now-indicator" style="left: ${nowPercent}%;">
-                            <div class="timing-now-badge">NOW</div>
+                            <div class="timing-now-badge" data-i18n="now_label">NOW</div>
                         </div>
                     </div>
                 </div>
@@ -7951,7 +7951,7 @@ function renderCalendarGrid(data) {
                 </div>
                 
                 <div class="current-time">
-                    <div class="label">NOW</div>
+                    <div class="label" data-i18n="now_label">NOW</div>
                     <div class="line-container">
                         <div class="pulse-beacon"></div>
                         <div class="gradient-line"></div>
@@ -7971,7 +7971,7 @@ function renderCalendarGrid(data) {
                     <div class="w-8 h-8 rounded-full ${bgIconClass} flex items-center justify-center ${titleColorClass} shadow-sm">
                         ${iconHtml}
                     </div>
-                    <h4 class="font-bold ${titleColorClass} text-sm uppercase tracking-widest m-0">${title}</h4>
+                    <h4 class="font-bold ${titleColorClass} text-sm uppercase tracking-widest m-0" data-i18n="${title.toLowerCase().replace(/\s+/g, '_')}_title">${title}</h4>
                     <div class="flex-grow h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
                 </div>
                 <div class="timeline-container mt-2">`;
@@ -8012,7 +8012,7 @@ function renderCalendarGrid(data) {
                         const mTime = waitMins % 60;
                         statusText = `UPCOMING IN ${h}H ${mTime}M`;
                     } else {
-                        statusText = "Completed";
+                        statusText = (appState.customLabels && appState.customLabels["completed_badge"]) ? appState.customLabels["completed_badge"] : "Completed";
                     }
 
                     const pillClass = `badge-${m.themeKey}`;
@@ -8049,8 +8049,8 @@ function renderCalendarGrid(data) {
                                 <div class="relative w-full h-full overflow-hidden rounded-xl">
                                     <div class="card-content relative pt-4">
                                         <div class="card-text-area mt-1">
-                                            <h2 class="card-title">${m.name}</h2>
-                                            <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
+                                            <h2 class="card-title" data-i18n="${m.name.toLowerCase().replace(/\s+/g, '_')}_title">${m.name}</h2>
+                                            <p class="card-desc" style="color: rgba(255,255,255,0.9);" data-i18n="${m.name.toLowerCase().replace(/\s+/g, '_')}_desc">${m.description}</p>
                                         </div>
                                         
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
@@ -8234,7 +8234,7 @@ function renderCalendarGrid(data) {
             clockCard.innerHTML = `
                 <div class="p-3 relative z-10 text-white text-center flex flex-col items-center justify-center h-full">
                      <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">--:--:-- --</div>
-                     <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
+                     <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1" data-i18n="current_time">Current Time</div>
                 </div>
                 <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
             `;
@@ -8869,7 +8869,7 @@ function renderCalendarGrid(data) {
                                 <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Current Tithi</span>
                             </div>
                             <h3 class="text-3xl font-extrabold text-deepred mb-1 leading-none">${tithiInfo.tithi}</h3>
-                            <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
+                            <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide"><span data-i18n="tithi">Tithi</span> Index ${tithiInfo.index + 1}</p>
                             
                             <div class="mt-5 p-4 bg-gray-50 rounded-2xl border border-gray-200 shadow-inner relative overflow-hidden">
                                 <div class="absolute inset-0 bg-amber-500/5 pointer-events-none"></div>
