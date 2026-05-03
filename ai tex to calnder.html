@@ -1807,7 +1807,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 </style>
 
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body class="h-screen flex flex-col overflow-hidden w-full max-w-[100vw] overflow-x-hidden">
 
     <!-- Navbar -->
     <header class="bg-deep-red px-5 py-4 flex items-center justify-between shadow-md relative overflow-hidden shrink-0 z-50">
@@ -2203,7 +2203,7 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24 flex flex-col">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-24 flex flex-col overflow-x-hidden max-w-full">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -2377,7 +2377,7 @@ The word "Nua" means new and "Khai" means food.
 </div>
 
 
-            <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-4 lg:gap-6">
+            <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-4 lg:gap-6 w-full max-w-full overflow-hidden">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full mobile-contents">
                     
@@ -2389,16 +2389,16 @@ The word "Nua" means new and "Khai" means food.
                             <div class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent pointer-events-none z-0"></div>
 
                              <!-- UPDATED HEADER LAYOUT TO CENTER TITLE -->
-                            <div class="flex items-center justify-between w-full gap-1 md:gap-4 relative z-10">
+                            <div class="flex items-center justify-between w-full gap-1 sm:gap-2 relative z-10 max-w-full">
                                 <button onclick="changeMonth(-1)" class="nav-btn flex-shrink-0" title="Previous Month" aria-label="Previous Month">
                                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                                 </button>
                                 
-                                <div class="text-center flex-grow px-1 flex flex-col items-center justify-center min-w-0">
+                                <div class="text-center flex-1 px-1 flex flex-col items-center justify-center min-w-0 w-full overflow-hidden">
                                     <!-- Adaptive Month/Year Container -->
-                                    <div class="flex flex-nowrap justify-center items-baseline gap-x-1.5 md:gap-x-2.5 whitespace-nowrap">
-                                        <span id="cal-month" class="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md"></span>
-                                        <span id="cal-year" class="text-lg sm:text-xl md:text-3xl font-light text-gray-600"></span>
+                                    <div class="flex flex-wrap justify-center items-baseline gap-x-1.5 md:gap-x-2.5 max-w-full">
+                                        <span id="cal-month" class="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight drop-shadow-md truncate"></span>
+                                        <span id="cal-year" class="text-lg sm:text-xl md:text-3xl font-light text-gray-600 truncate"></span>
                                     </div>
 
                                     <p id="cal-indian-month" class="text-sm md:text-base text-orange-600 font-bold mt-1 font-oriya leading-tight hidden"></p>
@@ -7162,7 +7162,7 @@ function renderCalendarGrid(data) {
         div.className = `w-full min-w-[3rem] md:min-w-[4rem] py-3 flex flex-col items-center justify-center text-center`;
         div.innerHTML = `
             <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ${isSunday ? 'text-red-500' : ''}">${engDay}</span>
-            ${currentLang !== 'en' ? `<span class="${localTextSize} font-bold text-red-600 font-oriya mt-0.5">${day}</span>` : ''}
+            ${currentLang !== 'en' ? `<span class="${localTextSize} font-bold text-red-600 font-oriya mt-0.5 truncate break-words w-full max-w-full block overflow-hidden">${day}</span>` : ''}
         `;
         headerRow.appendChild(div);
     });
