@@ -3908,6 +3908,13 @@ const LOCATION_DATA = {
 };
 
 
+
+        function generateI18nKey(text, suffix = '') {
+            if (!text) return '';
+            let baseKey = text.trim().toLowerCase().replace(/\s+/g, '_');
+            return suffix ? `${baseKey}_${suffix}` : baseKey;
+        }
+
         let appState = {
             activeMonthIndex: 0,
             customLabels: {},
@@ -6349,9 +6356,14 @@ function getCDNUrl(originalUrl) {
         function applyCustomLabels() {
             if (!appState.customLabels) return;
             document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
+                const key = el.getAttribute('data-i18n').toLowerCase();
                 if (appState.customLabels[key]) {
-                    el.innerText = appState.customLabels[key];
+                    if (el.tagName === 'INPUT') {
+                        if (el.placeholder) el.placeholder = appState.customLabels[key];
+                        if (el.value) el.value = appState.customLabels[key];
+                    } else {
+                        el.innerHTML = appState.customLabels[key];
+                    }
                 }
             });
         }
@@ -7648,7 +7660,7 @@ function renderCalendarGrid(data) {
                 gridDiv.innerHTML += `
                     <div class="panchang-item">
                         <div class="panchang-label ${color}">
-                            <i class="fa-solid ${icon}"></i> ${key}
+                            <i class="fa-solid ${icon}"></i> <span data-i18n="${key.toLowerCase()}">${key}</span>
                         </div>
                         <div class="panchang-value truncate" title="${val.replace(/<[^>]*>/g, '')}">
                             ${val}
@@ -7705,7 +7717,7 @@ function renderCalendarGrid(data) {
                     upcomingHtml += `
                         <div class="${bgColor} rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
                             <div class="w-6 h-6 mb-1 drop-shadow-sm">${iconHtml}</div>
-                            <div class="font-bold text-xs mb-0.5">${title}</div>
+                            <div class="font-bold text-xs mb-0.5"><span data-i18n="${generateI18nKey(title)}">${title}</span></div>
                             <div class="text-[9px] opacity-80 uppercase font-bold leading-tight">${dateStr}</div>
                         </div>
                     `;
@@ -7780,7 +7792,7 @@ function renderCalendarGrid(data) {
 
                 } else {
                     // COMPLETED
-                    badge.innerText = "Completed";
+                    badge.innerHTML = `<span data-i18n="completed">Completed</span>`;
                     badge.classList.remove('badge-ending-soon');
                     if (pulseText) pulseText.style.display = 'none';
                     card.classList.add('completed');
@@ -7916,7 +7928,7 @@ function renderCalendarGrid(data) {
                 timingAnalysisHtml = `
                 <div class="timing-analysis-wrapper">
                     <div class="timing-analysis-header">
-                        <div class="timing-analysis-title">TIMING ANALYSIS</div>
+                        <div class="timing-analysis-title"><span data-i18n="timing_analysis">TIMING ANALYSIS</span></div>
                         <div class="timing-analysis-live">LIVE</div>
                     </div>
                     <div class="timing-track-container">
@@ -7937,7 +7949,7 @@ function renderCalendarGrid(data) {
 
                         <!-- NOW Indicator -->
                         <div class="timing-now-indicator" style="left: ${nowPercent}%;">
-                            <div class="timing-now-badge">NOW</div>
+                            <div class="timing-now-badge"><span data-i18n="now">NOW</span></div>
                         </div>
                     </div>
                 </div>
@@ -7951,7 +7963,7 @@ function renderCalendarGrid(data) {
                 </div>
                 
                 <div class="current-time">
-                    <div class="label">NOW</div>
+                    <div class="label"><span data-i18n="now">NOW</span></div>
                     <div class="line-container">
                         <div class="pulse-beacon"></div>
                         <div class="gradient-line"></div>
@@ -8012,7 +8024,7 @@ function renderCalendarGrid(data) {
                         const mTime = waitMins % 60;
                         statusText = `UPCOMING IN ${h}H ${mTime}M`;
                     } else {
-                        statusText = "Completed";
+                        statusText = `<span data-i18n="completed">Completed</span>`;
                     }
 
                     const pillClass = `badge-${m.themeKey}`;
@@ -8049,8 +8061,8 @@ function renderCalendarGrid(data) {
                                 <div class="relative w-full h-full overflow-hidden rounded-xl">
                                     <div class="card-content relative pt-4">
                                         <div class="card-text-area mt-1">
-                                            <h2 class="card-title">${m.name}</h2>
-                                            <p class="card-desc" style="color: rgba(255,255,255,0.9);">${m.description}</p>
+                                            <h2 class="card-title"><span data-i18n="${generateI18nKey(m.name, 'title')}">${m.name}</span></h2>
+                                            <p class="card-desc" style="color: rgba(255,255,255,0.9);"><span data-i18n="${generateI18nKey(m.name, 'desc')}">${m.description}</span></p>
                                         </div>
                                         
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
@@ -8074,6 +8086,7 @@ function renderCalendarGrid(data) {
             html += renderList(result.inauspicious, 'Inauspicious Timings', 'text-red-700', '<i class="fa-solid fa-circle-exclamation text-xs"></i>', 'bg-red-50 border border-red-100');
 
             container.innerHTML = html;
+            applyCustomLabels();
             startLiveClock(); // Ensure clock restarts
         }
 
@@ -8234,7 +8247,7 @@ function renderCalendarGrid(data) {
             clockCard.innerHTML = `
                 <div class="p-3 relative z-10 text-white text-center flex flex-col items-center justify-center h-full">
                      <div id="live-clock-time" class="text-xl md:text-2xl font-mono font-bold tracking-tight drop-shadow-md whitespace-nowrap">--:--:-- --</div>
-                     <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1">Current Time</div>
+                     <div class="text-[9px] uppercase tracking-[0.2em] opacity-80 font-semibold mt-1"><span data-i18n="current_time">Current Time</span></div>
                 </div>
                 <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
             `;
@@ -9045,6 +9058,7 @@ function renderCalendarGrid(data) {
 
             const modalContent = modal.querySelector('.modal-content');
             modalContent.innerHTML = contentHtml;
+            applyCustomLabels();
 
             // Remove legacy listeners (simplified view now)
             
