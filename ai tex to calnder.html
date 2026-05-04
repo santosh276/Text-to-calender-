@@ -1962,10 +1962,14 @@ Moonset : ଚନ୍ଦ୍ରାସ୍ତ
 Sunrise : ସୂର୍ଯ୍ୟୋଦୟ
 Sunset : ସୂର୍ଯ୍ୟାସ୍ତ
 Festivals Header : ପର୍ବପର୍ବାଣି
-Timings Main Header : ଶୁଭ ସମୟ
+Timings : ସମୟ
 Auspicious Timings Header : ଶୁଭ ସମୟ
 Inauspicious Timings Header : ଅଶୁଭ ସମୟ
 Upcoming Tithis : ଆସୁଥିବା ତିଥି
+Upcoming Festivals : ଆସୁଥିବା ପର୍ବ
+View calendar : କ୍ୟାଲେଣ୍ଡର ଦେଖନ୍ତୁ
+Next Upcoming Festival : ପରବର୍ତ୍ତୀ ପର୍ବ
+Today Festival : ଆଜିର ପର୍ବ:
 Year View : ବାର୍ଷିକ ଦୃଶ୍ୟ
 Brahma Muhurta Title : ବ୍ରହ୍ମ ମୁହୂର୍ତ୍ତ
 Brahma Muhurta Desc : ଧ୍ୟାନ ଏବଂ ଶିକ୍ଷା ପାଇଁ ଉପଯୁକ୍ତ।
@@ -2242,9 +2246,9 @@ The word "Nua" means new and "Khai" means food.
                 
                 <!-- Header -->
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-extrabold text-gray-900">Upcoming Festivals</h2>
+                    <h2 class="text-xl font-extrabold text-gray-900"><span data-i18n="upcoming_festivals">Upcoming Festivals</span></h2>
                     <button onclick="toggleView('month')" class="text-orange-600 font-bold text-sm flex items-center gap-1 hover:text-orange-700 transition-colors">
-                        <i class="fa-regular fa-calendar"></i> View calendar
+                        <i class="fa-regular fa-calendar"></i> <span data-i18n="view_calendar">View calendar</span>
                     </button>
                 </div>
 
@@ -6750,7 +6754,7 @@ function getCDNUrl(originalUrl) {
                         <div class="w-1.5 h-1.5 rounded-full bg-white relative" id="hero-festival-pulse">
                             <div class="absolute inset-0 rounded-full bg-white" style="opacity: 0.75; animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
                         </div>
-                        <span id="hero-festival-text">Next Upcoming Festival</span>
+                        <span id="hero-festival-text" data-i18n="next_upcoming_festival">Next Upcoming Festival</span>
                     </div>
                     
                     <p class="text-white text-xs font-medium mb-1" style="text-shadow: 0 1px 3px rgb(0 0 0 / 100%);">${months[heroEvent.monthData.month]} ${heroEvent.event.date}, ${heroEvent.monthData.year}</p>
@@ -7135,7 +7139,7 @@ function getCDNUrl(originalUrl) {
                     if (todayEvent) {
                          const locText = todayEvent.locName ? ` <span class="font-oriya opacity-80 font-normal">(${todayEvent.locName})</span>` : '';
                          footerHtml = `<div class="mt-2 text-[9px] text-center truncate border-t border-gray-50 pt-1">
-                                         <span class="text-orange-600 font-bold animate-pulse">Today:</span> <span class="text-gray-700 font-semibold">${todayEvent.engName}${locText}</span>
+                                         <span class="text-orange-600 font-bold animate-pulse" data-i18n="today_festival">Today:</span> <span class="text-gray-700 font-semibold">${todayEvent.engName}${locText}</span>
                                        </div>`;
                     } else {
                          const nextEvent = monthData.events
@@ -7999,7 +8003,7 @@ function renderCalendarGrid(data) {
 
             let html = `
                 <div class="section-title">
-                    <h3 class="font-bold text-green-700 mb-0"><i class="fa-solid fa-clock text-orange-600 mr-2"></i><span data-i18n="timings_main_header">Timings</span></h3>
+                    <h3 class="font-bold text-green-700 mb-0"><i class="fa-solid fa-clock text-orange-600 mr-2"></i><span data-i18n="timings">Timings</span></h3>
                     <span class="badge">${dateStr}</span>
                 </div>
                 
