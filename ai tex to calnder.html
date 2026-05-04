@@ -1963,6 +1963,7 @@ Sunrise : ସୂର୍ଯ୍ୟୋଦୟ
 Sunset : ସୂର୍ଯ୍ୟାସ୍ତ
 Festivals Header : ପର୍ବପର୍ବାଣି
 Timings Header : ଶୁଭ ସମୟ
+Inauspicious Timings Header : ଅଶୁଭ ସମୟ
 Upcoming Tithis : ଆସୁଥିବା ତିଥି
 Year View : ବାର୍ଷିକ ଦୃଶ୍ୟ
 Brahma Muhurta Title : ବ୍ରହ୍ମ ମୁହୂର୍ତ୍ତ
@@ -8122,7 +8123,7 @@ function renderCalendarGrid(data) {
             };
 
             html += renderList(result.auspicious, '<span data-i18n="timings_header">Auspicious Timings</span>', 'text-green-700', '<i class="fa-solid fa-star text-xs"></i>', 'bg-green-50 border border-green-100');
-            html += renderList(result.inauspicious, 'Inauspicious Timings', 'text-red-700', '<i class="fa-solid fa-circle-exclamation text-xs"></i>', 'bg-red-50 border border-red-100');
+            html += renderList(result.inauspicious, '<span data-i18n="inauspicious_timings_header">Inauspicious Timings</span>', 'text-red-700', '<i class="fa-solid fa-circle-exclamation text-xs"></i>', 'bg-red-50 border border-red-100');
 
             container.innerHTML = html;
             applyCustomLabels();
