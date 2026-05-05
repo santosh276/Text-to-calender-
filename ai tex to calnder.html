@@ -2324,7 +2324,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunrise:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="sunrise">Sunrise:</span>
                     <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">06:12</span>
                 </div>
             </div>
@@ -2337,7 +2337,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunrise:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="sunrise">Sunrise:</span>
                     <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">06:12</span>
                 </div>
             </div>
@@ -2350,7 +2350,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunrise:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="sunrise">Sunrise:</span>
                     <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">06:12</span>
                 </div>
             </div>
@@ -2363,7 +2363,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">Sunrise:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="sunrise">Sunrise:</span>
                     <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">06:12</span>
                 </div>
             </div>
@@ -4156,14 +4156,6 @@ const LOCATION_DATA = {
             const currentLang = appState.config.language || 'en';
             const isOdia = currentLang === 'or';
             
-            const l_tithi = isOdia ? "ତିଥି" : "Tithi";
-            const l_nak = isOdia ? "ନକ୍ଷତ୍ର" : "Nakshatra";
-            const l_yoga = isOdia ? "ଯୋଗ" : "Yoga";
-            const l_karana = isOdia ? "କରଣ" : "Karana";
-            const l_sunrise = isOdia ? "ସୂର୍ଯ୍ୟୋଦୟ" : "Sunrise";
-            const l_sunset = isOdia ? "ସୂର୍ଯ୍ୟାସ୍ତ" : "Sunset";
-            const l_moonrise = isOdia ? "ଚନ୍ଦ୍ରୋଦୟ" : "Moonrise";
-            const l_moonset = isOdia ? "ଚନ୍ଦ୍ରାସ୍ତ" : "Moonset";
 
             // Determine if Paksha is part of the tithi string. calculateTithi returns paksha separately, but let's just construct the final string.
             const tithiVal = astro.paksha ? `${astro.paksha} ${astro.tithi}` : astro.tithi;
@@ -4172,42 +4164,42 @@ const LOCATION_DATA = {
             <div class="flex items-center gap-8 px-4 whitespace-nowrap flex-nowrap">
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_tithi}:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="tithi">Tithi:</span>
                     <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">${tithiVal}</span>
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-star text-gold text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_nak}:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="nakshatra">Nakshatra:</span>
                     <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">${astro.nakshatra}</span>
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-om text-gold text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_yoga}:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="yoga">Yoga:</span>
                     <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">${astro.yoga}</span>
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-circle-notch text-gold text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_karana}:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="karana">Karana:</span>
                     <span class="text-gold font-bold text-sm tracking-wider uppercase whitespace-nowrap flex items-center justify-center">${astro.karana}</span>
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_sunrise}:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="sunrise">Sunrise:</span>
                     <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${sunTimesStr.sunrise}</span>
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-cloud-sun text-saffron text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_sunset}:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="sunset">Sunset:</span>
                     <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${sunTimesStr.sunset}</span>
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_moonrise}:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="moonrise">Moonrise:</span>
                     <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${moonTimesStr.moonrise}</span>
                 </div>
                 <div class="flex items-center gap-2 whitespace-nowrap flex-nowrap">
                     <i class="fa-solid fa-cloud-moon text-gold text-sm shrink-0 flex items-center justify-center"></i>
-                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${l_moonset}:</span>
+                    <span class="text-white font-medium text-sm tracking-wider whitespace-nowrap flex items-center justify-center" data-i18n="moonset">Moonset:</span>
                     <span class="text-white font-bold text-sm tracking-wider whitespace-nowrap flex items-center justify-center">${moonTimesStr.moonset}</span>
                 </div>
             </div>`;
