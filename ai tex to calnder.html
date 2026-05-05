@@ -9835,10 +9835,10 @@ function renderCalendarGrid(data) {
     </div>
 
     <!-- Mobile Bottom Navigation Bar -->
-    <div id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-between items-center pt-4 pb-6 px-2 sm:px-4 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+    <div id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full min-h-[70px] bg-white border-t border-gray-200 flex justify-between items-center pt-2 pb-4 px-2 sm:px-4 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.05)]" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
         <button id="nav-btn-calendar" class="flex flex-col items-center justify-center gap-1 text-orange-600 hover:text-orange-500 transition-colors flex-1" onclick="toggleView('month')">
             <svg viewBox="0 0 24 24" width="20" height="20" class="fa-calendar text-xl" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
-            <span class="text-[10px] font-bold" data-i18n="calendar_nav">Calendar</span>
+            <span class="text-[10px] font-bold leading-none" data-i18n="calendar_nav">Calendar</span>
         </button>
         <button id="nav-btn-festivals" class="flex flex-col items-center justify-center gap-1 text-gray-400 transition-colors flex-1" onclick="toggleView('festivals')">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="festivals-icon w-5 h-5 mb-0.5 mt-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -9852,15 +9852,15 @@ function renderCalendarGrid(data) {
                 <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98v0C9.52 4.9 9 5.52 9 6.23V7" />
                 <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" />
             </svg>
-            <span class="text-[10px] font-bold" data-i18n="festivals_nav">Festivals</span>
+            <span class="text-[10px] font-bold leading-none" data-i18n="festivals_nav">Festivals</span>
         </button>
         <button class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <i class="fa-solid fa-headphones text-xl"></i>
-            <span class="text-[10px] font-bold" data-i18n="listen_nav">Listen</span>
+            <span class="text-[10px] font-bold leading-none" data-i18n="listen_nav">Listen</span>
         </button>
         <button class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <i class="fa-regular fa-comment-dots text-xl"></i>
-            <span class="text-[10px] font-bold" data-i18n="chat_nav">Chat</span>
+            <span class="text-[10px] font-bold leading-none" data-i18n="chat_nav">Chat</span>
         </button>
         <button onclick="toggleView('more')" class="menu-icon-btn flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
