@@ -4938,7 +4938,7 @@ const LOCATION_DATA = {
                 }
             } else {
                 alert("Invalid Google Drive Link. Please use a standard sharing link.");
-                            }
+                                            }
                     }
         // --- LIVE GOOGLE DOC SYNC FEATURE ---
 
@@ -8912,7 +8912,7 @@ function renderCalendarGrid(data) {
                     </div>
 
                     <!-- Scrollable Body -->
-                    <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-20 px-4 pt-4 space-y-4 max-w-lg mx-auto w-full transform-gpu will-change-transform overscroll-none touch-pan-y max-h-[85vh]" style="-webkit-overflow-scrolling: touch; contain: content;">
+                    <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-[75px] md:pb-8 px-4 pt-4 space-y-2 max-w-lg mx-auto w-full transform-gpu will-change-transform overscroll-none touch-pan-y max-h-[90vh]" style="-webkit-overflow-scrolling: touch; contain: content;">
                         
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
@@ -9032,16 +9032,16 @@ function renderCalendarGrid(data) {
                         </div>` : ''}
 
                         <!-- 5. Rich Details (Notes/Events) -->
-                        <div id="new-modal-rich-body" class="space-y-3 pb-8 pt-2">
+                        <div id="new-modal-rich-body" class="space-y-3 pt-2 pb-0">
                             ${dayEvents.map(ev => `
-                                <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3">
+                                <div class="modal-card relative overflow-hidden p-4 pl-5 border-l-4 ${ev.symbol==='!'?'border-red-500':(ev.symbol==='*'?'border-blue-500':'border-gray-500')} mb-3 last:mb-0">
                                     <h4 class="font-bold text-gray-900 text-lg leading-tight mb-1">${ev.engName.replace(/[\(\)\[\]]/g, '').trim()}</h4>
                                     ${ev.locName ? `<p class="text-sm text-gray-600 font-oriya">${ev.locName.replace(/[\(\)\[\]]/g, '').trim()}</p>` : ''}
                                 </div>
                             `).join('')}
                             
                             ${details.length > 0 ? details.map(d => {
-                                    let content = '<div class="modal-card relative overflow-hidden p-4 pl-5 text-gray-700 text-sm leading-relaxed rich-content mb-3">';
+                                    let content = '<div class="modal-card relative overflow-hidden p-4 pl-5 text-gray-700 text-sm leading-relaxed rich-content mb-3 last:mb-0">';
                                     
                                     // Render tags if present
                                     if (d.tags && d.tags.length > 0) {
