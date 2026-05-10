@@ -3573,6 +3573,55 @@ return SunCalc;
                 </svg>`
         };
 
+
+        const defaultRituImages = [
+            "https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?auto=format&fit=crop&w=600&q=80", // Vasant (Spring)
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80", // Grishma (Summer)
+            "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=600&q=80", // Varsha (Monsoon)
+            "https://images.unsplash.com/photo-1508609536830-4e4142f1f0a2?auto=format&fit=crop&w=600&q=80", // Sharad (Autumn)
+            "https://images.unsplash.com/photo-1433162653888-a571f43eb912?auto=format&fit=crop&w=600&q=80", // Hemant (Pre-Winter)
+            "https://images.unsplash.com/photo-1478719059408-592965723cbc?auto=format&fit=crop&w=600&q=80"  // Shishir (Winter)
+        ];
+
+        function getRituImage(seasonIndex) {
+            let customImages = {};
+            try {
+                const stored = localStorage.getItem('customRituImages');
+                if (stored) customImages = JSON.parse(stored);
+            } catch(e) {}
+            return customImages[seasonIndex] || defaultRituImages[seasonIndex];
+        }
+
+        window.toggleRituEditMode = function(e) {
+            e.stopPropagation();
+            const form = document.getElementById('ritu-edit-form');
+            if (form) form.classList.toggle('hidden');
+        }
+
+        window.saveRituImage = function(e, seasonIndex) {
+            e.stopPropagation();
+            const input = document.getElementById('ritu-image-input');
+            if (input && input.value) {
+                let customImages = {};
+                try {
+                    const stored = localStorage.getItem('customRituImages');
+                    if (stored) customImages = JSON.parse(stored);
+                } catch(e) {}
+                customImages[seasonIndex] = input.value;
+                localStorage.setItem('customRituImages', JSON.stringify(customImages));
+                render();
+            } else if (input && !input.value) {
+                let customImages = {};
+                try {
+                    const stored = localStorage.getItem('customRituImages');
+                    if (stored) customImages = JSON.parse(stored);
+                } catch(e) {}
+                delete customImages[seasonIndex];
+                localStorage.setItem('customRituImages', JSON.stringify(customImages));
+                render();
+            }
+        }
+
         const seasonUIConfig = [
             { name: "Vasant (Spring)", color: "#388E3C", icon: SeasonIcons.vasant },   // 0
             { name: "Grishma (Summer)", color: "#E65100", icon: SeasonIcons.grishma },  // 1
@@ -7579,19 +7628,43 @@ function renderCalendarGrid(data) {
 
             // Inject Season Card at the top of the list container
             const seasonCard = document.createElement('div');
-            seasonCard.className = "season-ui-card group mb-4 flex-col items-start gap-4"; // Changed layout to column for better fit
+            seasonCard.className = "season-ui-card group mb-4 flex-col items-start gap-0 !p-0 overflow-hidden";
             seasonCard.onclick = cycleSeasonCard;
             
-            // Re-structured inner HTML to include description always visible
+            const rituImageUrl = getRituImage(seasonIndex);
+
             seasonCard.innerHTML = `
-                <div class="flex items-center gap-4 w-full">
-                    <div class="season-ui-icon-container" style="transform: scale(1); opacity: 1;">${seasonConfig.icon}</div>
-                    <div class="season-ui-content flex-1">
-                        <span class="season-ui-label" data-i18n="current_ritu">Current Ritu</span>
-                        <span class="season-ui-title text-xl" style="color: ${seasonConfig.color};">${seasonName}</span>
+                <div class="relative w-full h-32 shrink-0 bg-gray-200">
+                    <img src="${rituImageUrl}" class="absolute inset-0 w-full h-full object-cover" alt="${seasonName} Banner" id="ritu-banner-img" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+
+                    <button onclick="window.toggleRituEditMode(event)" class="absolute top-2 right-2 bg-black/30 hover:bg-black/50 backdrop-blur-md text-white p-2 rounded-full z-[30] transition-colors cursor-pointer" title="Edit Image">
+                        <i class="fa-solid fa-image text-sm"></i>
+                    </button>
+
+                    <div id="ritu-edit-form" class="hidden absolute top-12 right-2 bg-white p-3 rounded-lg shadow-xl z-[40] w-64 border border-gray-200" onclick="event.stopPropagation()">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold text-gray-700">Insert Image Link</label>
+                            <input type="text" id="ritu-image-input" placeholder="Paste image URL here..." class="text-xs border rounded p-1.5 w-full focus:outline-none focus:border-red-500" value="${rituImageUrl !== defaultRituImages[seasonIndex] ? rituImageUrl : ''}">
+                            <div class="flex justify-end gap-2 mt-1">
+                                <button onclick="window.toggleRituEditMode(event)" class="text-xs px-2 py-1 text-gray-500 hover:text-gray-700">Cancel</button>
+                                <button onclick="window.saveRituImage(event, ${seasonIndex})" class="text-xs px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-3 left-4 flex items-center gap-3 z-10 w-full pr-12 pointer-events-none">
+                        <div class="season-ui-icon-container !w-12 !h-12 bg-white/20 backdrop-blur-md rounded-full shadow-sm shrink-0 border border-white/30 text-white fill-white" style="transform: scale(1); opacity: 1;">
+                            ${seasonConfig.icon.replace(/stroke="[^"]*"/g, 'stroke="white"').replace(/fill="[^"]*"/g, 'fill="white"')}
+                        </div>
+                        <div class="season-ui-content flex-1 min-w-0">
+                            <span class="block text-white/80 text-[10px] uppercase font-bold tracking-wider" data-i18n="current_ritu">Current Ritu</span>
+                            <span class="block text-white text-xl font-bold truncate drop-shadow-md">${seasonName}</span>
+                        </div>
                     </div>
                 </div>
-                <div class="w-full border-t border-gray-200 pt-2 mt-1">
+
+                <div class="w-full p-4 pt-3 bg-[#FFFBF5]">
                     <div class="text-xs text-gray-600 leading-relaxed font-sans">
                         ${seasonDescHtml}
                     </div>
