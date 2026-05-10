@@ -3593,13 +3593,6 @@ return SunCalc;
             "https://images.unsplash.com/photo-1478265409131-1f65c88f965c?auto=format&fit=crop&q=80&w=800"  // Shishir
         ];
 
-        window.promptForRituImage = function(seasonIndex) {
-            const currentUrl = (appState.config.customRituImages && appState.config.customRituImages[seasonIndex]) || defaultRituImages[seasonIndex];
-            const newUrl = prompt("Enter an Image URL for this Ritu:", currentUrl);
-
-            if (newUrl !== null && newUrl.trim() !== "") {
-                if (!appState.config.customRituImages) {
-                    appState.config.customRituImages = {};
                 }
                 appState.config.customRituImages[seasonIndex] = newUrl.trim();
                 saveConfigToStorage();
@@ -4666,29 +4659,43 @@ const LOCATION_DATA = {
             render();
         }
 
-        function openLinkModal() {
+        function openLinkModal(defaultType = 'logo', defaultExtra = null) {
             lockScroll();
             const modal = document.getElementById('link-modal');
             let year = new Date().getFullYear();
             let month = new Date().getMonth();
             if (appState.monthsData && appState.monthsData.length > 0) {
-                const currentData = appState.monthsData[appState.activeMonthIndex];
-                if (currentData) { year = currentData.year; month = currentData.month; }
+                year = appState.monthsData[0].year;
+                month = appState.monthsData[0].month;
             }
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const dropdown = document.getElementById('link-date-select');
-            dropdown.innerHTML = '<option value="" disabled selected>Select Date</option>';
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = `${String(d).padStart(2, '0')}-${String(month + 1).padStart(2, '0')}-${year}`;
-                const dateObj = new Date(year, month, d);
-                const dayName = daysOfWeek[dateObj.getDay()];
+            const select = document.getElementById('link-date-select');
+            select.innerHTML = '';
+            for(let i=1; i<=daysInMonth; i++) {
+                const d = i.toString().padStart(2, '0');
                 const option = document.createElement('option');
-                option.value = dateStr;
-                option.text = `${dateStr} (${dayName})`;
-                dropdown.appendChild(option);
+                option.value = d;
+                option.textContent = `${d} ${new Date(year, month).toLocaleString('default', {month:'short'})}`;
+                select.appendChild(option);
             }
-            updateLinkType('logo');
-            document.getElementById('link-url-input').value = '';
+
+            updateLinkType(defaultType);
+
+            if (defaultType === 'season' && defaultExtra !== null) {
+                // Focus the specific season input if one was requested
+                setTimeout(() => {
+                    const specificInput = document.getElementById(`season-url-${defaultExtra}`);
+                    if(specificInput) {
+                        specificInput.focus();
+                        specificInput.select();
+                        // Scroll container to show it
+                        specificInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 50);
+            } else {
+                document.getElementById('link-url-input').value = '';
+            }
+
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.remove('modal-hidden'), 10);
         }
@@ -4863,6 +4870,47 @@ const LOCATION_DATA = {
             tempLinkState.selectedType = type;
             document.querySelectorAll('#link-modal .radio-option').forEach(el => el.classList.remove('selected'));
             const selectedEl = document.querySelector(`#link-modal .radio-option[onclick="updateLinkType('${type}')"]`);
+            if(selectedEl) selectedEl.classList.add('selected');
+
+            const dateContainer = document.getElementById('link-date-container');
+            const seasonContainer = document.getElementById('link-season-container');
+            const urlInputContainer = document.getElementById('link-url-input').parentElement;
+
+            dateContainer.classList.add('hidden');
+            seasonContainer.classList.add('hidden');
+            urlInputContainer.classList.remove('hidden'); // default
+
+            if(type === 'banner' || type === 'gridbg') {
+                dateContainer.classList.remove('hidden');
+            } else if (type === 'season') {
+                seasonContainer.classList.remove('hidden');
+                urlInputContainer.classList.add('hidden'); // hide default single URL input
+
+                // Generate 6 inputs
+                const container = document.getElementById('season-bulk-inputs');
+                container.innerHTML = '';
+
+                const currentLang = appState.config.language || 'en';
+                const langObj = langData[currentLang] || langData['en'];
+
+                for(let i = 0; i < 6; i++) {
+                    const seasonName = langObj.indianSeasons[i];
+                    const seasonRange = seasonUIConfig[i].dateRange;
+                    const rituImgUrl = (appState.config.customRituImages && appState.config.customRituImages[i]) || defaultRituImages[i];
+
+                    const div = document.createElement('div');
+                    div.className = "flex gap-2 items-center bg-gray-50 p-2 rounded border border-gray-200";
+                    div.innerHTML = `
+                        <img src="${rituImgUrl}" class="w-10 h-10 rounded object-cover shadow-sm shrink-0 border border-gray-300" alt="${seasonName}">
+                        <div class="flex-1 min-w-0">
+                            <label class="block text-xs font-bold text-gray-700 truncate">${seasonName} <span class="font-normal text-gray-500">(${seasonRange})</span></label>
+                            <input type="text" id="season-url-${i}" class="w-full p-1.5 mt-1 border border-gray-300 rounded bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-xs" value="${rituImgUrl}" placeholder="Image URL">
+                        </div>
+                    `;
+                    container.appendChild(div);
+                }
+            }
+        }')"]`);
                                                 if(selectedEl) selectedEl.classList.add('selected');
             
             const dateContainer = document.getElementById('link-date-container');
@@ -4893,24 +4941,63 @@ const LOCATION_DATA = {
         }
 
         function performLinkInsert() {
-            let url = document.getElementById('link-url-input').value.trim();
-            if (!url) { alert("Please enter a URL or HTML Code."); return; }
-            
-            // Extract URL from HTML if present
-            if (url.includes('<') && url.includes('>')) {
-                const imgMatch = url.match(/<img[^>]+src=["']([^"']+)["']/i);
-                if (imgMatch && imgMatch[1]) {
-                    url = imgMatch[1];
+            const type = tempLinkState.selectedType;
+            let url = "";
+
+            if (type !== 'season') {
+                url = document.getElementById('link-url-input').value.trim();
+                if (!url) { alert("Please enter a URL or HTML Code."); return; }
+
+                // Extract URL from HTML if present
+                if (url.includes('<') && url.includes('>')) {
+                    const imgMatch = url.match(/<img[^>]+src=["']([^"']+)["']/i);
+                    if (imgMatch && imgMatch[1]) {
+                        url = imgMatch[1];
+                    }
                 }
+                // Convert Google Drive Links to Direct View Links
+                url = convertGoogleDriveLink(url);
             }
-                        // Convert Google Drive Links to Direct View Links
-            url = convertGoogleDriveLink(url);
-                        const type = tempLinkState.selectedType;
+
             let extraParam = null;
             if (type === 'banner' || type === 'gridbg') {
                 extraParam = document.getElementById('link-date-select').value;
                 if (!extraParam) { alert("Please select a date."); return; }
+            } else if (type === 'season') {
+                if (!appState.config.customRituImages) {
+                    appState.config.customRituImages = {};
+                }
+
+                // Read all 6 inputs
+                let changed = false;
+                for(let i=0; i<6; i++) {
+                    const inputEl = document.getElementById(`season-url-${i}`);
+                    if (inputEl) {
+                        let newUrl = inputEl.value.trim();
+                        newUrl = convertGoogleDriveLink(newUrl);
+                        // Only save if it's different from default to avoid bloating config,
+                        // but save it anyway if they customized it
+                        if (newUrl !== "" && newUrl !== defaultRituImages[i]) {
+                            appState.config.customRituImages[i] = newUrl;
+                            changed = true;
+                        } else if (newUrl === "" || newUrl === defaultRituImages[i]) {
+                             // Reset to default
+                             if (appState.config.customRituImages[i]) {
+                                 delete appState.config.customRituImages[i];
+                                 changed = true;
+                             }
+                        }
+                    }
+                }
+
+                if (changed) {
+                    saveConfigToStorage();
+                    render();
+                }
+                closeLinkModal();
+                return;
             }
+
             insertImageToEditor(url, type, extraParam);
             closeLinkModal();
         }
@@ -7623,7 +7710,7 @@ function renderCalendarGrid(data) {
                 <div class="relative h-[160px] w-full rounded-t-2xl overflow-hidden shrink-0">
                     <img src="${rituImgUrl}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner">
                     <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"></div>
-                    <div class="absolute top-3 z-10 cursor-pointer text-white/80 hover:text-white drop-shadow-md p-2 bg-black/20 rounded-full backdrop-blur-sm" style="right: 12px; right: 0.75rem;" onclick="window.promptForRituImage(${seasonIndex}); event.stopPropagation();">
+                    <div class="absolute top-3 z-10 cursor-pointer text-white/80 hover:text-white drop-shadow-md p-2 bg-black/20 rounded-full backdrop-blur-sm" style="right: 12px; right: 0.75rem;" onclick="openLinkModal('season', ${seasonIndex}); event.stopPropagation();">
                         <i class="fa-solid fa-gear"></i>
                     </div>
                     <div class="absolute inset-x-0 bottom-0 p-4 flex flex-col pointer-events-none">
