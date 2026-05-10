@@ -2142,10 +2142,15 @@ It marks the sun's transit into *Makara* (Capricorn).
                         <div class="code-block">
 ::: seasons
 @ Spring : <span class="hl-string">Flowers blooming everywhere.</span>
+@ Spring image: <span class="hl-string">https://www.example.com/image.jpg</span>
 @ Summer : <span class="hl-string">Scorching sun, mango season.</span>
+@ Summer image: <span class="hl-string">https://www.example.com/image.jpg</span>
 :::
                         </div>
-                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).</p>
+                        <p class="code-annotation">
+                            - <strong>@ [Season Name] :</strong> is for the description.<br>
+                            - <strong>@ [Season Name] image:</strong> is for the URL.
+                        </p>
                     </div>
 
                     <div class="guide-section">
@@ -2737,12 +2742,32 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="block font-bold text-gray-700 text-sm">Day Banner</span>
                             </div>
                         </div>
+                        <div class="radio-option" onclick="updateLinkType('ritu')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm">Update Ritu Banners</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="link-date-container" class="hidden">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
                     <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
                 </div>
+
+                <div id="link-ritu-container" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Ritu</label>
+                    <select id="link-ritu-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+                        <option value="" disabled selected>Select Ritu</option>
+                        <option value="1">Grishma (Summer / ଗ୍ରୀଷ୍ମ)</option>
+                        <option value="2">Varsha (Monsoon / ବର୍ଷା)</option>
+                        <option value="3">Sharad (Autumn / ଶରତ)</option>
+                        <option value="4">Hemant (Pre-Winter / ହେମନ୍ତ)</option>
+                        <option value="5">Shishir (Winter / ଶିଶିର)</option>
+                        <option value="0">Vasant (Spring / ବସନ୍ତ)</option>
+                    </select>
+                </div>
+
                 <div class="mt-4">
                     <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus"></i> Insert Link
@@ -4866,10 +4891,15 @@ const LOCATION_DATA = {
                                                 if(selectedEl) selectedEl.classList.add('selected');
             
             const dateContainer = document.getElementById('link-date-container');
+            const rituContainer = document.getElementById('link-ritu-container');
+
             dateContainer.classList.add('hidden');
+            if (rituContainer) rituContainer.classList.add('hidden');
             
             if(type === 'banner' || type === 'gridbg') {
                 dateContainer.classList.remove('hidden');
+            } else if (type === 'ritu') {
+                if (rituContainer) rituContainer.classList.remove('hidden');
             }
         }
 
@@ -4910,6 +4940,21 @@ const LOCATION_DATA = {
             if (type === 'banner' || type === 'gridbg') {
                 extraParam = document.getElementById('link-date-select').value;
                 if (!extraParam) { alert("Please select a date."); return; }
+            } else if (type === 'ritu') {
+                const rituSelect = document.getElementById('link-ritu-select');
+                if (rituSelect) {
+                    const seasonIndex = rituSelect.value;
+                    if (!seasonIndex) { alert("Please select a Ritu."); return; }
+
+                    if (!appState.config.customRituImages) {
+                        appState.config.customRituImages = {};
+                    }
+                    appState.config.customRituImages[seasonIndex] = url;
+                    saveConfigToStorage();
+                    render();
+                    closeLinkModal();
+                    return;
+                }
             }
             insertImageToEditor(url, type, extraParam);
             closeLinkModal();
@@ -5954,8 +5999,25 @@ function getCDNUrl(originalUrl) {
                     }
                 }
                 else if (currentBlock === 'seasons') {
+                    const imageMatch = line.match(/^@\s*(.+?)\s*image\s*:\s*(.*)/i);
                     const match = line.match(/^@\s*(.+?)\s*:\s*(.*)/);
-                    if (match) {
+
+                    if (imageMatch) {
+                        const key = imageMatch[1].trim().toLowerCase();
+                        let url = imageMatch[2].trim();
+                        let idx = -1;
+                        if (key.includes('spring') || key.includes('vasant')) idx = 0;
+                        else if (key.includes('summer') || key.includes('grishma')) idx = 1;
+                        else if (key.includes('monsoon') || key.includes('varsha')) idx = 2;
+                        else if (key.includes('autumn') || key.includes('sharad')) idx = 3;
+                        else if (key.includes('pre-winter') || key.includes('hemant')) idx = 4;
+                        else if (key.includes('winter') || key.includes('shishir')) idx = 5;
+
+                        if (idx !== -1 && url) {
+                            if (!tempConfig.customRituImages) tempConfig.customRituImages = {};
+                            tempConfig.customRituImages[idx] = url;
+                        }
+                    } else if (match) {
                         const key = match[1].trim().toLowerCase();
                         let val = match[2].trim();
                         
