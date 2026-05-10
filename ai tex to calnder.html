@@ -3573,6 +3573,17 @@ return SunCalc;
                 </svg>`
         };
 
+
+        // Default high-quality Unsplash images for the 6 Ritus
+        const defaultRituImages = [
+            "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=600&q=80", // Vasant (Spring)
+            "https://images.unsplash.com/photo-1561470508-0e3188566417?auto=format&fit=crop&w=600&q=80", // Grishma (Summer)
+            "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?auto=format&fit=crop&w=600&q=80", // Varsha (Monsoon)
+            "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80", // Sharad (Autumn)
+            "https://images.unsplash.com/photo-1444858291040-58f756a3bdd6?auto=format&fit=crop&w=600&q=80", // Hemant (Pre-Winter)
+            "https://images.unsplash.com/photo-1478265409131-1f65c88f965c?auto=format&fit=crop&w=600&q=80"  // Shishir (Winter)
+        ];
+
         const seasonUIConfig = [
             { name: "Vasant (Spring)", color: "#388E3C", icon: SeasonIcons.vasant },   // 0
             { name: "Grishma (Summer)", color: "#E65100", icon: SeasonIcons.grishma },  // 1
@@ -7554,6 +7565,29 @@ function renderCalendarGrid(data) {
             return { auspicious, inauspicious };
         }
 
+
+        window.openRituImageModal = function(seasonIndex, event) {
+            event.stopPropagation();
+            const url = prompt("Enter Image URL for this Ritu:");
+            if (url !== null) {
+                const customImages = JSON.parse(localStorage.getItem('customRituImages') || '{}');
+                if (url.trim() === '') {
+                    delete customImages[seasonIndex];
+                } else {
+                    customImages[seasonIndex] = url.trim();
+                }
+                localStorage.setItem('customRituImages', JSON.stringify(customImages));
+
+                // update image dynamically
+                const imgEl = document.getElementById('ritu-banner-img-' + seasonIndex);
+                if (imgEl) {
+                    imgEl.src = url.trim() || defaultRituImages[seasonIndex];
+                } else {
+                    render(); // full render fallback
+                }
+            }
+        };
+
         // --- UPDATED MAIN RENDER FUNCTION ---
         function renderPanchang(data) {
             const section = document.getElementById('sec-panchang');
@@ -7577,27 +7611,38 @@ function renderCalendarGrid(data) {
                                : (langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "");
             const seasonDescHtml = formatSeasonDescription(rawSeasonDesc);
 
+
+            // Check localStorage for custom image
+            const customImages = JSON.parse(localStorage.getItem('customRituImages') || '{}');
+            const bannerImg = customImages[seasonIndex] || defaultRituImages[seasonIndex];
+
             // Inject Season Card at the top of the list container
             const seasonCard = document.createElement('div');
-            seasonCard.className = "season-ui-card group mb-4 flex-col items-start gap-4"; // Changed layout to column for better fit
-            seasonCard.onclick = cycleSeasonCard;
+            seasonCard.className = "season-ui-card group mb-4 flex-col items-start gap-0 relative overflow-hidden backdrop-blur-md bg-white/40 dark:bg-black/40 border border-white/20 shadow-lg rounded-2xl";
             
-            // Re-structured inner HTML to include description always visible
+            // Re-structured inner HTML to include the banner, gradient, and gear icon
             seasonCard.innerHTML = `
-                <div class="flex items-center gap-4 w-full">
-                    <div class="season-ui-icon-container" style="transform: scale(1); opacity: 1;">${seasonConfig.icon}</div>
-                    <div class="season-ui-content flex-1">
-                        <span class="season-ui-label" data-i18n="current_ritu">Current Ritu</span>
-                        <span class="season-ui-title text-xl" style="color: ${seasonConfig.color};">${seasonName}</span>
+                <div class="relative w-full h-[160px] rounded-t-2xl overflow-hidden shrink-0">
+                    <img src="${bannerImg}" class="w-full h-full object-cover rounded-t-2xl" id="ritu-banner-img-${seasonIndex}" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none rounded-t-2xl"></div>
+                    <div class="absolute bottom-3 left-4 right-4 flex justify-between items-end">
+                        <div>
+                            <span class="block text-white text-2xl font-bold drop-shadow-md">${seasonName}</span>
+                            <span class="block text-white/90 text-sm font-medium drop-shadow-sm">${seasonConfig.name.split(' ')[0]} Season</span>
+                        </div>
+                    </div>
+                    <div class="absolute top-3 right-3 bg-black/40 hover:bg-black/60 rounded-full p-2 cursor-pointer transition-colors" onclick="openRituImageModal(${seasonIndex}, event)" id="ritu-settings-icon">
+                        <i class="fa-solid fa-gear text-white text-sm"></i>
                     </div>
                 </div>
-                <div class="w-full border-t border-gray-200 pt-2 mt-1">
-                    <div class="text-xs text-gray-600 leading-relaxed font-sans">
+                <div class="w-full p-4">
+                    <div class="text-sm text-gray-800 dark:text-gray-200 leading-relaxed font-sans">
                         ${seasonDescHtml}
                     </div>
                 </div>
             `;
             list.appendChild(seasonCard);
+
 
             // 2. Astronomical Calculations (Sun/Moon/Times)
             const today = new Date();
