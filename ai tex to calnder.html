@@ -5828,6 +5828,7 @@ function getCDNUrl(originalUrl) {
             let currentDetailKey = null;
             let parsedSeasonDescs = {};
             let currentSeasonIdx = -1;
+            let currentSeasonIsImage = false;
             let parsedCustomCards = [];
             let currentCustomCard = null;
             let parsedScrollCards = [];
@@ -6019,13 +6020,28 @@ function getCDNUrl(originalUrl) {
                         
                         if (idx !== -1) {
                             currentSeasonIdx = idx;
-                            parsedSeasonDescs[idx] = [];
-                            if (val) parsedSeasonDescs[idx].push(val);
+                            if (key.includes('image')) {
+                                currentSeasonIsImage = true;
+                                if (!tempConfig.customRituImages) tempConfig.customRituImages = {};
+                                tempConfig.customRituImages[idx] = val;
+                            } else {
+                                currentSeasonIsImage = false;
+                                parsedSeasonDescs[idx] = [];
+                                if (val) parsedSeasonDescs[idx].push(val);
+                            }
                         } else {
                             currentSeasonIdx = -1;
+                            currentSeasonIsImage = false;
                         }
                     } else if (currentSeasonIdx !== -1 && line.trim() !== '') {
-                        parsedSeasonDescs[currentSeasonIdx].push(line.trim());
+                        if (!currentSeasonIsImage) {
+                            parsedSeasonDescs[currentSeasonIdx].push(line.trim());
+                        } else {
+                            if (!tempConfig.customRituImages) tempConfig.customRituImages = {};
+                            if (tempConfig.customRituImages[currentSeasonIdx]) {
+                                tempConfig.customRituImages[currentSeasonIdx] += line.trim();
+                            }
+                        }
                     }
                 }
                 else if (currentBlock === 'panchang') {
