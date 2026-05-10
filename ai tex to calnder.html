@@ -4910,16 +4910,9 @@ const LOCATION_DATA = {
                     container.appendChild(div);
                 }
             }
-        }')"]`);
-                                                if(selectedEl) selectedEl.classList.add('selected');
-            
-            const dateContainer = document.getElementById('link-date-container');
-            dateContainer.classList.add('hidden');
-            
-            if(type === 'banner' || type === 'gridbg') {
-                dateContainer.classList.remove('hidden');
-            }
         }
+
+
 
         function convertGoogleDriveLink(url) {
             // 1. Check for /file/d/ID pattern (supports trailing slash, question mark, or end of line)
