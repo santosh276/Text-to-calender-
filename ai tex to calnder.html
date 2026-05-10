@@ -1945,6 +1945,29 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                         </div>
                     </div>
 
+
+                    <!-- NEW: Seasons (Ritu) -->
+                    <div class="guide-section">
+                        <div class="guide-title text-green-400"><i class="fa-solid fa-cloud-sun"></i> 6. SEASONS (RITU)</div>
+                        <p class="text-gray-300 mb-2">Define custom descriptions and banner images for each season. The <code>@ [Season Name] :</code> line defines the description and <code>@ [Season Name] image:</code> defines the banner URL.</p>
+                        <div class="code-block" style="max-height: 250px; overflow-y: auto;">
+::: seasons
+@ Spring : Flowers blooming everywhere.
+@ Spring image: https://www.example.com/image.jpg
+@ Summer : Scorching sun, mango season.
+@ Summer image: https://www.example.com/image.jpg
+@ Monsoon : Heavy rains and lush greenery.
+@ Monsoon image: https://www.example.com/image.jpg
+@ Autumn : Cool breeze and falling leaves.
+@ Autumn image: https://www.example.com/image.jpg
+@ Pre-Winter : Chilly mornings and mist.
+@ Pre-Winter image: https://www.example.com/image.jpg
+@ Winter : Snow and cold nights.
+@ Winter image: https://www.example.com/image.jpg
+:::
+                        </div>
+                    </div>
+
                     <!-- NEW: Custom Labels Syntax -->
                     <div class="guide-section">
                         <div class="guide-title text-green-400"><i class="fa-solid fa-language"></i> Custom Labels</div>
@@ -2713,10 +2736,6 @@ The word "Nua" means new and "Khai" means food.
             </div>
             <div class="p-6 flex flex-col gap-4 overflow-y-auto">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Image URL or HTML Code</label>
-                    <input type="text" id="link-url-input" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="https://example.com/image.jpg or <img src='...'>">
-                </div>
-                <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">Placement</label>
                     <div class="space-y-3">
                         <div class="radio-option selected" onclick="updateLinkType('logo')">
@@ -2737,16 +2756,62 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="block font-bold text-gray-700 text-sm">Day Banner</span>
                             </div>
                         </div>
+                        <div class="radio-option" onclick="updateLinkType('seasons')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm flex items-center gap-2"><i class="fa-solid fa-cloud-sun text-orange-500"></i> Update Seasons Banners (6. SEASONS)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div id="link-date-container" class="hidden">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
-                    <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
+
+                <div id="link-default-form" class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Image URL or HTML Code</label>
+                        <input type="text" id="link-url-input" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="https://example.com/image.jpg or <img src='...'>">
+                    </div>
+                    <div id="link-date-container" class="hidden">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
+                        <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
+                    </div>
+                    <div class="mt-2">
+                        <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Insert Link
+                        </button>
+                    </div>
                 </div>
-                <div class="mt-4">
-                    <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Insert Link
-                    </button>
+
+                <div id="link-seasons-form" class="hidden flex flex-col gap-3">
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Vasant (Spring / ବସନ୍ତ)</label>
+                            <input type="url" id="season-url-0" class="w-full p-2 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-orange-500 outline-none transition text-xs" placeholder="Image URL">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Grishma (Summer / ଗ୍ରୀଷ୍ମ)</label>
+                            <input type="url" id="season-url-1" class="w-full p-2 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-orange-500 outline-none transition text-xs" placeholder="Image URL">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Varsha (Monsoon / ବର୍ଷା)</label>
+                            <input type="url" id="season-url-2" class="w-full p-2 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-orange-500 outline-none transition text-xs" placeholder="Image URL">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Sharad (Autumn / ଶରତ)</label>
+                            <input type="url" id="season-url-3" class="w-full p-2 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-orange-500 outline-none transition text-xs" placeholder="Image URL">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Hemant (Pre-Winter / ହେମନ୍ତ)</label>
+                            <input type="url" id="season-url-4" class="w-full p-2 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-orange-500 outline-none transition text-xs" placeholder="Image URL">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Shishir (Winter / ଶିଶିର)</label>
+                            <input type="url" id="season-url-5" class="w-full p-2 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-orange-500 outline-none transition text-xs" placeholder="Image URL">
+                        </div>
+                    </div>
+                    <div class="mt-2 flex justify-end gap-3" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
+                        <button type="button" onclick="closeLinkModal()" class="px-3 py-2 bg-gray-100 text-gray-700 text-sm font-bold rounded-lg hover:bg-gray-200 transition">Cancel</button>
+                        <button type="button" onclick="saveSeasonsBanners()" class="px-3 py-2 bg-orange-600 text-white text-sm font-bold rounded-lg hover:bg-orange-700 transition flex items-center gap-2"><i class="fa-solid fa-save"></i> Save</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -4859,21 +4924,58 @@ const LOCATION_DATA = {
             unlockScroll();
             setTimeout(() => modal.style.display = 'none', 300);
         }
-                function updateLinkType(type) {
+                        function updateLinkType(type) {
             tempLinkState.selectedType = type;
             document.querySelectorAll('#link-modal .radio-option').forEach(el => el.classList.remove('selected'));
             const selectedEl = document.querySelector(`#link-modal .radio-option[onclick="updateLinkType('${type}')"]`);
-                                                if(selectedEl) selectedEl.classList.add('selected');
+            if(selectedEl) selectedEl.classList.add('selected');
             
+            const defaultForm = document.getElementById('link-default-form');
+            const seasonsForm = document.getElementById('link-seasons-form');
             const dateContainer = document.getElementById('link-date-container');
-            dateContainer.classList.add('hidden');
             
-            if(type === 'banner' || type === 'gridbg') {
-                dateContainer.classList.remove('hidden');
+            if (type === 'seasons') {
+                defaultForm.classList.add('hidden');
+                seasonsForm.classList.remove('hidden');
+
+                // Pre-fill existing season URLs if available
+                if (!appState.config.customRituImages) appState.config.customRituImages = {};
+                for (let i = 0; i < 6; i++) {
+                    const input = document.getElementById('season-url-' + i);
+                    if (input) {
+                        input.value = appState.config.customRituImages[i] || '';
+                    }
+                }
+            } else {
+                seasonsForm.classList.add('hidden');
+                defaultForm.classList.remove('hidden');
+
+                dateContainer.classList.add('hidden');
+                if(type === 'banner' || type === 'gridbg') {
+                    dateContainer.classList.remove('hidden');
+                }
             }
         }
 
-        function convertGoogleDriveLink(url) {
+        function saveSeasonsBanners() {
+            if (!appState.config.customRituImages) {
+                appState.config.customRituImages = {};
+            }
+            for (let i = 0; i < 6; i++) {
+                const input = document.getElementById('season-url-' + i);
+                if (input && input.value.trim() !== '') {
+                    appState.config.customRituImages[i] = convertGoogleDriveLink(input.value.trim());
+                } else if (input && input.value.trim() === '') {
+                    // Optional: allow clearing the image
+                    appState.config.customRituImages[i] = '';
+                }
+            }
+            saveConfigToStorage();
+            render();
+            closeLinkModal();
+        }
+
+function convertGoogleDriveLink(url) {
             // 1. Check for /file/d/ID pattern (supports trailing slash, question mark, or end of line)
             const fileIdRegex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
             let match = url.match(fileIdRegex);
