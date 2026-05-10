@@ -2142,10 +2142,12 @@ It marks the sun's transit into *Makara* (Capricorn).
                         <div class="code-block">
 ::: seasons
 @ Spring : <span class="hl-string">Flowers blooming everywhere.</span>
+@ Spring image: <span class="hl-string">https://www.example.com/image.jpg</span>
 @ Summer : <span class="hl-string">Scorching sun, mango season.</span>
+@ Summer image: <span class="hl-string">https://www.example.com/image.jpg</span>
 :::
                         </div>
-                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).</p>
+                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir). Use "@ [Season Name] :" for the description and "@ [Season Name] image:" for the URL.</p>
                     </div>
 
                     <div class="guide-section">
@@ -2737,11 +2739,28 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="block font-bold text-gray-700 text-sm">Day Banner</span>
                             </div>
                         </div>
+                        <div class="radio-option" onclick="updateLinkType('ritu')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm">Update Ritu Banners</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="link-date-container" class="hidden">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
                     <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
+                </div>
+                <div id="link-ritu-container" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Ritu</label>
+                    <select id="link-ritu-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+                        <option value="1|Summer">Grishma (Summer / ଗ୍ରୀଷ୍ମ)</option>
+                        <option value="2|Monsoon">Varsha (Monsoon / ବର୍ଷା)</option>
+                        <option value="3|Autumn">Sharad (Autumn / ଶରତ)</option>
+                        <option value="4|Pre-Winter">Hemant (Pre-Winter / ହେମନ୍ତ)</option>
+                        <option value="5|Winter">Shishir (Winter / ଶିଶିର)</option>
+                        <option value="0|Spring">Vasant (Spring / ବସନ୍ତ)</option>
+                    </select>
                 </div>
                 <div class="mt-4">
                     <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
@@ -4660,6 +4679,30 @@ const LOCATION_DATA = {
                 const tagLine = type === 'banner' ? `![Banner](${url})` : `![GridBg](${url})`;
                 if(newText.match(dateHeaderRegex)) { newText = newText.replace(dateHeaderRegex, `$1\n${tagLine}`); } 
                 else { newText += `\n\n::: details\n>> ${date}\n${tagLine}\n## tag : New Event\n:::`; }
+            } else if (type === 'ritu') {
+                const [idxStr, seasonName] = extraParam.split('|');
+                const idx = parseInt(idxStr, 10);
+                if (!seasonName) { alert("Please select a Ritu."); return; }
+                const seasonsBlockRegex = /::: seasons([\s\S]*?):::/;
+                const rituLine = `@ ${seasonName} image: ${url}`;
+                if (seasonsBlockRegex.test(newText)) {
+                    newText = newText.replace(seasonsBlockRegex, (match, content) => {
+                        const regex = new RegExp(`@\\s*${seasonName}\\s*image\\s*:.*(\\r?\\n|$)`, 'i');
+                        if (content.match(regex)) {
+                            return match.replace(regex, `${rituLine}\n`);
+                        } else {
+                            return `::: seasons\n${rituLine}${content}:::`;
+                        }
+                    });
+                } else {
+                    newText += `\n\n::: seasons\n${rituLine}\n:::`;
+                }
+
+                // Directly update the DOM element via data-attribute if it exists
+                const rituImgEl = document.querySelector(`img[data-ritu-index="${idx}"]`);
+                if (rituImgEl) {
+                    rituImgEl.src = url;
+                }
             }
             editor.value = newText;
             parseInput(newText);
@@ -4866,10 +4909,14 @@ const LOCATION_DATA = {
                                                 if(selectedEl) selectedEl.classList.add('selected');
             
             const dateContainer = document.getElementById('link-date-container');
+            const rituContainer = document.getElementById('link-ritu-container');
             dateContainer.classList.add('hidden');
+            rituContainer.classList.add('hidden');
             
             if(type === 'banner' || type === 'gridbg') {
                 dateContainer.classList.remove('hidden');
+            } else if (type === 'ritu') {
+                rituContainer.classList.remove('hidden');
             }
         }
 
@@ -4910,6 +4957,9 @@ const LOCATION_DATA = {
             if (type === 'banner' || type === 'gridbg') {
                 extraParam = document.getElementById('link-date-select').value;
                 if (!extraParam) { alert("Please select a date."); return; }
+            } else if (type === 'ritu') {
+                extraParam = document.getElementById('link-ritu-select').value;
+                if (!extraParam) { alert("Please select a Ritu."); return; }
             }
             insertImageToEditor(url, type, extraParam);
             closeLinkModal();
@@ -7621,7 +7671,7 @@ function renderCalendarGrid(data) {
             // Re-structured inner HTML to include banner image and glassmorphic layout
             seasonCard.innerHTML = `
                 <div class="relative h-[160px] w-full rounded-t-2xl overflow-hidden shrink-0">
-                    <img src="${rituImgUrl}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner">
+                    <img src="${rituImgUrl}" data-ritu-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner">
                     <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"></div>
                     <div class="absolute top-3 z-10 cursor-pointer text-white/80 hover:text-white drop-shadow-md p-2 bg-black/20 rounded-full backdrop-blur-sm" style="right: 12px; right: 0.75rem;" onclick="window.promptForRituImage(${seasonIndex}); event.stopPropagation();">
                         <i class="fa-solid fa-gear"></i>
