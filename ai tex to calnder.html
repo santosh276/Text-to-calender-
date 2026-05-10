@@ -2142,10 +2142,13 @@ It marks the sun's transit into *Makara* (Capricorn).
                         <div class="code-block">
 ::: seasons
 @ Spring : <span class="hl-string">Flowers blooming everywhere.</span>
+@ Spring image: <span class="hl-string">https://www.example.com/image.jpg</span>
 @ Summer : <span class="hl-string">Scorching sun, mango season.</span>
+@ Summer image: <span class="hl-string">https://www.example.com/image.jpg</span>
+... (and so on for all 6 seasons)
 :::
                         </div>
-                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).</p>
+                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).<br>Note: The `@ [Season Name] :` line defines the description and `@ [Season Name] image:` defines the banner URL.</p>
                     </div>
 
                     <div class="guide-section">
@@ -2711,11 +2714,14 @@ The word "Nua" means new and "Khai" means food.
                 <h3 class="font-bold text-gray-700"><i class="fa-solid fa-link mr-2 text-blue-500"></i>Insert Image Link</h3>
                 <button onclick="closeLinkModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
             </div>
-            <div class="p-6 flex flex-col gap-4 overflow-y-auto">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Image URL or HTML Code</label>
-                    <input type="text" id="link-url-input" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="https://example.com/image.jpg or <img src='...'>">
+            <div class="p-6 flex flex-col gap-4 overflow-y-auto max-h-[85vh]">
+                <div id="standard-link-inputs" class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Image URL or HTML Code</label>
+                        <input type="text" id="link-url-input" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm" placeholder="https://example.com/image.jpg or <img src='...'>">
+                    </div>
                 </div>
+
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">Placement</label>
                     <div class="space-y-3">
@@ -2737,13 +2743,52 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="block font-bold text-gray-700 text-sm">Day Banner</span>
                             </div>
                         </div>
+                        <div class="radio-option" onclick="updateLinkType('seasons')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm flex items-center gap-2"><i class="fa-solid fa-images text-orange-500"></i> Update Seasons Banners (6. SEASONS)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="link-date-container" class="hidden">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
                     <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
                 </div>
-                <div class="mt-4">
+
+                <!-- NEW: Seasons Bulk Form -->
+                <div id="seasons-bulk-form" class="hidden flex-col gap-3 mt-2 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Grishma (Summer / ଗ୍ରୀଷ୍ମ)</label>
+                        <input type="url" id="season-url-1" class="w-full p-2 border border-gray-300 rounded bg-white text-sm focus:ring-1 focus:ring-orange-500 outline-none" placeholder="Image URL">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Varsha (Monsoon / ବର୍ଷା)</label>
+                        <input type="url" id="season-url-2" class="w-full p-2 border border-gray-300 rounded bg-white text-sm focus:ring-1 focus:ring-orange-500 outline-none" placeholder="Image URL">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Sharad (Autumn / ଶରତ)</label>
+                        <input type="url" id="season-url-3" class="w-full p-2 border border-gray-300 rounded bg-white text-sm focus:ring-1 focus:ring-orange-500 outline-none" placeholder="Image URL">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Hemant (Pre-Winter / ହେମନ୍ତ)</label>
+                        <input type="url" id="season-url-4" class="w-full p-2 border border-gray-300 rounded bg-white text-sm focus:ring-1 focus:ring-orange-500 outline-none" placeholder="Image URL">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Shishir (Winter / ଶିଶିର)</label>
+                        <input type="url" id="season-url-5" class="w-full p-2 border border-gray-300 rounded bg-white text-sm focus:ring-1 focus:ring-orange-500 outline-none" placeholder="Image URL">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Vasant (Spring / ବସନ୍ତ)</label>
+                        <input type="url" id="season-url-0" class="w-full p-2 border border-gray-300 rounded bg-white text-sm focus:ring-1 focus:ring-orange-500 outline-none" placeholder="Image URL">
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="saveSeasonsBanners()" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 rounded shadow transition active:scale-95 text-sm">Save</button>
+                        <button onclick="closeLinkModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 rounded shadow transition active:scale-95 text-sm">Cancel</button>
+                    </div>
+                </div>
+
+                <div id="standard-link-action" class="mt-4">
                     <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus"></i> Insert Link
                     </button>
@@ -4866,11 +4911,55 @@ const LOCATION_DATA = {
                                                 if(selectedEl) selectedEl.classList.add('selected');
             
             const dateContainer = document.getElementById('link-date-container');
+            const standardInputs = document.getElementById('standard-link-inputs');
+            const standardAction = document.getElementById('standard-link-action');
+            const seasonsForm = document.getElementById('seasons-bulk-form');
+
             dateContainer.classList.add('hidden');
             
-            if(type === 'banner' || type === 'gridbg') {
-                dateContainer.classList.remove('hidden');
+            if (type === 'seasons') {
+                standardInputs.classList.add('hidden');
+                standardAction.classList.add('hidden');
+                seasonsForm.classList.remove('hidden');
+                seasonsForm.classList.add('flex');
+
+                // Populate current season URLs
+                for (let i = 0; i < 6; i++) {
+                    const input = document.getElementById(`season-url-${i}`);
+                    if (input) {
+                        input.value = (appState.config.customRituImages && appState.config.customRituImages[i]) ? appState.config.customRituImages[i] : '';
+                    }
+                }
+            } else {
+                standardInputs.classList.remove('hidden');
+                standardAction.classList.remove('hidden');
+                seasonsForm.classList.add('hidden');
+                seasonsForm.classList.remove('flex');
+
+                if(type === 'banner' || type === 'gridbg') {
+                    dateContainer.classList.remove('hidden');
+                }
             }
+        }
+
+        function saveSeasonsBanners() {
+            if (!appState.config.customRituImages) {
+                appState.config.customRituImages = {};
+            }
+
+            for (let i = 0; i < 6; i++) {
+                const url = document.getElementById(`season-url-${i}`).value.trim();
+                if (url) {
+                    appState.config.customRituImages[i] = url;
+                } else if (appState.config.customRituImages[i]) {
+                    delete appState.config.customRituImages[i];
+                }
+            }
+
+            saveConfigToStorage();
+            render();
+            closeLinkModal();
+            showToast("Season banners updated successfully");
         }
 
         function convertGoogleDriveLink(url) {
@@ -5969,8 +6058,17 @@ function getCDNUrl(originalUrl) {
                         
                         if (idx !== -1) {
                             currentSeasonIdx = idx;
-                            parsedSeasonDescs[idx] = [];
-                            if (val) parsedSeasonDescs[idx].push(val);
+                            if (key.includes('image')) {
+                                if (!appState.config.customRituImages) {
+                                    appState.config.customRituImages = {};
+                                }
+                                appState.config.customRituImages[idx] = val;
+                                // clear current season idx so lines after image don't get added to it
+                                currentSeasonIdx = -1;
+                            } else {
+                                parsedSeasonDescs[idx] = [];
+                                if (val) parsedSeasonDescs[idx].push(val);
+                            }
                         } else {
                             currentSeasonIdx = -1;
                         }
