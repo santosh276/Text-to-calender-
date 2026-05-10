@@ -2147,10 +2147,7 @@ It marks the sun's transit into *Makara* (Capricorn).
 @ Summer image: <span class="hl-string">https://www.example.com/image.jpg</span>
 :::
                         </div>
-                        <p class="code-annotation">
-                            - <strong>@ [Season Name] :</strong> is for the description.<br>
-                            - <strong>@ [Season Name] image:</strong> is for the URL.
-                        </p>
+                        <p class="code-annotation">Customize text for: Spring (Vasant), Summer (Grishma), Monsoon (Varsha), Autumn (Sharad), Pre-Winter (Hemant), Winter (Shishir).<br>Use <code>@ [Season Name] :</code> for the description and <code>@ [Season Name] image:</code> for the URL.</p>
                     </div>
 
                     <div class="guide-section">
@@ -2754,20 +2751,17 @@ The word "Nua" means new and "Khai" means food.
                     <label class="block text-sm font-bold text-gray-700 mb-2">Select Date</label>
                     <select id="link-date-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"></select>
                 </div>
-
                 <div id="link-ritu-container" class="hidden">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Select Ritu</label>
                     <select id="link-ritu-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
-                        <option value="" disabled selected>Select Ritu</option>
+                        <option value="0">Vasant (Spring / ବସନ୍ତ)</option>
                         <option value="1">Grishma (Summer / ଗ୍ରୀଷ୍ମ)</option>
                         <option value="2">Varsha (Monsoon / ବର୍ଷା)</option>
                         <option value="3">Sharad (Autumn / ଶରତ)</option>
                         <option value="4">Hemant (Pre-Winter / ହେମନ୍ତ)</option>
                         <option value="5">Shishir (Winter / ଶିଶିର)</option>
-                        <option value="0">Vasant (Spring / ବସନ୍ତ)</option>
                     </select>
                 </div>
-
                 <div class="mt-4">
                     <button onclick="performLinkInsert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus"></i> Insert Link
@@ -4685,6 +4679,35 @@ const LOCATION_DATA = {
                 const tagLine = type === 'banner' ? `![Banner](${url})` : `![GridBg](${url})`;
                 if(newText.match(dateHeaderRegex)) { newText = newText.replace(dateHeaderRegex, `$1\n${tagLine}`); } 
                 else { newText += `\n\n::: details\n>> ${date}\n${tagLine}\n## tag : New Event\n:::`; }
+            } else if (type === 'ritu') {
+                const rituIndex = parseInt(extraParam, 10);
+                const rituNames = ['Spring', 'Summer', 'Monsoon', 'Autumn', 'Pre-Winter', 'Winter'];
+                const rituName = rituNames[rituIndex];
+                if (!rituName) { alert("Invalid Ritu index."); return; }
+                
+                const seasonsBlockRegex = /::: seasons([\s\S]*?):::/;
+                const rituImageLine = `@ ${rituName} image: ${url}`;
+                
+                if (seasonsBlockRegex.test(newText)) {
+                    newText = newText.replace(seasonsBlockRegex, (match, content) => {
+                        const rituImageUpdateRegex = new RegExp(`@\\s*(?:${rituName}|${rituName.toLowerCase()})\\s*image\\s*:[^\\n]*`);
+                        if (rituImageUpdateRegex.test(content)) {
+                            return match.replace(rituImageUpdateRegex, rituImageLine);
+                        } else {
+                            return match.replace('::: seasons', `::: seasons\n${rituImageLine}`);
+                        }
+                    });
+                } else {
+                    newText += `\n\n::: seasons\n${rituImageLine}\n:::`;
+                }
+                
+                if (!appState.config.customRituImages) { appState.config.customRituImages = {}; }
+                appState.config.customRituImages[rituIndex] = url;
+                
+                setTimeout(() => {
+                    const rituImg = document.querySelector(`img[data-season-index="${rituIndex}"]`);
+                    if (rituImg) rituImg.src = url;
+                }, 100);
             }
             editor.value = newText;
             parseInput(newText);
@@ -4892,13 +4915,12 @@ const LOCATION_DATA = {
             
             const dateContainer = document.getElementById('link-date-container');
             const rituContainer = document.getElementById('link-ritu-container');
-            
-            dateContainer.classList.add('hidden');
+            if (dateContainer) dateContainer.classList.add('hidden');
             if (rituContainer) rituContainer.classList.add('hidden');
             
             if(type === 'banner' || type === 'gridbg') {
-                dateContainer.classList.remove('hidden');
-            } else if (type === 'ritu') {
+                if (dateContainer) dateContainer.classList.remove('hidden');
+            } else if(type === 'ritu') {
                 if (rituContainer) rituContainer.classList.remove('hidden');
             }
         }
@@ -4941,20 +4963,8 @@ const LOCATION_DATA = {
                 extraParam = document.getElementById('link-date-select').value;
                 if (!extraParam) { alert("Please select a date."); return; }
             } else if (type === 'ritu') {
-                const rituSelect = document.getElementById('link-ritu-select');
-                if (rituSelect) {
-                    const seasonIndex = rituSelect.value;
-                    if (!seasonIndex) { alert("Please select a Ritu."); return; }
-                    
-                    if (!appState.config.customRituImages) {
-                        appState.config.customRituImages = {};
-                    }
-                    appState.config.customRituImages[seasonIndex] = url;
-                    saveConfigToStorage();
-                    render();
-                    closeLinkModal();
-                    return;
-                }
+                extraParam = document.getElementById('link-ritu-select').value;
+                if (!extraParam) { alert("Please select a Ritu."); return; }
             }
             insertImageToEditor(url, type, extraParam);
             closeLinkModal();
@@ -4980,7 +4990,7 @@ const LOCATION_DATA = {
             if (!url) return;
 
             // 2. Extract the File ID using Regex
-            // Matches /d/FILE_ID or id=FILE_ID patterns
+                    // Matches /d/FILE_ID or id=FILE_ID patterns
             let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
 
             if (match && match[1]) {
@@ -4989,7 +4999,7 @@ const LOCATION_DATA = {
                 const originalText = btn ? btn.innerHTML : '';
                 
                 if(btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
-                
+
                 // 3. Construct Proxy URL (Bypasses CORS security block)
                 // We use 'allorigins' proxy to fetch the Google Drive download link
                 const driveDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
@@ -5999,25 +6009,8 @@ function getCDNUrl(originalUrl) {
                     }
                 }
                 else if (currentBlock === 'seasons') {
-                    const imageMatch = line.match(/^@\s*(.+?)\s*image\s*:\s*(.*)/i);
                     const match = line.match(/^@\s*(.+?)\s*:\s*(.*)/);
-                    
-                    if (imageMatch) {
-                        const key = imageMatch[1].trim().toLowerCase();
-                        let url = imageMatch[2].trim();
-                        let idx = -1;
-                        if (key.includes('spring') || key.includes('vasant')) idx = 0;
-                        else if (key.includes('summer') || key.includes('grishma')) idx = 1;
-                        else if (key.includes('monsoon') || key.includes('varsha')) idx = 2;
-                        else if (key.includes('autumn') || key.includes('sharad')) idx = 3;
-                        else if (key.includes('pre-winter') || key.includes('hemant')) idx = 4;
-                        else if (key.includes('winter') || key.includes('shishir')) idx = 5;
-                        
-                        if (idx !== -1 && url) {
-                            if (!tempConfig.customRituImages) tempConfig.customRituImages = {};
-                            tempConfig.customRituImages[idx] = url;
-                        }
-                    } else if (match) {
+                    if (match) {
                         const key = match[1].trim().toLowerCase();
                         let val = match[2].trim();
                         
@@ -6030,9 +6023,17 @@ function getCDNUrl(originalUrl) {
                         else if (key.includes('winter') || key.includes('shishir')) idx = 5;
                         
                         if (idx !== -1) {
-                            currentSeasonIdx = idx;
-                            parsedSeasonDescs[idx] = [];
-                            if (val) parsedSeasonDescs[idx].push(val);
+                            if (key.includes('image')) {
+                                if (!appState.config.customRituImages) {
+                                    appState.config.customRituImages = {};
+                                }
+                                appState.config.customRituImages[idx] = val;
+                                currentSeasonIdx = -1;
+                            } else {
+                                currentSeasonIdx = idx;
+                                parsedSeasonDescs[idx] = [];
+                                if (val) parsedSeasonDescs[idx].push(val);
+                            }
                         } else {
                             currentSeasonIdx = -1;
                         }
@@ -7683,7 +7684,7 @@ function renderCalendarGrid(data) {
             // Re-structured inner HTML to include banner image and glassmorphic layout
             seasonCard.innerHTML = `
                 <div class="relative h-[160px] w-full rounded-t-2xl overflow-hidden shrink-0">
-                    <img src="${rituImgUrl}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner">
+                    <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner">
                     <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"></div>
                     <div class="absolute top-3 z-10 cursor-pointer text-white/80 hover:text-white drop-shadow-md p-2 bg-black/20 rounded-full backdrop-blur-sm" style="right: 12px; right: 0.75rem;" onclick="window.promptForRituImage(${seasonIndex}); event.stopPropagation();">
                         <i class="fa-solid fa-gear"></i>
