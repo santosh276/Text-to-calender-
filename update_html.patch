@@ -1,0 +1,24 @@
+--- "ai tex to calnder.html"
++++ "ai tex to calnder.html"
+@@ -7662,6 +7662,7 @@
+             const currentLang = appState.config.language || 'en';
+             const langObj = langData[currentLang] || langData['en'];
+             const seasonName = langObj.indianSeasons[seasonIndex];
++            const seasonEmojis = ["🌼", "🏜️", "⛈️", "🍁", "🌥️", "🏔️"];
+
+             // Retrieve detailed description
+             const rawSeasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex])
+@@ -7681,8 +7682,11 @@
+                     <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner">
+                     <div class="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent pointer-events-none"></div>
+                     <div class="absolute inset-x-0 bottom-0 p-4 flex flex-col pointer-events-none z-10">
+-                        <span class="text-white text-xl font-bold drop-shadow-lg">${seasonName}</span>
+-                        <span class="text-white/90 text-sm drop-shadow-lg mt-1 font-medium">${seasonConfig.dateRange}</span>
++                        <div class="flex items-center gap-3">
++                            <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-lg">${seasonEmojis[seasonIndex]}</div>
++                            <span class="text-xl font-bold text-white drop-shadow-lg">${seasonName}</span>
++                        </div>
++                        <span class="text-white/90 text-sm drop-shadow-lg mt-2 font-medium">${seasonConfig.dateRange}</span>
+                     </div>
+                 </div>
+                 <div class="w-full p-4 pt-2">
