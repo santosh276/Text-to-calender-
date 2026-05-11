@@ -2471,13 +2471,13 @@ The word "Nua" means new and "Khai" means food.
                         </div>
                     </div>
                     
-                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-3">
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i><span data-i18n="panchang_header">Panchang</span></h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul>
                     </div>
                     
-                    <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 order-4 hidden">
+                    <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 order-5 hidden">
                         <!-- Auspicious Timings Content -->
                     </div>
                 </div>
@@ -2489,6 +2489,10 @@ The word "Nua" means new and "Khai" means food.
                         <div class="flex justify-between items-center mb-4 relative z-10"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0"><i class="fa-solid fa-bell text-red-600 text-lg"></i> <span data-i18n="festivals_header">Festivals</span></h3><button class="bg-orange-50 hover:bg-orange-100 text-orange-700 px-2.5 py-1 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5 border border-orange-200 transition shadow-sm" onclick="openLocationModal()"><i class="fa-solid fa-location-dot animate-slight-bounce"></i> Location</button></div>
                         <div id="festival-filters" class="flex flex-wrap gap-2 mb-4"></div>
                         <ul id="festival-list" class="space-y-2 text-sm"></ul>
+                    </div>
+                    <div id="sec-ritu" class="glass rounded-xl shadow-md border-l-4 border-amber-500 p-4 transition-all duration-300 relative overflow-hidden order-3">
+                        <div class="flex justify-between items-center mb-4 relative z-10"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0"><i class="fa-solid fa-sun text-orange-500 text-lg"></i> <span data-i18n="current_ritu">Current Ritu</span></h3></div>
+                        <div id="ritu-content" class="w-full"></div>
                     </div>
                 </div>
             </div>
@@ -7641,10 +7645,12 @@ function renderCalendarGrid(data) {
             const section = document.getElementById('sec-panchang');
             const pillsContainer = document.getElementById('panchang-pills');
             const list = document.getElementById('panchang-list');
+            const rituContent = document.getElementById('ritu-content');
             
             // Clear containers
             pillsContainer.innerHTML = '';
             list.innerHTML = '';
+            if (rituContent) rituContent.innerHTML = '';
 
             // 1. Season (Ritu) Logic (Kept mostly same, but cleaner injection)
             const seasonIndex = getSeasonIndex(data.month);
@@ -7661,7 +7667,7 @@ function renderCalendarGrid(data) {
 
             // Inject Season Card at the top of the list container
             const seasonCard = document.createElement('div');
-            seasonCard.className = "season-ui-card group mb-4 flex-col items-start gap-4"; // Changed layout to column for better fit
+            seasonCard.className = "season-ui-card group flex-col items-start gap-4 w-full m-0"; // Layout for standalone card
             seasonCard.onclick = cycleSeasonCard;
             
             const rituImgUrl = (appState.config.customRituImages && appState.config.customRituImages[seasonIndex]) || defaultRituImages[seasonIndex];
@@ -7683,7 +7689,7 @@ function renderCalendarGrid(data) {
                     </div>
                 </div>
             `;
-            list.appendChild(seasonCard);
+            if (rituContent) { rituContent.appendChild(seasonCard); } else { list.appendChild(seasonCard); }
 
             // 2. Astronomical Calculations (Sun/Moon/Times)
             const today = new Date();
