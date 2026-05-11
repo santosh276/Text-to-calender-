@@ -1,0 +1,14 @@
+--- "ai tex to calnder.html"
++++ "ai tex to calnder.html"
+@@ -2144,9 +2144,9 @@
+                         <div class="guide-title"><i class="fa-solid fa-sun"></i> 6. Seasons (Ritu)</div>
+                         <div class="code-block">
+ ::: seasons
+-@ Spring : <span class="hl-string">Flowers blooming everywhere.</span>
++@ 🌼 Vasant : <span class="hl-string">Flowers blooming everywhere.</span>
+ @ Spring image: <span class="hl-string">https://www.example.com/image.jpg</span>
+-@ Summer : <span class="hl-string">Scorching sun, mango season.</span>
++@ 🏜️ Grishma : <span class="hl-string">Scorching sun, mango season.</span>
+ @ Summer image: <span class="hl-string">https://www.example.com/image.jpg</span>
+ :::
+                         </div>
