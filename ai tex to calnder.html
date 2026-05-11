@@ -63,6 +63,18 @@
 .mb-5{margin-bottom:1.25rem}
 </style>
     <style id="tailwindcss">
+
+        .from-orange-500\/20 { --tw-gradient-from: rgba(249, 115, 22, 0.2) var(--tw-gradient-from-position); --tw-gradient-to: rgba(249, 115, 22, 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+        .to-amber-600\/10 { --tw-gradient-to: rgba(217, 119, 6, 0.1) var(--tw-gradient-to-position); }
+        .border-orange-500\/30 { border-color: rgba(249, 115, 22, 0.3); }
+        .bg-orange-500\/20 { background-color: rgba(249, 115, 22, 0.2); }
+        .text-orange-500 { color: rgba(249, 115, 22, 1); }
+        .from-blue-500\/20 { --tw-gradient-from: rgba(59, 130, 246, 0.2) var(--tw-gradient-from-position); --tw-gradient-to: rgba(59, 130, 246, 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+        .to-indigo-600\/10 { --tw-gradient-to: rgba(79, 70, 229, 0.1) var(--tw-gradient-to-position); }
+        .border-blue-500\/30 { border-color: rgba(59, 130, 246, 0.3); }
+        .bg-blue-500\/20 { background-color: rgba(59, 130, 246, 0.2); }
+        .text-blue-500 { color: rgba(59, 130, 246, 1); }
+
     .pb-\[75px\] { padding-bottom: 75px; }
 
         .bg-white\/30 { background-color: rgba(255, 255, 255, 0.3); }
@@ -7733,30 +7745,46 @@ function renderCalendarGrid(data) {
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
                 const timelineDiv = document.createElement('div');
-                timelineDiv.className = "astro-timeline-modern";
+                timelineDiv.className = "grid grid-cols-1 md:grid-cols-2 gap-4 mb-4";
                 timelineDiv.innerHTML = `
-                    <div class="astro-time-item">
-                        <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
-                        <span class="astro-label" data-i18n="sunrise">Sunrise</span>
-                        <span class="astro-time">${fmt(sunTimes.sunrise)}</span>
+                    <!-- SOLAR TIMES CARD -->
+                    <div class="relative overflow-hidden rounded-2xl p-4 backdrop-blur-md border border-orange-500/30 bg-gradient-to-br from-orange-500/20 to-amber-600/10 shadow-sm flex flex-col justify-center">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-orange-500 shrink-0">
+                                <i class="fa-solid fa-sun text-lg"></i>
+                            </div>
+                            <span class="font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wider text-sm" data-i18n="solar_times">Solar Times</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm font-medium">
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-500 uppercase tracking-wide" data-i18n="sunrise">Sunrise</span>
+                                <span class="text-gray-900 dark:text-white font-bold">${fmt(sunTimes.sunrise)}</span>
+                            </div>
+                            <div class="flex flex-col text-right">
+                                <span class="text-xs text-gray-500 uppercase tracking-wide" data-i18n="sunset">Sunset</span>
+                                <span class="text-gray-900 dark:text-white font-bold">${fmt(sunTimes.sunset)}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="astro-divider"></div>
-                    <div class="astro-time-item">
-                        <i class="fa-solid fa-cloud-sun text-2xl text-purple-400 icon-glow-purple"></i>
-                        <span class="astro-label" data-i18n="sunset">Sunset</span>
-                        <span class="astro-time">${fmt(sunTimes.sunset)}</span>
-                    </div>
-                    <div class="astro-divider"></div>
-                    <div class="astro-time-item">
-                        <i class="fa-solid fa-cloud-moon text-2xl text-blue-400 icon-glow-blue"></i>
-                        <span class="astro-label" data-i18n="moonrise">Moonrise</span>
-                        <span class="astro-time">${fmt(moonTimes ? moonTimes.rise : null)}</span>
-                    </div>
-                    <div class="astro-divider"></div>
-                    <div class="astro-time-item">
-                        <i class="fa-solid fa-moon text-2xl text-gray-300 icon-glow-gray"></i>
-                        <span class="astro-label" data-i18n="moonset">Moonset</span>
-                        <span class="astro-time">${fmt(moonTimes ? moonTimes.set : null)}</span>
+
+                    <!-- LUNAR TIMES CARD -->
+                    <div class="relative overflow-hidden rounded-2xl p-4 backdrop-blur-md border border-blue-500/30 bg-gradient-to-br from-blue-500/20 to-indigo-600/10 shadow-sm flex flex-col justify-center">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-500 shrink-0">
+                                <i class="fa-solid fa-moon text-lg"></i>
+                            </div>
+                            <span class="font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wider text-sm" data-i18n="lunar_times">Lunar Times</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm font-medium">
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-500 uppercase tracking-wide" data-i18n="moonrise">Moonrise</span>
+                                <span class="text-gray-900 dark:text-white font-bold">${fmt(moonTimes ? moonTimes.rise : null)}</span>
+                            </div>
+                            <div class="flex flex-col text-right">
+                                <span class="text-xs text-gray-500 uppercase tracking-wide" data-i18n="moonset">Moonset</span>
+                                <span class="text-gray-900 dark:text-white font-bold">${fmt(moonTimes ? moonTimes.set : null)}</span>
+                            </div>
+                        </div>
                     </div>
                 `;
                 list.appendChild(timelineDiv);
