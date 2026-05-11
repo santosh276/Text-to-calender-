@@ -7732,9 +7732,14 @@ function renderCalendarGrid(data) {
             if (sunTimes.sunrise && sunTimes.sunset) {
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
-                const timelineDiv = document.createElement('div');
-                timelineDiv.className = "astro-timeline-modern";
-                timelineDiv.innerHTML = `
+                const timelineContainer = document.createElement('div');
+                timelineContainer.className = "grid grid-cols-2 gap-3 mb-5";
+
+                // Sun Card
+                const sunCard = document.createElement('div');
+                sunCard.className = "astro-timeline-modern";
+                sunCard.style.cssText = "background: linear-gradient(135deg, rgba(234, 88, 12, 0.8) 0%, rgba(154, 52, 18, 0.8) 100%); margin-bottom: 0 !important;";
+                sunCard.innerHTML = `
                     <div class="astro-time-item">
                         <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
                         <span class="astro-label" data-i18n="sunrise">Sunrise</span>
@@ -7746,7 +7751,13 @@ function renderCalendarGrid(data) {
                         <span class="astro-label" data-i18n="sunset">Sunset</span>
                         <span class="astro-time">${fmt(sunTimes.sunset)}</span>
                     </div>
-                    <div class="astro-divider"></div>
+                `;
+
+                // Moon Card
+                const moonCard = document.createElement('div');
+                moonCard.className = "astro-timeline-modern";
+                moonCard.style.cssText = "margin-bottom: 0 !important;"; // Inherits global css background
+                moonCard.innerHTML = `
                     <div class="astro-time-item">
                         <i class="fa-solid fa-cloud-moon text-2xl text-blue-400 icon-glow-blue"></i>
                         <span class="astro-label" data-i18n="moonrise">Moonrise</span>
@@ -7759,7 +7770,10 @@ function renderCalendarGrid(data) {
                         <span class="astro-time">${fmt(moonTimes ? moonTimes.set : null)}</span>
                     </div>
                 `;
-                list.appendChild(timelineDiv);
+
+                timelineContainer.appendChild(sunCard);
+                timelineContainer.appendChild(moonCard);
+                list.appendChild(timelineContainer);
             }
 
             // 4. Merge Data (Manual > Auto)
