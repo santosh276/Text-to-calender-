@@ -2474,7 +2474,6 @@ The word "Nua" means new and "Khai" means food.
                     
                     <div id="sec-ritu" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden order-3">
                         <div class="absolute top-0 right-0 -mr-4 -mt-4 pointer-events-none" style="width: 6rem; height: 6rem; background: linear-gradient(to right bottom, rgba(239, 68, 68, 0.1), transparent); border-bottom-left-radius: 100%;"></div>
-                        <div class="flex justify-between items-center mb-4 relative z-10 min-w-0 gap-2"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0 shrink-0"><i class="fa-solid fa-cloud-sun text-orange-500 text-lg"></i> <span data-i18n="current_ritu">Current Ritu</span></h3></div>
                         <div id="ritu-content"></div>
                     </div>
 <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4">
@@ -7676,8 +7675,9 @@ function renderCalendarGrid(data) {
             seasonCard.innerHTML = `
                 <div class="relative h-[160px] w-full rounded-t-2xl overflow-hidden shrink-0">
                     <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner">
-                    <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none"></div>
+                    <div class="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent pointer-events-none"></div>
                     <div class="absolute inset-x-0 bottom-0 p-4 flex flex-col pointer-events-none z-10">
+                        <span class="text-white/80 text-[10px] font-bold uppercase tracking-widest mb-1 drop-shadow-md" data-i18n="current_ritu">CURRENT RITU</span>
                         <span class="text-white text-xl font-bold drop-shadow-lg">${seasonName}</span>
                         <span class="text-white/90 text-sm drop-shadow-lg mt-1 font-medium">${seasonConfig.dateRange}</span>
                     </div>
