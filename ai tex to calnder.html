@@ -7737,37 +7737,47 @@ function renderCalendarGrid(data) {
 
                 // Sun Card
                 const sunCard = document.createElement('div');
-                sunCard.className = "astro-timeline-modern";
-                sunCard.style.cssText = "background: linear-gradient(135deg, rgba(234, 88, 12, 0.8) 0%, rgba(154, 52, 18, 0.8) 100%); margin-bottom: 0 !important;";
+                sunCard.className = "astro-timeline-modern flex flex-col";
+                sunCard.style.cssText = "background: linear-gradient(135deg, rgba(239, 136, 68, 0.9) 0%, rgba(220, 68, 59, 0.9) 100%); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2);";
                 sunCard.innerHTML = `
-                    <div class="astro-time-item">
-                        <i class="fa-solid fa-sun text-2xl text-orange-400 icon-glow-orange"></i>
-                        <span class="astro-label" data-i18n="sunrise">Sunrise</span>
-                        <span class="astro-time">${fmt(sunTimes.sunrise)}</span>
+                    <div class="w-full text-center pb-2 mb-2 border-b border-white/20">
+                        <span class="text-[10px] font-bold tracking-wider text-white/90" data-i18n="solar_times">SOLAR TIMES</span>
                     </div>
-                    <div class="astro-divider"></div>
-                    <div class="astro-time-item">
-                        <i class="fa-solid fa-cloud-sun text-2xl text-purple-400 icon-glow-purple"></i>
-                        <span class="astro-label" data-i18n="sunset">Sunset</span>
-                        <span class="astro-time">${fmt(sunTimes.sunset)}</span>
+                    <div class="flex justify-between w-full">
+                        <div class="astro-time-item">
+                            <i class="fa-solid fa-sun text-2xl text-yellow-300 icon-glow-orange"></i>
+                            <span class="astro-label text-white/80" data-i18n="sunrise">Sunrise</span>
+                            <span class="astro-time text-white">${fmt(sunTimes.sunrise)}</span>
+                        </div>
+                        <div class="astro-divider !bg-white/20"></div>
+                        <div class="astro-time-item">
+                            <i class="fa-solid fa-cloud-sun text-2xl text-orange-200 icon-glow-purple"></i>
+                            <span class="astro-label text-white/80" data-i18n="sunset">Sunset</span>
+                            <span class="astro-time text-white">${fmt(sunTimes.sunset)}</span>
+                        </div>
                     </div>
                 `;
 
                 // Moon Card
                 const moonCard = document.createElement('div');
-                moonCard.className = "astro-timeline-modern";
-                moonCard.style.cssText = "margin-bottom: 0 !important;"; // Inherits global css background
+                moonCard.className = "astro-timeline-modern flex flex-col";
+                moonCard.style.cssText = "background: linear-gradient(135deg, rgba(62, 88, 121, 0.9) 0%, rgba(33, 53, 85, 0.9) 100%); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2);";
                 moonCard.innerHTML = `
-                    <div class="astro-time-item">
-                        <i class="fa-solid fa-cloud-moon text-2xl text-blue-400 icon-glow-blue"></i>
-                        <span class="astro-label" data-i18n="moonrise">Moonrise</span>
-                        <span class="astro-time">${fmt(moonTimes ? moonTimes.rise : null)}</span>
+                    <div class="w-full text-center pb-2 mb-2 border-b border-white/20">
+                        <span class="text-[10px] font-bold tracking-wider text-white/90" data-i18n="lunar_times">LUNAR TIMES</span>
                     </div>
-                    <div class="astro-divider"></div>
-                    <div class="astro-time-item">
-                        <i class="fa-solid fa-moon text-2xl text-gray-300 icon-glow-gray"></i>
-                        <span class="astro-label" data-i18n="moonset">Moonset</span>
-                        <span class="astro-time">${fmt(moonTimes ? moonTimes.set : null)}</span>
+                    <div class="flex justify-between w-full">
+                        <div class="astro-time-item">
+                            <i class="fa-solid fa-cloud-moon text-2xl text-blue-200 icon-glow-blue"></i>
+                            <span class="astro-label text-white/80" data-i18n="moonrise">Moonrise</span>
+                            <span class="astro-time text-white">${fmt(moonTimes ? moonTimes.rise : null)}</span>
+                        </div>
+                        <div class="astro-divider !bg-white/20"></div>
+                        <div class="astro-time-item">
+                            <i class="fa-solid fa-moon text-2xl text-gray-200 icon-glow-gray"></i>
+                            <span class="astro-label text-white/80" data-i18n="moonset">Moonset</span>
+                            <span class="astro-time text-white">${fmt(moonTimes ? moonTimes.set : null)}</span>
+                        </div>
                     </div>
                 `;
 
