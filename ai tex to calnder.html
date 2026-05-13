@@ -7734,9 +7734,9 @@ function renderCalendarGrid(data) {
                     const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                     const parts = timeStr.split(/\s+/);
                     if (parts.length > 1) {
-                        return `<span class="text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
+                        return `<span class="text-sm md:text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-[10px] md:text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
                     }
-                    return `<span class="text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
+                    return `<span class="text-sm md:text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
                 };
                 
                 const timelineContainer = document.createElement('div');
@@ -8965,9 +8965,9 @@ function renderCalendarGrid(data) {
                 const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                 const parts = timeStr.split(/\s+/);
                 if (parts.length > 1) {
-                    return `<span class="text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
+                    return `<span class="text-sm md:text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-[10px] md:text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
                 }
-                return `<span class="text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
+                return `<span class="text-sm md:text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
             };
             
             // Astro Data
