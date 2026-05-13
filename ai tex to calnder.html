@@ -7729,7 +7729,15 @@ function renderCalendarGrid(data) {
 
             // 3. Render Astro Timeline (Sun/Moon Visual Strip)
             if (sunTimes.sunrise && sunTimes.sunset) {
-                const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+                const fmtSplit = (d) => {
+                    if (!d) return '--:--';
+                    const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                    const parts = timeStr.split(/\s+/);
+                    if (parts.length > 1) {
+                        return `<span class="text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
+                    }
+                    return `<span class="text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
+                };
                 
                 const timelineContainer = document.createElement('div');
                 timelineContainer.className = "grid grid-cols-2 gap-3 mb-5";
@@ -7737,22 +7745,22 @@ function renderCalendarGrid(data) {
                 // Sun Card
                 const sunCard = document.createElement('div');
                 sunCard.className = "astro-timeline-modern flex flex-col";
-                sunCard.style.cssText = "background: linear-gradient(to right, rgb(173, 111, 38), rgb(188, 72, 67)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;";
+                sunCard.style.cssText = "background: linear-gradient(to right, rgb(182, 121, 35), rgb(185, 76, 65)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;";
                 sunCard.innerHTML = `
     <div class="w-full text-center pb-2">
         <span class="text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="solar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">SOLAR TIMES</span>
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
-            <i class="fas fa-sun text-3xl text-yellow-400 mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+            <i class="fas fa-sun text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
             <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
-            <span class="text-lg font-bold text-white tracking-wide">${fmt(sunTimes.sunrise)}</span>
+            <div class="flex items-baseline">${fmtSplit(sunTimes.sunrise)}</div>
         </div>
         <div class="h-16 w-px bg-white/20 absolute left-1/2 -translate-x-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <i class="fas fa-cloud-sun text-3xl text-yellow-400 mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+            <i class="fas fa-cloud-sun text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
             <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
-            <span class="text-lg font-bold text-white tracking-wide">${fmt(sunTimes.sunset)}</span>
+            <div class="flex items-baseline">${fmtSplit(sunTimes.sunset)}</div>
         </div>
     </div>
 `;
@@ -7760,22 +7768,22 @@ function renderCalendarGrid(data) {
                 // Moon Card
                 const moonCard = document.createElement('div');
                 moonCard.className = "astro-timeline-modern flex flex-col";
-                moonCard.style.cssText = "background: linear-gradient(to right, rgb(61, 59, 109), rgb(60, 58, 108)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;"; 
+                moonCard.style.cssText = "background: linear-gradient(to right, rgb(42, 46, 92), rgb(62, 59, 111)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;";
                 moonCard.innerHTML = `
     <div class="w-full text-center pb-2">
         <span class="text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="lunar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">LUNAR TIMES</span>
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
-            <i class="fas fa-moon text-3xl text-blue-200 mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+            <i class="fas fa-moon text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
             <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
-            <span class="text-lg font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmt(moonTimes.rise) : '--:--'}</span>
+            <div class="flex items-baseline">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmtSplit(moonTimes.rise) : '--:--'}</div>
         </div>
         <div class="h-16 w-px bg-white/20 absolute left-1/2 -translate-x-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <i class="fas fa-cloud-moon text-3xl text-blue-200 mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+            <i class="fas fa-cloud-moon text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
             <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
-            <span class="text-lg font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmt(moonTimes.set) : '--:--'}</span>
+            <div class="flex items-baseline">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmtSplit(moonTimes.set) : '--:--'}</div>
         </div>
     </div>
 `;
@@ -8952,7 +8960,15 @@ function renderCalendarGrid(data) {
                 }
             }
 
-            const fmtAstroTime = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
+            const fmtAstroTime = (d) => {
+                if (!d) return '--:--';
+                const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                const parts = timeStr.split(/\s+/);
+                if (parts.length > 1) {
+                    return `<span class="text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
+                }
+                return `<span class="text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
+            };
             
             // Astro Data
             const jd = tithiInfo.jd || 0;
@@ -9123,32 +9139,44 @@ function renderCalendarGrid(data) {
 
                         <!-- 2a. Astro Details -->
                         ${sunTimes.sunrise ? `
-                        <div class="modal-card">
-                            <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-                                <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-cloud-sun"></i></div>
-                                <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Astro Details</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3 text-center">
-                                 <div class="bg-orange-50 rounded-xl p-2 border border-orange-100 flex flex-col items-center">
-                                     <i class="fa-solid fa-sun text-orange-400 mb-1"></i>
-                                     <span class="text-[10px] text-gray-500 font-bold uppercase" data-i18n="sunrise">Sunrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunrise)}</span>
-                                 </div>
-                                 <div class="bg-purple-50 rounded-xl p-2 border border-purple-100 flex flex-col items-center">
-                                     <i class="fa-solid fa-cloud-sun text-purple-400 mb-1"></i>
-                                     <span class="text-[10px] text-gray-500 font-bold uppercase" data-i18n="sunset">Sunset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunset)}</span>
-                                 </div>
-                                 <div class="bg-blue-50 rounded-xl p-2 border border-blue-100 flex flex-col items-center">
-                                     <i class="fa-solid fa-cloud-moon text-blue-400 mb-1"></i>
-                                     <span class="text-[10px] text-gray-500 font-bold uppercase" data-i18n="moonrise">Moonrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
-                                 </div>
-                                 <div class="bg-gray-50 rounded-xl p-2 border border-gray-200 flex flex-col items-center">
-                                     <i class="fa-solid fa-moon text-gray-400 mb-1"></i>
-                                     <span class="text-[10px] text-gray-500 font-bold uppercase" data-i18n="moonset">Moonset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
-                                 </div>
+                        <div class="modal-card p-0 bg-transparent border-0 shadow-none">
+                            <div class="grid grid-cols-2 gap-3 mb-5">
+                                <div class="astro-timeline-modern flex flex-col" style="background: linear-gradient(to right, rgb(182, 121, 35), rgb(185, 76, 65)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;">
+                                    <div class="w-full text-center pb-2">
+                                        <span class="text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="solar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">SOLAR TIMES</span>
+                                    </div>
+                                    <div class="flex justify-between items-center w-full relative">
+                                        <div class="flex flex-col items-center flex-1">
+                                            <i class="fas fa-sun text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                                            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
+                                            <div class="flex items-baseline">${fmtAstroTime(sunTimes.sunrise)}</div>
+                                        </div>
+                                        <div class="h-16 w-px bg-white/20 absolute left-1/2 -translate-x-1/2"></div>
+                                        <div class="flex flex-col items-center flex-1">
+                                            <i class="fas fa-cloud-sun text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                                            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
+                                            <div class="flex items-baseline">${fmtAstroTime(sunTimes.sunset)}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="astro-timeline-modern flex flex-col" style="background: linear-gradient(to right, rgb(42, 46, 92), rgb(62, 59, 111)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;">
+                                    <div class="w-full text-center pb-2">
+                                        <span class="text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="lunar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">LUNAR TIMES</span>
+                                    </div>
+                                    <div class="flex justify-between items-center w-full relative">
+                                        <div class="flex flex-col items-center flex-1">
+                                            <i class="fas fa-moon text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                                            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
+                                            <div class="flex items-baseline">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmtAstroTime(moonTimes.rise) : '--:--'}</div>
+                                        </div>
+                                        <div class="h-16 w-px bg-white/20 absolute left-1/2 -translate-x-1/2"></div>
+                                        <div class="flex flex-col items-center flex-1">
+                                            <i class="fas fa-cloud-moon text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+                                            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
+                                            <div class="flex items-baseline">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmtAstroTime(moonTimes.set) : '--:--'}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>` : ''}
 
