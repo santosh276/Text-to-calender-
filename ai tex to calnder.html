@@ -7744,13 +7744,13 @@ function renderCalendarGrid(data) {
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
-            <i class="fas fa-sun text-[24px] md:text-[28px] text-[#FFD700] mb-2" style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.5));"></i>
+            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-sun text-[24px] md:text-[28px]" style="background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${fmt(sunTimes.sunrise)}</span>
         </div>
         <div class="h-16 md:h-20 w-px bg-white/20 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <i class="fas fa-cloud-sun text-[24px] md:text-[28px] text-[#FFD700] mb-2" style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.5));"></i>
+            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-sun text-[24px] md:text-[28px]" style="background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${fmt(sunTimes.sunset)}</span>
         </div>
@@ -7767,13 +7767,13 @@ function renderCalendarGrid(data) {
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
-            <i class="fas fa-cloud-moon text-[24px] md:text-[28px] text-white mb-2" style="filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));"></i>
+            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-moon text-[24px] md:text-[28px]" style="background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmt(moonTimes.rise) : '--:--'}</span>
         </div>
         <div class="h-16 md:h-20 w-px bg-white/20 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <i class="fas fa-moon text-[24px] md:text-[28px] text-white mb-2" style="filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));"></i>
+            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-moon text-[24px] md:text-[28px]" style="background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmt(moonTimes.set) : '--:--'}</span>
         </div>
