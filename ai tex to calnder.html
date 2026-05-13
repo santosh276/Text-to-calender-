@@ -7734,9 +7734,9 @@ function renderCalendarGrid(data) {
                     const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                     const parts = timeStr.split(/\s+/);
                     if (parts.length > 1) {
-                        return `<span class="text-sm md:text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-[10px] md:text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
+                        return `<span class="text-[13px] md:text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-[9px] md:text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
                     }
-                    return `<span class="text-sm md:text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
+                    return `<span class="text-[13px] md:text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
                 };
                 
                 const timelineContainer = document.createElement('div');
@@ -7748,18 +7748,18 @@ function renderCalendarGrid(data) {
                 sunCard.style.cssText = "background: linear-gradient(to right, rgb(182, 121, 35), rgb(185, 76, 65)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;";
                 sunCard.innerHTML = `
     <div class="w-full text-center pb-2">
-        <span class="text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="solar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">SOLAR TIMES</span>
+        <span class="text-[10px] md:text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="solar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">SOLAR TIMES</span>
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
             <i class="fas fa-sun text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
+            <span class="text-[9px] md:text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
             <div class="flex items-baseline">${fmtSplit(sunTimes.sunrise)}</div>
         </div>
         <div class="h-16 w-px bg-white/20 absolute left-1/2 -translate-x-1/2"></div>
         <div class="flex flex-col items-center flex-1">
             <i class="fas fa-cloud-sun text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
+            <span class="text-[9px] md:text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
             <div class="flex items-baseline">${fmtSplit(sunTimes.sunset)}</div>
         </div>
     </div>
@@ -7771,18 +7771,18 @@ function renderCalendarGrid(data) {
                 moonCard.style.cssText = "background: linear-gradient(to right, rgb(42, 46, 92), rgb(62, 59, 111)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;";
                 moonCard.innerHTML = `
     <div class="w-full text-center pb-2">
-        <span class="text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="lunar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">LUNAR TIMES</span>
+        <span class="text-[10px] md:text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="lunar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">LUNAR TIMES</span>
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
             <i class="fas fa-moon text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
+            <span class="text-[9px] md:text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
             <div class="flex items-baseline">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmtSplit(moonTimes.rise) : '--:--'}</div>
         </div>
         <div class="h-16 w-px bg-white/20 absolute left-1/2 -translate-x-1/2"></div>
         <div class="flex flex-col items-center flex-1">
             <i class="fas fa-cloud-moon text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
+            <span class="text-[9px] md:text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
             <div class="flex items-baseline">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmtSplit(moonTimes.set) : '--:--'}</div>
         </div>
     </div>
@@ -8965,9 +8965,9 @@ function renderCalendarGrid(data) {
                 const timeStr = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                 const parts = timeStr.split(/\s+/);
                 if (parts.length > 1) {
-                    return `<span class="text-sm md:text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-[10px] md:text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
+                    return `<span class="text-[13px] md:text-lg font-bold text-white tracking-wide">${parts[0]}</span> <span class="text-[9px] md:text-xs font-bold text-white/90 ml-0.5">${parts[1]}</span>`;
                 }
-                return `<span class="text-sm md:text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
+                return `<span class="text-[13px] md:text-lg font-bold text-white tracking-wide">${timeStr}</span>`;
             };
             
             // Astro Data
@@ -9143,36 +9143,36 @@ function renderCalendarGrid(data) {
                             <div class="grid grid-cols-2 gap-3 mb-5">
                                 <div class="astro-timeline-modern flex flex-col" style="background: linear-gradient(to right, rgb(182, 121, 35), rgb(185, 76, 65)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;">
                                     <div class="w-full text-center pb-2">
-                                        <span class="text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="solar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">SOLAR TIMES</span>
+                                        <span class="text-[10px] md:text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="solar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">SOLAR TIMES</span>
                                     </div>
                                     <div class="flex justify-between items-center w-full relative">
                                         <div class="flex flex-col items-center flex-1">
                                             <i class="fas fa-sun text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-                                            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
+                                            <span class="text-[9px] md:text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
                                             <div class="flex items-baseline">${fmtAstroTime(sunTimes.sunrise)}</div>
                                         </div>
                                         <div class="h-16 w-px bg-white/20 absolute left-1/2 -translate-x-1/2"></div>
                                         <div class="flex flex-col items-center flex-1">
                                             <i class="fas fa-cloud-sun text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-                                            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
+                                            <span class="text-[9px] md:text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
                                             <div class="flex items-baseline">${fmtAstroTime(sunTimes.sunset)}</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="astro-timeline-modern flex flex-col" style="background: linear-gradient(to right, rgb(42, 46, 92), rgb(62, 59, 111)); margin-bottom: 0 !important; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;">
                                     <div class="w-full text-center pb-2">
-                                        <span class="text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="lunar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">LUNAR TIMES</span>
+                                        <span class="text-[10px] md:text-xs font-bold tracking-widest text-white/90 uppercase" data-i18n="lunar_times" style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">LUNAR TIMES</span>
                                     </div>
                                     <div class="flex justify-between items-center w-full relative">
                                         <div class="flex flex-col items-center flex-1">
                                             <i class="fas fa-moon text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-                                            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
+                                            <span class="text-[9px] md:text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
                                             <div class="flex items-baseline">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmtAstroTime(moonTimes.rise) : '--:--'}</div>
                                         </div>
                                         <div class="h-16 w-px bg-white/20 absolute left-1/2 -translate-x-1/2"></div>
                                         <div class="flex flex-col items-center flex-1">
                                             <i class="fas fa-cloud-moon text-3xl text-white mb-2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-                                            <span class="text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
+                                            <span class="text-[9px] md:text-[11px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
                                             <div class="flex items-baseline">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmtAstroTime(moonTimes.set) : '--:--'}</div>
                                         </div>
                                     </div>
