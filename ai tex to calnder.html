@@ -7746,13 +7746,13 @@ function renderCalendarGrid(data) {
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-sun text-[25px] md:text-[26px]" style="background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${fmt(sunTimes.sunrise)}</span>
         </div>
         <div class="h-16 md:h-20 w-px bg-white/20 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-sun text-[25px] md:text-[26px]" style="background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${fmt(sunTimes.sunset)}</span>
         </div>
@@ -7770,22 +7770,21 @@ function renderCalendarGrid(data) {
     </div>
 
     <!-- Twinkle Stars -->
-    <div class="absolute top-1 left-1/2 text-white/80" style="width: 10px; height: 10px; filter: drop-shadow(0 0 2px rgba(255,255,255,0.8));">
+    <div class="absolute -translate-x-1/2 text-white" style="top: 28px; left: 52%; width: 14px; height: 14px; filter: drop-shadow(0 0 3px rgba(255,255,255,1)); z-index: 10;">
 <svg viewBox="0 0 24 24" fill="currentColor" style="width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
   <path d="M12 0C12.5 8 16 11.5 24 12C16 12.5 12.5 16 12 24C11.5 16 8 12.5 0 12C8 11.5 11.5 8 12 0Z"/>
 </svg>
 </div>
-    <div class="absolute top-3 right-4 text-white/80" style="width: 8px; height: 8px; filter: drop-shadow(0 0 2px rgba(255,255,255,0.8));">
+    <div class="absolute -translate-x-1/2 text-white/90" style="top: 26px; left: 49%; width: 8px; height: 8px; filter: drop-shadow(0 0 2px rgba(255,255,255,0.8)); z-index: 10;">
 <svg viewBox="0 0 24 24" fill="currentColor" style="width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
   <path d="M12 0C12.5 8 16 11.5 24 12C16 12.5 12.5 16 12 24C11.5 16 8 12.5 0 12C8 11.5 11.5 8 12 0Z"/>
 </svg>
 </div>
-    <div class="absolute bottom-6 right-1/2 text-white/60" style="width: 8px; height: 8px; filter: drop-shadow(0 0 2px rgba(255,255,255,0.6));">
+    <div class="absolute text-white/90" style="top: 35px; right: 8%; width: 13px; height: 13px; filter: drop-shadow(0 0 2px rgba(255,255,255,0.8)); z-index: 10;">
 <svg viewBox="0 0 24 24" fill="currentColor" style="width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
   <path d="M12 0C12.5 8 16 11.5 24 12C16 12.5 12.5 16 12 24C11.5 16 8 12.5 0 12C8 11.5 11.5 8 12 0Z"/>
 </svg>
 </div>
-
     <!-- Background Tiny Dots -->
     <div class="absolute top-2 left-6 text-white/40" style="width: 2px; height: 2px;">
 <svg viewBox="0 0 24 24" fill="currentColor" style="width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
@@ -7851,13 +7850,13 @@ function renderCalendarGrid(data) {
     <div class="flex justify-between items-center w-full relative">
 
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-moon text-[25px] md:text-[26px]" style="background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmt(moonTimes.rise) : '--:--'}</span>
         </div>
         <div class="h-16 md:h-20 w-px bg-white/20 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-moon text-[25px] md:text-[26px]" style="background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmt(moonTimes.set) : '--:--'}</span>
         </div>
