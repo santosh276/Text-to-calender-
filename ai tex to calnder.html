@@ -7663,6 +7663,8 @@ function renderCalendarGrid(data) {
             const langObj = langData[currentLang] || langData['en'];
             const seasonName = langObj.indianSeasons[seasonIndex];
             const seasonEmojis = ["🌸", "☀️", "⛈️", "🌾", "🌥️", "❄️"];
+            // Colors for different seasons (Vasant: Pink, Grishma: Orange, Varsha: Blue, Sharad: Yellow, Hemant: Purple, Shishir: Sky Blue)
+            const seasonTitleColors = ["#E83E8C", "#F97316", "#3B82F6", "#F59E0B", "#8B5CF6", "#0EA5E9"];
             
             // Retrieve detailed description
             const rawSeasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex]) 
@@ -7685,7 +7687,7 @@ function renderCalendarGrid(data) {
                     <div class="absolute inset-x-0 bottom-0 p-4 flex flex-col pointer-events-none z-10">
                         <div class="flex items-center gap-3">
                             <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-lg">${seasonEmojis[seasonIndex]}</div>
-                            <span class="text-xl font-bold text-white drop-shadow-lg">${seasonName}</span>
+                            <span class="text-xl font-bold drop-shadow-lg" style="color: ${seasonTitleColors[seasonIndex]};">${seasonName}</span>
                         </div>
                         <span class="text-white/90 text-sm drop-shadow-lg mt-2 font-medium">${seasonConfig.dateRange}</span>
                     </div>
