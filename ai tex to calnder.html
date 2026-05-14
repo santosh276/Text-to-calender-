@@ -7687,15 +7687,14 @@ function renderCalendarGrid(data) {
 
             // Re-structured inner HTML to include banner image and glassmorphic layout
             seasonCard.innerHTML = `
-                <div class="ritu-glass-card relative h-[160px] shrink-0" style="background-color: ${seasonTitleColors[seasonIndex]};">
-                    <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner" onerror="this.style.display='none';">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent pointer-events-none"></div>
+                <div class="ritu-glass-card relative h-[160px] shrink-0" style="background: linear-gradient(to bottom, ${seasonTitleColors[seasonIndex]}, #2D0F1F);">
+                    <!-- Removed image tag as per the user's request for solid colors -->
                     <div class="absolute inset-x-0 bottom-0 p-4 flex flex-col pointer-events-none z-10">
                         <div class="flex items-center gap-3">
-                            <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-lg">${seasonEmojis[seasonIndex]}</div>
+                            <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-2xl">${seasonEmojis[seasonIndex]}</div>
                             <span class="text-xl font-bold drop-shadow-lg" style="color: ${seasonTitleColors[seasonIndex]};">${seasonName}</span>
                         </div>
-                        <span class="text-white/90 text-sm drop-shadow-lg mt-2 font-medium">${seasonConfig.dateRange}</span>
+                        <span class="text-white/90 text-base drop-shadow-lg mt-2 font-medium">${seasonConfig.dateRange}</span>
                     </div>
                 </div>
                 ${seasonDescHtml.trim() ? `
