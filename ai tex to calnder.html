@@ -7699,8 +7699,8 @@ function renderCalendarGrid(data) {
                     </div>
                 </div>
                 ${seasonDescHtml.trim() ? `
-                <div class="ritu-glass-card p-4">
-                    <div class="text-sm text-gray-700 leading-relaxed font-sans">
+                <div class="ritu-glass-card p-4" style="background: ${seasonTitleColors[seasonIndex]}20; border-top: 1px solid ${seasonTitleColors[seasonIndex]}50; border-left: 1px solid ${seasonTitleColors[seasonIndex]}50;">
+                    <div class="text-sm text-gray-800 leading-relaxed font-sans">
                         ${seasonDescHtml}
                     </div>
                 </div>` : ''}
