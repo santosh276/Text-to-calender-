@@ -7693,12 +7693,12 @@ function renderCalendarGrid(data) {
                         <span class="text-white/90 text-sm drop-shadow-lg mt-2 font-medium">${seasonConfig.dateRange}</span>
                     </div>
                 </div>
-
+                ${seasonDescHtml.trim() ? `
                 <div class="ritu-glass-card p-4">
                     <div class="text-sm text-gray-700 leading-relaxed font-sans">
                         ${seasonDescHtml}
                     </div>
-                </div>
+                </div>` : ''}
             `;
             
             const rituContainer = document.getElementById('ritu-content');
