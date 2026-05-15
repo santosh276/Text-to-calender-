@@ -5044,7 +5044,7 @@ const LOCATION_DATA = {
 
                                                       // Save to App State (So it persists in Downloaded File)
                                                      appState.config.liveUrl = url;
-                                                                                    if (!url.includes('github') && !url.includes('jsdelivr.net')) {
+                                                                                                                      if (!url.includes('github') && !url.includes('jsdelivr.net')) {
                                         appState.config.syncDocsUrl = url;
                 }
                 
@@ -7685,8 +7685,8 @@ function renderCalendarGrid(data) {
                 <div class="ritu-glass-card relative h-[160px] shrink-0" style="background-color: ${seasonTitleColors[seasonIndex]};">
                     <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner" onerror="this.style.display='none';">
                     <div class="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent pointer-events-none"></div>
-                    <div class="absolute inset-x-0 bottom-0 p-4 flex flex-col pointer-events-none z-10">
-                        <div class="flex items-center gap-3">
+                    <div class="absolute inset-x-0 bottom-0 px-3 py-4 flex flex-col pointer-events-none z-10">
+                        <div class="flex items-center gap-1.5">
                             <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-lg">${seasonEmojis[seasonIndex]}</div>
                             <span class="text-xl font-bold drop-shadow-lg" style="color: ${seasonTitleColors[seasonIndex]};">${seasonName}</span>
                         </div>
@@ -7694,11 +7694,12 @@ function renderCalendarGrid(data) {
                     </div>
                 </div>
                 
-                <div class="ritu-glass-card p-4">
+                ${seasonDescHtml.trim() ? `
+                <div class="ritu-glass-card p-4" style="background-color: ${seasonTitleColors[seasonIndex]}15; border: 1px solid ${seasonTitleColors[seasonIndex]}40;">
                     <div class="text-sm text-gray-700 leading-relaxed font-sans">
                         ${seasonDescHtml}
                     </div>
-                </div>
+                </div>` : ''}
             `;
             
             const rituContainer = document.getElementById('ritu-content');
