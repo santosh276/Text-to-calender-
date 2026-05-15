@@ -703,27 +703,28 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
         /* SEASON UI COMPONENT STYLES */
         .season-ui-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .season-ui-card:active {
+            transform: scale(0.98);
+        }
+        
+        .ritu-glass-card {
             background-color: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 16px;
-            padding: 0; /* Removed padding for banner to be edge-to-edge */
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0;
-            width: 100%; /* Fitted to container */
-            cursor: pointer;
             box-shadow: 0 8px 32px rgba(0,0,0,0.05);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
             overflow: hidden;
-            margin-bottom: 1rem;
-        }
-
-        .season-ui-card:active {
-            transform: scale(0.98);
+            width: 100%;
         }
 
         .season-ui-icon-container {
@@ -5043,7 +5044,7 @@ const LOCATION_DATA = {
 
                                                       // Save to App State (So it persists in Downloaded File)
                                                      appState.config.liveUrl = url;
-                                                  if (!url.includes('github') && !url.includes('jsdelivr.net')) {
+                                                                                    if (!url.includes('github') && !url.includes('jsdelivr.net')) {
                                         appState.config.syncDocsUrl = url;
                 }
                 
@@ -7663,6 +7664,8 @@ function renderCalendarGrid(data) {
             const langObj = langData[currentLang] || langData['en'];
             const seasonName = langObj.indianSeasons[seasonIndex];
             const seasonEmojis = ["🌸", "☀️", "⛈️", "🌾", "🌥️", "❄️"];
+            // Colors for different seasons (Vasant: Pink, Grishma: Orange, Varsha: Blue, Sharad: Yellow, Hemant: Purple, Shishir: Sky Blue)
+            const seasonTitleColors = ["#E83E8C", "#F97316", "#3B82F6", "#F59E0B", "#8B5CF6", "#0EA5E9"];
             
             // Retrieve detailed description
             const rawSeasonDesc = (appState.customSeasonDescriptions && appState.customSeasonDescriptions[seasonIndex]) 
@@ -7679,18 +7682,19 @@ function renderCalendarGrid(data) {
 
             // Re-structured inner HTML to include banner image and glassmorphic layout
             seasonCard.innerHTML = `
-                <div class="relative h-[160px] w-full rounded-t-2xl overflow-hidden shrink-0">
-                    <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner">
+                <div class="ritu-glass-card relative h-[160px] shrink-0" style="background-color: ${seasonTitleColors[seasonIndex]};">
+                    <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner" onerror="this.style.display='none';">
                     <div class="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent pointer-events-none"></div>
                     <div class="absolute inset-x-0 bottom-0 p-4 flex flex-col pointer-events-none z-10">
                         <div class="flex items-center gap-3">
                             <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-lg">${seasonEmojis[seasonIndex]}</div>
-                            <span class="text-xl font-bold text-white drop-shadow-lg">${seasonName}</span>
+                            <span class="text-xl font-bold drop-shadow-lg" style="color: ${seasonTitleColors[seasonIndex]};">${seasonName}</span>
                         </div>
                         <span class="text-white/90 text-sm drop-shadow-lg mt-2 font-medium">${seasonConfig.dateRange}</span>
                     </div>
                 </div>
-                <div class="w-full p-4 pt-2">
+                
+                <div class="ritu-glass-card p-4">
                     <div class="text-sm text-gray-700 leading-relaxed font-sans">
                         ${seasonDescHtml}
                     </div>
