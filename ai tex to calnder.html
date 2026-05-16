@@ -7685,12 +7685,12 @@ function renderCalendarGrid(data) {
                 <div class="ritu-glass-card relative h-[160px] shrink-0" style="background-color: ${seasonTitleColors[seasonIndex]};">
                     <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner" onerror="this.style.display='none';">
                     <div class="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent pointer-events-none"></div>
-                    <div class="absolute inset-x-0 bottom-0 px-3 py-4 flex flex-col pointer-events-none z-10">
-                        <div class="flex items-center gap-1.5">
-                            <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-lg">${seasonEmojis[seasonIndex]}</div>
-                            <span class="text-xl font-bold drop-shadow-lg" style="color: ${seasonTitleColors[seasonIndex]};">${seasonName}</span>
+                    <div class="absolute inset-x-0 bottom-0 px-2 pt-4 flex flex-col pointer-events-none z-10" style="padding-bottom: 18px;">
+                        <div class="flex items-center gap-1">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-base">${seasonEmojis[seasonIndex]}</div>
+                            <span class="text-lg font-bold drop-shadow-lg leading-none" style="color: ${seasonTitleColors[seasonIndex]};">${seasonName}</span>
                         </div>
-                        <span class="text-white/90 text-sm drop-shadow-lg mt-2 font-medium">${seasonConfig.dateRange}</span>
+                        <span class="text-white/90 drop-shadow-lg font-medium" style="margin-left: 36px; margin-top: -2px; font-size: 12.5px;">${seasonConfig.dateRange}</span>
                     </div>
                 </div>
                 
