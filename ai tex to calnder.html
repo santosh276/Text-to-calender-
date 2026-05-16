@@ -1980,6 +1980,9 @@ Moonset : ଚନ୍ଦ୍ରାସ୍ତ
 Sunrise : ସୂର୍ଯ୍ୟୋଦୟ
 Sunset : ସୂର୍ଯ୍ୟାସ୍ତ
 Festivals Header : ପର୍ବପର୍ବାଣି
+Vaidik Date : ବୈଦିକ ତାରିଖ
+Solar Date : ସୌର ତାରିଖ
+Lunar Date : ଚାନ୍ଦ୍ର ତାରିଖ
 Timings : ସମୟ
 Auspicious Timings Header : ଶୁଭ ସମୟ
 Inauspicious Timings Header : ଅଶୁଭ ସମୟ
@@ -2487,7 +2490,8 @@ The word "Nua" means new and "Khai" means food.
                         <div class="flex justify-between items-center mb-4 relative z-10 min-w-0 gap-2"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0 shrink-0"><i class="fa-solid fa-cloud-sun text-orange-500 text-lg"></i> <span data-i18n="current_ritu">Current Ritu</span></h3></div>
                         <div id="ritu-content"></div>
                     </div>
-<div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4">
+<div id="sec-vaidik-date" class="glass rounded-xl shadow-md border-l-4 border-blue-500 p-4 transition-all duration-300 order-3 mb-4"></div>
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i><span data-i18n="panchang_header">Panchang</span></h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul>
@@ -3494,6 +3498,22 @@ return SunCalc;
                 getNakshatraTimes: getNakshatraTimes,
                 AMRIT_GHATIS: AMRIT_GHATIS,
 
+                getPastSankranti: function(baseDateObj) {
+                    let jdStart = (Date.UTC(baseDateObj.getFullYear(), baseDateObj.getMonth(), baseDateObj.getDate()) / 86400000) + 2440587.5;
+                    let currentSunLon = norm(getSunLong(jdStart) - getAyanamsa(jdStart));
+                    let currentRashi = Math.floor(currentSunLon / 30);
+
+                    for (let i = 1; i <= 35; i++) {
+                        let jdCheck = jdStart - i;
+                        let testSunLon = norm(getSunLong(jdCheck) - getAyanamsa(jdCheck));
+                        let testRashi = Math.floor(testSunLon / 30);
+
+                        if (testRashi !== currentRashi) {
+                            return { rashiIndex: currentRashi, daysElapsed: i - 1 };
+                        }
+                    }
+                    return null;
+                },
                 getUpcomingSankranti: function(baseDateObj) {
                     let jdStart = (Date.UTC(baseDateObj.getFullYear(), baseDateObj.getMonth(), baseDateObj.getDate()) / 86400000) + 2440587.5;
                     let currentSunLon = norm(getSunLong(jdStart) - getAyanamsa(jdStart));
@@ -7935,6 +7955,29 @@ function renderCalendarGrid(data) {
             
             // Add Upcoming Sankranti directly to displayData if it happens today
             const sankrantiToday = VedicAstro.getUpcomingSankranti(calcDate);
+            // Vaidik Date Card Population
+            const vaidikCard = document.getElementById('sec-vaidik-date');
+            if (vaidikCard) {
+                const pastSankranti = VedicAstro.getPastSankranti(calcDate);
+                const solarDay = pastSankranti ? pastSankranti.daysElapsed + 1 : '-';
+                const solarMonth = pastSankranti ? langObj.rashis[pastSankranti.rashiIndex] : '-';
+                const lunarDate = (typeof getHinduMonthName === 'function' ? getHinduMonthName(calcDate, data.month) : langObj.indianMonths[data.month]) + ' ' + autoData.paksha.split(' ')[0] + ' ' + autoData.tithi;
+
+                vaidikCard.innerHTML = `
+                    <h3 class="font-bold text-blue-600 mb-3 border-b pb-2 flex items-center gap-2"><i class="fa-solid fa-calendar-alt text-lg"></i> <span data-i18n="vaidik_date">Vaidik Date</span></h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col items-start">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1"><i class="fa-solid fa-sun text-orange-500"></i> <span data-i18n="solar_date">Solar Date</span></span>
+                            <span class="text-sm font-semibold text-gray-800">${solarMonth} ${toNativeNum(solarDay, appState.config.language)}</span>
+                        </div>
+                        <div class="flex flex-col items-start">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1"><i class="fa-solid fa-moon text-blue-400"></i> <span data-i18n="lunar_date">Lunar Date</span></span>
+                            <span class="text-sm font-semibold text-gray-800">${lunarDate}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
             if (sankrantiToday) {
                 // If the exact date of sankranti matches calcDate
                 if (sankrantiToday.dateObj.getDate() === calcDate.getDate() && 
@@ -9226,6 +9269,27 @@ function renderCalendarGrid(data) {
                         <h2 class="text-xl font-extrabold text-deepred mb-3 tracking-tight leading-none">${daysOfWeek[dateObj.getDay()]}, ${months[monthData.month]} ${day}, ${monthData.year}</h2>
                         ${pakshaBadgeHtml}
                     </div>
+
+                    <!-- Vaidik Date Block -->
+                    ${(() => {
+                        const pastSankranti = VedicAstro.getPastSankranti(dateObj);
+                        const solarDay = pastSankranti ? pastSankranti.daysElapsed + 1 : '-';
+                        const solarMonth = pastSankranti ? langObj.rashis[pastSankranti.rashiIndex] : '-';
+                        const lunarDate = hinduMonthName + ' ' + tithiInfo.paksha.split(' ')[0] + ' ' + tithiInfo.tithi;
+
+                        return `
+                            <div class="bg-white/40 backdrop-blur-sm rounded-lg p-3 mx-4 mb-2 mt-2 border border-white/50 shadow-sm flex justify-between items-center text-left">
+                                <div class="flex-1 border-r border-gray-300/50 pr-3">
+                                    <div class="text-[10px] uppercase font-bold text-gray-500 flex items-center gap-1 mb-1"><i class="fa-solid fa-sun text-orange-500"></i> <span data-i18n="solar_date">Solar Date</span></div>
+                                    <div class="text-sm font-bold text-gray-800">${solarMonth} ${toNativeNum(solarDay, appState.config.language)}</div>
+                                </div>
+                                <div class="flex-1 pl-3">
+                                    <div class="text-[10px] uppercase font-bold text-gray-500 flex items-center gap-1 mb-1"><i class="fa-solid fa-moon text-blue-500"></i> <span data-i18n="lunar_date">Lunar Date</span></div>
+                                    <div class="text-sm font-bold text-gray-800 leading-tight">${lunarDate}</div>
+                                </div>
+                            </div>
+                        `;
+                    })()}
 
                     <!-- Scrollable Body -->
                     <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-[75px] md:pb-8 px-4 pt-4 space-y-2 max-w-lg mx-auto w-full transform-gpu will-change-transform overscroll-none touch-pan-y max-h-[90vh]" style="-webkit-overflow-scrolling: touch; contain: content;">
