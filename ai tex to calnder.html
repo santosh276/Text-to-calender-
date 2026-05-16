@@ -3489,6 +3489,24 @@ return SunCalc;
             };
 
             return {
+                getSolarDate: function(dateObj) {
+                    let currentJd = (Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()) / 86400000) + 2440587.5;
+                    let currentSunLon = norm(getSunLong(currentJd) - getAyanamsa(currentJd));
+                    let rashiIndex = Math.floor(currentSunLon / 30);
+
+                    let solarDay = 1;
+                    // Step backwards up to 32 days to find when the sun entered this Rashi
+                    for (let i = 1; i <= 32; i++) {
+                        let prevJd = currentJd - i;
+                        let prevSunLon = norm(getSunLong(prevJd) - getAyanamsa(prevJd));
+                        let prevRashi = Math.floor(prevSunLon / 30);
+                        if (prevRashi !== rashiIndex) {
+                            solarDay = i; // Days elapsed since transition
+                            break;
+                        }
+                    }
+                    return { rashiIndex: rashiIndex, solarDay: solarDay };
+                },
                 calculate: calculate,
                 getTithiTimes: getTithiTimes,
                 getNakshatraTimes: getNakshatraTimes,
@@ -4088,7 +4106,8 @@ const LOCATION_DATA = {
         let isBannerDismissed = false;
 
         const langData = {
-    en: { 
+    en: {
+        solarMonths: ["Vaishakha", "Jyeshtha", "Ashadha", "Shravana", "Bhadrapada", "Ashvina", "Kartika", "Margashirsha", "Pausha", "Magha", "Phalguna", "Chaitra"], dina: "Day",
         days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
         nums: ["0","1","2","3","4","5","6","7","8","9"], 
         filters: ["Festivals", "Auspicious", "Holidays", "Other festivals"],
@@ -4099,7 +4118,8 @@ indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chai
         paksha: ["Shukla Paksha", "Krishna Paksha"],
         tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
     },
-    hi: { 
+    hi: {
+        solarMonths: ["वैशाख", "ज्येष्ठ", "आषाढ़", "श्रावण", "भाद्रपद", "आश्विन", "कार्तिक", "मार्गशीर्ष", "पौष", "माघ", "फाल्गुन", "चैत्र"], dina: "दिन",
         days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], 
         nums: ["०","१","२","३","४","५","६","७","८","९"], 
         filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ", "अन्य त्यौहार"],
@@ -4110,7 +4130,8 @@ indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "�
         paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
         tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
     },
-    or: { 
+    or: {
+        solarMonths: ["ବୈଶାଖ", "ଜ୍ୟୈଷ୍ଠ", "ଆଷାଢ଼", "ଶ୍ରାବଣ", "ଭାଦ୍ରବ", "ଆଶ୍ୱିନ", "କାର୍ତ୍ତିକ", "ମାର୍ଗଶିର", "ପୌଷ", "ମାଘ", "ଫାଲ୍ଗୁନ", "ଚୈତ୍ର"], dina: "ଦିନ",
         days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], 
         nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], 
         filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ", "ଅନ୍ୟାନ୍ୟ ପର୍ବ"],
@@ -4121,7 +4142,8 @@ indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫ�
         paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
         tithis: ["ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ଅମାବାସ୍ୟା"]
     },
-    bn: { 
+    bn: {
+        solarMonths: ["বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ", "ভাদ্র", "আশ্বিন", "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"], dina: "দিন",
         days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], 
         nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
         filters: ["উৎসব", "শুভ দিন", "ছুটি", "অন্যান্য উৎসব"],
@@ -4132,7 +4154,8 @@ indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "�
         paksha: ["শুক্ল পক্ষ", "कृष्ण পক্ষ"],
         tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
     },
-    mr: { 
+    mr: {
+        solarMonths: ["वैशाख", "ज्येष्ठ", "आषाढ", "श्रावण", "भाद्रपद", "आश्विन", "कार्तिक", "मार्गशीर्ष", "पौष", "माघ", "फाल्गुन", "चैत्र"], dina: "दिवस",
         days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], 
         nums: ["०","१","२","३","४","५","६","७","८","९"], 
         filters: ["सण", "शुभ दिवस", "सुट्ट्या", "इतर सण"],
@@ -4143,7 +4166,8 @@ indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "�
         paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
         tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
     },
-    gu: { 
+    gu: {
+        solarMonths: ["વૈશાખ", "જેઠ", "અષાઢ", "શ્રાવણ", "ભાદરવો", "આસો", "કારતક", "માગશર", "પોષ", "મહા", "ફાગણ", "ચૈત્ર"], dina: "દિવસ",
         days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], 
         nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], 
         filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ", "અન્ય તહેવારો"],
@@ -4154,7 +4178,8 @@ indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગ�
         paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
         tithis: ["પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "પૂનમ", "પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "અમાસ"]
     },
-    pa: { 
+    pa: {
+        solarMonths: ["ਵੈਸਾਖ", "ਜੇਠ", "ਹਾੜ", "ਸਾਵਣ", "ਭਾਦੋਂ", "ਅੱਸੂ", "ਕੱਤਕ", "ਮੱਘਰ", "ਪੋਹ", "ਮਾਘ", "ਫੱਗਣ", "ਚੇਤ"], dina: "ਦਿਨ",
         days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], 
         nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], 
         filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ", "ਹੋਰ ਤਿਉਹਾਰ"],
@@ -4165,7 +4190,8 @@ indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗ�
         paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
         tithis: ["ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਮਾਸ਼ੀ", "ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਮੱਸਿਆ"]
     },
-    ta: { 
+    ta: {
+        solarMonths: ["சித்திரை", "வைகாசி", "ஆனி", "ஆடி", "ஆவணி", "புரட்டாசி", "ஐப்பசி", "கார்த்திகை", "மார்கழி", "தை", "மாசி", "பங்குனி"], dina: "நாள்",
         days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], 
         nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], 
         filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை", "மற்ற பண்டிகைகள்"],
@@ -4176,7 +4202,8 @@ indianMonths: ["மார்கழி / தை", "தை / மாசி", "ம�
         paksha: ["வளர்பிறை", "தேய்பிறை"],
         tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "அமாவாசை"]
     },
-    te: { 
+    te: {
+        solarMonths: ["వైశాఖం", "జ్యేష్ఠం", "ఆషాఢం", "శ్రావణం", "భాద్రపదం", "ఆశ్వయుజం", "కార్తీకం", "మార్గశిరం", "పుష్యం", "మాఘం", "ఫాల్గుణం", "చైత్రం"], dina: "రోజు",
         days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], 
         nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], 
         filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు", "ఇతర పండుగలు"],
@@ -4187,7 +4214,8 @@ indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్
         paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
         tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "అమావాస్య"]
     },
-    kn: { 
+    kn: {
+        solarMonths: ["ವೈಶಾಖ", "ಜ್ಯೇಷ್ಠ", "ಆಷಾಢ", "ಶ್ರಾವಣ", "ಭಾದ್ರಪದ", "ಆಶ್ವಯುಜ", "ಕಾರ್ತಿಕ", "ಮಾರ್ಗಶಿರ", "ಪುಷ್ಯ", "ಮಾಘ", "ಫಾಲ್ಗುಣ", "ಚೈತ್ರ"], dina: "ದಿನ",
         days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], 
         nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], 
         filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು", "ಇತರ ಹಬ್ಬಗಳು"],
@@ -4198,7 +4226,8 @@ indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ
         paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
         tithis: ["ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಅಮಾವಾಸ್ಯೆ"]
     },
-    ml: { 
+    ml: {
+        solarMonths: ["മേടം", "ഇടവം", "മിഥുനം", "കർക്കടകം", "ചിങ്ങം", "കന്നി", "തുലാം", "വൃശ്ചികം", "ധനു", "മകരം", "കുംഭം", "മീനം"], dina: "ദിവസം",
         days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], 
         nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], 
         filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി", "മറ്റ് ഉത്സവങ്ങൾ"],
@@ -4209,7 +4238,8 @@ indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "�
         paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
         tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "പൗർണ്ണമി", "പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "അമാവാസി"]
     },
-    as: { 
+    as: {
+        solarMonths: ["ব\'হাগ", "জেঠ", "আহাৰ", "শাওণ", "ভাদ", "আহিন", "কাতি", "আঘোণ", "পুহ", "মাঘ", "ফাগুন", "চ\'ত"], dina: "দিন",
         days: ["ৰবি", "সোম", "মঙল", "বুধ", "বৃহ", "শুক্ৰ", "শনি"], 
         nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
         filters: ["উৎসৱ", "শুভ দিন", "বন্ধ", "অন্যান্য উৎসৱ"],
@@ -4347,6 +4377,8 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             const langObj = langData[currentLang] || langData['en'];
             const safeIndex = astro.tithiIndex;
             
+            const solarData = VedicAstro.getSolarDate(dateObj);
+
             return {
                 tithi: langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`,
                 paksha: langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna"),
@@ -4356,7 +4388,9 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                 karana: astro.karana,
                 jd: astro.jd,
                 sunLon: astro.sunLon,
-                moonLon: astro.moonLon
+                moonLon: astro.moonLon,
+                solarMonthIndex: solarData.rashiIndex,
+                solarDay: solarData.solarDay
             };
         }
 
@@ -7927,7 +7961,14 @@ function renderCalendarGrid(data) {
 
             // 4. Merge Data (Manual > Auto)
             let displayData = { ...data.panchang };
-            if (!displayData['Tithi']) displayData['Tithi'] = `${autoData.tithi} (${autoData.paksha})`;
+
+            // Re-using currentLang and langObj from earlier
+            const solarMonthName = langObj.solarMonths[autoData.solarMonthIndex];
+            const dinaText = langObj.dina || "Day";
+            const nativeSolarDay = toNativeNum(autoData.solarDay, currentLang);
+            const formattedHinduDate = `${solarMonthName} ${autoData.paksha} ${autoData.tithi}(${solarMonthName} ${nativeSolarDay} ${dinaText})`;
+
+            if (!displayData['Tithi']) displayData['Tithi'] = formattedHinduDate;
             if (!displayData['Nakshatra']) displayData['Nakshatra'] = autoData.nakshatra;
             if (!displayData['Yoga']) displayData['Yoga'] = autoData.yoga;
             if (!displayData['Karana']) displayData['Karana'] = autoData.karana;
@@ -9236,7 +9277,15 @@ function renderCalendarGrid(data) {
                                 <div class="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 text-xs"><i class="fa-solid fa-moon"></i></div>
                                 <span class="font-bold text-gray-600 text-xs uppercase tracking-wider">Current Tithi</span>
                             </div>
-                            <h3 class="text-3xl font-extrabold text-deepred mb-1 leading-none">${tithiInfo.tithi}</h3>
+                            ${(() => {
+                                const currentLang = appState.config.language || 'en';
+                                const langObj = langData[currentLang] || langData['en'];
+                                const solarMonthName = langObj.solarMonths[tithiInfo.solarMonthIndex];
+                                const dinaText = langObj.dina || "Day";
+                                const nativeSolarDay = toNativeNum(tithiInfo.solarDay, currentLang);
+                                const formattedHinduDate = `${solarMonthName} ${tithiInfo.paksha} ${tithiInfo.tithi}(${solarMonthName} ${nativeSolarDay} ${dinaText})`;
+                                return `<h3 class="text-2xl md:text-3xl font-extrabold text-deepred mb-1 leading-none font-oriya">${formattedHinduDate}</h3>`;
+                            })()}
                             <p class="text-xs text-gray-500 font-bold mb-4 uppercase tracking-wide">Tithi Index ${tithiInfo.index + 1}</p>
                             
                             <div class="mt-5 p-4 bg-gray-50 rounded-2xl border border-gray-200 shadow-inner relative overflow-hidden">
