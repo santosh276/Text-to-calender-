@@ -2004,8 +2004,11 @@ Rahu Kalam Desc : କୌଣସି ନୂଆ କାମ ପାଇଁ ନିଷେ�
 Yamaganda Title : ଯମଗଣ୍ଡ
 Yamaganda Desc : ଯାତ୍ରା କିମ୍ବା ମୂଲ୍ୟବାନ ଜିନିଷ କିଣିବାକୁ ନିଷେଧ।
 Gulika Kalam Title : ଗୁଳିକ କାଳ
+Gulika Kalam Title : ଗୁଳିକ କାଳ
 Gulika Kalam Desc : ନୂଆ କାର୍ଯ୍ୟରେ ବାଧା ଆସିପାରେ।
+Today's Sankranti : ଆଜିର ସଂକ୍ରାନ୍ତି
 :::
+
                         </div>
                     </div>
 
@@ -8069,6 +8072,7 @@ function renderCalendarGrid(data) {
                 let rashiName = langObj.rashis[nextSankranti.rashiIndex];
                 let titleText = isTodaySankranti ? "Today's Sankranti" : "Upcoming Sankranti";
                 let dataI18n = isTodaySankranti ? "today_sankranti" : "upcoming_sankranti";
+                let displayDateStr = isTodaySankranti ? `TODAY • ${exactTimeFormatted}` : `${dateStr} • ${exactTimeFormatted}`;
 
                 const sankrantiContainer = document.createElement('div');
                 sankrantiContainer.className = "mt-4 bg-white rounded-xl shadow-sm border border-gray-100 p-4";
@@ -8080,7 +8084,7 @@ function renderCalendarGrid(data) {
                     <div class="bg-orange-50 border border-orange-200 text-orange-800 rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
                         <div class="text-2xl mb-1 text-orange-500"><i class="fa-solid fa-sun"></i></div>
                         <div class="font-bold text-sm mb-0.5">${rashiName} Sankranti</div>
-                        <div class="text-xs opacity-80 uppercase font-bold leading-tight">${dateStr} • ${exactTimeFormatted}</div>
+                        <div class="text-xs opacity-80 uppercase font-bold leading-tight">${displayDateStr}</div>
                     </div>
                 `;
                 list.appendChild(sankrantiContainer);
@@ -9209,6 +9213,39 @@ function renderCalendarGrid(data) {
                 `;
             }
 
+// Build Upcoming/Today Sankranti HTML for Modal
+            let sankrantiScanDate = new Date(dateObj);
+            const nextSankranti = VedicAstro.getUpcomingSankranti(sankrantiScanDate);
+            let sankrantiModalHtml = '';
+
+            if (nextSankranti) {
+                let isTodaySankranti = (nextSankranti.dateObj.getDate() === dateObj.getDate() &&
+                                        nextSankranti.dateObj.getMonth() === dateObj.getMonth() &&
+                                        nextSankranti.dateObj.getFullYear() === dateObj.getFullYear());
+
+                let exactTimeFormatted = nextSankranti.dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                let dateStr = nextSankranti.dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                let rashiName = langObj.rashis[nextSankranti.rashiIndex];
+                let titleText = isTodaySankranti ? "Today's Sankranti" : "Upcoming Sankranti";
+                let dataI18n = isTodaySankranti ? "today_sankranti" : "upcoming_sankranti";
+                let displayDateStr = isTodaySankranti ? `TODAY • ${exactTimeFormatted}` : `${dateStr} • ${exactTimeFormatted}`;
+
+                sankrantiModalHtml = `
+                    <!-- 2b. Sankranti Details -->
+                    <div class="modal-card">
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
+                            <div class="w-7 h-7 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 text-xs"><i class="fa-solid fa-sun"></i></div>
+                            <span class="font-bold text-gray-600 text-xs uppercase tracking-wider" data-i18n="${dataI18n}">${titleText}</span>
+                        </div>
+                        <div class="bg-orange-50 border border-orange-200 text-orange-800 rounded-xl p-3 flex flex-col items-center text-center shadow-sm transform hover:scale-105 transition">
+                            <div class="text-2xl mb-1 text-orange-500"><i class="fa-solid fa-sun"></i></div>
+                            <div class="font-bold text-sm mb-0.5">${rashiName} Sankranti</div>
+                            <div class="text-xs opacity-80 uppercase font-bold leading-tight">${displayDateStr}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
             // --- 2. BUILD HTML STRUCTURE (Light Page Layout) ---
             const contentHtml = `
                 <div class="flex flex-col h-full relative overflow-hidden">
@@ -9302,6 +9339,8 @@ function renderCalendarGrid(data) {
                                 <div class="font-mono text-gray-900 font-bold">${seasonName}</div>
                             </div>
                         </div>
+
+${sankrantiModalHtml}
 
                         <!-- 2a. Astro Details -->
                         ${sunTimes.sunrise ? `
