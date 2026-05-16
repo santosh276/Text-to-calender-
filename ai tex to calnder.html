@@ -1957,6 +1957,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                         <p class="text-gray-300 mb-2">Override standard UI text blocks dynamically:</p>
                         <div class="code-block">
 ::: labels
+Vaidik Date : ବୈଦିକ ତାରିଖ
+Solar Date : ସୌର ତାରିଖ
+Lunar Date : ଚାନ୍ଦ୍ର ତାରିଖ
 Panchang Header : ପଞ୍ଚାଙ୍ଗ
 Current Ritu : ବର୍ତ୍ତମାନର ଋତୁ
 Calendar Nav : କ୍ୟାଲେଣ୍ଡର
@@ -3493,6 +3496,27 @@ return SunCalc;
                 getTithiTimes: getTithiTimes,
                 getNakshatraTimes: getNakshatraTimes,
                 AMRIT_GHATIS: AMRIT_GHATIS,
+
+                getPastSankranti: function(baseDateObj) {
+                    // Check backwards from baseDateObj for up to 35 days
+                    // JD calculation for 00:00 UTC
+                    let jdStart = (Date.UTC(baseDateObj.getFullYear(), baseDateObj.getMonth(), baseDateObj.getDate(), 0, 0, 0) / 86400000) + 2440587.5;
+                    let currentSunLon = norm(getSunLong(jdStart) - getAyanamsa(jdStart));
+                    let currentRashi = Math.floor(currentSunLon / 30);
+
+                    for (let i = 1; i <= 35; i++) {
+                        let jdCheck = jdStart - i;
+                        let testSunLon = norm(getSunLong(jdCheck) - getAyanamsa(jdCheck));
+                        let testRashi = Math.floor(testSunLon / 30);
+
+                        // When the rashi changes compared to the previous day (moving backwards)
+                        // It means the day at `jdCheck + 1` was the day the rashi changed
+                        if (testRashi !== currentRashi) {
+                            return { rashiIndex: currentRashi, daysElapsed: i - 1 };
+                        }
+                    }
+                    return null;
+                },
 
                 getUpcomingSankranti: function(baseDateObj) {
                     let jdStart = (Date.UTC(baseDateObj.getFullYear(), baseDateObj.getMonth(), baseDateObj.getDate()) / 86400000) + 2440587.5;
@@ -7776,6 +7800,46 @@ function renderCalendarGrid(data) {
             
             const autoData = calculateTithi(calcDate);
             
+            // Vaidik Date (Solar and Lunar Date) Logic
+            const pastSankranti = VedicAstro.getPastSankranti(calcDate);
+            const solarDay = pastSankranti ? pastSankranti.daysElapsed + 1 : '-';
+            const solarMonth = pastSankranti ? langObj.rashis[pastSankranti.rashiIndex] : '-';
+
+            const hinduMonthName = langObj.indianMonths[data.month];
+            const lunarDate = hinduMonthName + ' ' + autoData.paksha.split(' ')[0] + ' ' + autoData.tithi;
+
+            // Create Vaidik Date Card
+            const vaidikCard = document.createElement('div');
+            vaidikCard.className = "bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4";
+            vaidikCard.innerHTML = `
+                <div class="text-sm font-bold text-gray-800 mb-3" data-i18n="Vaidik Date">Vaidik Date</div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex items-center gap-3 bg-orange-50/50 p-2.5 rounded-lg border border-orange-100/50">
+                        <i class="fas fa-sun text-orange-500 text-lg"></i>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold" data-i18n="Solar Date">Solar Date</span>
+                            <span class="text-sm font-bold text-gray-800">${toNativeNum(solarMonth + ' ' + solarDay, appState.config.language)}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-indigo-50/50 p-2.5 rounded-lg border border-indigo-100/50">
+                        <i class="fas fa-moon text-indigo-500 text-lg"></i>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold" data-i18n="Lunar Date">Lunar Date</span>
+                            <span class="text-sm font-bold text-gray-800">${toNativeNum(lunarDate, appState.config.language)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const rituContainerInner = document.getElementById('ritu-content');
+            if (rituContainerInner) {
+                // If ritu-content is used, we can just append it to list because ritu-content is handled above it in index.html
+                // Actually rituContainerInner is not inside list. So appending to list directly puts it after Ritu.
+                list.appendChild(vaidikCard);
+            } else {
+                list.appendChild(vaidikCard);
+            }
+
             // SunCalc Times
             let sunTimes = { sunrise: null, sunset: null };
             let moonTimes = { rise: null, set: null }; // Placeholder
@@ -9173,6 +9237,12 @@ function renderCalendarGrid(data) {
             const seasonName = langObj.indianSeasons[seasonIndex];
             const hinduMonthName = langObj.indianMonths[monthData.month];
 
+            // Vaidik Date Calculations for Modal
+            const pastSankrantiModal = VedicAstro.getPastSankranti(dateObj);
+            const solarDayModal = pastSankrantiModal ? pastSankrantiModal.daysElapsed + 1 : '-';
+            const solarMonthModal = pastSankrantiModal ? langObj.rashis[pastSankrantiModal.rashiIndex] : '-';
+            const lunarDateModal = hinduMonthName + ' ' + tithiInfo.paksha.split(' ')[0] + ' ' + tithiInfo.tithi;
+
             // Main Icon
             let mainIcon = getMoonPhaseIcon((tithiInfo.index + 1) / 30);
             if (tithiInfo.index === 14) mainIcon = TITHI_ICONS.purnima;
@@ -9273,6 +9343,27 @@ function renderCalendarGrid(data) {
                                             <i class="fa-regular fa-clock text-amber-500 text-[10px]"></i>
                                             <span class="text-[10px] text-amber-500 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vaidik Date Modal Card -->
+                        <div class="modal-card">
+                            <div class="text-sm font-bold text-gray-800 mb-3" data-i18n="Vaidik Date">Vaidik Date</div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="flex items-center gap-3 bg-orange-50/50 p-2.5 rounded-lg border border-orange-100/50">
+                                    <i class="fas fa-sun text-orange-500 text-lg"></i>
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold" data-i18n="Solar Date">Solar Date</span>
+                                        <span class="text-sm font-bold text-gray-800">${toNativeNum(solarMonthModal + ' ' + solarDayModal, appState.config.language)}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 bg-indigo-50/50 p-2.5 rounded-lg border border-indigo-100/50">
+                                    <i class="fas fa-moon text-indigo-500 text-lg"></i>
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold" data-i18n="Lunar Date">Lunar Date</span>
+                                        <span class="text-sm font-bold text-gray-800">${toNativeNum(lunarDateModal, appState.config.language)}</span>
                                     </div>
                                 </div>
                             </div>
