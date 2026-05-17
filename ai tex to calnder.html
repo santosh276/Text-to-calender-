@@ -3498,15 +3498,19 @@ return SunCalc;
 
 
                 getSolarMonthDay: function(dateObj) {
-                    // Target date at 12:00 PM IST
-                    let jdISTNoon = (Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()) / 86400000) + 2440587.5 + (6.5 / 24);
+                    // 1. Evaluate the Sun's Rashi at the VERY END of the target day (11:59 PM IST)
+                    // 11:59 PM IST = 18:29 UTC (18.483333 hours)
+                    let utcMidnightMs = Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+                    let jdEndIST = (utcMidnightMs / 86400000) + 2440587.5 + (18.483333 / 24);
+
                     const getRashi = (jd) => Math.floor(norm(getSunLong(jd) - getAyanamsa(jd)) / 30);
 
-                    let currentRashi = getRashi(jdISTNoon);
+                    // The Rashi at the end of the day determines the month for this entire calendar day
+                    let currentRashi = getRashi(jdEndIST);
 
-                    // Binary search for exact Sankranti (Sun entering current Rashi)
-                    let leftJd = jdISTNoon - 35; // Look back up to 35 days
-                    let rightJd = jdISTNoon;
+                    // 2. Binary search to find EXACTLY when the Sun entered currentRashi
+                    let leftJd = jdEndIST - 35;
+                    let rightJd = jdEndIST;
                     let targetLon = currentRashi * 30;
                     let exactSankrantiJd = rightJd;
 
@@ -3515,37 +3519,34 @@ return SunCalc;
                         let midLon = norm(getSunLong(midJd) - getAyanamsa(midJd));
                         let diff = midLon - targetLon;
 
-                        // Handle circular longitude wrap around
+                        // Handle longitude wrap around (e.g., Pisces 330 to Aries 0)
                         if (diff > 180) diff -= 360;
                         if (diff < -180) diff += 360;
 
                         if (diff >= 0) {
-                            rightJd = midJd; // Already crossed into current Rashi, look earlier
+                            rightJd = midJd; // Already crossed into currentRashi, look earlier
                             exactSankrantiJd = midJd;
                         } else {
                             leftJd = midJd; // Still in previous Rashi, look later
                         }
                     }
 
-                    // Convert exact Sankranti JD to IST Date
+                    // 3. Convert exact Sankranti JD to IST Date to find which calendar day it fell on
                     let sankrantiUtcMs = (exactSankrantiJd - 2440587.5) * 86400000;
-                    // Add 5.5 hours for IST to determine exact Indian Calendar Day
-                    let sankrantiIST = new Date(sankrantiUtcMs + (5.5 * 3600000));
+                    let sankrantiIST = new Date(sankrantiUtcMs + (5.5 * 3600000)); // UTC to IST
 
+                    // Normalize Sankranti Date to Midnight UTC for pure day difference calculation
                     let sYear = sankrantiIST.getUTCFullYear();
                     let sMonth = sankrantiIST.getUTCMonth();
                     let sDate = sankrantiIST.getUTCDate();
                     let sankrantiMidnight = Date.UTC(sYear, sMonth, sDate);
 
-                    // Target day midnight
-                    let targetMidnight = Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+                    // 4. Calculate Day Count (Target Day - Sankranti Day + 1)
+                    let dayCount = Math.round((utcMidnightMs - sankrantiMidnight) / 86400000) + 1;
 
-                    // Calculate difference in days (+1 because Sankranti day is Day 1)
-                    let dayCount = Math.round((targetMidnight - sankrantiMidnight) / 86400000) + 1;
-
-                    // Safety fallback
+                    // Fallback for extreme boundary safety
                     if (dayCount < 1) dayCount = 1;
-                    if (dayCount > 32) dayCount = 1; // Solar months rarely exceed 32 days
+                    if (dayCount > 32) dayCount = 1;
 
                     return { monthIndex: currentRashi, day: dayCount };
                 },
