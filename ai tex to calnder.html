@@ -13,7 +13,7 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
@@ -4373,6 +4373,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             tickerEl.innerHTML = setHtml.repeat(4);
         }
 
+        const astroCache = {};
         function calculateTithi(dateObj) {
             const day = String(dateObj.getDate()).padStart(2, '0');
             const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -4380,6 +4381,10 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             
             const fullDateKey = `${day}-${month}-${year}`; // e.g., 14-01-2026
             const recDateKey = `${day}-${month}`;        // e.g., 14-01
+
+            if (astroCache[fullDateKey] !== undefined && (appState.manualTithis === undefined || appState.manualTithis[fullDateKey] === undefined)) {
+                return astroCache[fullDateKey];
+            }
 
             // 1. Check for Manual Overrides first
             let manualIndex = null;
@@ -4404,7 +4409,8 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             const langObj = langData[currentLang] || langData['en'];
             const safeIndex = astro.tithiIndex;
             
-            return {
+
+            const result = {
                 tithi: langObj.tithis ? langObj.tithis[safeIndex] : `Tithi ${safeIndex + 1}`,
                 paksha: langObj.paksha ? (safeIndex < 15 ? langObj.paksha[0] : langObj.paksha[1]) : (safeIndex < 15 ? "Shukla" : "Krishna"),
                 index: safeIndex,
@@ -4415,6 +4421,8 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                 sunLon: astro.sunLon,
                 moonLon: astro.moonLon
             };
+            astroCache[fullDateKey] = result;
+            return result;
         }
 
         function toNativeNum(num, langCode) {
@@ -4962,7 +4970,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                     <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                     <div class="relative z-10 flex flex-col items-center text-center md:flex-row md:items-start md:text-left gap-3 w-full mb-3">
                         <div class="w-16 h-16 flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square">
-                            <img src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-contain rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
+                            <img loading="lazy" src="${cardData.image}" alt="${cardData.title}" class="w-full h-full object-contain rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80'" />
                         </div>
                         <div class="flex flex-col overflow-hidden w-full">
                             <h3 class="font-headline text-base md:text-lg font-extrabold text-white tracking-tight leading-tight truncate">${cardData.title}</h3>
@@ -4984,7 +4992,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                 <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                 <div class="flex items-center gap-3 w-[85%] relative z-10">
                     <div class="w-12 h-12 min-w-[3rem] flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square">
-                        ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-xl" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
+                        ${cardData.image ? `<img loading="lazy" src="${cardData.image}" class="w-full h-full object-contain rounded-xl" />` : `<i class="fa-solid fa-link text-xl drop-shadow-sm text-white"></i>`}
                     </div>
                     <div class="flex flex-col justify-center overflow-hidden w-full">
                         <span class="text-white font-bold text-[15px] leading-tight tracking-wide drop-shadow-sm truncate">${cardData.title}</span>
@@ -5002,7 +5010,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 rounded-xl p-3 relative overflow-hidden shadow-md" style="background-color: ${bgColor};">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                 <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square mb-2 relative z-10">
-                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
+                    ${cardData.image ? `<img loading="lazy" src="${cardData.image}" class="w-full h-full object-contain rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
                 </div>
                 <span class="text-center text-xs md:text-sm font-bold text-white relative z-10 tracking-tight max-w-[80px] md:max-w-[100px] leading-tight transition-colors">${cardData.title}</span>
             </a>
@@ -6437,7 +6445,7 @@ function getCDNUrl(originalUrl) {
             const logoContainer = document.getElementById('logo-container');
             if (appState.config.logoUrl) {
                 const src = resolveImageUrls(appState.config.logoUrl);
-                logoContainer.innerHTML = `<img id="app-logo-img" src="${src}" alt="Logo" class="w-12 h-12 rounded-full object-cover border border-white/10 shadow-lg">`;
+                logoContainer.innerHTML = `<img loading="lazy" id="app-logo-img" src="${src}" alt="Logo" class="w-12 h-12 rounded-full object-cover border border-white/10 shadow-lg">`;
             } else {
                 logoContainer.innerHTML = `
     <!-- COMPONENT START -->
@@ -6702,7 +6710,7 @@ function getCDNUrl(originalUrl) {
                 slide.onclick = () => openDayModal(banner.date, data); // Click banner to open day
                 
                 slide.innerHTML = `
-                    <img src="${banner.url}" class="w-full h-full" style="object-fit: cover;">
+                    <img loading="lazy" src="${banner.url}" class="w-full h-full" style="object-fit: cover;">
                     <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white pt-10" style="background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent);">
                         
                         <div class="text-xs md:text-sm opacity-90 font-semibold uppercase tracking-wide bg-black/30 inline-block px-2 py-0.5 rounded mt-1 backdrop-blur-sm border border-white/20">${months[data.month]} ${banner.date}</div>
@@ -7199,6 +7207,7 @@ function getCDNUrl(originalUrl) {
             const grid = document.getElementById('year-grid');
             if (!grid) return;
             grid.innerHTML = '';
+            const yearGridFragment = document.createDocumentFragment();
 
             const todayDate = new Date();
             const currentRealMonth = todayDate.getMonth();
@@ -7359,8 +7368,9 @@ function getCDNUrl(originalUrl) {
                     }
                 }
 
-                grid.appendChild(card);
+                yearGridFragment.appendChild(card);
             }
+            grid.appendChild(yearGridFragment);
         }
 
 function renderCalendarGrid(data) {
@@ -7372,6 +7382,7 @@ function renderCalendarGrid(data) {
 
     // --- 1. RENDER HEADER (Responsive Text Sizing) ---
     headerRow.innerHTML = '';
+    const headerFragment = document.createDocumentFragment();
     localizedDays.forEach((day, index) => {
         const isSunday = index === 0;
         const engDay = englishDays[index].substring(0, 3).toUpperCase();
@@ -7385,11 +7396,13 @@ function renderCalendarGrid(data) {
             <span class="text-sm md:text-base font-bold text-gray-700 uppercase tracking-wider ${isSunday ? 'text-red-500' : ''}">${engDay}</span>
             ${currentLang !== 'en' ? `<span class="${localTextSize} font-bold text-red-600 font-oriya mt-0.5">${day}</span>` : ''}
         `;
-        headerRow.appendChild(div);
+        headerFragment.appendChild(div);
     });
+    headerRow.appendChild(headerFragment);
 
     // --- 2. RENDER GRID CELLS ---
     grid.innerHTML = '';
+    const gridFragment = document.createDocumentFragment();
     const firstDay = new Date(data.year, data.month, 1).getDay();
     const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
     const today = new Date();
@@ -7398,7 +7411,7 @@ function renderCalendarGrid(data) {
     for (let i = 0; i < firstDay; i++) {
         const cell = document.createElement('div');
         cell.className = 'bg-transparent'; // Invisible placeholder
-        grid.appendChild(cell);
+        gridFragment.appendChild(cell);
     }
 
     // Days
@@ -7617,8 +7630,9 @@ function renderCalendarGrid(data) {
         `;
 
         cell.innerHTML = mobileView + desktopView;
-        grid.appendChild(cell);
+        gridFragment.appendChild(cell);
     }
+    grid.appendChild(gridFragment);
 }
 
         // --- UPDATED HELPER: Calculate Auspicious & Inauspicious Timings ---
@@ -7796,7 +7810,7 @@ function renderCalendarGrid(data) {
             // Re-structured inner HTML to include banner image and glassmorphic layout
             seasonCard.innerHTML = `
                 <div class="ritu-glass-card relative h-[160px] shrink-0" style="background-color: ${seasonTitleColors[seasonIndex]};">
-                    <img src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner" onerror="this.style.display='none';">
+                    <img loading="lazy" src="${rituImgUrl}" data-season-index="${seasonIndex}" class="absolute inset-0 w-full h-full object-cover" alt="Ritu Banner" onerror="this.style.display='none';">
                     <div class="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent pointer-events-none"></div>
                     <div class="absolute inset-x-0 bottom-0 px-2 pt-4 flex flex-col pointer-events-none z-10" style="padding-bottom: 18px;">
                         <div class="flex items-center gap-1">
@@ -9044,7 +9058,7 @@ function renderCalendarGrid(data) {
                     const alt = imgMatch[1];
                     const src = resolveImageUrls(imgMatch[2]);
                     const figure = document.createElement('figure');
-                    figure.innerHTML = `<img src="${src}" alt="${alt}"><figcaption>${alt}</figcaption>`;
+                    figure.innerHTML = `<img loading="lazy" src="${src}" alt="${alt}"><figcaption>${alt}</figcaption>`;
                     container.appendChild(figure);
                 } else if (line.startsWith('#')) {
                     const titleText = line.replace('#', '').trim();
@@ -9440,7 +9454,7 @@ function renderCalendarGrid(data) {
                         ${bannerUrl ? `
                         <div id="modal-banner-container" class="modal-card p-0 overflow-hidden relative group aspect-[3/1] md:aspect-[5/1] transition-all duration-500 ease-out flex items-center justify-center border border-gray-200 bg-gray-50">
                             <!-- View Mode -->
-                            <img src="${bannerUrl}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                            <img loading="lazy" src="${bannerUrl}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                             <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
                         </div>` : ''}
 
@@ -9810,8 +9824,20 @@ function renderCalendarGrid(data) {
 
 
     
-        // --- LOCATION SELECTION LOGIC ---        // Handle Location Search
-        function handleLocationSearch(event) {
+        // --- LOCATION SELECTION LOGIC ---
+        // Debounce utility
+        function debounce(func, delay) {
+            let timeoutId;
+            return function(...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    func.apply(this, args);
+                }, delay);
+            };
+        }
+
+        // Handle Location Search
+        const handleLocationSearch = debounce((event) => {
             const query = event.target.value.trim().toLowerCase();
             const resultsContainer = document.getElementById('location-search-results');
             
@@ -9856,7 +9882,7 @@ function renderCalendarGrid(data) {
                 `;
                 resultsContainer.classList.remove('hidden');
             }
-        }
+        }, 300);
         function selectSearchedLocation(state, city, lat, lng) {
             const resultsContainer = document.getElementById('location-search-results');
             const searchInput = document.getElementById('location-search-input');
@@ -10031,7 +10057,7 @@ function renderCalendarGrid(data) {
 
             if (!toolsSearchInput || !toolsSearchDropdown) return;
 
-            toolsSearchInput.addEventListener('input', (e) => {
+            const handleToolsInput = debounce((e) => {
                 const query = e.target.value.trim().toLowerCase();
 
                 if (!query) {
@@ -10131,7 +10157,8 @@ function renderCalendarGrid(data) {
                     `;
                     toolsSearchDropdown.classList.remove('hidden');
                 }
-            });
+            }, 300);
+            toolsSearchInput.addEventListener('input', handleToolsInput);
 
             // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
