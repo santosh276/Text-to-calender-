@@ -3591,8 +3591,58 @@ return SunCalc;
                     return null;
                 },
                 getTithiAtSunrise: function(dateObj) {
-                    // Strict Sunrise Rule: Always check 6 AM
-                    return calculate(dateObj, 6);
+                    let istHour = 6.0; // Fallback
+                    try {
+                        if (typeof SunCalc !== 'undefined') {
+
+                            // Regional Astronomical Centers mapping based on Language Code
+                            const langLocations = {
+                                'en': { lat: 28.6139, lng: 77.2090 }, // New Delhi (Default India)
+                                'hi': { lat: 23.1765, lng: 75.7885 }, // Ujjain (Traditional center for Hindi/North)
+                                'or': { lat: 19.8135, lng: 85.8312 }, // Puri, Odisha
+                                'bn': { lat: 22.5726, lng: 88.3639 }, // Kolkata, Bengal
+                                'mr': { lat: 18.5204, lng: 73.8567 }, // Pune, Maharashtra
+                                'gu': { lat: 23.0225, lng: 72.5714 }, // Ahmedabad, Gujarat
+                                'pa': { lat: 31.6340, lng: 74.8723 }, // Amritsar, Punjab
+                                'ta': { lat: 13.0827, lng: 80.2707 }, // Chennai, Tamil Nadu
+                                'te': { lat: 17.3850, lng: 78.4867 }, // Hyderabad, Telangana/AP
+                                'kn': { lat: 12.9716, lng: 77.5946 }, // Bengaluru, Karnataka
+                                'ml': { lat: 8.5241,  lng: 76.9366 }, // Thiruvananthapuram, Kerala
+                                'as': { lat: 26.1445, lng: 91.7362 }  // Guwahati, Assam
+                            };
+
+                            let lat = 23.18; // Fallback Ujjain/Mirzapur
+                            let lng = 82.50;
+
+                            // 1. Language-based default location
+                            if (typeof appState !== 'undefined' && appState.config && appState.config.language) {
+                                const langCode = appState.config.language;
+                                if (langLocations[langCode]) {
+                                    lat = langLocations[langCode].lat;
+                                    lng = langLocations[langCode].lng;
+                                }
+                            }
+
+                            // 2. User's Explicitly Selected Location overrides language defaults
+                            if (typeof appState !== 'undefined' && appState.config && appState.config.location && appState.config.location.lat) {
+                                lat = appState.config.location.lat;
+                                lng = appState.config.location.lng;
+                            }
+
+                            const times = SunCalc.getTimes(dateObj, lat, lng);
+
+                            if (times && times.sunrise) {
+                                // Extract the exact sunrise time in UTC
+                                let utcHour = times.sunrise.getUTCHours() + (times.sunrise.getUTCMinutes() / 60) + (times.sunrise.getUTCSeconds() / 3600);
+                                // Convert UTC to IST fractional hour (+5.5) because the 'calculate' function expects the hour relative to IST
+                                istHour = (utcHour + 5.5) % 24;
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Dynamic sunrise calc failed, falling back to 6 AM", e);
+                    }
+
+                    return calculate(dateObj, istHour);
                 }
             };
         })();
