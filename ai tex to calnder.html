@@ -3498,24 +3498,55 @@ return SunCalc;
 
 
                 getSolarMonthDay: function(dateObj) {
-                    // Universal Standard for Hindu Calendar Dates: Anchor to IST (UTC +5:30)
-                    // We evaluate the Sun's Rashi at 12:00 PM IST (06:30 UTC) to get the dominant month for that date globally.
-                    // 06:30 UTC = 6.5 hours = 6.5/24 days.
+                    // Target date at 12:00 PM IST
                     let jdISTNoon = (Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()) / 86400000) + 2440587.5 + (6.5 / 24);
-
                     const getRashi = (jd) => Math.floor(norm(getSunLong(jd) - getAyanamsa(jd)) / 30);
 
                     let currentRashi = getRashi(jdISTNoon);
-                    let dayCount = 1;
 
-                    // Step backwards exactly 24 hours at a time to find when the Rashi changed
-                    for (let i = 1; i <= 35; i++) {
-                        if (getRashi(jdISTNoon - i) === currentRashi) {
-                            dayCount++;
+                    // Binary search for exact Sankranti (Sun entering current Rashi)
+                    let leftJd = jdISTNoon - 35; // Look back up to 35 days
+                    let rightJd = jdISTNoon;
+                    let targetLon = currentRashi * 30;
+                    let exactSankrantiJd = rightJd;
+
+                    for (let step = 0; step < 20; step++) {
+                        let midJd = (leftJd + rightJd) / 2;
+                        let midLon = norm(getSunLong(midJd) - getAyanamsa(midJd));
+                        let diff = midLon - targetLon;
+
+                        // Handle circular longitude wrap around
+                        if (diff > 180) diff -= 360;
+                        if (diff < -180) diff += 360;
+
+                        if (diff >= 0) {
+                            rightJd = midJd; // Already crossed into current Rashi, look earlier
+                            exactSankrantiJd = midJd;
                         } else {
-                            break; // Rashi changed, meaning we found the first day of the month
+                            leftJd = midJd; // Still in previous Rashi, look later
                         }
                     }
+
+                    // Convert exact Sankranti JD to IST Date
+                    let sankrantiUtcMs = (exactSankrantiJd - 2440587.5) * 86400000;
+                    // Add 5.5 hours for IST to determine exact Indian Calendar Day
+                    let sankrantiIST = new Date(sankrantiUtcMs + (5.5 * 3600000));
+
+                    let sYear = sankrantiIST.getUTCFullYear();
+                    let sMonth = sankrantiIST.getUTCMonth();
+                    let sDate = sankrantiIST.getUTCDate();
+                    let sankrantiMidnight = Date.UTC(sYear, sMonth, sDate);
+
+                    // Target day midnight
+                    let targetMidnight = Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+
+                    // Calculate difference in days (+1 because Sankranti day is Day 1)
+                    let dayCount = Math.round((targetMidnight - sankrantiMidnight) / 86400000) + 1;
+
+                    // Safety fallback
+                    if (dayCount < 1) dayCount = 1;
+                    if (dayCount > 32) dayCount = 1; // Solar months rarely exceed 32 days
+
                     return { monthIndex: currentRashi, day: dayCount };
                 },
                 getUpcomingSankranti: function(baseDateObj) {
