@@ -2007,6 +2007,9 @@ Gulika Kalam Title : ଗୁଳିକ କାଳ
 Gulika Kalam Title : ଗୁଳିକ କାଳ
 Gulika Kalam Desc : ନୂଆ କାର୍ଯ୍ୟରେ ବାଧା ଆସିପାରେ।
 Today Sankranti : ଆଜିର ସଂକ୍ରାନ୍ତି
+Solar Date : ସୌର ତାରିଖ
+Day        : ଦିନ
+Today's Sankranti   : ଆଜିର ସଂକ୍ରାନ୍ତି
 Upcoming Sankranti : ଆସୁଥିବା ସଂକ୍ରାନ୍ତି
 :::
 
@@ -3489,6 +3492,32 @@ return SunCalc;
             };
 
             return {
+                getSolarMonthDay: function(dateObj) {
+                    // Anchor to IST Noon: 12:00 PM IST = 06:30 UTC
+                    // Julian Date for 06:30 UTC of the given calendar date:
+                    const utcMidnight = Date.UTC(
+                        dateObj.getFullYear(),
+                        dateObj.getMonth(),
+                        dateObj.getDate()
+                    );
+                    const jdISTNoon = (utcMidnight / 86400000) + 2440587.5 + (6.5 / 24);
+
+                    const getRashi = (jd) =>
+                        Math.floor(norm(getSunLong(jd) - getAyanamsa(jd)) / 30);
+
+                    const currentRashi = getRashi(jdISTNoon);
+                    let dayCount = 1;
+
+                    // Count backwards to find how many days ago this Rashi began
+                    for (let i = 1; i <= 35; i++) {
+                        if (getRashi(jdISTNoon - i) === currentRashi) {
+                            dayCount++;
+                        } else {
+                            break;
+                        }
+                    }
+                    return { monthIndex: currentRashi, day: dayCount };
+                },
                 calculate: calculate,
                 getTithiTimes: getTithiTimes,
                 getNakshatraTimes: getNakshatraTimes,
@@ -4088,7 +4117,9 @@ const LOCATION_DATA = {
         let isBannerDismissed = false;
 
         const langData = {
-    en: { 
+    en: {
+        solarMonths: ["Vaishakha","Jyeshtha","Ashadha","Shravana","Bhadrapada","Ashvina","Kartika","Margashirsha","Pausha","Magha","Phalguna","Chaitra"],
+        solarDateLabel: "Solar Date",
         days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
         nums: ["0","1","2","3","4","5","6","7","8","9"], 
         filters: ["Festivals", "Auspicious", "Holidays", "Other festivals"],
@@ -4099,7 +4130,9 @@ indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chai
         paksha: ["Shukla Paksha", "Krishna Paksha"],
         tithis: ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Amavasya"]
     },
-    hi: { 
+    hi: {
+        solarMonths: ["वैशाख","ज्येष्ठ","आषाढ़","श्रावण","भाद्रपद","आश्विन","कार्तिक","मार्गशीर्ष","पौष","माघ","फाल्गुन","चैत्र"],
+        solarDateLabel: "सौर तिथि",
         days: ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"], 
         nums: ["०","१","२","३","४","५","६","७","८","९"], 
         filters: ["त्यौहार", "शुभ दिन", "छुट्टियाँ", "अन्य त्यौहार"],
@@ -4110,7 +4143,9 @@ indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "�
         paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
         tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
     },
-    or: { 
+    or: {
+        solarMonths: ["ବୈଶାଖ","ଜ୍ୟୈଷ୍ଠ","ଆଷାଢ଼","ଶ୍ରାବଣ","ଭାଦ୍ରବ","ଆଶ୍ୱିନ","କାର୍ତ୍ତିକ","ମାର୍ଗଶୀର","ପୌଷ","ମାଘ","ଫାଲଗୁନ","ଚୈତ୍ର"],
+        solarDateLabel: "ସୌର ତାରିଖ",
         days: ["ରବି", "ସୋମ", "ମଙ୍ଗଳ", "ବୁଧ", "ଗୁରୁ", "ଶୁକ୍ର", "ଶନି"], 
         nums: ["୦","୧","୨","୩","୪","୫","୬","୭","୮","୯"], 
         filters: ["ପର୍ବପର୍ବାଣି", "ଶୁଭ ଦିନ", "ଛୁଟି ଦିନ", "ଅନ୍ୟାନ୍ୟ ପର୍ବ"],
@@ -4121,7 +4156,9 @@ indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫ�
         paksha: ["ଶୁକ୍ଳ ପକ୍ଷ", "କୃଷ୍ଣ ପକ୍ଷ"],
         tithis: ["ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ପୂର୍ଣ୍ଣିମା", "ପ୍ରତିପଦା", "ଦ୍ଵିତୀୟା", "ତୃତୀୟା", "ଚତୁର୍ଥୀ", "ପଞ୍ଚମୀ", "ଷଷ୍ଠୀ", "ସପ୍ତମୀ", "ଅଷ୍ଟମୀ", "ନବମୀ", "ଦଶମୀ", "ଏକାଦଶୀ", "ଦ୍ଵାଦଶୀ", "ତ୍ରୟୋଦଶୀ", "ଚତୁର୍ଦଶୀ", "ଅମାବାସ୍ୟା"]
     },
-    bn: { 
+    bn: {
+        solarMonths: ["বৈশাখ","জ্যৈষ্ঠ","আষাঢ়","শ্রাবণ","ভাদ্র","আশ্বিন","কার্তিক","অগ্রহায়ণ","পৌষ","মাঘ","ফাল্গুন","চৈত্র"],
+        solarDateLabel: "সৌর তারিখ",
         days: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি"], 
         nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
         filters: ["উৎসব", "শুভ দিন", "ছুটি", "অন্যান্য উৎসব"],
@@ -4132,7 +4169,9 @@ indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "�
         paksha: ["শুক্ল পক্ষ", "कृष्ण পক্ষ"],
         tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
     },
-    mr: { 
+    mr: {
+        solarMonths: ["वैशाख","ज्येष्ठ","आषाढ","श्रावण","भाद्रपद","आश्विन","कार्तिक","मार्गशीर्ष","पौष","माघ","फाल्गुन","चैत्र"],
+        solarDateLabel: "सौर तारीख",
         days: ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"], 
         nums: ["०","१","२","३","४","५","६","७","८","९"], 
         filters: ["सण", "शुभ दिवस", "सुट्ट्या", "इतर सण"],
@@ -4143,7 +4182,9 @@ indianMonths: ["पौष / माघ", "माघ / फाल्गुन", "�
         paksha: ["शुक्ल पक्ष", "कृष्ण पक्ष"],
         tithis: ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पौर्णिमा", "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या"]
     },
-    gu: { 
+    gu: {
+        solarMonths: ["વૈશાખ","જેઠ","અષાઢ","શ્રાવણ","ભાદરવો","આસો","કારતક","માગશર","પોષ","મહા","ફાગણ","ચૈત્ર"],
+        solarDateLabel: "સૌર તારીખ",
         days: ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"], 
         nums: ["૦","૧","૨","૩","૪","૫","૬","૭","૮","૯"], 
         filters: ["તહેવારો", "શુભ દિવસ", "રજાઓ", "અન્ય તહેવારો"],
@@ -4154,7 +4195,9 @@ indianMonths: ["પોષ / મહા", "મહા / ફાગણ", "ફાગ�
         paksha: ["શુક્લ પક્ષ", "કૃષ્ણ પક્ષ"],
         tithis: ["પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "પૂનમ", "પડવો", "બીજ", "ત્રીજ", "ચોથ", "પાંચમ", "છઠ", "સાતમ", "આઠમ", "નોમ", "દશમ", "અગિયારસ", "બારસ", "તેરસ", "ચૌદશ", "અમાસ"]
     },
-    pa: { 
+    pa: {
+        solarMonths: ["ਵੈਸਾਖ","ਜੇਠ","ਹਾੜ","ਸਾਵਣ","ਭਾਦੋਂ","ਅੱਸੂ","ਕੱਤਕ","ਮੱਘਰ","ਪੋਹ","ਮਾਘ","ਫੱਗਣ","ਚੇਤ"],
+        solarDateLabel: "ਸੌਰ ਤਾਰੀਖ",
         days: ["ਐਤ", "ਸੋਮ", "ਮੰਗਲ", "ਬੁੱਧ", "ਵੀਰ", "ਸ਼ੁੱਕਰ", "ਸ਼ਨੀ"], 
         nums: ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"], 
         filters: ["ਤਿਉਹਾਰ", "ਸ਼ੁਭ ਦਿਨ", "ਛੁੱਟੀਆਂ", "ਹੋਰ ਤਿਉਹਾਰ"],
@@ -4165,7 +4208,9 @@ indianMonths: ["ਪੋਹ / ਮਾਘ", "ਮਾਘ / ਫੱਗਣ", "ਫੱਗ�
         paksha: ["ਸ਼ੁਕਲ ਪੱਖ", "ਕ੍ਰਿਸ਼ਨ ਪੱਖ"],
         tithis: ["ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਪੂਰਨਮਾਸ਼ੀ", "ਏਕਮ", "ਦੂਜ", "ਤੀਜ", "ਚੌਥ", "ਪੰਚਮੀ", "ਛਠ", "ਸੱਤਮੀ", "ਅਸ਼ਟਮੀ", "ਨੌਮੀ", "ਦਸਮੀ", "ਏਕਾਦਸ਼ੀ", "ਦੁਆਦਸ਼ੀ", "ਤ੍ਰਯੋਦਸ਼ੀ", "ਚਤੁਰਦਸ਼ੀ", "ਮੱਸਿਆ"]
     },
-    ta: { 
+    ta: {
+        solarMonths: ["சித்திரை","வைகாசி","ஆனி","ஆடி","ஆவணி","புரட்டாசி","ஐப்பசி","கார்த்திகை","மார்கழி","தை","மாசி","பங்குனி"],
+        solarDateLabel: "சூரிய தேதி",
         days: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"], 
         nums: ["௦","௧","௨","௩","௪","௫","௬","௭","௮","௯"], 
         filters: ["பண்டிகைகள்", "சுப நாட்கள்", "விடுமுறை", "மற்ற பண்டிகைகள்"],
@@ -4177,6 +4222,8 @@ indianMonths: ["மார்கழி / தை", "தை / மாசி", "ம�
         tithis: ["பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை", "துவிதியை", "திருதியை", "சதுர்த்தி", "பஞ்சமி", "சஷ்டி", "சப்தமி", "அஷ்டமி", "நவமி", "தசமி", "ஏகாதசி", "துவாதசி", "திரயோதசி", "சதுர்த்தசி", "அமாவாசை"]
     },
     te: { 
+        solarMonths: ["వైశాఖం","జ్యేష్ఠం","ఆషాఢం","శ్రావణం","భాద్రపదం","ఆశ్వయుజం","కార్తీకం","మార్గశిరం","పుష్యం","మాఘం","ఫాల్గుణం","చైత్రం"],
+        solarDateLabel: "సౌర తేదీ",
         days: ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"], 
         nums: ["౦","౧","౨","౩","౪","౫","౬","౭","౮","౯"], 
         filters: ["పండుగలు", "శుభ దినాలు", "సెలవులు", "ఇతర పండుగలు"],
@@ -4187,7 +4234,9 @@ indianMonths: ["పుష్యం / మాఘం", "మాఘం / ఫాల్
         paksha: ["శుక్ల పక్షం", "కృష్ణ పక్షం"],
         tithis: ["పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "పౌర్ణమి", "పాడ్యమి", "విదియ", "తదియ", "చవితి", "పంచమి", "షష్ఠి", "సప్తమి", "అష్టమి", "నవమి", "దశమి", "ఏకాదశి", "ద్వాదశి", "త్రయోదశి", "చతుర్దశి", "అమావాస్య"]
     },
-    kn: { 
+    kn: {
+        solarMonths: ["ವೈಶಾಖ","ಜ್ಯೇಷ್ಠ","ಆಷಾಢ","ಶ್ರಾವಣ","ಭಾದ್ರಪದ","ಆಶ್ವಯುಜ","ಕಾರ್ತಿಕ","ಮಾರ್ಗಶಿರ","ಪುಷ್ಯ","ಮಾಘ","ಫಾಲ್ಗುಣ","ಚೈತ್ರ"],
+        solarDateLabel: "ಸೌರ ದಿನಾಂಕ",
         days: ["ಭಾನು", "ಸೋಮ", "ಮಂಗಳ", "ಬುಧ", "ಗುರು", "ಶುಕ್ರ", "ಶನಿ"], 
         nums: ["೦","೧","೨","೩","೪","೫","೬","೭","೮","೯"], 
         filters: ["ಹಬ್ಬಗಳು", "ಶುಭ ದಿನಗಳು", "ರಜಾದಿನಗಳು", "ಇತರ ಹಬ್ಬಗಳು"],
@@ -4198,7 +4247,9 @@ indianMonths: ["ಪುಷ್ಯ / ಮಾಘ", "ಮಾಘ / ಫಾಲ್ಗುಣ
         paksha: ["ಶುಕ್ಲ ಪಕ್ಷ", "ಕೃಷ್ಣ ಪಕ್ಷ"],
         tithis: ["ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಹುಣ್ಣಿಮೆ", "ಪಾಡ್ಯಮಿ", "ಬಿದಿಗೆ", "ತದಿಗೆ", "ಚೌತಿ", "ಪಂಚಮಿ", "ಷಷ್ಠಿ", "ಸಪ್ತಮಿ", "ಅಷ್ಟಮಿ", "ನವಮಿ", "ದಶಮಿ", "ಏಕಾದಶಿ", "ದ್ವಾದಶಿ", "ತ್ರಯೋದಶಿ", "ಚತುರ್ದಶಿ", "ಅಮಾವಾಸ್ಯೆ"]
     },
-    ml: { 
+    ml: {
+        solarMonths: ["മേടം","ഇടവം","മിഥുനം","കർക്കടകം","ചിങ്ങം","കന്നി","തുലാം","വൃശ്ചികം","ധനു","മകരം","കുംഭം","മീനം"],
+        solarDateLabel: "സൗര തീയതി",
         days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"], 
         nums: ["൦","൧","൨","൩","൪","൫","൬","൭","൮","൯"], 
         filters: ["ഉത്സവങ്ങൾ", "ശുഭദിനങ്ങൾ", "അവധി", "മറ്റ് ഉത്സവങ്ങൾ"],
@@ -4209,7 +4260,9 @@ indianMonths: ["ധനു / മകരം", "മകരം / കുംഭം", "�
         paksha: ["ശുക്ല പക്ഷം", "കൃഷ്ണ പക്ഷം"],
         tithis: ["പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "പൗർണ്ണമി", "പ്രഥമ", "ദ്വിതീയ", "തൃതീയ", "ചതുർത്ഥി", "പഞ്ചമി", "ഷഷ്ഠി", "സപ്തമി", "അഷ്ടമി", "നവമി", "ദശമി", "ഏകാദശി", "ദ്വാദശി", "ത്രയോദശി", "ചതുർദ്ദശി", "അമാവാസി"]
     },
-    as: { 
+    as: {
+        solarMonths: ["বহাগ","জেঠ","আহাৰ","শাওন","ভাদ","আহিন","কাতি","আঘোণ","পুহ","মাঘ","ফাগুন","চ'ত"],
+        solarDateLabel: "সৌৰ তাৰিখ",
         days: ["ৰবি", "সোম", "মঙল", "বুধ", "বৃহ", "শুক্ৰ", "শনি"], 
         nums: ["০","১","২","৩","৪","৫","৬","৭","৮","৯"], 
         filters: ["উৎসৱ", "শুভ দিন", "বন্ধ", "অন্যান্য উৎসৱ"],
@@ -8003,6 +8056,28 @@ function renderCalendarGrid(data) {
                 }
             });
 
+                        const solarInfo   = VedicAstro.getSolarMonthDay(calcDate);
+            const solarMonths = (langObj.solarMonths || langData.en.solarMonths);
+            const solarName   = solarMonths[solarInfo.monthIndex];
+            const solarDay    = toNativeNum(solarInfo.day, currentLang);
+
+            const solarCard   = document.createElement('div');
+            solarCard.className =
+                "bg-orange-50/80 border border-orange-200 rounded-xl p-3 flex items-center gap-3 mb-4 shadow-sm";
+            solarCard.innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 shrink-0">
+                    <i class="fa-solid fa-sun text-lg"></i>
+                </div>
+                <div>
+                    <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                        ${langObj.solarDateLabel || 'Solar Date'}
+                    </div>
+                    <div class="text-sm font-extrabold text-gray-900">
+                        ${solarName} &mdash; <span class="text-orange-600">${solarDay}</span>
+                    </div>
+                </div>
+            `;
+            list.appendChild(solarCard);
             list.appendChild(gridDiv);
 
             // Upcoming Tithis (Scan next 30 days)
@@ -9172,6 +9247,10 @@ function renderCalendarGrid(data) {
             const seasonIndex = getSeasonIndex(monthData.month);
             const seasonName = langObj.indianSeasons[seasonIndex];
             const hinduMonthName = langObj.indianMonths[monthData.month];
+            const solarInfo   = VedicAstro.getSolarMonthDay(dateObj);
+            const solarMonths = (langObj.solarMonths || langData.en.solarMonths);
+            const solarName   = solarMonths[solarInfo.monthIndex];
+            const solarDay    = toNativeNum(solarInfo.day, currentLang);
 
             // Main Icon
             let mainIcon = getMoonPhaseIcon((tithiInfo.index + 1) / 30);
@@ -9274,6 +9353,24 @@ function renderCalendarGrid(data) {
                                             <span class="text-[10px] text-amber-500 font-bold font-mono leading-none">${fmtTime(tithiTimes.end)}</span>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Solar Date Sub-Card -->
+                        <div class="modal-card bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200 mb-3 p-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center
+                                            justify-center text-orange-500 shrink-0">
+                                    <i class="fa-solid fa-calendar-day text-lg"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                                        ${langObj.solarDateLabel || 'Solar Date'}
+                                    </span>
+                                    <span class="block font-extrabold text-gray-900 text-sm">
+                                        ${solarName} &mdash; <span class="text-orange-600">${solarDay}</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
