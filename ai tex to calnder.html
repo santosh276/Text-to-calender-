@@ -3901,6 +3901,11 @@ const seasonUIConfig = [
         // Background Pre-rendering State
         let preRenderQueue = [];
         let isPreRenderRunning = false;
+
+        // Timing Analysis Toggle State
+        let isNightViewActive = false;
+        let lastTimingData = null;
+
         // Polyfill for requestIdleCallback
         const reqIdleCallback = window.requestIdleCallback || function(cb) { return setTimeout(function() { cb({ timeRemaining: function() { return 50; } }); }, 1); };
 
@@ -7621,14 +7626,57 @@ function renderCalendarGrid(data) {
     }
 }
 
+
+        // --- Day/Night Timing View Toggle ---
+        window.toggleTimingView = function(isNight) {
+            isNightViewActive = isNight;
+            if (lastTimingData) {
+                renderTimings(lastTimingData);
+            }
+        };
+
         // --- UPDATED HELPER: Calculate Auspicious & Inauspicious Timings ---
-        function getSpecialTimes(date, sunrise, sunset) {
+
+        function getSpecialTimes(date, sunrise, sunset, tomorrowSunrise) {
             if (!sunrise || !sunset) return { auspicious: [], inauspicious: [] };
 
             const dayOfWeek = date.getDay(); // 0 = Sunday
-            const duration = (sunset - sunrise); // Duration in ms
-            const part = duration / 8; // Rahu/Yama/Gulika use 8 parts
+
+            // For Night, we use Sunset to Tomorrow's Sunrise
+            const duration = isNightViewActive ? (tomorrowSunrise - sunset) : (sunset - sunrise); // Duration in ms
+            const part = duration / 8; // Choghadiya, Rahu/Yama/Gulika use 8 parts
             const muhurta = duration / 15; // Auspicious timings use 15 parts
+
+            // Choghadiya Names mapping to themes
+            const chogThemeMap = {
+                "Amrit": { type: "good", desc: "Best for all type of works.", grad: "bg-skyblue-gradient", dot: "dot-skyblue", key: "skyblue" },
+                "Shubha": { type: "good", desc: "Good for auspicious works.", grad: "bg-emerald-gradient", dot: "dot-emerald", key: "emerald" },
+                "Labh": { type: "good", desc: "Good for starting a business or learning.", grad: "bg-lavender-gradient", dot: "dot-lavender", key: "lavender" },
+                "Char": { type: "neutral", desc: "Good for travel.", grad: "bg-slate-gradient", dot: "dot-slate", key: "slate" },
+                "Udveg": { type: "bad", desc: "Inauspicious. Avoid new works.", grad: "bg-crimson-gradient", dot: "dot-crimson", key: "crimson" },
+                "Rog": { type: "bad", desc: "Inauspicious. Avoid travel or business.", grad: "bg-rust-gradient", dot: "dot-rust", key: "rust" },
+                "Kaal": { type: "bad", desc: "Inauspicious. Avoid new beginnings.", grad: "bg-gold-gradient", dot: "dot-gold", key: "gold" } // using gold visually for Kaal, though maybe dark would be better. Let's use gold as it's distinct
+            };
+
+            const daySlotsNames = {
+                0: ["Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubha", "Rog", "Udveg"], // Sun
+                1: ["Amrit", "Kaal", "Shubha", "Rog", "Udveg", "Char", "Labh", "Amrit"], // Mon
+                2: ["Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubha", "Rog"], // Tue
+                3: ["Labh", "Amrit", "Kaal", "Shubha", "Rog", "Udveg", "Char", "Labh"], // Wed
+                4: ["Shubha", "Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubha"], // Thu
+                5: ["Char", "Labh", "Amrit", "Kaal", "Shubha", "Rog", "Udveg", "Char"], // Fri
+                6: ["Kaal", "Shubha", "Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal"] // Sat
+            };
+
+            const nightSlotsNames = {
+                0: ["Shubha", "Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg", "Shubha"], // Sun
+                1: ["Char", "Rog", "Kaal", "Labh", "Udveg", "Shubha", "Amrit", "Char"], // Mon
+                2: ["Kaal", "Labh", "Udveg", "Shubha", "Amrit", "Char", "Rog", "Kaal"], // Tue
+                3: ["Udveg", "Shubha", "Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg"], // Wed
+                4: ["Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg", "Shubha", "Amrit"], // Thu
+                5: ["Rog", "Kaal", "Labh", "Udveg", "Shubha", "Amrit", "Char", "Rog"], // Fri
+                6: ["Labh", "Udveg", "Shubha", "Amrit", "Char", "Rog", "Kaal", "Labh"] // Sat
+            };
 
             // Slots (0-indexed parts of the day)
             const rahuSlots = [7, 1, 6, 4, 5, 3, 2]; 
@@ -7654,43 +7702,62 @@ function renderCalendarGrid(data) {
             const auspicious = [];
             const inauspicious = [];
 
-            // --- INAUSPICIOUS ---
+            // Calculate Choghadiya
+            const baseTime = isNightViewActive ? sunset.getTime() : sunrise.getTime();
+            const chogNames = isNightViewActive ? nightSlotsNames[dayOfWeek] : daySlotsNames[dayOfWeek];
             
-            // Rahu Kalam
-            const rahuStart = sunrise.getTime() + (rahuSlots[dayOfWeek] * part);
-            inauspicious.push(createTimeObj(
-                "Rahu Kalam", rahuStart, rahuStart + part, 
-                "bad", "Strictly avoid for any new undertaking.", 
-                "bg-rust-gradient", "dot-rust", "rust"
-            ));
+            for (let i = 0; i < 8; i++) {
+                let name = chogNames[i];
+                let theme = chogThemeMap[name];
+                let startMs = baseTime + (i * part);
+                let endMs = startMs + part;
+                let chogObj = createTimeObj(
+                    name + " Choghadiya", startMs, endMs,
+                    theme.type, theme.desc, theme.grad, theme.dot, theme.key
+                );
+                if (theme.type === 'good' || theme.type === 'neutral') auspicious.push(chogObj);
+                else inauspicious.push(chogObj);
+            }
 
-            // Yamaganda
-            const yamaStart = sunrise.getTime() + (yamaSlots[dayOfWeek] * part);
-            inauspicious.push(createTimeObj(
-                "Yamaganda", yamaStart, yamaStart + part, 
-                "bad", "Inauspicious period. Avoid travel.", 
-                "bg-crimson-gradient", "dot-crimson", "crimson"
-            ));
+            if (!isNightViewActive) {
+                // --- INAUSPICIOUS (Day only) ---
 
-            // Gulika Kalam
-            const gulikaStart = sunrise.getTime() + (gulikaSlots[dayOfWeek] * part);
-            inauspicious.push(createTimeObj(
-                "Gulika Kalam", gulikaStart, gulikaStart + part, 
-                "neutral", "Period for repeating activities.", 
-                "bg-slate-gradient", "dot-slate", "slate"
-            ));
+                // Rahu Kalam
+                const rahuStart = sunrise.getTime() + (rahuSlots[dayOfWeek] * part);
+                inauspicious.push(createTimeObj(
+                    "Rahu Kalam", rahuStart, rahuStart + part,
+                    "bad", "Strictly avoid for any new undertaking.",
+                    "bg-rust-gradient", "dot-rust", "rust"
+                ));
+
+                // Yamaganda
+                const yamaStart = sunrise.getTime() + (yamaSlots[dayOfWeek] * part);
+                inauspicious.push(createTimeObj(
+                    "Yamaganda", yamaStart, yamaStart + part,
+                    "bad", "Inauspicious period. Avoid travel.",
+                    "bg-crimson-gradient", "dot-crimson", "crimson"
+                ));
+
+                // Gulika Kalam
+                const gulikaStart = sunrise.getTime() + (gulikaSlots[dayOfWeek] * part);
+                inauspicious.push(createTimeObj(
+                    "Gulika Kalam", gulikaStart, gulikaStart + part,
+                    "neutral", "Period for repeating activities.",
+                    "bg-slate-gradient", "dot-slate", "slate"
+                ));
 
 
-            // --- AUSPICIOUS ---
+                // --- AUSPICIOUS (Day only) ---
 
-            // Brahma Muhurta (Sunrise - 96m to -48m)
-            const brahmaStart = sunrise.getTime() - (96 * 60000);
-            const brahmaEnd = sunrise.getTime() - (48 * 60000);
-            auspicious.push(createTimeObj(
-                "Brahma Muhurta", brahmaStart, brahmaEnd, 
-                "good", "Ideal for meditation and learning.", 
-                "bg-gold-gradient", "dot-gold", "gold"
-            ));
+                // Brahma Muhurta (Sunrise - 96m to -48m)
+                const brahmaStart = sunrise.getTime() - (96 * 60000);
+                const brahmaEnd = sunrise.getTime() - (48 * 60000);
+                auspicious.push(createTimeObj(
+                    "Brahma Muhurta", brahmaStart, brahmaEnd,
+                    "good", "Ideal for meditation and learning.",
+                    "bg-gold-gradient", "dot-gold", "gold"
+                ));
+
 
             // Pratah Sandhya (Sunrise - 48m to Sunrise)
             const pratahStart = sunrise.getTime() - (48 * 60000);
@@ -7751,7 +7818,7 @@ function renderCalendarGrid(data) {
                      }
                 }
             } catch (e) { console.error("Amrit Kalam Calc Failed", e); }
-
+            }
 
             // Sort
             auspicious.sort((a, b) => a.start - b.start);
@@ -8292,12 +8359,17 @@ function renderCalendarGrid(data) {
                            : new Date(data.year, data.month, 1);
 
             let sunTimes = { sunrise: null, sunset: null };
+            lastTimingData = data;
             let result = { auspicious: [], inauspicious: [] };
 
             if (appState.config.location && SunCalc) {
                 sunTimes = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
                 if (sunTimes.sunrise && sunTimes.sunset) {
-                    result = getSpecialTimes(calcDate, sunTimes.sunrise, sunTimes.sunset);
+                    // Calculate tomorrow's sunrise for Night Choghadiya
+                    const tomorrow = new Date(calcDate);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const tomorrowSunTimes = SunCalc.getTimes(tomorrow, appState.config.location.lat, appState.config.location.lng);
+                    result = getSpecialTimes(calcDate, sunTimes.sunrise, sunTimes.sunset, tomorrowSunTimes.sunrise);
                 }
             }
 
@@ -8314,9 +8386,9 @@ function renderCalendarGrid(data) {
             // Timing Analysis Visualization logic
             let timingAnalysisHtml = '';
             const dayStart = new Date(calcDate);
-            dayStart.setHours(6, 0, 0, 0); // View window start (e.g., 06:00)
+            dayStart.setHours(isNightViewActive ? 18 : 6, 0, 0, 0);
             const dayEnd = new Date(calcDate);
-            dayEnd.setHours(18, 0, 0, 0);   // View window end (e.g., 18:00)
+            dayEnd.setHours(isNightViewActive ? 30 : 18, 0, 0, 0); // 30 is 6 AM next day
             const totalMs = dayEnd - dayStart;
 
             if (totalMs > 0) {
@@ -8365,15 +8437,15 @@ function renderCalendarGrid(data) {
                     <div class="timing-track-container">
                         <div class="timing-baseline"></div>
                         
-                        <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
+                        <!-- Timeline Markers -->
                         <div class="timing-marker" style="left: 0%;">
-                            <div class="timing-marker-label text-center">6:00 AM</div>
+                            <div class="timing-marker-label text-center">${isNightViewActive ? '6:00 PM' : '6:00 AM'}</div>
                         </div>
                         <div class="timing-marker" style="left: 50%;">
-                            <div class="timing-marker-label text-center">12:00 PM</div>
+                            <div class="timing-marker-label text-center">${isNightViewActive ? '12:00 AM' : '12:00 PM'}</div>
                         </div>
                         <div class="timing-marker" style="left: 100%;">
-                            <div class="timing-marker-label text-center">6:00 PM</div>
+                            <div class="timing-marker-label text-center">${isNightViewActive ? '6:00 AM' : '6:00 PM'}</div>
                         </div>
 
                         ${eventsHtml}
@@ -8387,12 +8459,26 @@ function renderCalendarGrid(data) {
                 `;
             }
 
+
+            // Toggle Buttons
+            const activeClass = "bg-blue-600 text-white shadow-md";
+            const inactiveClass = "bg-white/50 text-gray-600 hover:bg-white border border-gray-200";
+
             let html = `
                 <div class="section-title">
                     <h3 class="font-bold text-green-700 mb-0"><i class="fa-solid fa-clock text-orange-600 mr-2"></i><span data-i18n="timings">Timings</span></h3>
                     <span class="badge">${dateStr}</span>
                 </div>
                 
+                <div class="flex items-center gap-2 mb-4 bg-gray-100 p-1 rounded-lg w-fit">
+                    <button onclick="toggleTimingView(false)" class="px-4 py-1.5 rounded-md text-sm font-bold transition-all flex items-center gap-2 ${!isNightViewActive ? activeClass : inactiveClass}">
+                        <i class="fa-solid fa-sun"></i> Day
+                    </button>
+                    <button onclick="toggleTimingView(true)" class="px-4 py-1.5 rounded-md text-sm font-bold transition-all flex items-center gap-2 ${isNightViewActive ? activeClass : inactiveClass}">
+                        <i class="fa-solid fa-moon"></i> Night
+                    </button>
+                </div>
+
                 <div class="current-time">
                     <div class="label"><span data-i18n="now">NOW</span></div>
                     <div class="line-container">
