@@ -1,0 +1,146 @@
+        function getSpecialTimes(date, sunrise, sunset) {
+            if (!sunrise || !sunset) return { auspicious: [], inauspicious: [] };
+
+            const dayOfWeek = date.getDay(); // 0 = Sunday
+            const duration = (sunset - sunrise); // Duration in ms
+            const part = duration / 8; // Rahu/Yama/Gulika use 8 parts
+            const muhurta = duration / 15; // Auspicious timings use 15 parts
+
+            // Slots (0-indexed parts of the day)
+            const rahuSlots = [7, 1, 6, 4, 5, 3, 2];
+            const yamaSlots = [4, 3, 2, 1, 0, 6, 5];
+            const gulikaSlots = [6, 5, 4, 3, 2, 1, 0];
+
+            const createTimeObj = (name, startMs, endMs, type, description, gradientClass, iconColor, themeKey) => {
+                const s = new Date(startMs);
+                const e = new Date(endMs);
+                return {
+                    name,
+                    start: s,
+                    end: e,
+                    type,
+                    description,
+                    gradientClass,
+                    iconColor,
+                    themeKey,
+                    duration: Math.round((e - s) / 60000) + 'm'
+                };
+            };
+
+            const auspicious = [];
+            const inauspicious = [];
+
+            // --- INAUSPICIOUS ---
+
+            // Rahu Kalam
+            const rahuStart = sunrise.getTime() + (rahuSlots[dayOfWeek] * part);
+            inauspicious.push(createTimeObj(
+                "Rahu Kalam", rahuStart, rahuStart + part,
+                "bad", "Strictly avoid for any new undertaking.",
+                "bg-rust-gradient", "dot-rust", "rust"
+            ));
+
+            // Yamaganda
+            const yamaStart = sunrise.getTime() + (yamaSlots[dayOfWeek] * part);
+            inauspicious.push(createTimeObj(
+                "Yamaganda", yamaStart, yamaStart + part,
+                "bad", "Inauspicious period. Avoid travel.",
+                "bg-crimson-gradient", "dot-crimson", "crimson"
+            ));
+
+            // Gulika Kalam
+            const gulikaStart = sunrise.getTime() + (gulikaSlots[dayOfWeek] * part);
+            inauspicious.push(createTimeObj(
+                "Gulika Kalam", gulikaStart, gulikaStart + part,
+                "neutral", "Period for repeating activities.",
+                "bg-slate-gradient", "dot-slate", "slate"
+            ));
+
+
+            // --- AUSPICIOUS ---
+
+            // Brahma Muhurta (Sunrise - 96m to -48m)
+            const brahmaStart = sunrise.getTime() - (96 * 60000);
+            const brahmaEnd = sunrise.getTime() - (48 * 60000);
+            auspicious.push(createTimeObj(
+                "Brahma Muhurta", brahmaStart, brahmaEnd,
+                "good", "Ideal for meditation and learning.",
+                "bg-gold-gradient", "dot-gold", "gold"
+            ));
+
+            // Pratah Sandhya (Sunrise - 48m to Sunrise)
+            const pratahStart = sunrise.getTime() - (48 * 60000);
+            auspicious.push(createTimeObj(
+                "Pratah Sandhya", pratahStart, sunrise.getTime(),
+                "good", "Time for morning prayers.",
+                "bg-lavender-gradient", "dot-lavender", "lavender"
+            ));
+
+            // Abhijit Muhurat (8th Muhurta) - Usually skipped on Wednesday (3), but requested to always show.
+            const abhijitStart = sunrise.getTime() + (7 * muhurta);
+            const abhijitEnd = sunrise.getTime() + (8 * muhurta);
+            auspicious.push(createTimeObj(
+                "Abhijit Muhurat", abhijitStart, abhijitEnd,
+                "good", "Victory over obstacles. Best for new beginnings.",
+                "bg-emerald-gradient", "dot-emerald", "emerald"
+            ));
+
+            // Vijaya Muhurta (11th Muhurta)
+            const vijayaStart = sunrise.getTime() + (10 * muhurta);
+            const vijayaEnd = sunrise.getTime() + (11 * muhurta);
+            auspicious.push(createTimeObj(
+                "Vijaya Muhurta", vijayaStart, vijayaEnd,
+                "good", "Time for victory and success.",
+                "bg-royal-gradient", "dot-royal", "royal"
+            ));
+
+            // Amrit Kalam (Nakshatra Based)
+            try {
+                // Get Nakshatra Active at Sunrise to determine Amrit Kalam for the day
+                const astro = VedicAstro.calculate(sunrise, 6);
+                const nakName = astro.nakshatra;
+
+                // Find index using keys since we don't have access to internal NAKSHATRAS array
+                // But AMRIT_GHATIS keys match NAKSHATRAS names
+                const nakIndex = Object.keys(VedicAstro.AMRIT_GHATIS).indexOf(nakName);
+
+                if (nakIndex !== -1) {
+                     const jd = astro.jd;
+                     const times = VedicAstro.getNakshatraTimes(jd, nakIndex); // Returns JD {start, end}
+
+                     // Convert JD to Date
+                     const jdToDate = (j) => new Date((j - 2440587.5) * 86400000);
+                     const nakStart = jdToDate(times.start);
+                     const nakEnd = jdToDate(times.end);
+                     const nakDur = nakEnd - nakStart;
+
+                     const ghatis = VedicAstro.AMRIT_GHATIS[nakName]; // [start, end]
+                     if (ghatis) {
+                         const amritStart = new Date(nakStart.getTime() + (ghatis[0]/60 * nakDur));
+                         const amritEnd = new Date(nakStart.getTime() + (ghatis[1]/60 * nakDur));
+
+                         auspicious.push(createTimeObj(
+                            "Amrit Kalam", amritStart, amritEnd,
+                            "good", "Most auspicious time for any work.",
+                            "bg-skyblue-gradient", "dot-skyblue", "skyblue"
+                         ));
+                     }
+                }
+            } catch (e) { console.error("Amrit Kalam Calc Failed", e); }
+
+
+            // Sort
+            auspicious.sort((a, b) => a.start - b.start);
+            inauspicious.sort((a, b) => a.start - b.start);
+
+            return { auspicious, inauspicious };
+        }
+
+        // --- UPDATED MAIN RENDER FUNCTION ---
+        function renderPanchang(data) {
+            const section = document.getElementById('sec-panchang');
+            const pillsContainer = document.getElementById('panchang-pills');
+            const list = document.getElementById('panchang-list');
+
+            // Clear containers
+            pillsContainer.innerHTML = '';
