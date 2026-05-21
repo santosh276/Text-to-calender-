@@ -1748,13 +1748,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         
         /* SCROLLING ANIMATION */
         @keyframes seamless-scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
         .animate-seamless-scroll {
             display: flex;
             width: max-content;
             animation: seamless-scroll 35s linear infinite;
+            will-change: transform;
+            transform: translateZ(0);
         }
         .animate-seamless-scroll:hover {
             animation-play-state: paused;
@@ -4127,6 +4129,7 @@ const LOCATION_DATA = {
         
         let bannerInterval;
         let liveClockInterval = null;
+        let cachedTimingCards = [];
         let bannerCurrentIndex = 0;
         let currentBannerDataHash = "";
         let isBannerDismissed = false;
@@ -4944,7 +4947,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         function renderCustomCard(cardData) {
             const bgColor = cardData.color || '#0d9488';
             return `
-            <a href="${cardData.link}" target="_blank" class="block h-full group">
+            <a href="${cardData.link}" target="_blank" class="block h-full group" style="transform: translateZ(0); will-change: transform;">
                 <div style="background-color: ${bgColor};" class="rounded-xl p-3 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                     <div class="relative z-10 flex flex-col items-center text-center md:flex-row md:items-start md:text-left gap-3 w-full mb-3">
@@ -4967,7 +4970,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         function renderScrollCard(cardData) {
             const bgColor = cardData.color || '#2e3459';
             return `
-            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 shadow-lg shadow-black/5 relative overflow-hidden" style="background-color: ${bgColor};">
+            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 shadow-lg shadow-black/5 relative overflow-hidden" style="background-color: ${bgColor}; transform: translateZ(0); will-change: transform;">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                 <div class="flex items-center gap-3 w-[85%] relative z-10">
                     <div class="w-12 h-12 min-w-[3rem] flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square">
@@ -4986,7 +4989,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         function renderBubbleCard(cardData) {
             const bgColor = cardData.color || '#0d9488';
             return `
-            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 rounded-xl p-3 relative overflow-hidden shadow-md" style="background-color: ${bgColor};">
+            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 rounded-xl p-3 relative overflow-hidden shadow-md" style="background-color: ${bgColor}; transform: translateZ(0); will-change: transform;">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                 <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square mb-2 relative z-10">
                     ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
@@ -7054,7 +7057,7 @@ function getCDNUrl(originalUrl) {
 
             gridEvents.forEach(item => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer active:scale-95 flex flex-col w-full min-w-0 relative";
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer active:scale-95 flex flex-col w-full min-w-0 relative transform-gpu will-change-transform";
                 card.onclick = () => openDayModal(item.event.date, item.monthData);
 
                 // Calculate days remaining
@@ -8188,10 +8191,10 @@ function renderCalendarGrid(data) {
         }
 
         function updateLiveTimers() {
-            const cards = document.querySelectorAll('.timeline-card[data-start][data-end]');
+            if (appState.view !== 'timings') return;
             const now = new Date();
 
-            cards.forEach(card => {
+            cachedTimingCards.forEach(card => {
                 const start = parseInt(card.getAttribute('data-start'));
                 const end = parseInt(card.getAttribute('data-end'));
                 
@@ -8537,6 +8540,8 @@ function renderCalendarGrid(data) {
 
             container.innerHTML = html;
             applyCustomLabels();
+
+            cachedTimingCards = Array.from(document.querySelectorAll('.timeline-card[data-start][data-end]'));
             startLiveClock(); // Ensure clock restarts
         }
 
@@ -8646,7 +8651,7 @@ function renderCalendarGrid(data) {
 
                 // --- CARD 1: Event Details ---
                 const eventCard = document.createElement('div');
-                eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
+                eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95 transform-gpu will-change-transform";
                 eventCard.onclick = () => openDayModal(upNextEvent.date, upNextMonthData);
                 eventCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)";
                 eventCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
