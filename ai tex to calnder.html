@@ -4110,6 +4110,7 @@ const LOCATION_DATA = {
 
         let appState = {
             activeMonthIndex: 0,
+            scrollPositions: {},
             customLabels: {},
             customMonths: {},
             monthsData: [],
@@ -7136,6 +7137,9 @@ function getCDNUrl(originalUrl) {
 
         function toggleView(viewName) {
 
+            if (!appState.scrollPositions) appState.scrollPositions = {};
+            appState.scrollPositions[appState.view] = window.scrollY || document.documentElement.scrollTop;
+
             appState.view = viewName;
             
             // Default to month if undefined (handles initial cache hit logic)
@@ -7208,6 +7212,13 @@ function getCDNUrl(originalUrl) {
             });
             
             render();
+
+            requestAnimationFrame(() => {
+                window.scrollTo({
+                    top: appState.scrollPositions[viewName] || 0,
+                    behavior: 'instant'
+                });
+            });
         }
 
         function isLeapYear(year) {
