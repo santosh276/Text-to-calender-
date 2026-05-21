@@ -884,8 +884,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .badge-ending-soon {
             /* Remove hardcoded red to inherit theme badge colors dynamically */
             color: #ffffff !important;
-            backdrop-filter: blur(8px) !important;
-            -webkit-backdrop-filter: blur(8px) !important;
             animation: ending-soon-pulse 1.5s infinite ease-in-out;
             font-weight: 800;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
@@ -1618,7 +1616,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             background: var(--glass-bg); border: 1px solid var(--glass-border); 
             padding: 4px 10px; border-radius: 999px; 
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
         .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
         .timeline-icon { width: 12px; height: 12px; fill: currentColor; }
@@ -1628,7 +1625,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; 
             text-transform: uppercase; letter-spacing: 0.05em; 
             animation: pulse-opacity 2.5s ease-in-out infinite; 
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
@@ -7892,13 +7888,13 @@ function renderCalendarGrid(data) {
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${fmt(sunTimes.sunrise)}</span>
         </div>
         <div class="h-16 md:h-20 w-px bg-white/20 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${fmt(sunTimes.sunset)}</span>
         </div>
@@ -7992,13 +7988,13 @@ function renderCalendarGrid(data) {
     <div class="flex justify-between items-center w-full relative">
 
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmt(moonTimes.rise) : '--:--'}</span>
         </div>
         <div class="h-16 md:h-20 w-px bg-white/20 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmt(moonTimes.set) : '--:--'}</span>
         </div>
@@ -8206,80 +8202,83 @@ function renderCalendarGrid(data) {
         }
 
         function updateLiveTimers() {
-            const cards = document.querySelectorAll('.timeline-card[data-start][data-end]');
             const now = new Date();
+            const cards = document.querySelectorAll('.timeline-card');
 
             cards.forEach(card => {
-                const start = parseInt(card.getAttribute('data-start'));
-                const end = parseInt(card.getAttribute('data-end'));
+                const startTimeStr = card.getAttribute('data-start');
+                const endTimeStr = card.getAttribute('data-end');
+                if (!startTimeStr || !endTimeStr) return;
                 
-                const badge = card.querySelector('.progress-badge');
-                const pulseText = card.querySelector('.pulse-text');
+                const start = new Date(startTimeStr);
+                const end = new Date(endTimeStr);
 
+                const badge = card.querySelector('.live-badge');
                 if (!badge) return;
 
+                const pulseText = card.querySelector('.pulse-text');
+
                 if (now < start) {
-                    // FUTURE
-                    const waitMs = start - now;
-                    const waitMins = Math.ceil(waitMs / 60000);
-                    const h = Math.floor(waitMins / 60);
-                    const m = waitMins % 60;
+                    // UPCOMING
+                    const diffMs = start - now;
+                    const remMins = Math.floor(diffMs / 60000);
+                    const h = Math.floor(remMins / 60);
+                    const m = remMins % 60;
                     
-                    badge.innerText = `UPCOMING IN ${h}H ${m}M`;
-                    badge.classList.remove('badge-ending-soon');
-                    if (pulseText) pulseText.style.display = 'none';
-                    card.classList.remove('completed');
+                    const newText = `UPCOMING IN ${h}H ${m}M`;
+                    if (badge.innerText !== newText) badge.innerText = newText;
+
+                    if (badge.classList.contains('badge-ending-soon')) badge.classList.remove('badge-ending-soon');
+                    if (pulseText && pulseText.style.display !== 'none') pulseText.style.display = 'none';
+                    if (card.classList.contains('completed')) card.classList.remove('completed');
 
                 } else if (now >= start && now <= end) {
                     // ACTIVE
-                    const remainingMs = end - now;
-                    const remMins = Math.ceil(remainingMs / 60000);
+                    const diffMs = end - now;
+                    const remMins = Math.floor(diffMs / 60000);
                     const h = Math.floor(remMins / 60);
                     const m = remMins % 60;
 
-                    // "Ending Soon" Logic (less than 15 mins)
                     if (remMins <= 15) {
-                        badge.innerText = "Ending Soon";
-                        badge.classList.add('badge-ending-soon');
+                        const newText = "Ending Soon";
+                        if (badge.innerText !== newText) badge.innerText = newText;
+                        if (!badge.classList.contains('badge-ending-soon')) badge.classList.add('badge-ending-soon');
                     } else {
-                        badge.innerText = `ENDS IN ${h}H ${m}M`;
-                        badge.classList.remove('badge-ending-soon');
+                        const newText = `ENDS IN ${h}H ${m}M`;
+                        if (badge.innerText !== newText) badge.innerText = newText;
+                        if (badge.classList.contains('badge-ending-soon')) badge.classList.remove('badge-ending-soon');
                     }
                     
-                    if (pulseText) pulseText.style.display = 'inline-block';
-                    card.classList.remove('completed');
+                    if (pulseText && pulseText.style.display !== 'inline-block') pulseText.style.display = 'inline-block';
+                    if (card.classList.contains('completed')) card.classList.remove('completed');
 
                 } else {
                     // COMPLETED
-                    badge.innerHTML = `<span data-i18n="completed">Completed</span>`;
-                    badge.classList.remove('badge-ending-soon');
-                    if (pulseText) pulseText.style.display = 'none';
-                    card.classList.add('completed');
+                    const newHtml = `<span data-i18n="completed">Completed</span>`;
+                    if (badge.innerHTML !== newHtml) badge.innerHTML = newHtml;
+                    if (badge.classList.contains('badge-ending-soon')) badge.classList.remove('badge-ending-soon');
+                    if (pulseText && pulseText.style.display !== 'none') pulseText.style.display = 'none';
+                    if (!card.classList.contains('completed')) card.classList.add('completed');
                 }
             });
         }
 
         function startLiveClock() {
-            stopLiveClock();
-            
-            const updateTime = () => {
+            if (liveClockInterval) clearInterval(liveClockInterval);
+            liveClockInterval = setInterval(() => {
                 const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-                const el = document.getElementById('live-clock-time');
+                const el = document.getElementById('live-clock');
                 if (el) {
-                    el.innerText = timeString;
+                    const timeStr = now.toLocaleTimeString();
+                    if (el.innerText !== timeStr) el.innerText = timeStr;
                 }
                 const el2 = document.getElementById('timings-clock');
                 if (el2) {
-                    el2.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const timeStr2 = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    if (el2.innerText !== timeStr2) el2.innerText = timeStr2;
                 }
-                
-                // Dynamic Timers Hook
                 updateLiveTimers();
-            };
-            
-            updateTime();
-            liveClockInterval = setInterval(updateTime, 1000);
+            }, 1000);
         }
 
         function adjustUpNextIcon(card) {
@@ -8527,7 +8526,7 @@ function renderCalendarGrid(data) {
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
                                         <div class="relative mt-auto pt-3">
                                             <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
-                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-2 py-0.5 text-[8px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
+                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-2 py-0.5 text-[8px] tracking-widest whitespace-nowrap" style="border-radius: 9999px;">ACTIVE NOW</span>
                                             </div>
                                             ${footerHtml}
                                         </div>
