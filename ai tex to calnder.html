@@ -1010,8 +1010,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         /* --- Glass Time Box (Timings Card Footer) --- */
         .glass-time-box {
             background: rgba(255, 255, 255, 0.2); /* Frosted Glass */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3); /* Glass Edge */
             border-radius: 12px;
             padding: 4px 6px;
@@ -1526,6 +1524,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             flex: 1; border-radius: 12px; padding: 10px; color: white; position: relative; overflow: hidden;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             border: 1px solid rgba(255, 255, 255, 0.15); /* Glass edge */
+            transform: translateZ(0);
+            will-change: transform;
+            contain: content;
         }
         
         /* Completed Card Styling */
@@ -1570,14 +1571,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .footer-lavender { background: rgba(76, 29, 149, 0.3); border: 1px solid rgba(167, 139, 250, 0.3); }
         .footer-royal { background: rgba(30, 58, 138, 0.3); border: 1px solid rgba(96, 165, 250, 0.3); }
 
-        .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-skyblue { background-color: rgba(12, 74, 110, 0.25); border-color: rgba(56, 189, 248, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-rust { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(253, 186, 116, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-crimson { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(252, 165, 165, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-lavender { background-color: rgba(76, 29, 149, 0.25); border-color: rgba(167, 139, 250, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-royal { background-color: rgba(30, 58, 138, 0.25); border-color: rgba(96, 165, 250, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; }
+        .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; }
+        .badge-skyblue { background-color: rgba(12, 74, 110, 0.25); border-color: rgba(56, 189, 248, 0.5); color: white; }
+        .badge-rust { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(253, 186, 116, 0.5); color: white; }
+        .badge-crimson { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(252, 165, 165, 0.5); color: white; }
+        .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; }
+        .badge-lavender { background-color: rgba(76, 29, 149, 0.25); border-color: rgba(167, 139, 250, 0.5); color: white; }
+        .badge-royal { background-color: rgba(30, 58, 138, 0.25); border-color: rgba(96, 165, 250, 0.5); color: white; }
 
         .dot-emerald { border-color: #10b981; }
         .dot-gold { border-color: #f59e0b; }
@@ -1602,7 +1603,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             background: var(--glass-bg); border: 1px solid var(--glass-border); 
             padding: 4px 10px; border-radius: 999px; 
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+
         }
         .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
         .timeline-icon { width: 12px; height: 12px; fill: currentColor; }
@@ -1674,10 +1675,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
 
         /* Themed Badges */
-        .badge-green { background-color: rgba(6, 78, 59, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-orange { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(251, 146, 60, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-red { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(244, 63, 94, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-neutral { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-green { background-color: rgba(6, 78, 59, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; }
+        .badge-orange { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(251, 146, 60, 0.5); color: white; }
+        .badge-red { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(244, 63, 94, 0.5); color: white; }
+        .badge-neutral { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; }
 
         /* Glassmorphic Badges for Festival List */
         .badge-glass-red {
@@ -2267,7 +2268,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
 
-            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4 pt-4 pb-24">
+            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4 pt-4 pb-24 transform-gpu will-change-transform overscroll-none">
                 <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 hidden">
                     <!-- Auspicious Timings Content -->
                 </div>
@@ -4706,12 +4707,12 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         let currentTagFilter = null; // null = Show All Tags
 
         const TAG_STYLES = [
-            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Blue
-            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Green
-            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Brown/Orange
-            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Purple
-            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Deep Orange/Red
-            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"  // Deep Purple
+            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3);", // Blue
+            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3);", // Green
+            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3);", // Brown/Orange
+            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3);", // Purple
+            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3);", // Deep Orange/Red
+            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3);"  // Deep Purple
         ];
 
         function getTagStyle(tagName) {
