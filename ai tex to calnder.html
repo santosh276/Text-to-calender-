@@ -1866,9 +1866,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                 <i class="fa-solid fa-headphones text-xl"></i>
                 <span class="text-[10px] font-bold" data-i18n="listen_nav">Listen</span>
             </button>
-            <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
-                <i class="fa-regular fa-comment-dots text-xl"></i>
-                <span class="text-[10px] font-bold" data-i18n="chat_nav">Chat</span>
+            <button onclick="toggleView('timings')" class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
+                <i class="fa-solid fa-clock text-xl"></i>
+                <span class="text-[10px] font-bold" data-i18n="timings_nav">Timings</span>
             </button>
             <button onclick="toggleView('more')" class="menu-icon-btn flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
@@ -2239,6 +2239,13 @@ The word "Nua" means new and "Khai" means food.
 
         <!-- RIGHT PANEL: Preview -->
         <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] flex flex-col" style="padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom)));">
+            <!-- TIMINGS VIEW CONTAINER -->
+            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4 pt-4 pb-24">
+                <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300">
+                        <!-- Auspicious Timings Content -->
+                    </div>
+            </div>
+
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -2495,9 +2502,7 @@ The word "Nua" means new and "Khai" means food.
                         <ul id="panchang-list" class="text-sm space-y-2"></ul>
                     </div>
                     
-                    <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 order-4 hidden">
-                        <!-- Auspicious Timings Content -->
-                    </div>
+
                 </div>
 
                 <!-- Sidebar Section -->
@@ -6405,9 +6410,11 @@ function getCDNUrl(originalUrl) {
 
                         const festivalContainer = document.getElementById('app-festival-view');
             const moreContainer = document.getElementById('more-view-container');
+            const timingsContainer = document.getElementById('timings-view-container');
 
             if (appState.view === 'year') {
                 if(monthContainer) monthContainer.classList.add('hidden');
+                if(timingsContainer) timingsContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.remove('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
                 if(moreContainer) moreContainer.classList.add('hidden');
@@ -6416,17 +6423,26 @@ function getCDNUrl(originalUrl) {
                 renderYearView();
             } else if (appState.view === 'festivals') {
                 if(monthContainer) monthContainer.classList.add('hidden');
+                if(timingsContainer) timingsContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.remove('hidden');
                 if(moreContainer) moreContainer.classList.add('hidden');
                 renderAppFestivalView();
             } else if (appState.view === 'more') {
                 if(monthContainer) monthContainer.classList.add('hidden');
+                if(timingsContainer) timingsContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
                 if(moreContainer) moreContainer.classList.remove('hidden');
+            } else if (appState.view === 'timings') {
+                if(monthContainer) monthContainer.classList.add('hidden');
+                if(yearContainer) yearContainer.classList.add('hidden');
+                if(festivalContainer) festivalContainer.classList.add('hidden');
+                if(moreContainer) moreContainer.classList.add('hidden');
+                if(timingsContainer) timingsContainer.classList.remove('hidden');
             } else {
                 if(monthContainer) monthContainer.classList.remove('hidden');
+                if(timingsContainer) timingsContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
                 if(moreContainer) moreContainer.classList.add('hidden');
@@ -7156,6 +7172,12 @@ function getCDNUrl(originalUrl) {
                     } else {
                         btn.classList.add('text-gray-400');
                     }
+                } else if (btn.querySelector('.fa-clock')) {
+                    if (safeView === 'timings') {
+                        btn.classList.add('text-orange-600');
+                    } else {
+                        btn.classList.add('text-gray-400');
+                    }
                 } else {
                     btn.classList.add('text-gray-400');
                 }
@@ -7179,6 +7201,12 @@ function getCDNUrl(originalUrl) {
                     }
                 } else if (btn.classList.contains('menu-icon-btn')) {
                     if (viewName === 'more') {
+                        btn.classList.add('text-white');
+                    } else {
+                        btn.classList.add('text-white/80');
+                    }
+                } else if (btn.querySelector('.fa-clock')) {
+                    if (viewName === 'timings') {
                         btn.classList.add('text-white');
                     } else {
                         btn.classList.add('text-white/80');
@@ -10041,6 +10069,7 @@ function renderCalendarGrid(data) {
 
                 // Get all cards in the more-view-container
                 const moreContainer = document.getElementById('more-view-container');
+            const timingsContainer = document.getElementById('timings-view-container');
                 if (!moreContainer) return;
                 
                 const cardElements = moreContainer.querySelectorAll('.snap-start, .grid > div, .grid > a');
@@ -10273,9 +10302,9 @@ function renderCalendarGrid(data) {
             <i class="fa-solid fa-headphones text-xl"></i>
             <span class="text-[10px] font-bold leading-none" data-i18n="listen_nav">Listen</span>
         </button>
-        <button class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
-            <i class="fa-regular fa-comment-dots text-xl"></i>
-            <span class="text-[10px] font-bold leading-none" data-i18n="chat_nav">Chat</span>
+        <button id="nav-btn-timings" onclick="toggleView('timings')" class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
+            <i class="fa-solid fa-clock text-xl"></i>
+            <span class="text-[10px] font-bold leading-none" data-i18n="timings_nav">Timings</span>
         </button>
         <button onclick="toggleView('more')" class="menu-icon-btn flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
