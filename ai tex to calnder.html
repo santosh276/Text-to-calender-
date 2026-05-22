@@ -8773,13 +8773,19 @@ function renderCalendarGrid(data) {
 
             const choghadiyas = calculateChoghadiya(calcDate, lat, lng);
 
+            // Remove existing Choghadiya container if present to avoid duplicates
+            const existingCh = document.getElementById('choghadiya-container');
+            if (existingCh) existingCh.remove();
+
             if (choghadiyas.length > 0) {
                 const fmtC = (d) => d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12: false});
 
                 let chHtml = `
-                <div class="glass rounded-xl shadow-md p-4 md:p-5 mt-6 border border-gray-100" id="choghadiya-container">
-                    <h2 class="text-xl font-extrabold text-gray-900 tracking-tight">Vedic Planner</h2>
-                    <p class="text-gray-500 text-sm font-medium mb-4">Daily Choghadiya Timeline</p>
+                <div class="glass rounded-xl shadow-md border-l-4 border-blue-500 p-4 transition-all duration-300 mt-4" id="choghadiya-container">
+                    <div class="section-title mb-4">
+                        <h3 class="font-bold text-blue-700 mb-0"><i class="fa-solid fa-layer-group text-orange-600 mr-2"></i><span>Vedic Planner</span></h3>
+                        <span class="badge">Choghadiya</span>
+                    </div>
 
                     <!-- Legend -->
                     <div class="border border-gray-100 rounded-xl p-3 md:p-4 bg-white/50 mb-6 flex flex-col gap-2.5">
@@ -8822,7 +8828,8 @@ function renderCalendarGrid(data) {
                 });
 
                 chHtml += `</div></div>`;
-                container.insertAdjacentHTML('beforeend', chHtml);
+                // Insert AFTER the timings container so it's a completely separate card
+                container.insertAdjacentHTML('afterend', chHtml);
             }
 
             applyCustomLabels();
