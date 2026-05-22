@@ -928,7 +928,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-track-container {
             position: relative;
-            height: 60px;
+            height: 75px;
             margin: 0 10px;
         }
         .timing-baseline {
@@ -8355,7 +8355,8 @@ function renderCalendarGrid(data) {
             const dayStart = new Date(calcDate);
             dayStart.setHours(6, 0, 0, 0); // View window start (e.g., 06:00)
             const dayEnd = new Date(calcDate);
-            dayEnd.setHours(18, 0, 0, 0);   // View window end (e.g., 18:00)
+            dayEnd.setDate(dayEnd.getDate() + 1);
+            dayEnd.setHours(6, 0, 0, 0);   // View window end (e.g., 06:00 Next Day)
             const totalMs = dayEnd - dayStart;
 
             if (totalMs > 0) {
@@ -8365,6 +8366,7 @@ function renderCalendarGrid(data) {
 
                 // Generate events
                 let eventsHtml = '';
+                let eventIndex = 0;
                 
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
@@ -8382,12 +8384,14 @@ function renderCalendarGrid(data) {
                             
                             // Clean up name for label (remove "Kalam", "Muhurat")
                             let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
-
+                            // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
+                            const yOffset = (eventIndex % 2 === 0) ? '28px' : '42px';
                             eventsHtml += `
                                 <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%;">
-                                    <div class="timing-event-label">${displayName}</div>
+                                    <div class="timing-event-label" style="transform: translate(-50%, ${yOffset});">${displayName}</div>
                                 </div>
                             `;
+                            eventIndex++;
                         }
                     }
                 };
@@ -8406,13 +8410,19 @@ function renderCalendarGrid(data) {
                         
                         <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
                         <div class="timing-marker" style="left: 0%;">
-                            <div class="timing-marker-label text-center">6:00 AM</div>
+                            <div class="timing-marker-label text-center">6 AM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 25%;">
+                            <div class="timing-marker-label text-center">12 PM</div>
                         </div>
                         <div class="timing-marker" style="left: 50%;">
-                            <div class="timing-marker-label text-center">12:00 PM</div>
+                            <div class="timing-marker-label text-center">6 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 75%;">
+                            <div class="timing-marker-label text-center">12 AM</div>
                         </div>
                         <div class="timing-marker" style="left: 100%;">
-                            <div class="timing-marker-label text-center">6:00 PM</div>
+                            <div class="timing-marker-label text-center">6 AM</div>
                         </div>
 
                         ${eventsHtml}
