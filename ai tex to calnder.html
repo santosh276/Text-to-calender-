@@ -1431,75 +1431,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         text-transform: uppercase;
     }
 
-        /* --- CHOGHADIYA TIMELINE STYLES --- */
-        .ch-timeline {
-            position: relative;
-            padding-left: 1.5rem; /* Space for the line */
-        }
-        /* Dashed Line */
-        .ch-timeline::before {
-            content: '';
-            position: absolute;
-            left: 0.35rem; /* Center of the dots */
-            top: 1.5rem;
-            bottom: 2rem;
-            border-left: 2px dashed #D1D5DB; /* Tailwind gray-300 */
-            z-index: 0;
-        }
 
-        .ch-item {
-            position: relative;
-            z-index: 10;
-        }
-
-        /* The Dots */
-        .ch-node {
-            position: absolute;
-            left: -1.5rem; /* Move to the line */
-            top: 1.25rem;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background-color: white;
-            border: 3px solid;
-            transition: all 0.3s ease;
-        }
-
-        /* Active State Dot */
-        .ch-item.active .ch-node {
-            background-color: currentColor; /* Fill the dot */
-            box-shadow: 0 0 0 4px rgba(currentColor, 0.2); /* Outer glow */
-            animation: pulse-ring 2s infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0px rgba(currentColor, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(currentColor, 0); }
-            100% { box-shadow: 0 0 0 0px rgba(currentColor, 0); }
-        }
-
-        /* Card Styles */
-        .ch-card {
-            background: white;
-            border: 1px solid #E5E7EB; /* gray-200 */
-            border-radius: 1rem;
-            padding: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        /* Active Card Style */
-        .ch-item.active .ch-card {
-            border-color: currentColor;
-            background-color: rgba(currentColor, 0.03);
-            box-shadow: 0 4px 15px -3px rgba(currentColor, 0.1);
-            transform: scale(1.02);
-            z-index: 20;
-        }
-
-        /* Status Colors */
-        .ch-good { color: #10B981; }    /* Emerald 500 */
-        .ch-neutral { color: #F59E0B; } /* Amber 500 */
-        .ch-bad { color: #EF4444; }     /* Red 500 */
     </style>
 <style>
         /* =========================================
@@ -1887,7 +1819,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
         /* --- Choghadiya Timeline CSS --- */
         .ch-timeline { position: relative; }
-        .ch-timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; border-left: 2px dashed #e5e7eb; z-index: 0; }
+        .ch-timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; border-left: 2px dashed #e5e7eb; z-index: 0; }
         .ch-item { position: relative; display: flex; align-items: stretch; gap: 16px; margin-bottom: 16px; z-index: 1; }
         .ch-item:last-child { margin-bottom: 0; }
         .ch-node { width: 30px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; position: relative; z-index: 2; }
