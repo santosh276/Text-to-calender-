@@ -928,7 +928,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-track-container {
             position: relative;
-            height: 60px;
+            height: 75px;
             margin: 0 10px;
         }
         .timing-baseline {
@@ -1430,6 +1430,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         letter-spacing: 0.25em;
         text-transform: uppercase;
     }
+
+
     </style>
 <style>
         /* =========================================
@@ -1814,7 +1816,23 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     padding-top: 0;
 }
 
-</style>
+
+        /* --- Choghadiya Timeline CSS --- */
+        .ch-timeline { position: relative; }
+        .ch-timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; border-left: 2px dashed #e5e7eb; z-index: 0; }
+        .ch-item { position: relative; display: flex; align-items: stretch; gap: 16px; margin-bottom: 16px; z-index: 1; }
+        .ch-item:last-child { margin-bottom: 0; }
+        .ch-node { width: 30px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; position: relative; z-index: 2; }
+        .ch-node::before { content: ''; width: 14px; height: 14px; border-radius: 50%; background-color: white; border: 2px solid currentColor; box-shadow: 0 0 0 4px white; transition: all 0.3s ease; }
+        .ch-item.active .ch-node::before { background-color: currentColor; box-shadow: 0 0 0 4px white, 0 0 0 8px currentColor; opacity: 0.8; animation: ch-pulse 2s infinite; }
+        @keyframes ch-pulse { 0% { box-shadow: 0 0 0 4px white, 0 0 0 8px currentColor; opacity: 0.8; } 50% { box-shadow: 0 0 0 4px white, 0 0 0 12px currentColor; opacity: 0.4; } 100% { box-shadow: 0 0 0 4px white, 0 0 0 8px currentColor; opacity: 0.8; } }
+        .ch-card { flex-grow: 1; background-color: white; border: 1px solid #f3f4f6; border-radius: 12px; padding: 12px 16px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
+        .ch-item.active .ch-card { transform: translateX(4px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .ch-bg-good .ch-card { background-color: #ecfdf5; border-color: #10b981; } .ch-bg-good { color: #10b981; } .ch-bg-good .ch-countdown { background-color: #10b981; color: white; }
+        .ch-bg-neutral .ch-card { background-color: #fffbeb; border-color: #f59e0b; } .ch-bg-neutral { color: #f59e0b; } .ch-bg-neutral .ch-countdown { background-color: #f59e0b; color: white; }
+        .ch-bg-bad .ch-card { background-color: #fef2f2; border-color: #ef4444; } .ch-bg-bad { color: #ef4444; } .ch-bg-bad .ch-countdown { background-color: #ef4444; color: white; }
+
+    </style>
 
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -2278,7 +2296,36 @@ The word "Nua" means new and "Khai" means food.
 
             <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4 pt-4 pb-24 transform-gpu will-change-transform overscroll-none">
                 <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 hidden">
-                    <!-- Auspicious Timings Content -->
+                    <!-- Placeholder: Auspicious Timings Content -->
+                    <div class="timing-analysis-wrapper">
+                        <div class="timing-analysis-header">
+                            <div class="timing-analysis-title"><span data-i18n="timing_analysis">TIMING ANALYSIS</span></div>
+                            <div class="timing-analysis-live">LIVE</div>
+                        </div>
+                        <div class="timing-track-container">
+                            <div class="timing-baseline"></div>
+                            
+                            <div class="timing-marker" style="left: 0%;">
+                                <div class="timing-marker-label text-center">6 AM</div>
+                            </div>
+                            <div class="timing-marker" style="left: 25%;">
+                                <div class="timing-marker-label text-center">12 PM</div>
+                            </div>
+                            <div class="timing-marker" style="left: 50%;">
+                                <div class="timing-marker-label text-center">6 PM</div>
+                            </div>
+                            <div class="timing-marker" style="left: 75%;">
+                                <div class="timing-marker-label text-center">12 AM</div>
+                            </div>
+                            <div class="timing-marker" style="left: 100%;">
+                                <div class="timing-marker-label text-center">6 AM</div>
+                            </div>
+                            
+                            <div class="timing-now-indicator" style="left: 10%;">
+                                <div class="timing-now-badge"><span data-i18n="now">NOW</span></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -3591,6 +3638,100 @@ return SunCalc;
                 }
             };
         })();
+
+        /* --- CHOGHADIYA LOGIC --- */
+        const CHOGHADIYA_DATA = {
+            names: {
+                1: { name: 'Udveg', type: 'bad', meaning: 'Anxiety (Bad)' },
+                2: { name: 'Chal', type: 'neutral', meaning: 'Motion (Neutral)' },
+                3: { name: 'Labh', type: 'good', meaning: 'Gain (Good)' },
+                4: { name: 'Amrit', type: 'good', meaning: 'Nectar (Best)' },
+                5: { name: 'Kaal', type: 'bad', meaning: 'Death (Bad)' },
+                6: { name: 'Shubh', type: 'good', meaning: 'Auspicious (Good)' },
+                7: { name: 'Rog', type: 'bad', meaning: 'Disease (Bad)' }
+            },
+            // Order of Choghadiyas based on Weekday (0=Sun, 1=Mon... 6=Sat)
+            daySequence: [
+                [1, 2, 3, 4, 5, 6, 7, 1], // Sunday
+                [4, 5, 6, 7, 1, 2, 3, 4], // Monday
+                [7, 1, 2, 3, 4, 5, 6, 7], // Tuesday
+                [3, 4, 5, 6, 7, 1, 2, 3], // Wednesday
+                [6, 7, 1, 2, 3, 4, 5, 6], // Thursday
+                [2, 3, 4, 5, 6, 7, 1, 2], // Friday
+                [5, 6, 7, 1, 2, 3, 4, 5]  // Saturday
+            ],
+            nightSequence: [
+                [6, 4, 2, 7, 5, 3, 1, 6], // Sunday Night
+                [2, 7, 5, 3, 1, 6, 4, 2], // Monday Night
+                [5, 3, 1, 6, 4, 2, 7, 5], // Tuesday Night
+                [1, 6, 4, 2, 7, 5, 3, 1], // Wednesday Night
+                [4, 2, 7, 5, 3, 1, 6, 4], // Thursday Night
+                [7, 5, 3, 1, 6, 4, 2, 7], // Friday Night
+                [3, 1, 6, 4, 2, 7, 5, 3]  // Saturday Night
+            ]
+        };
+
+        function calculateChoghadiya(date, lat, lng) {
+            if (!SunCalc) return [];
+            
+            // Get Sunrise and Sunset for the given date
+            const timesToday = SunCalc.getTimes(date, lat, lng);
+            const sunrise = timesToday.sunrise;
+            const sunset = timesToday.sunset;
+            
+            // Get Next day's Sunrise for night calculation
+            const nextDate = new Date(date);
+            nextDate.setDate(nextDate.getDate() + 1);
+            const timesTomorrow = SunCalc.getTimes(nextDate, lat, lng);
+            const nextSunrise = timesTomorrow.sunrise;
+
+            if(!sunrise || !sunset || !nextSunrise) return [];
+
+            const dayOfWeek = date.getDay();
+            const choghadiyas = [];
+
+            // 1. Day Choghadiyas (Sunrise to Sunset / 8)
+            const dayDurationMs = sunset.getTime() - sunrise.getTime();
+            const dayPartMs = dayDurationMs / 8;
+            
+            for (let i = 0; i < 8; i++) {
+                const start = new Date(sunrise.getTime() + (i * dayPartMs));
+                const end = new Date(sunrise.getTime() + ((i + 1) * dayPartMs));
+                const id = CHOGHADIYA_DATA.daySequence[dayOfWeek][i];
+                const info = CHOGHADIYA_DATA.names[id];
+                
+                choghadiyas.push({
+                    name: info.name,
+                    type: info.type,
+                    meaning: info.meaning,
+                    start: start,
+                    end: end,
+                    isNight: false
+                });
+            }
+
+            // 2. Night Choghadiyas (Sunset to Next Sunrise / 8)
+            const nightDurationMs = nextSunrise.getTime() - sunset.getTime();
+            const nightPartMs = nightDurationMs / 8;
+
+            for (let i = 0; i < 8; i++) {
+                const start = new Date(sunset.getTime() + (i * nightPartMs));
+                const end = new Date(sunset.getTime() + ((i + 1) * nightPartMs));
+                const id = CHOGHADIYA_DATA.nightSequence[dayOfWeek][i];
+                const info = CHOGHADIYA_DATA.names[id];
+                
+                choghadiyas.push({
+                    name: info.name,
+                    type: info.type,
+                    meaning: info.meaning,
+                    start: start,
+                    end: end,
+                    isNight: true
+                });
+            }
+
+            return choghadiyas;
+        }
 
         const SeasonIcons = {
             // Sun behind small cloud
@@ -5155,7 +5296,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                                                       // Save to App State (So it persists in Downloaded File)
                                                      appState.config.liveUrl = url;
                                                                                                                       if (!url.includes('github') && !url.includes('jsdelivr.net')) {
-                                        appState.config.syncDocsUrl = url;
+                                                                                                                                                                  appState.config.syncDocsUrl = url;
                 }
                 
                 saveConfigToStorage();
@@ -8265,6 +8406,39 @@ function renderCalendarGrid(data) {
                     if (!card.classList.contains('completed')) card.classList.add('completed');
                 }
             });
+
+            // --- UPDATE CHOGHADIYA LIVE STATE ---
+            const chItems = document.querySelectorAll('.ch-item');
+            if(chItems.length > 0) {
+                chItems.forEach(item => {
+                    const start = parseInt(item.getAttribute('data-ch-start'));
+                    const end = parseInt(item.getAttribute('data-ch-end'));
+                    const cdPill = item.querySelector('.ch-countdown');
+                    const cdText = item.querySelector('.ch-time-left');
+                    
+                    if (now >= start && now < end) {
+                        // Active
+                        if (!item.classList.contains('active')) item.classList.add('active');
+                        if (cdPill) cdPill.classList.remove('hidden');
+                        
+                        const diffMs = end - now;
+                        const h = Math.floor(diffMs / 3600000);
+                        const m = Math.floor((diffMs % 3600000) / 60000);
+                        const s = Math.floor((diffMs % 60000) / 1000);
+                        
+                        let timeStr = '';
+                        if(h > 0) timeStr += `${h.toString().padStart(2, '0')} Hr `;
+                        timeStr += `${m.toString().padStart(2, '0')} min ${s.toString().padStart(2, '0')} sec`;
+                        
+                        if(cdText) cdText.innerText = timeStr;
+                        
+                    } else {
+                        // Inactive (Past or Future)
+                        if (item.classList.contains('active')) item.classList.remove('active');
+                        if (cdPill) cdPill.classList.add('hidden');
+                    }
+                });
+            }
         }
 
         function startLiveClock() {
@@ -8355,7 +8529,8 @@ function renderCalendarGrid(data) {
             const dayStart = new Date(calcDate);
             dayStart.setHours(6, 0, 0, 0); // View window start (e.g., 06:00)
             const dayEnd = new Date(calcDate);
-            dayEnd.setHours(18, 0, 0, 0);   // View window end (e.g., 18:00)
+            dayEnd.setDate(dayEnd.getDate() + 1);
+            dayEnd.setHours(6, 0, 0, 0);   // View window end (e.g., 06:00 Next Day)
             const totalMs = dayEnd - dayStart;
 
             if (totalMs > 0) {
@@ -8365,6 +8540,7 @@ function renderCalendarGrid(data) {
 
                 // Generate events
                 let eventsHtml = '';
+                let eventIndex = 0;
                 
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
@@ -8382,12 +8558,14 @@ function renderCalendarGrid(data) {
                             
                             // Clean up name for label (remove "Kalam", "Muhurat")
                             let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
-
+                            // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
+                            const yOffset = (eventIndex % 2 === 0) ? '28px' : '42px';
                             eventsHtml += `
                                 <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%;">
-                                    <div class="timing-event-label">${displayName}</div>
+                                    <div class="timing-event-label" style="transform: translate(-50%, ${yOffset});">${displayName}</div>
                                 </div>
                             `;
+                            eventIndex++;
                         }
                     }
                 };
@@ -8404,15 +8582,21 @@ function renderCalendarGrid(data) {
                     <div class="timing-track-container">
                         <div class="timing-baseline"></div>
                         
-                        <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
+                        <!-- Timeline Markers (6 AM, 12 PM, 6 PM, 12 AM) -->
                         <div class="timing-marker" style="left: 0%;">
-                            <div class="timing-marker-label text-center">6:00 AM</div>
+                            <div class="timing-marker-label text-center">6 AM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 25%;">
+                            <div class="timing-marker-label text-center">12 PM</div>
                         </div>
                         <div class="timing-marker" style="left: 50%;">
-                            <div class="timing-marker-label text-center">12:00 PM</div>
+                            <div class="timing-marker-label text-center">6 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 75%;">
+                            <div class="timing-marker-label text-center">12 AM</div>
                         </div>
                         <div class="timing-marker" style="left: 100%;">
-                            <div class="timing-marker-label text-center">6:00 PM</div>
+                            <div class="timing-marker-label text-center">6 AM</div>
                         </div>
 
                         ${eventsHtml}
@@ -8556,6 +8740,84 @@ function renderCalendarGrid(data) {
             html += renderList(result.inauspicious, '<span data-i18n="inauspicious_timings_header">Inauspicious Timings</span>', 'text-red-700', '<i class="fa-solid fa-circle-exclamation text-xs"></i>', 'bg-red-50 border border-red-100');
 
             container.innerHTML = html;
+
+            // --- RENDER CHOGHADIYA TIMELINE ---
+            let lat = 19.8135; let lng = 85.8312;
+            if (appState.config && appState.config.location && appState.config.location.lat) {
+                lat = appState.config.location.lat;
+                lng = appState.config.location.lng;
+            }
+            
+            const choghadiyas = calculateChoghadiya(calcDate, lat, lng);
+            
+            // Remove existing Choghadiya container if present to avoid duplicates
+            const existingCh = document.getElementById('choghadiya-container');
+            if (existingCh) existingCh.remove();
+
+            if (choghadiyas.length > 0) {
+                const fmtC = (d) => d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12: false});
+                
+                let chHtml = `
+                <div class="glass rounded-xl shadow-md border-l-4 border-blue-500 p-4 transition-all duration-300 mt-4" id="choghadiya-container">
+                    <div class="section-title mb-4">
+                        <h3 class="font-bold text-blue-700 mb-0"><i class="fa-solid fa-layer-group text-orange-600 mr-2"></i><span>Vedic Planner</span></h3>
+                        <span class="badge">Choghadiya</span>
+                    </div>
+                    
+                    <!-- Legend -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-white/60 backdrop-blur-sm rounded-xl p-3 mb-6 shadow-sm border border-white/50">
+                        <div class="flex items-center gap-2 px-2">
+                            <div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-sm"></div>
+                            <span class="text-xs font-bold tracking-wide text-gray-700">GOOD</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-2 border-l border-r border-gray-200/60">
+                            <div class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm"></div>
+                            <span class="text-xs font-bold tracking-wide text-gray-700">NEUTRAL</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-2">
+                            <div class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm"></div>
+                            <span class="text-xs font-bold tracking-wide text-gray-700">BAD</span>
+                        </div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="ch-timeline flex flex-col gap-4">
+                `;
+
+                choghadiyas.forEach((ch) => {
+                    let colorClass = "ch-bg-good";
+                    if(ch.type === 'neutral') colorClass = "ch-bg-neutral";
+                    if(ch.type === 'bad') colorClass = "ch-bg-bad";
+
+                    chHtml += `
+                        <div class="ch-item ${colorClass} group" data-ch-start="${ch.start.getTime()}" data-ch-end="${ch.end.getTime()}">
+                            <div class="ch-node"></div>
+                            <div class="ch-card relative overflow-hidden">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                                    <div>
+                                        <div class="text-gray-500 font-mono text-xs font-semibold tracking-wide mb-1">
+                                            ${fmtC(ch.start)} - ${fmtC(ch.end)} 
+                                            <span class="text-[9px] uppercase ml-1 opacity-70">${ch.isNight ? '(Night)' : ''}</span>
+                                        </div>
+                                        <div class="text-lg font-bold text-gray-900 leading-none mb-1">${ch.name}</div>
+                                        <div class="text-xs font-bold currentColor opacity-90">${ch.meaning}</div>
+                                    </div>
+                                    
+                                    <!-- Countdown Pill (Visible only when active) -->
+                                    <div class="ch-countdown hidden px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap self-start sm:self-auto">
+                                        <span class="ch-time-left"></span> left
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                chHtml += `</div></div>`;
+                // Insert AFTER the timings container so it's a completely separate card
+                container.insertAdjacentHTML('afterend', chHtml);
+            }
+            
             applyCustomLabels();
             
             cachedTimingCards = Array.from(document.querySelectorAll('.timeline-card[data-start][data-end]'));
