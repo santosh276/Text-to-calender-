@@ -8010,6 +8010,71 @@ function renderCalendarGrid(data) {
                 timelineContainer.appendChild(sunCard);
                 timelineContainer.appendChild(moonCard);
                 list.appendChild(timelineContainer);
+
+                let tomorrowDate = new Date(calcDate);
+                tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+                let tomorrowSunTimes = SunCalc.getTimes(tomorrowDate, appState.config.location.lat, appState.config.location.lng);
+
+                let prevDate = new Date(calcDate);
+                prevDate.setDate(prevDate.getDate() - 1);
+                let prevSunTimes = SunCalc.getTimes(prevDate, appState.config.location.lat, appState.config.location.lng);
+
+                const dayCycleCard = document.createElement('div');
+                dayCycleCard.className = "bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6 mt-4 mb-2 relative overflow-hidden";
+                dayCycleCard.id = "day-cycle-card";
+                dayCycleCard.setAttribute('data-prev-sunset', prevSunTimes.sunset.getTime());
+                dayCycleCard.setAttribute('data-sunrise', sunTimes.sunrise.getTime());
+                dayCycleCard.setAttribute('data-sunset', sunTimes.sunset.getTime());
+                dayCycleCard.setAttribute('data-next-sunrise', tomorrowSunTimes.sunrise.getTime());
+
+                dayCycleCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-50 pb-3">
+                        <span id="day-cycle-title" class="font-extrabold text-orange-600 tracking-wide text-sm">DAY CYCLE</span>
+                        <div class="flex items-center text-xs text-gray-500 font-semibold">
+                            <span id="day-cycle-dot" class="w-2 h-2 rounded-full bg-orange-500 mr-2"></span>
+                            Current Position
+                        </div>
+                    </div>
+
+                    <div class="relative w-full max-w-[280px] md:max-w-[320px] mx-auto">
+                        <svg viewBox="0 0 200 120" class="w-full h-auto overflow-visible">
+                            <defs>
+                                <linearGradient id="dayCycleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#f97316"/>
+                                    <stop offset="100%" stop-color="#8b5cf6"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#f3f4f6" stroke-width="6" stroke-dasharray="6 6" stroke-linecap="round"/>
+                            <path id="day-cycle-progress" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#dayCycleGradient)" stroke-width="6" stroke-linecap="round" stroke-dasharray="251.32" stroke-dashoffset="251.32" style="transition: stroke-dashoffset 1s linear;"/>
+
+                            <circle cx="20" cy="100" r="4" fill="#d1d5db" />
+                            <circle cx="180" cy="100" r="4" fill="#d1d5db" />
+
+                            <g id="day-cycle-icon-group" transform="translate(20, 100)" style="transition: transform 1s linear;">
+                                <circle cx="0" cy="0" r="10" fill="#fef08a" stroke="#f59e0b" stroke-width="2"/>
+                                <path d="M 0 -14 V -16 M 0 14 V 16 M -14 0 H -16 M 14 0 H 16 M -10 -10 L -12 -12 M 10 10 L 12 12 M 10 -10 L 12 -12 M -10 10 L -12 12" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+                            </g>
+                        </svg>
+
+                        <div class="flex justify-between px-1 text-[10px] md:text-xs text-gray-400 font-bold uppercase tracking-wider -mt-3">
+                            <span id="day-cycle-start-label">Sunrise</span>
+                            <span id="day-cycle-mid-label">Noon</span>
+                            <span id="day-cycle-end-label">Sunset</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 mb-6 relative px-2">
+                        <div class="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div id="day-cycle-linear-progress" class="h-full rounded-full bg-gradient-to-r from-orange-500 to-purple-500" style="width: 0%; transition: width 1s linear;"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-2 pb-2">
+                        <h4 id="day-cycle-percent" class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">0% of Day Passed</h4>
+                        <p id="day-cycle-countdown" class="text-xs md:text-sm text-gray-500 font-medium mt-1 md:mt-2">-- Hour -- minutes -- second until sunset</p>
+                    </div>
+                `;
+                list.appendChild(dayCycleCard);
             }
 
             // 4. Merge Data (Manual > Auto)
@@ -8267,6 +8332,99 @@ function renderCalendarGrid(data) {
             });
         }
 
+        function updateDayCycle() {
+            const container = document.getElementById('day-cycle-card');
+            if (!container) return;
+
+            const now = Date.now();
+            const prevSunset = parseInt(container.getAttribute('data-prev-sunset'));
+            const sunrise = parseInt(container.getAttribute('data-sunrise'));
+            const sunset = parseInt(container.getAttribute('data-sunset'));
+            const nextSunrise = parseInt(container.getAttribute('data-next-sunrise'));
+
+            let isDay = true;
+            let start, end, labelStart, labelMid, labelEnd;
+
+            if (now >= sunrise && now < sunset) {
+                isDay = true;
+                start = sunrise;
+                end = sunset;
+                labelStart = "Sunrise";
+                labelMid = "Noon";
+                labelEnd = "Sunset";
+            } else if (now >= sunset && now < nextSunrise) {
+                isDay = false;
+                start = sunset;
+                end = nextSunrise;
+                labelStart = "Sunset";
+                labelMid = "Midnight";
+                labelEnd = "Sunrise";
+            } else if (now < sunrise) {
+                isDay = false;
+                start = prevSunset;
+                end = sunrise;
+                labelStart = "Sunset";
+                labelMid = "Midnight";
+                labelEnd = "Sunrise";
+            } else {
+                return;
+            }
+
+            const total = end - start;
+            const elapsed = now - start;
+            let percent = elapsed / total;
+            percent = Math.max(0, Math.min(1, percent));
+
+            // SVG Arc Dash Logic
+            const arcLength = 251.32;
+            const dashOffset = arcLength * (1 - percent);
+            const progressEl = document.getElementById('day-cycle-progress');
+            if(progressEl) progressEl.style.strokeDashoffset = dashOffset;
+
+            // Icon Trigonometric Position
+            const angle = Math.PI * (1 - percent);
+            const cx = 100, cy = 100, r = 80;
+            const x = cx + r * Math.cos(angle);
+            const y = cy - r * Math.sin(angle);
+
+            const iconGroup = document.getElementById('day-cycle-icon-group');
+            if(iconGroup) iconGroup.setAttribute('transform', `translate(${x}, ${y})`);
+
+            const gradient = document.getElementById('dayCycleGradient');
+            if (isDay) {
+                if(gradient) gradient.innerHTML = '<stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#8b5cf6"/>';
+                if(iconGroup) iconGroup.innerHTML = '<circle cx="0" cy="0" r="9" fill="#fef08a" stroke="#f59e0b" stroke-width="2"/><path d="M 0 -13 V -16 M 0 13 V 16 M -13 0 H -16 M 13 0 H 16 M -9 -9 L -11 -11 M 9 9 L 11 11 M 9 -9 L 11 -11 M -9 9 L -11 11" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>';
+
+                document.getElementById('day-cycle-title').innerText = "DAY CYCLE";
+                document.getElementById('day-cycle-title').className = "font-extrabold text-orange-600 tracking-wide text-sm";
+                document.getElementById('day-cycle-dot').className = "w-2 h-2 rounded-full bg-orange-500 mr-2";
+                document.getElementById('day-cycle-linear-progress').className = "h-full rounded-full bg-gradient-to-r from-orange-500 to-purple-500 shadow-md";
+            } else {
+                if(gradient) gradient.innerHTML = '<stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/>';
+                if(iconGroup) iconGroup.innerHTML = '<path d="M -4 -7 A 7 7 0 1 0 5 7 A 9 9 0 1 1 -4 -7 Z" fill="#93c5fd" stroke="#2563eb" stroke-width="1.5" transform="scale(1.2)"/>';
+
+                document.getElementById('day-cycle-title').innerText = "NIGHT CYCLE";
+                document.getElementById('day-cycle-title').className = "font-extrabold text-blue-600 tracking-wide text-sm";
+                document.getElementById('day-cycle-dot').className = "w-2 h-2 rounded-full bg-blue-500 mr-2";
+                document.getElementById('day-cycle-linear-progress').className = "h-full rounded-full bg-gradient-to-r from-blue-400 to-indigo-800 shadow-md";
+            }
+
+            document.getElementById('day-cycle-start-label').innerText = labelStart;
+            document.getElementById('day-cycle-mid-label').innerText = labelMid;
+            document.getElementById('day-cycle-end-label').innerText = labelEnd;
+
+            document.getElementById('day-cycle-linear-progress').style.width = `${percent * 100}%`;
+            document.getElementById('day-cycle-percent').innerText = `${Math.round(percent * 100)}% of ${isDay ? 'Day' : 'Night'} Passed`;
+
+            const remainMs = end - now;
+            const h = Math.floor(remainMs / 3600000);
+            const m = Math.floor((remainMs % 3600000) / 60000);
+            const s = Math.floor((remainMs % 60000) / 1000);
+            const pad = (n) => n.toString().padStart(2, '0');
+
+            document.getElementById('day-cycle-countdown').innerText = `${pad(h)} Hour ${pad(m)} minutes ${pad(s)} second until ${labelEnd.toLowerCase()}`;
+        }
+
         function startLiveClock() {
             stopLiveClock();
             
@@ -8287,6 +8445,7 @@ function renderCalendarGrid(data) {
                 
                 // Dynamic Timers Hook
                 updateLiveTimers();
+                if (typeof updateDayCycle === 'function') updateDayCycle();
             };
             
             updateTime();
