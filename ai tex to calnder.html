@@ -1884,7 +1884,23 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     padding-top: 0;
 }
 
-</style>
+
+        /* --- Choghadiya Timeline CSS --- */
+        .ch-timeline { position: relative; }
+        .ch-timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; border-left: 2px dashed #e5e7eb; z-index: 0; }
+        .ch-item { position: relative; display: flex; align-items: stretch; gap: 16px; margin-bottom: 16px; z-index: 1; }
+        .ch-item:last-child { margin-bottom: 0; }
+        .ch-node { width: 30px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; position: relative; z-index: 2; }
+        .ch-node::before { content: ''; width: 14px; height: 14px; border-radius: 50%; background-color: white; border: 2px solid currentColor; box-shadow: 0 0 0 4px white; transition: all 0.3s ease; }
+        .ch-item.active .ch-node::before { background-color: currentColor; box-shadow: 0 0 0 4px white, 0 0 0 8px currentColor; opacity: 0.8; animation: ch-pulse 2s infinite; }
+        @keyframes ch-pulse { 0% { box-shadow: 0 0 0 4px white, 0 0 0 8px currentColor; opacity: 0.8; } 50% { box-shadow: 0 0 0 4px white, 0 0 0 12px currentColor; opacity: 0.4; } 100% { box-shadow: 0 0 0 4px white, 0 0 0 8px currentColor; opacity: 0.8; } }
+        .ch-card { flex-grow: 1; background-color: white; border: 1px solid #f3f4f6; border-radius: 12px; padding: 12px 16px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
+        .ch-item.active .ch-card { transform: translateX(4px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .ch-bg-good .ch-card { background-color: #ecfdf5; border-color: #10b981; } .ch-bg-good { color: #10b981; }
+        .ch-bg-neutral .ch-card { background-color: #fffbeb; border-color: #f59e0b; } .ch-bg-neutral { color: #f59e0b; }
+        .ch-bg-bad .ch-card { background-color: #fef2f2; border-color: #ef4444; } .ch-bg-bad { color: #ef4444; }
+
+    </style>
 
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -2348,7 +2364,36 @@ The word "Nua" means new and "Khai" means food.
 
             <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4 pt-4 pb-24 transform-gpu will-change-transform overscroll-none">
                 <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 hidden">
-                    <!-- Auspicious Timings Content -->
+                    <!-- Placeholder: Auspicious Timings Content -->
+                    <div class="timing-analysis-wrapper">
+                        <div class="timing-analysis-header">
+                            <div class="timing-analysis-title"><span data-i18n="timing_analysis">TIMING ANALYSIS</span></div>
+                            <div class="timing-analysis-live">LIVE</div>
+                        </div>
+                        <div class="timing-track-container">
+                            <div class="timing-baseline"></div>
+
+                            <div class="timing-marker" style="left: 0%;">
+                                <div class="timing-marker-label text-center">6 AM</div>
+                            </div>
+                            <div class="timing-marker" style="left: 25%;">
+                                <div class="timing-marker-label text-center">12 PM</div>
+                            </div>
+                            <div class="timing-marker" style="left: 50%;">
+                                <div class="timing-marker-label text-center">6 PM</div>
+                            </div>
+                            <div class="timing-marker" style="left: 75%;">
+                                <div class="timing-marker-label text-center">12 AM</div>
+                            </div>
+                            <div class="timing-marker" style="left: 100%;">
+                                <div class="timing-marker-label text-center">6 AM</div>
+                            </div>
+
+                            <div class="timing-now-indicator" style="left: 10%;">
+                                <div class="timing-now-badge"><span data-i18n="now">NOW</span></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -8605,7 +8650,7 @@ function renderCalendarGrid(data) {
                     <div class="timing-track-container">
                         <div class="timing-baseline"></div>
                         
-                        <!-- Timeline Markers (6:00 AM, 12:00 PM, 6:00 PM) -->
+                        <!-- Timeline Markers (6 AM, 12 PM, 6 PM, 12 AM) -->
                         <div class="timing-marker" style="left: 0%;">
                             <div class="timing-marker-label text-center">6 AM</div>
                         </div>
@@ -8788,10 +8833,19 @@ function renderCalendarGrid(data) {
                     </div>
 
                     <!-- Legend -->
-                    <div class="border border-gray-100 rounded-xl p-3 md:p-4 bg-white/50 mb-6 flex flex-col gap-2.5">
-                        <div class="flex items-center gap-3"><div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div> <span class="text-sm font-semibold text-gray-700">Good (Start Work)</span></div>
-                        <div class="flex items-center gap-3"><div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div> <span class="text-sm font-semibold text-gray-700">Neutral (Travel/Normal)</span></div>
-                        <div class="flex items-center gap-3"><div class="w-2.5 h-2.5 rounded-full bg-red-500"></div> <span class="text-sm font-semibold text-gray-700">Bad (Avoid Risks)</span></div>
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-white/60 backdrop-blur-sm rounded-xl p-3 mb-6 shadow-sm border border-white/50">
+                        <div class="flex items-center gap-2 px-2">
+                            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                            <span class="text-xs font-bold tracking-wide text-gray-700">GOOD</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-2 border-l border-r border-gray-200/60">
+                            <div class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></div>
+                            <span class="text-xs font-bold tracking-wide text-gray-700">NEUTRAL</span>
+                        </div>
+                        <div class="flex items-center gap-2 px-2">
+                            <div class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                            <span class="text-xs font-bold tracking-wide text-gray-700">BAD</span>
+                        </div>
                     </div>
 
                     <!-- Timeline -->
@@ -8799,9 +8853,9 @@ function renderCalendarGrid(data) {
                 `;
 
                 choghadiyas.forEach((ch) => {
-                    let colorClass = "ch-good";
-                    if(ch.type === 'neutral') colorClass = "ch-neutral";
-                    if(ch.type === 'bad') colorClass = "ch-bad";
+                    let colorClass = "ch-bg-good";
+                    if(ch.type === 'neutral') colorClass = "ch-bg-neutral";
+                    if(ch.type === 'bad') colorClass = "ch-bg-bad";
 
                     chHtml += `
                         <div class="ch-item ${colorClass} group" data-ch-start="${ch.start.getTime()}" data-ch-end="${ch.end.getTime()}">
