@@ -19,6 +19,23 @@
 
     <!-- Tailwind CSS -->
     <style>
+        @keyframes sun-pulse-anim {
+            0% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.6); opacity: 0.1; }
+            100% { transform: scale(1); opacity: 0.4; }
+        }
+        .animate-sun-pulse { animation: sun-pulse-anim 3s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+
+        @keyframes moon-pulse-anim {
+            0% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.4); opacity: 0.1; }
+            100% { transform: scale(1); opacity: 0.3; }
+        }
+        .animate-moon-pulse { animation: moon-pulse-anim 4s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+
+        .track-dashed { stroke-dasharray: 6, 8; stroke-linecap: butt; stroke-width: 8; }
+        .track-solid-fill { stroke-dasharray: none; stroke-linecap: butt; stroke-width: 8; }
+
         /* Mobile Specific Overrides */
         @media (max-width: 767px) {
             .safe-area-pb {
@@ -8151,6 +8168,92 @@ function renderCalendarGrid(data) {
                 timelineContainer.appendChild(sunCard);
                 timelineContainer.appendChild(moonCard);
                 list.appendChild(timelineContainer);
+
+        // Calculate surrounding sun times for Day/Night cycle logic
+        let tomorrowDate = new Date(calcDate);
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+        let tomorrowSunTimes = SunCalc.getTimes(tomorrowDate, appState.config.location.lat, appState.config.location.lng);
+
+        let prevDate = new Date(calcDate);
+        prevDate.setDate(prevDate.getDate() - 1);
+        let prevSunTimes = SunCalc.getTimes(prevDate, appState.config.location.lat, appState.config.location.lng);
+
+        const dayCycleCard = document.createElement('div');
+        dayCycleCard.id = "day-cycle-card";
+        dayCycleCard.className = "bg-white rounded-[1.5rem] border border-gray-200 shadow-sm p-6 md:p-8 mt-4 mb-2 flex flex-col items-center relative overflow-hidden";
+        dayCycleCard.setAttribute('data-prev-sunset', prevSunTimes.sunset.getTime());
+        dayCycleCard.setAttribute('data-sunrise', sunTimes.sunrise.getTime());
+        dayCycleCard.setAttribute('data-sunset', sunTimes.sunset.getTime());
+        dayCycleCard.setAttribute('data-next-sunrise', tomorrowSunTimes.sunrise.getTime());
+
+        dayCycleCard.innerHTML = `
+            <div class="w-full flex justify-between items-center mb-6 px-2">
+                <span id="dayCycleTitle" class="font-extrabold text-[#ea580c] tracking-widest text-sm uppercase">DAY CYCLE</span>
+                <div class="flex items-center text-sm text-gray-600 font-bold">
+                    <span id="dayCycleDot" class="w-2.5 h-2.5 rounded-full bg-[#ea580c] mr-2 shadow-sm"></span>
+                    Current Position
+                </div>
+            </div>
+
+            <div class="w-full max-w-[420px] aspect-[2/1.2] relative mb-2">
+                <svg viewBox="0 0 300 160" preserveAspectRatio="xMidYMax meet" class="w-full h-full overflow-visible">
+                    <defs>
+                        <linearGradient id="dayCycleGradDay" gradientUnits="userSpaceOnUse" x1="40" y1="140" x2="260" y2="140">
+                            <stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#fbbf24;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="dayCycleGradNight" gradientUnits="userSpaceOnUse" x1="40" y1="140" x2="260" y2="140">
+                            <stop offset="0%" style="stop-color:#1e1b4b;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#4c1d95;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#818cf8;stop-opacity:1" />
+                        </linearGradient>
+                        <filter id="sunShadowFx" x="-50%" y="-50%" width="200%" height="200%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#f59e0b" flood-opacity="0.4"/>
+                        </filter>
+                        <filter id="moonShadowFx" x="-50%" y="-50%" width="200%" height="200%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#818cf8" flood-opacity="0.4"/>
+                        </filter>
+                    </defs>
+
+                    <path d="M 40 140 A 110 110 0 0 1 260 140" fill="none" stroke="#e2e8f0" class="track-dashed" />
+                    <path id="dayCycleActiveArc" d="M 40 140 A 110 110 0 0 1 260 140" fill="none" stroke="url(#dayCycleGradDay)" class="track-solid-fill" />
+                    <line x1="30" y1="155" x2="270" y2="155" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6,6" stroke-linecap="round" />
+
+                    <g id="dayCycleSunGroup" transform="translate(40, 140)">
+                        <circle cx="0" cy="0" r="14" fill="#fbbf24" opacity="0.3" class="animate-sun-pulse" />
+                        <circle cx="0" cy="0" r="8" fill="#ffffff" stroke="#f59e0b" stroke-width="3" filter="url(#sunShadowFx)" />
+                        <g stroke="#f59e0b" stroke-width="2" stroke-linecap="round">
+                            <line x1="0" y1="-12" x2="0" y2="-16" /><line x1="0" y1="12" x2="0" y2="16" />
+                            <line x1="-12" y1="0" x2="-16" y2="0" /><line x1="12" y1="0" x2="16" y2="0" />
+                            <line x1="-8.5" y1="-8.5" x2="-11.3" y2="-11.3" /><line x1="8.5" y1="-8.5" x2="11.3" y2="-11.3" />
+                            <line x1="-8.5" y1="8.5" x2="-11.3" y2="11.3" /><line x1="8.5" y1="8.5" x2="11.3" y2="11.3" />
+                        </g>
+                    </g>
+
+                    <g id="dayCycleMoonGroup" transform="translate(40, 140)" class="hidden">
+                        <circle cx="0" cy="0" r="16" fill="#818cf8" opacity="0.3" class="animate-moon-pulse" />
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" transform="translate(-12, -12)" fill="#ffffff" stroke="#4f46e5" stroke-width="2" filter="url(#moonShadowFx)" />
+                    </g>
+                </svg>
+            </div>
+
+            <div class="flex justify-between w-full max-w-[380px] -mt-2 mb-6 px-3">
+                <span id="cycleLabelLeft" class="text-xs font-mono text-gray-400 font-bold w-[60px] text-left">Sunrise</span>
+                <span id="cycleLabelCenter" class="text-xs font-mono text-gray-400 font-bold w-[60px] text-center">Noon</span>
+                <span id="cycleLabelRight" class="text-xs font-mono text-gray-400 font-bold w-[60px] text-right">Sunset</span>
+            </div>
+
+            <div class="w-full max-w-[380px] h-2.5 bg-[#f1f5f9] rounded-full overflow-hidden mb-6 relative">
+                <div id="dayCycleProgressBar" class="h-full w-0 rounded-full transition-all duration-1000 ease-out" style="background: linear-gradient(90deg, #ea580c 0%, #fbbf24 50%, #4f46e5 100%);"></div>
+            </div>
+
+            <div class="text-center w-full">
+                <div id="cyclePercentText" class="text-[1.35rem] font-bold text-gray-900 font-mono tracking-tight mb-1.5">--% of Day Passed</div>
+                <div id="cycleTimeLeftText" class="text-[0.9rem] text-gray-600 font-medium">Calculating...</div>
+            </div>
+        `;
+        list.appendChild(dayCycleCard);
             }
 
             // 4. Merge Data (Manual > Auto)
@@ -8441,6 +8544,103 @@ function renderCalendarGrid(data) {
             }
         }
 
+        function updateDayCycleCard() {
+            const card = document.getElementById('day-cycle-card');
+            if (!card) return;
+
+            const now = Date.now();
+            const prevSunset = parseInt(card.getAttribute('data-prev-sunset'));
+            const sunrise = parseInt(card.getAttribute('data-sunrise'));
+            const sunset = parseInt(card.getAttribute('data-sunset'));
+            const nextSunrise = parseInt(card.getAttribute('data-next-sunrise'));
+
+            let isDay = false;
+            let start = 0, end = 0;
+            let labelLeft = "", labelCenter = "", labelRight = "";
+
+            // Determine current phase
+            if (now >= sunrise && now < sunset) {
+                isDay = true;
+                start = sunrise;
+                end = sunset;
+                labelLeft = "Sunrise"; labelCenter = "Noon"; labelRight = "Sunset";
+            } else if (now >= sunset && now < nextSunrise) {
+                isDay = false;
+                start = sunset;
+                end = nextSunrise;
+                labelLeft = "Sunset"; labelCenter = "Midnight"; labelRight = "Sunrise";
+            } else if (now < sunrise) {
+                isDay = false;
+                start = prevSunset;
+                end = sunrise;
+                labelLeft = "Sunset"; labelCenter = "Midnight"; labelRight = "Sunrise";
+            } else {
+                return; // Fallback
+            }
+
+            const duration = end - start;
+            const elapsed = now - start;
+            let percentage = elapsed / duration;
+            percentage = Math.max(0, Math.min(1, percentage));
+
+            // Time Remaining Formatting
+            const remainMs = end - now;
+            const totalSecs = Math.floor(remainMs / 1000);
+            const h = Math.floor(totalSecs / 3600);
+            const m = Math.floor((totalSecs % 3600) / 60);
+            const s = totalSecs % 60;
+            const pad = (n) => String(n).padStart(2, '0');
+            const timeText = `${pad(h)} Hour ${pad(m)} minutes ${pad(s)} second until ${labelRight.toLowerCase()}`;
+            const percentText = `${Math.round(percentage * 100)}% of ${isDay ? 'Day' : 'Night'} Passed`;
+
+            // SVG Math (Arc goes from 180 deg to 360 deg in SVG coordinates, which is Pi to 2*Pi)
+            const cx = 150, cy = 140, r = 110;
+            const angle = Math.PI + (percentage * Math.PI);
+            const x = cx + r * Math.cos(angle);
+            const y = cy + r * Math.sin(angle);
+
+            // Update DOM Elements
+            document.getElementById('cycleLabelLeft').innerText = labelLeft;
+            document.getElementById('cycleLabelCenter').innerText = labelCenter;
+            document.getElementById('cycleLabelRight').innerText = labelRight;
+            document.getElementById('cyclePercentText').innerText = percentText;
+            document.getElementById('cycleTimeLeftText').innerText = timeText;
+
+            const activeArc = document.getElementById('dayCycleActiveArc');
+            const sunIcon = document.getElementById('dayCycleSunGroup');
+            const moonIcon = document.getElementById('dayCycleMoonGroup');
+            const titleEl = document.getElementById('dayCycleTitle');
+            const dotEl = document.getElementById('dayCycleDot');
+            const progressBar = document.getElementById('dayCycleProgressBar');
+
+            // Update SVG Path & Transforms
+            activeArc.setAttribute('d', percentage <= 0.01 ? `M 40 140 M 40 140` : `M 40 140 A 110 110 0 0 1 ${x} ${y}`);
+
+            if (isDay) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                sunIcon.setAttribute("transform", `translate(${x}, ${y})`);
+                activeArc.setAttribute('stroke', 'url(#dayCycleGradDay)');
+
+                titleEl.innerText = "DAY CYCLE";
+                titleEl.style.color = "#ea580c";
+                dotEl.style.backgroundColor = "#ea580c";
+                progressBar.style.width = `${percentage * 100}%`;
+                progressBar.style.background = "linear-gradient(90deg, #ea580c 0%, #fbbf24 50%, #4f46e5 100%)";
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                moonIcon.setAttribute("transform", `translate(${x}, ${y})`);
+                activeArc.setAttribute('stroke', 'url(#dayCycleGradNight)');
+
+                titleEl.innerText = "NIGHT CYCLE";
+                titleEl.style.color = "#4f46e5"; // Indigo
+                dotEl.style.backgroundColor = "#4f46e5";
+                progressBar.style.width = `${percentage * 100}%`;
+                progressBar.style.background = "linear-gradient(90deg, #1e1b4b 0%, #4c1d95 50%, #818cf8 100%)";
+            }
+        }
+
         function startLiveClock() {
             stopLiveClock();
             
@@ -8461,6 +8661,8 @@ function renderCalendarGrid(data) {
                 
                 // Dynamic Timers Hook
                 updateLiveTimers();
+
+                if (typeof updateDayCycleCard === 'function') updateDayCycleCard();
             };
             
             updateTime();
