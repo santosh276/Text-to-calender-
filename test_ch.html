@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .ch-bg-good .ch-card { background-color: #ecfdf5; border-color: #10b981; } .ch-bg-good { color: #10b981; } .ch-bg-good .ch-countdown { background-color: #10b981; color: white; }
+        .ch-bg-neutral .ch-card { background-color: #fffbeb; border-color: #f59e0b; } .ch-bg-neutral { color: #f59e0b; } .ch-bg-neutral .ch-countdown { background-color: #f59e0b; color: white; }
+        .ch-bg-bad .ch-card { background-color: #fef2f2; border-color: #ef4444; } .ch-bg-bad { color: #ef4444; } .ch-bg-bad .ch-countdown { background-color: #ef4444; color: white; }
+    </style>
+</head>
+<body class="p-10">
+
+<div class="ch-item ch-bg-bad group">
+    <div class="ch-card relative overflow-hidden" style="padding: 10px; border: 1px solid currentColor;">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <div>
+                <div class="text-gray-500 font-mono text-xs font-semibold tracking-wide mb-1">
+                    15:02 - 16:41
+                </div>
+                <div class="text-lg font-bold text-gray-900 leading-none mb-1">Udveg</div>
+                <div class="text-xs font-bold currentColor opacity-90">Anxiety (Bad)</div>
+            </div>
+
+            <div class="ch-countdown px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap self-start sm:self-auto">
+                <span class="ch-time-left">01 Hr 24 min 28 sec left</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
