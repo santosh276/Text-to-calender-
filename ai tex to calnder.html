@@ -680,6 +680,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .premium-header-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 20%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 30%); pointer-events: none; }
         #app-logo-img { height: 40px; width: auto; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         
+        .grid-cell {
+            contain: content;
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
         .grid-cell-bg-wrapper { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: 0.375rem; }
         .grid-cell-bg-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: transform 0.3s ease; }
         .grid-cell:hover .grid-cell-bg-img { transform: scale(1.1); }
@@ -884,8 +890,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .badge-ending-soon {
             /* Remove hardcoded red to inherit theme badge colors dynamically */
             color: #ffffff !important;
-            backdrop-filter: blur(8px) !important;
-            -webkit-backdrop-filter: blur(8px) !important;
             animation: ending-soon-pulse 1.5s infinite ease-in-out;
             font-weight: 800;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
@@ -1012,8 +1016,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         /* --- Glass Time Box (Timings Card Footer) --- */
         .glass-time-box {
             background: rgba(255, 255, 255, 0.2); /* Frosted Glass */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3); /* Glass Edge */
             border-radius: 12px;
             padding: 4px 6px;
@@ -1521,20 +1523,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
         .timeline-item { 
             display: flex; align-items: stretch; position: relative;
-            /* Animation for floating in */
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        
-        /* Delays so they cascade down the screen nicely */
-        .timeline-item:nth-child(2) { animation-delay: 0.1s; }
-        .timeline-item:nth-child(3) { animation-delay: 0.2s; }
-        .timeline-item:nth-child(4) { animation-delay: 0.3s; }
-        .timeline-item:nth-child(5) { animation-delay: 0.4s; }
-
-        @keyframes slideUpFade {
-            to { opacity: 1; transform: translateY(0); }
         }
 
         /* --- Premium Cards --- */
@@ -1542,6 +1530,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             flex: 1; border-radius: 12px; padding: 10px; color: white; position: relative; overflow: hidden;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             border: 1px solid rgba(255, 255, 255, 0.15); /* Glass edge */
+            transform: translateZ(0);
+            will-change: transform;
+            contain: content;
         }
         
         /* Completed Card Styling */
@@ -1586,14 +1577,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .footer-lavender { background: rgba(76, 29, 149, 0.3); border: 1px solid rgba(167, 139, 250, 0.3); }
         .footer-royal { background: rgba(30, 58, 138, 0.3); border: 1px solid rgba(96, 165, 250, 0.3); }
 
-        .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-skyblue { background-color: rgba(12, 74, 110, 0.25); border-color: rgba(56, 189, 248, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-rust { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(253, 186, 116, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-crimson { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(252, 165, 165, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-lavender { background-color: rgba(76, 29, 149, 0.25); border-color: rgba(167, 139, 250, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-royal { background-color: rgba(30, 58, 138, 0.25); border-color: rgba(96, 165, 250, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; }
+        .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; }
+        .badge-skyblue { background-color: rgba(12, 74, 110, 0.25); border-color: rgba(56, 189, 248, 0.5); color: white; }
+        .badge-rust { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(253, 186, 116, 0.5); color: white; }
+        .badge-crimson { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(252, 165, 165, 0.5); color: white; }
+        .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; }
+        .badge-lavender { background-color: rgba(76, 29, 149, 0.25); border-color: rgba(167, 139, 250, 0.5); color: white; }
+        .badge-royal { background-color: rgba(30, 58, 138, 0.25); border-color: rgba(96, 165, 250, 0.5); color: white; }
 
         .dot-emerald { border-color: #10b981; }
         .dot-gold { border-color: #f59e0b; }
@@ -1618,7 +1609,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             background: var(--glass-bg); border: 1px solid var(--glass-border); 
             padding: 4px 10px; border-radius: 999px; 
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+           
         }
         .glass-pill span { font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
         .timeline-icon { width: 12px; height: 12px; fill: currentColor; }
@@ -1628,7 +1619,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; 
             text-transform: uppercase; letter-spacing: 0.05em; 
             animation: pulse-opacity 2.5s ease-in-out infinite; 
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
         @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
@@ -1691,10 +1681,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
 
         /* Themed Badges */
-        .badge-green { background-color: rgba(6, 78, 59, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-orange { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(251, 146, 60, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-red { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(244, 63, 94, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .badge-neutral { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .badge-green { background-color: rgba(6, 78, 59, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; }
+        .badge-orange { background-color: rgba(124, 45, 18, 0.25); border-color: rgba(251, 146, 60, 0.5); color: white; }
+        .badge-red { background-color: rgba(136, 19, 55, 0.25); border-color: rgba(244, 63, 94, 0.5); color: white; }
+        .badge-neutral { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; }
 
         /* Glassmorphic Badges for Festival List */
         .badge-glass-red {
@@ -1764,13 +1754,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         
         /* SCROLLING ANIMATION */
         @keyframes seamless-scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
         .animate-seamless-scroll {
             display: flex;
             width: max-content;
             animation: seamless-scroll 35s linear infinite;
+            will-change: transform;
+            transform: translateZ(0);
         }
         .animate-seamless-scroll:hover {
             animation-play-state: paused;
@@ -1866,9 +1858,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                 <i class="fa-solid fa-headphones text-xl"></i>
                 <span class="text-[10px] font-bold" data-i18n="listen_nav">Listen</span>
             </button>
-            <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
-                <i class="fa-regular fa-comment-dots text-xl"></i>
-                <span class="text-[10px] font-bold" data-i18n="chat_nav">Chat</span>
+            <button class="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer" onclick="toggleView('timings')">
+                <i class="fa-solid fa-clock text-xl"></i>
+                <span class="text-[10px] font-bold" data-i18n="timings_nav">Timings</span>
             </button>
             <button onclick="toggleView('more')" class="menu-icon-btn flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
@@ -2284,6 +2276,12 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
 
+            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4 pt-4 pb-24 transform-gpu will-change-transform overscroll-none">
+                <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 hidden">
+                    <!-- Auspicious Timings Content -->
+                </div>
+            </div>
+
             <div id="more-view-container" class="hidden w-full overflow-x-hidden pt-6 md:pt-12 pb-12">
 
     <!-- HERO SECTION -->
@@ -2412,7 +2410,7 @@ The word "Nua" means new and "Khai" means food.
 </div>
 
 
-            <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-4 lg:gap-6">
+            <div id="month-view-container" class="app-container max-w-6xl mx-auto flex flex-col lg:flex-row gap-4 lg:gap-6 transform-gpu will-change-transform overscroll-none">
                 <!-- Calendar Grid Section -->
                 <div class="flex-grow lg:w-3/4 space-y-2 w-full mobile-contents">
                     
@@ -2469,7 +2467,7 @@ The word "Nua" means new and "Khai" means food.
                             <div id="banner-dots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 p-1 rounded-full bg-black/10 backdrop-blur-[2px]"></div>
                         </div>
 
-                        <div id="calendar-swipe-area" class="bg-white rounded-xl shadow-lg p-2 md:p-3">
+                        <div id="calendar-swipe-area" class="bg-white rounded-xl shadow-lg p-2 md:p-3 transform-gpu will-change-transform">
                             <div id="grid-header" class="grid grid-cols-7 mb-2 text-center border-b-2 border-gray-100 pb-2"></div>
                             <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 auto-rows-fr"></div>
                             
@@ -2484,20 +2482,17 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                     
                     
-                    <div id="sec-ritu" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden order-3">
+                    <div id="sec-ritu" class="glass rounded-xl shadow-md border-l-4 border-saffron p-4 transition-all duration-300 relative overflow-hidden order-3 transform-gpu will-change-transform">
                         <div class="absolute top-0 right-0 -mr-4 -mt-4 pointer-events-none" style="width: 6rem; height: 6rem; background: linear-gradient(to right bottom, rgba(239, 68, 68, 0.1), transparent); border-bottom-left-radius: 100%;"></div>
                         <div class="flex justify-between items-center mb-4 relative z-10 min-w-0 gap-2"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0 shrink-0"><i class="fa-solid fa-cloud-sun text-orange-500 text-lg"></i> <span data-i18n="current_ritu">Current Ritu</span></h3></div>
                         <div id="ritu-content"></div>
                     </div>
-<div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4">
+<div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4 transform-gpu will-change-transform">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i><span data-i18n="panchang_header">Panchang</span></h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul>
                     </div>
                     
-                    <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 order-4 hidden">
-                        <!-- Auspicious Timings Content -->
-                    </div>
                 </div>
 
                 <!-- Sidebar Section -->
@@ -4115,6 +4110,7 @@ const LOCATION_DATA = {
 
         let appState = {
             activeMonthIndex: 0,
+            scrollPositions: {},
             customLabels: {},
             customMonths: {},
             monthsData: [],
@@ -4140,6 +4136,7 @@ const LOCATION_DATA = {
         
         let bannerInterval;
         let liveClockInterval = null;
+        let cachedTimingCards = [];
         let bannerCurrentIndex = 0;
         let currentBannerDataHash = "";
         let isBannerDismissed = false;
@@ -4720,12 +4717,12 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         let currentTagFilter = null; // null = Show All Tags
 
         const TAG_STYLES = [
-            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Blue
-            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Green
-            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Brown/Orange
-            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Purple
-            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);", // Deep Orange/Red
-            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"  // Deep Purple
+            "background: rgba(43, 62, 115, 0.15); color: #4F70B8; border: 1px solid rgba(79, 112, 184, 0.3);", // Blue
+            "background: rgba(30, 80, 56, 0.15); color: #3CB371; border: 1px solid rgba(60, 179, 113, 0.3);", // Green
+            "background: rgba(105, 50, 15, 0.15); color: #D2691E; border: 1px solid rgba(210, 105, 30, 0.3);", // Brown/Orange
+            "background: rgba(60, 40, 80, 0.15); color: #9370DB; border: 1px solid rgba(147, 112, 219, 0.3);", // Purple
+            "background: rgba(120, 30, 15, 0.15); color: #FF6347; border: 1px solid rgba(255, 99, 71, 0.3);", // Deep Orange/Red
+            "background: rgba(75, 30, 80, 0.15); color: #BA55D3; border: 1px solid rgba(186, 85, 211, 0.3);"  // Deep Purple
         ];
 
         function getTagStyle(tagName) {
@@ -4957,7 +4954,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         function renderCustomCard(cardData) {
             const bgColor = cardData.color || '#0d9488';
             return `
-            <a href="${cardData.link}" target="_blank" class="block h-full group">
+            <a href="${cardData.link}" target="_blank" class="block h-full group" style="transform: translateZ(0); will-change: transform;">
                 <div style="background-color: ${bgColor};" class="rounded-xl p-3 flex flex-col justify-between overflow-hidden relative h-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                     <div class="relative z-10 flex flex-col items-center text-center md:flex-row md:items-start md:text-left gap-3 w-full mb-3">
@@ -4980,7 +4977,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         function renderScrollCard(cardData) {
             const bgColor = cardData.color || '#2e3459';
             return `
-            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 shadow-lg shadow-black/5 relative overflow-hidden" style="background-color: ${bgColor};">
+            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex items-center justify-between w-[260px] md:w-[280px] p-3 pr-4 rounded-[1.25rem] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/20 shadow-lg shadow-black/5 relative overflow-hidden" style="background-color: ${bgColor}; transform: translateZ(0); will-change: transform;">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                 <div class="flex items-center gap-3 w-[85%] relative z-10">
                     <div class="w-12 h-12 min-w-[3rem] flex items-center justify-center p-2 rounded-2xl bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square">
@@ -4999,7 +4996,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         function renderBubbleCard(cardData) {
             const bgColor = cardData.color || '#0d9488';
             return `
-            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 rounded-xl p-3 relative overflow-hidden shadow-md" style="background-color: ${bgColor};">
+            <a href="${cardData.link}" target="_blank" class="snap-start shrink-0 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:-translate-y-1 rounded-xl p-3 relative overflow-hidden shadow-md" style="background-color: ${bgColor}; transform: translateZ(0); will-change: transform;">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/15 pointer-events-none z-0 rounded-[inherit]"></div>
                 <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full bg-white/30 dark:bg-white/5 backdrop-blur-md border border-gray-300/50 dark:border-white/10 shadow-sm shrink-0 aspect-square mb-2 relative z-10">
                     ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain rounded-full" />` : `<i class="fa-solid fa-link text-2xl text-white"></i>`}
@@ -5168,7 +5165,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                     fetchGitHubData(url);
                 } else {
                     fetchLiveDoc(url);
-                }
+                                    }
 
                                                       // Update Settings UI if open
                 const docsToggle = document.getElementById('toggle-sync-docs');
@@ -6403,14 +6400,16 @@ function getCDNUrl(originalUrl) {
             const viewBtnText = document.getElementById('view-btn-text');
             const viewBtnIcon = document.getElementById('view-btn-icon');
 
-                        const festivalContainer = document.getElementById('app-festival-view');
+            const festivalContainer = document.getElementById('app-festival-view');
             const moreContainer = document.getElementById('more-view-container');
+            const timingsContainer = document.getElementById('timings-view-container');
 
             if (appState.view === 'year') {
                 if(monthContainer) monthContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.remove('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
                 if(moreContainer) moreContainer.classList.add('hidden');
+                if(timingsContainer) timingsContainer.classList.add('hidden');
                 if(viewBtnText) viewBtnText.innerText = "Month View";
                 if(viewBtnIcon) viewBtnIcon.innerHTML = CALENDAR_ICON_SVG;
                 renderYearView();
@@ -6419,17 +6418,26 @@ function getCDNUrl(originalUrl) {
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.remove('hidden');
                 if(moreContainer) moreContainer.classList.add('hidden');
+                if(timingsContainer) timingsContainer.classList.add('hidden');
                 renderAppFestivalView();
             } else if (appState.view === 'more') {
                 if(monthContainer) monthContainer.classList.add('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
                 if(moreContainer) moreContainer.classList.remove('hidden');
+                if(timingsContainer) timingsContainer.classList.add('hidden');
+            } else if (appState.view === 'timings') {
+                if(monthContainer) monthContainer.classList.add('hidden');
+                if(yearContainer) yearContainer.classList.add('hidden');
+                if(festivalContainer) festivalContainer.classList.add('hidden');
+                if(moreContainer) moreContainer.classList.add('hidden');
+                if(timingsContainer) timingsContainer.classList.remove('hidden');
             } else {
                 if(monthContainer) monthContainer.classList.remove('hidden');
                 if(yearContainer) yearContainer.classList.add('hidden');
                 if(festivalContainer) festivalContainer.classList.add('hidden');
                 if(moreContainer) moreContainer.classList.add('hidden');
+                if(timingsContainer) timingsContainer.classList.add('hidden');
                 if(viewBtnText) viewBtnText.innerText = "Year View";
                 if(viewBtnIcon) viewBtnIcon.innerHTML = CALENDAR_ICON_SVG;
             }
@@ -7056,7 +7064,7 @@ function getCDNUrl(originalUrl) {
 
             gridEvents.forEach(item => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer active:scale-95 flex flex-col w-full min-w-0 relative";
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer active:scale-95 flex flex-col w-full min-w-0 relative transform-gpu will-change-transform";
                 card.onclick = () => openDayModal(item.event.date, item.monthData);
 
                 // Calculate days remaining
@@ -7129,6 +7137,9 @@ function getCDNUrl(originalUrl) {
 
         function toggleView(viewName) {
 
+            if (!appState.scrollPositions) appState.scrollPositions = {};
+            appState.scrollPositions[appState.view] = window.scrollY || document.documentElement.scrollTop;
+
             appState.view = viewName;
             
             // Default to month if undefined (handles initial cache hit logic)
@@ -7146,6 +7157,12 @@ function getCDNUrl(originalUrl) {
                     }
                 } else if (btn.querySelector('.festivals-icon')) {
                     if (safeView === 'festivals') {
+                        btn.classList.add('text-orange-600');
+                    } else {
+                        btn.classList.add('text-gray-400');
+                    }
+                } else if (btn.querySelector('.fa-clock')) {
+                    if (safeView === 'timings') {
                         btn.classList.add('text-orange-600');
                     } else {
                         btn.classList.add('text-gray-400');
@@ -7177,6 +7194,12 @@ function getCDNUrl(originalUrl) {
                     } else {
                         btn.classList.add('text-white/80');
                     }
+                } else if (btn.querySelector('.fa-clock')) {
+                    if (viewName === 'timings') {
+                        btn.classList.add('text-white');
+                    } else {
+                        btn.classList.add('text-white/80');
+                    }
                 } else if (btn.classList.contains('menu-icon-btn')) {
                     if (viewName === 'more') {
                         btn.classList.add('text-white');
@@ -7189,6 +7212,13 @@ function getCDNUrl(originalUrl) {
             });
             
             render();
+
+            requestAnimationFrame(() => {
+                window.scrollTo({ 
+                    top: appState.scrollPositions[viewName] || 0, 
+                    behavior: 'instant' 
+                });
+            });
         }
 
         function isLeapYear(year) {
@@ -7864,13 +7894,13 @@ function renderCalendarGrid(data) {
     </div>
     <div class="flex justify-between items-center w-full relative">
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunrise">SUNRISE</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${fmt(sunTimes.sunrise)}</span>
         </div>
         <div class="h-16 md:h-20 w-px bg-white/20 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-sun" style="font-size: 25px; background: linear-gradient(to bottom, #FFF3B0, #FFB347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="sunset">SUNSET</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${fmt(sunTimes.sunset)}</span>
         </div>
@@ -7964,13 +7994,13 @@ function renderCalendarGrid(data) {
     <div class="flex justify-between items-center w-full relative">
 
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-cloud-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonrise">MOONRISE</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.rise) ? fmt(moonTimes.rise) : '--:--'}</span>
         </div>
         <div class="h-16 md:h-20 w-px bg-white/20 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div class="flex flex-col items-center flex-1">
-            <span style="filter: drop-shadow(0 0 8px rgba(135,206,235,0.8)); display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
+            <span style="display: inline-block; margin-bottom: 0.5rem;"><i class="fas fa-moon" style="font-size: 25px; background: linear-gradient(to bottom, #E0FFFF, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i></span>
             <span class="text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider mb-1" data-i18n="moonset">MOONSET</span>
             <span class="text-[11px] md:text-base font-bold text-white tracking-wide">${(typeof moonTimes !== 'undefined' && moonTimes && moonTimes.set) ? fmt(moonTimes.set) : '--:--'}</span>
         </div>
@@ -8178,10 +8208,10 @@ function renderCalendarGrid(data) {
         }
 
         function updateLiveTimers() {
-            const cards = document.querySelectorAll('.timeline-card[data-start][data-end]');
+            if (appState.view !== 'timings') return;
             const now = new Date();
 
-            cards.forEach(card => {
+            cachedTimingCards.forEach(card => {
                 const start = parseInt(card.getAttribute('data-start'));
                 const end = parseInt(card.getAttribute('data-end'));
                 
@@ -8197,10 +8227,12 @@ function renderCalendarGrid(data) {
                     const h = Math.floor(waitMins / 60);
                     const m = waitMins % 60;
                     
-                    badge.innerText = `UPCOMING IN ${h}H ${m}M`;
-                    badge.classList.remove('badge-ending-soon');
-                    if (pulseText) pulseText.style.display = 'none';
-                    card.classList.remove('completed');
+                    const newText = `UPCOMING IN ${h}H ${m}M`;
+                    if (badge.innerText !== newText) badge.innerText = newText;
+                    
+                    if (badge.classList.contains('badge-ending-soon')) badge.classList.remove('badge-ending-soon');
+                    if (pulseText && pulseText.style.display !== 'none') pulseText.style.display = 'none';
+                    if (card.classList.contains('completed')) card.classList.remove('completed');
 
                 } else if (now >= start && now <= end) {
                     // ACTIVE
@@ -8211,22 +8243,26 @@ function renderCalendarGrid(data) {
 
                     // "Ending Soon" Logic (less than 15 mins)
                     if (remMins <= 15) {
-                        badge.innerText = "Ending Soon";
-                        badge.classList.add('badge-ending-soon');
+                        const newText = "Ending Soon";
+                        if (badge.innerText !== newText) badge.innerText = newText;
+                        if (!badge.classList.contains('badge-ending-soon')) badge.classList.add('badge-ending-soon');
                     } else {
-                        badge.innerText = `ENDS IN ${h}H ${m}M`;
-                        badge.classList.remove('badge-ending-soon');
+                        const newText = `ENDS IN ${h}H ${m}M`;
+                        if (badge.innerText !== newText) badge.innerText = newText;
+                        if (badge.classList.contains('badge-ending-soon')) badge.classList.remove('badge-ending-soon');
                     }
                     
-                    if (pulseText) pulseText.style.display = 'inline-block';
-                    card.classList.remove('completed');
+                    if (pulseText && pulseText.style.display !== 'inline-block') pulseText.style.display = 'inline-block';
+                    if (card.classList.contains('completed')) card.classList.remove('completed');
 
                 } else {
                     // COMPLETED
-                    badge.innerHTML = `<span data-i18n="completed">Completed</span>`;
-                    badge.classList.remove('badge-ending-soon');
-                    if (pulseText) pulseText.style.display = 'none';
-                    card.classList.add('completed');
+                    const completedHtml = `<span data-i18n="completed">Completed</span>`;
+                    if (badge.innerHTML !== completedHtml) badge.innerHTML = completedHtml;
+                    
+                    if (badge.classList.contains('badge-ending-soon')) badge.classList.remove('badge-ending-soon');
+                    if (pulseText && pulseText.style.display !== 'none') pulseText.style.display = 'none';
+                    if (!card.classList.contains('completed')) card.classList.add('completed');
                 }
             });
         }
@@ -8238,12 +8274,15 @@ function renderCalendarGrid(data) {
                 const now = new Date();
                 const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
                 const el = document.getElementById('live-clock-time');
-                if (el) {
+                if (el && el.innerText !== timeString) {
                     el.innerText = timeString;
                 }
                 const el2 = document.getElementById('timings-clock');
                 if (el2) {
-                    el2.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const newTimingsStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    if (el2.innerText !== newTimingsStr) {
+                        el2.innerText = newTimingsStr;
+                    }
                 }
                 
                 // Dynamic Timers Hook
@@ -8499,7 +8538,7 @@ function renderCalendarGrid(data) {
                                         <!-- Footer Wrapper to allow relative positioning for Active Badge -->
                                         <div class="relative mt-auto pt-3">
                                             <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30" style="display: ${isActive ? 'block' : 'none'}">
-                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-2 py-0.5 text-[8px] tracking-widest whitespace-nowrap" style="backdrop-filter: blur(12px); border-radius: 9999px;">ACTIVE NOW</span>
+                                                <span class="pulse-text bg-amber-600/90 border-amber-400/50 shadow-lg px-2 py-0.5 text-[8px] tracking-widest whitespace-nowrap" style="border-radius: 9999px;">ACTIVE NOW</span>
                                             </div>
                                             ${footerHtml}
                                         </div>
@@ -8518,6 +8557,8 @@ function renderCalendarGrid(data) {
 
             container.innerHTML = html;
             applyCustomLabels();
+            
+            cachedTimingCards = Array.from(document.querySelectorAll('.timeline-card[data-start][data-end]'));
             startLiveClock(); // Ensure clock restarts
         }
 
@@ -8627,7 +8668,7 @@ function renderCalendarGrid(data) {
 
                 // --- CARD 1: Event Details ---
                 const eventCard = document.createElement('div');
-                eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95";
+                eventCard.className = "mb-3 relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-95 transform-gpu will-change-transform";
                 eventCard.onclick = () => openDayModal(upNextEvent.date, upNextMonthData);
                 eventCard.style.background = "linear-gradient(135deg, #f15a24 0%, #ed1c24 50%, #800000 100%)";
                 eventCard.style.boxShadow = "0 10px 15px -3px rgba(249, 115, 22, 0.4), 0 4px 6px -4px rgba(249, 115, 22, 0.4)";
@@ -10273,9 +10314,9 @@ function renderCalendarGrid(data) {
             <i class="fa-solid fa-headphones text-xl"></i>
             <span class="text-[10px] font-bold leading-none" data-i18n="listen_nav">Listen</span>
         </button>
-        <button class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
-            <i class="fa-regular fa-comment-dots text-xl"></i>
-            <span class="text-[10px] font-bold leading-none" data-i18n="chat_nav">Chat</span>
+        <button id="nav-btn-timings" class="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1" onclick="toggleView('timings')">
+            <i class="fa-solid fa-clock text-xl"></i>
+            <span class="text-[10px] font-bold leading-none" data-i18n="timings_nav">Timings</span>
         </button>
         <button onclick="toggleView('more')" class="menu-icon-btn flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-orange-500 transition-colors flex-1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
