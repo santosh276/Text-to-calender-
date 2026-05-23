@@ -8265,9 +8265,9 @@ function renderCalendarGrid(data) {
       <span id="labelCenterCycle" class="digit absolute" style="font-size:10px; font-weight:700; letter-spacing:0.1em; color:rgba(255,255,255,0.5); text-transform:uppercase; left:50%; transform:translateX(-50%); top:0; white-space:nowrap;">Noon</span>
       <span id="labelRightCycle" class="digit absolute" style="font-size:10px; font-weight:700; letter-spacing:0.1em; color:rgba(255,255,255,0.5); text-transform:uppercase; left:90.625%; transform:translateX(-50%); top:0; white-space:nowrap;">Sunset</span>
     </div>
-    <div style="margin-bottom:12px;">
-      <div style="width:100%; height:8px; border-radius:999px; background:rgba(255,255,255,0.09); overflow:hidden; position:relative;">
-        <div id="progressBarCycle" class="shimmer-bar" style="height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,#f97316,#fbbf24,#fde68a,#fbbf24,#f97316,#c2410c); transition: width 1s ease;"></div>
+    <div style="margin-bottom:16px; padding: 0 4px;">
+      <div style="width:100%; height:8px; border-radius:999px; background:rgba(255,255,255,0.1); position:relative;">
+        <div id="progressBarCycle" class="shimmer-bar" style="position:absolute; top:0; left:0; height:100%; width:0%; border-radius:999px; transition: width 1s ease, box-shadow 1s ease;"></div>
       </div>
     </div>
     <div class="cycle-glass rounded-2xl flex flex-col items-center justify-center text-center" style="padding: 16px 12px; gap: 6px;">
@@ -8727,11 +8727,16 @@ function updateDayCycleCard() {
     }
 
     const pb = document.getElementById('progressBarCycle');
-    pb.style.width = `${(pct * 100).toFixed(2)}%`;
-    if (isDay) {
-        pb.style.background = 'linear-gradient(90deg,#c2410c,#f97316,#fbbf24,#fde68a,#fbbf24,#f97316,#c2410c)';
-    } else {
-        pb.style.background = 'linear-gradient(90deg,#1e1b4b,#3730a3,#6366f1,#a78bfa,#6366f1,#3730a3,#1e1b4b)';
+    if (pb) {
+        pb.style.width = `${(pct * 100).toFixed(2)}%`;
+        if (isDay) {
+            pb.style.background = 'linear-gradient(90deg,#ea580c,#f97316,#fde68a,#f97316,#ea580c)';
+            pb.style.boxShadow = '0 0 12px 1px rgba(245, 158, 11, 0.7)';
+        } else {
+            pb.style.background = 'linear-gradient(90deg,#3730a3,#6366f1,#c084fc,#6366f1,#3730a3)';
+            pb.style.boxShadow = '0 0 12px 1px rgba(167, 139, 250, 0.7)';
+        }
+        pb.style.backgroundSize = '300% auto';
     }
 
     document.getElementById('labelLeftCycle').textContent = labelL;
