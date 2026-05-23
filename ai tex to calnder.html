@@ -8729,12 +8729,11 @@ function updateDayCycleCard() {
     const pb = document.getElementById('progressBarCycle');
     if (pb) {
         pb.style.width = `${(pct * 100).toFixed(2)}%`;
+        pb.style.boxShadow = 'none'; // Removing the glow effect
         if (isDay) {
             pb.style.background = 'linear-gradient(90deg,#ea580c,#f97316,#fde68a,#f97316,#ea580c)';
-            pb.style.boxShadow = '0 0 12px 1px rgba(245, 158, 11, 0.7)';
         } else {
             pb.style.background = 'linear-gradient(90deg,#3730a3,#6366f1,#c084fc,#6366f1,#3730a3)';
-            pb.style.boxShadow = '0 0 12px 1px rgba(167, 139, 250, 0.7)';
         }
         pb.style.backgroundSize = '300% auto';
     }
