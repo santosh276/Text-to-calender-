@@ -8063,9 +8063,9 @@ function renderCalendarGrid(data) {
                         </div>
                     </div>
 
-                    <div class="mt-8 mb-6 relative px-2">
-                        <div class="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div id="day-cycle-linear-progress" class="h-full rounded-full bg-gradient-to-r from-orange-500 to-purple-500" style="width: 0%; transition: width 1s linear;"></div>
+                    <div class="mt-8 mb-6 relative px-2" style="padding-top: 4px; padding-bottom: 4px;">
+                        <div class="h-2.5 w-full bg-gray-100 rounded-full relative">
+                            <div id="day-cycle-linear-progress" class="h-full rounded-full absolute top-0 left-0" style="width: 0%; transition: width 1s linear, box-shadow 1s linear;"></div>
                         </div>
                     </div>
 
@@ -8391,6 +8391,8 @@ function renderCalendarGrid(data) {
             if(iconGroup) iconGroup.setAttribute('transform', `translate(${x}, ${y})`);
 
             const gradient = document.getElementById('dayCycleGradient');
+            const pb = document.getElementById('day-cycle-linear-progress');
+
             if (isDay) {
                 if(gradient) gradient.innerHTML = '<stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#8b5cf6"/>';
                 if(iconGroup) iconGroup.innerHTML = '<circle cx="0" cy="0" r="9" fill="#fef08a" stroke="#f59e0b" stroke-width="2"/><path d="M 0 -13 V -16 M 0 13 V 16 M -13 0 H -16 M 13 0 H 16 M -9 -9 L -11 -11 M 9 9 L 11 11 M 9 -9 L 11 -11 M -9 9 L -11 11" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>';
@@ -8398,7 +8400,12 @@ function renderCalendarGrid(data) {
                 document.getElementById('day-cycle-title').innerText = "DAY CYCLE";
                 document.getElementById('day-cycle-title').className = "font-extrabold text-orange-600 tracking-wide text-sm";
                 document.getElementById('day-cycle-dot').className = "w-2 h-2 rounded-full bg-orange-500 mr-2";
-                document.getElementById('day-cycle-linear-progress').className = "h-full rounded-full bg-gradient-to-r from-orange-500 to-purple-500 shadow-md";
+
+                if (pb) {
+                    pb.style.background = 'linear-gradient(90deg,#ea580c,#f97316,#fde68a,#f97316,#ea580c)';
+                    pb.style.boxShadow = '0 0 12px 1px rgba(245, 158, 11, 0.7)';
+                    pb.style.backgroundSize = '300% auto';
+                }
             } else {
                 if(gradient) gradient.innerHTML = '<stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/>';
                 if(iconGroup) iconGroup.innerHTML = '<path d="M -4 -7 A 7 7 0 1 0 5 7 A 9 9 0 1 1 -4 -7 Z" fill="#93c5fd" stroke="#2563eb" stroke-width="1.5" transform="scale(1.2)"/>';
@@ -8406,14 +8413,21 @@ function renderCalendarGrid(data) {
                 document.getElementById('day-cycle-title').innerText = "NIGHT CYCLE";
                 document.getElementById('day-cycle-title').className = "font-extrabold text-blue-600 tracking-wide text-sm";
                 document.getElementById('day-cycle-dot').className = "w-2 h-2 rounded-full bg-blue-500 mr-2";
-                document.getElementById('day-cycle-linear-progress').className = "h-full rounded-full bg-gradient-to-r from-blue-400 to-indigo-800 shadow-md";
+
+                if (pb) {
+                    pb.style.background = 'linear-gradient(90deg,#3730a3,#6366f1,#c084fc,#6366f1,#3730a3)';
+                    pb.style.boxShadow = '0 0 12px 1px rgba(167, 139, 250, 0.7)';
+                    pb.style.backgroundSize = '300% auto';
+                }
             }
 
             document.getElementById('day-cycle-start-label').innerText = labelStart;
             document.getElementById('day-cycle-mid-label').innerText = labelMid;
             document.getElementById('day-cycle-end-label').innerText = labelEnd;
 
-            document.getElementById('day-cycle-linear-progress').style.width = `${percent * 100}%`;
+            if (pb) {
+                pb.style.width = `${percent * 100}%`;
+            }
             document.getElementById('day-cycle-percent').innerText = `${Math.round(percent * 100)}% of ${isDay ? 'Day' : 'Night'} Passed`;
 
             const remainMs = end - now;
