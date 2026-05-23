@@ -1834,6 +1834,48 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
     </style>
 
+<style>
+/* ─── LIVE DAY/NIGHT CYCLE ANIMATIONS ─── */
+@keyframes sun-ray-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes sun-halo-pulse { 0%, 100% { r: 13px; opacity: 0.35; } 50% { r: 17px; opacity: 0.12; } }
+@keyframes sun-corona-pulse { 0%, 100% { r: 20px; opacity: 0.20; } 50% { r: 26px; opacity: 0.07; } }
+.sun-rays { animation: sun-ray-spin 14s linear infinite; transform-origin: 0px 0px; }
+.sun-halo { animation: sun-halo-pulse 3s ease-in-out infinite; transform-origin: 0px 0px; }
+.sun-corona { animation: sun-corona-pulse 4.5s ease-in-out infinite; transform-origin: 0px 0px; }
+
+@keyframes moon-halo-pulse { 0%, 100% { opacity: 0.25; transform: scale(1); } 50% { opacity: 0.08; transform: scale(1.3); } }
+@keyframes moon-outer-pulse { 0%, 100% { opacity: 0.12; transform: scale(1); } 50% { opacity: 0.04; transform: scale(1.4); } }
+.moon-halo { animation: moon-halo-pulse 4s ease-in-out infinite; transform-origin: 0px 0px; }
+.moon-outer { animation: moon-outer-pulse 6s ease-in-out infinite; transform-origin: 0px 0px; }
+
+@keyframes twinkle-1 { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.1; transform: scale(0.5); } }
+@keyframes twinkle-2 { 0%, 100% { opacity: 0.75; transform: scale(1); } 35% { opacity: 0.05; transform: scale(0.4); } }
+@keyframes twinkle-3 { 0%, 100% { opacity: 0.9; transform: scale(1); } 65% { opacity: 0.15; transform: scale(0.6); } }
+@keyframes twinkle-4 { 0% { opacity: 0.4; } 25% { opacity: 1; } 75% { opacity: 0.1; } 100% { opacity: 0.4; } }
+.t1 { animation: twinkle-1 var(--d,2s) ease-in-out infinite var(--delay,0s); transform-box: fill-box; transform-origin: center; }
+.t2 { animation: twinkle-2 var(--d,3s) ease-in-out infinite var(--delay,0s); transform-box: fill-box; transform-origin: center; }
+.t3 { animation: twinkle-3 var(--d,2.5s) ease-in-out infinite var(--delay,0s); transform-box: fill-box; transform-origin: center; }
+.t4 { animation: twinkle-4 var(--d,2.8s) ease-in-out infinite var(--delay,0s); transform-box: fill-box; transform-origin: center; }
+
+@keyframes meteor-shower { 0% { transform: translate(0px, 0px); opacity: 0; } 2% { opacity: 1; } 10% { transform: translate(45px, 45px); opacity: 0; } 100% { transform: translate(45px, 45px); opacity: 0; } }
+.meteor { opacity: 0; animation: meteor-shower var(--dur, 6s) linear infinite var(--delay, 0s); }
+
+@keyframes aurora { 0%, 100% { opacity: 0.10; } 50% { opacity: 0.22; } }
+.aurora { animation: aurora var(--d,7s) ease-in-out infinite var(--delay,0s); }
+
+@keyframes bird-fly { 0%, 100% { transform: translateX(0px) translateY(0px); } 25% { transform: translateX(3px) translateY(-2px); } 75% { transform: translateX(-2px) translateY(1px); } }
+.bird { animation: bird-fly 4s ease-in-out infinite var(--delay, 0s); transform-box: fill-box; transform-origin: center; }
+
+@keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+.shimmer-bar { background-size: 300% auto; animation: shimmer 3s linear infinite; }
+
+@keyframes live-blink { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { opacity: 0.7; box-shadow: 0 0 0 5px rgba(34,197,94,0); } }
+.live-dot { animation: live-blink 2s ease-in-out infinite; }
+
+.cycle-card { transition: background 1s ease, box-shadow 1s ease; }
+.glass-panel { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.11); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.digit { font-family: 'Inter', monospace; font-variant-numeric: tabular-nums; line-height: 1; }
+</style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
 
@@ -8151,6 +8193,127 @@ function renderCalendarGrid(data) {
                 timelineContainer.appendChild(sunCard);
                 timelineContainer.appendChild(moonCard);
                 list.appendChild(timelineContainer);
+
+        // Pre-calculate adjacent sun events using existing SunCalc
+        let prevDate = new Date(calcDate);
+        prevDate.setDate(prevDate.getDate() - 1);
+        let nextDate = new Date(calcDate);
+        nextDate.setDate(nextDate.getDate() + 1);
+
+        let prevSunTimes = SunCalc.getTimes(prevDate, appState.config.location.lat, appState.config.location.lng);
+        let nextSunTimes = SunCalc.getTimes(nextDate, appState.config.location.lat, appState.config.location.lng);
+
+        const dayCycleCard = document.createElement('div');
+        dayCycleCard.className = "cycle-card rounded-3xl overflow-hidden relative w-full mb-6 mt-2";
+        dayCycleCard.id = "day-cycle-card";
+        dayCycleCard.style.background = "#020617";
+        dayCycleCard.setAttribute('data-prev-sunset', prevSunTimes.sunset.getTime());
+        dayCycleCard.setAttribute('data-sunrise', sunTimes.sunrise.getTime());
+        dayCycleCard.setAttribute('data-sunset', sunTimes.sunset.getTime());
+        dayCycleCard.setAttribute('data-next-sunrise', nextSunTimes.sunrise.getTime());
+
+        dayCycleCard.innerHTML = `
+            <div class="absolute inset-0 overflow-hidden pointer-events-none" id="bgCanvas">
+                <svg id="bgSvg" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="bgNight" cx="50%" cy="0%" r="100%"><stop offset="0%" stop-color="#1e1035"/><stop offset="40%" stop-color="#0d0820"/><stop offset="100%" stop-color="#020617"/></radialGradient>
+                    <radialGradient id="bgDay" cx="50%" cy="0%" r="120%"><stop offset="0%" stop-color="#0c4a6e"/><stop offset="50%" stop-color="#075985"/><stop offset="100%" stop-color="#1e3a5f"/></radialGradient>
+                    <filter id="sunIconGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5" result="b"/><feColorMatrix in="b" type="matrix" values="1 0.5 0 0 0.1  0.5 0.3 0 0 0  0 0 0 0 0  0 0 0 0.65 0" result="colored"/><feMerge><feMergeNode in="colored"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                    <filter id="moonIconGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6" result="b"/><feColorMatrix in="b" type="matrix" values="0.3 0.3 1 0 0  0.3 0.3 1 0 0  0.5 0.5 1 0 0  0 0 0 0.55 0" result="colored"/><feMerge><feMergeNode in="colored"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                    <clipPath id="aboveHorizon"><rect x="0" y="0" width="320" height="175"/></clipPath>
+                    <linearGradient id="arcGradDay" gradientUnits="userSpaceOnUse" x1="30" y1="175" x2="290" y2="175"><stop offset="0%" stop-color="#f97316"/><stop offset="30%" stop-color="#fbbf24"/><stop offset="60%" stop-color="#fde68a"/><stop offset="100%" stop-color="#f97316" stop-opacity="0.6"/></linearGradient>
+                    <linearGradient id="arcGradNight" gradientUnits="userSpaceOnUse" x1="30" y1="175" x2="290" y2="175"><stop offset="0%" stop-color="#4338ca"/><stop offset="40%" stop-color="#6366f1"/><stop offset="75%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#818cf8" stop-opacity="0.6"/></linearGradient>
+                    <filter id="arcGlowDay"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                    <filter id="arcGlowNight"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                </defs>
+                <rect id="bgRect" width="100%" height="100%" fill="url(#bgNight)"/>
+                <g id="bgScene"></g>
+                </svg>
+            </div>
+
+            <div class="relative z-10 flex flex-col p-5 md:p-6 pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <div id="titleBadge" class="flex items-center gap-2 rounded-full px-3 py-1" style="background:rgba(251,191,36,0.14); border:1px solid rgba(251,191,36,0.28);">
+                        <span id="titleIcon" class="text-sm">☀️</span>
+                        <span id="titleText" class="digit font-bold tracking-widest text-[11px] md:text-xs" style="color:#fbbf24;">DAY CYCLE</span>
+                    </div>
+                    <div class="flex items-center gap-2 rounded-full glass-panel px-3 py-1">
+                        <span class="live-dot rounded-full w-2 h-2 bg-green-500 block"></span>
+                        <span class="text-[11px] font-semibold text-white/70">Live</span>
+                    </div>
+                </div>
+
+                <div class="w-full relative mt-2">
+                    <svg id="arcSvg" viewBox="0 0 320 185" width="100%" class="block overflow-visible" xmlns="http://www.w3.org/2000/svg">
+                        <g id="arcBgScene" clip-path="url(#aboveHorizon)"></g>
+                        <line id="horizonLine" x1="16" y1="175" x2="304" y2="175" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                        <circle id="horizonDotL" cx="30" cy="175" r="3.5" fill="rgba(255,255,255,0.25)"/>
+                        <circle id="horizonDotR" cx="290" cy="175" r="3.5" fill="rgba(255,255,255,0.25)"/>
+
+                        <path id="arcTrack" d="M 30 175 A 130 130 0 0 1 290 175" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="6" stroke-dasharray="5 8" stroke-linecap="round"/>
+                        <path id="arcActive" d="M 30 175 L 30 175" fill="none" stroke="url(#arcGradDay)" stroke-width="6" stroke-linecap="round" filter="url(#arcGlowDay)"/>
+
+                        <g id="sunIcon" transform="translate(30,175)">
+                            <circle class="sun-corona" cx="0" cy="0" r="20" fill="#fde68a" opacity="0.18"/>
+                            <circle class="sun-halo" cx="0" cy="0" r="13" fill="#fbbf24" opacity="0.32"/>
+                            <g class="sun-rays">
+                                <line x1="0" y1="-14" x2="0" y2="-19" stroke="#fcd34d" stroke-width="1.8" stroke-linecap="round"/>
+                                <line x1="0" y1=" 14" x2="0" y2=" 19" stroke="#fcd34d" stroke-width="1.8" stroke-linecap="round"/>
+                                <line x1="-14" y1="0" x2="-19" y2="0" stroke="#fcd34d" stroke-width="1.8" stroke-linecap="round"/>
+                                <line x1=" 14" y1="0" x2=" 19" y2="0" stroke="#fcd34d" stroke-width="1.8" stroke-linecap="round"/>
+                                <line x1="-9.9" y1="-9.9" x2="-13.4" y2="-13.4" stroke="#fcd34d" stroke-width="1.5" stroke-linecap="round"/>
+                                <line x1=" 9.9" y1="-9.9" x2=" 13.4" y2="-13.4" stroke="#fcd34d" stroke-width="1.5" stroke-linecap="round"/>
+                                <line x1="-9.9" y1=" 9.9" x2="-13.4" y2=" 13.4" stroke="#fcd34d" stroke-width="1.5" stroke-linecap="round"/>
+                                <line x1=" 9.9" y1=" 9.9" x2=" 13.4" y2=" 13.4" stroke="#fcd34d" stroke-width="1.5" stroke-linecap="round"/>
+                            </g>
+                            <circle cx="0" cy="0" r="9" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" filter="url(#sunIconGlow)"/>
+                            <circle cx="-2.5" cy="-2.5" r="2.8" fill="#fef3c7" opacity="0.55"/>
+                        </g>
+
+                        <g id="moonIcon" transform="translate(30,175)" class="hidden">
+                            <circle class="moon-outer" cx="0" cy="0" r="26" fill="#818cf8" opacity="0.10"/>
+                            <circle class="moon-halo" cx="0" cy="0" r="17" fill="#6366f1" opacity="0.22"/>
+                            <g filter="url(#moonIconGlow)">
+                                <circle cx="0" cy="0" r="10" fill="#dde4ff" stroke="#a5b4fc" stroke-width="1.5"/>
+                                <circle cx="-3" cy="-3" r="2.2" fill="#a5b4fc" opacity="0.4"/>
+                                <circle cx="3" cy="2" r="1.8" fill="#a5b4fc" opacity="0.35"/>
+                                <circle cx="-2" cy="4" r="1.2" fill="#a5b4fc" opacity="0.3"/>
+                                <circle cx="4" cy="-3" r="1.0" fill="#a5b4fc" opacity="0.4"/>
+                                <ellipse cx="-3" cy="-4" rx="4" ry="2" fill="white" opacity="0.3" transform="rotate(-30,-3,-4)"/>
+                            </g>
+                            <circle cx="16" cy="-8" r="0.9" fill="white" opacity="0.7" class="t1" style="--d:1.8s;--delay:0.3s;"/>
+                            <circle cx="20" cy="3" r="0.6" fill="white" opacity="0.5" class="t3" style="--d:2.4s;--delay:0.9s;"/>
+                        </g>
+
+                        <line x1="30" y1="175" x2="30" y2="183" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+                        <line x1="160" y1="175" x2="160" y2="183" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+                        <line x1="290" y1="175" x2="290" y2="183" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <div class="relative h-[28px] mt-1 mb-4 w-full">
+                    <span id="labelLeft" class="digit absolute text-[10px] font-bold tracking-widest text-white/50 uppercase left-[9.375%] -translate-x-1/2 top-0 whitespace-nowrap">Sunrise</span>
+                    <span id="labelCenter" class="digit absolute text-[10px] font-bold tracking-widest text-white/50 uppercase left-1/2 -translate-x-1/2 top-0 whitespace-nowrap">Noon</span>
+                    <span id="labelRight" class="digit absolute text-[10px] font-bold tracking-widest text-white/50 uppercase left-[90.625%] -translate-x-1/2 top-0 whitespace-nowrap">Sunset</span>
+                </div>
+
+                <div class="mb-4">
+                    <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden relative">
+                        <div id="progressBar" class="shimmer-bar h-full w-0 rounded-full transition-all duration-1000 ease-out" style="background:linear-gradient(90deg,#f97316,#fbbf24,#fde68a,#fbbf24,#f97316);"></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl flex flex-col items-center justify-center text-center p-4 md:p-5 gap-2 w-full">
+                    <div class="text-[14px] md:text-[15px] font-medium text-white/85 tracking-wide">
+                        <span id="statPctStr" class="digit text-[20px] md:text-[22px] font-extrabold text-amber-400">--%</span> of <span id="phaseLabelStr" class="font-bold">Day</span> Passed
+                    </div>
+                    <div class="text-xs md:text-[13px] font-medium text-white/60 tracking-wide">
+                        <span id="remTimeStr" class="digit text-slate-100 font-semibold">-- Hours -- mins</span> until <span id="untilLabelStr" class="font-semibold capitalize">Sunset</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        list.appendChild(dayCycleCard);
             }
 
             // 4. Merge Data (Manual > Auto)
@@ -8441,6 +8604,133 @@ function renderCalendarGrid(data) {
             }
         }
 
+let lastIsDayState = null;
+
+function buildNightScene() {
+  const STARS = [[18, 12, 1.4, 't1', 2.1, 0.0], [82, 7, 1.5, 't1', 1.9, 0.4], [155, 5, 1.6, 't1', 2.3, 0.8], [218, 10, 1.4, 't1', 2.0, 0.2], [274, 16, 1.5, 't1', 1.8, 1.1], [48, 55, 1.3, 't1', 2.5, 0.6], [198, 48, 1.4, 't1', 2.2, 1.3], [295, 60, 1.3, 't1', 2.0, 0.5], [110, 95, 1.5, 't1', 1.7, 0.9], [255, 90, 1.4, 't1', 2.4, 0.3], [35, 30, 1.0, 't2', 3.1, 0.3], [68, 40, 0.9, 't2', 3.5, 0.7], [128, 25, 1.1, 't2', 2.9, 1.2], [175, 33, 1.0, 't2', 3.3, 0.1], [240, 28, 0.9, 't2', 3.0, 0.8], [302, 35, 1.1, 't2', 2.8, 1.5], [92, 70, 1.0, 't2', 3.4, 0.4], [165, 72, 0.9, 't2', 3.1, 1.0], [228, 65, 1.1, 't2', 2.7, 0.6], [308, 85, 1.0, 't2', 3.2, 1.4], [55, 110, 1.1, 't2', 3.0, 0.2], [145, 105, 0.9, 't2', 3.6, 0.7], [225, 115, 1.0, 't2', 2.9, 1.1], [290, 108, 1.1, 't2', 3.3, 0.5], [20, 140, 1.0, 't2', 3.1, 0.9], [75, 135, 0.9, 't2', 2.8, 1.3], [170, 145, 1.1, 't2', 3.4, 0.4], [260, 140, 1.0, 't2', 3.0, 0.8], [25, 48, 0.7, 't3', 2.0, 0.5], [58, 20, 0.6, 't3', 2.5, 1.0], [103, 14, 0.7, 't3', 1.8, 0.2], [142, 42, 0.6, 't3', 2.2, 0.7], [193, 18, 0.7, 't3', 2.7, 1.4], [235, 45, 0.6, 't3', 2.1, 0.3], [265, 32, 0.7, 't3', 1.9, 0.8], [312, 18, 0.6, 't3', 2.4, 1.1], [72, 80, 0.7, 't3', 2.3, 0.6], [130, 85, 0.6, 't3', 2.6, 1.2], [188, 88, 0.7, 't3', 2.0, 0.1], [248, 78, 0.6, 't3', 2.8, 0.9], [305, 75, 0.7, 't3', 2.2, 1.5], [38, 122, 0.6, 't4', 2.5, 0.4], [100, 128, 0.7, 't4', 2.9, 0.8], [160, 118, 0.6, 't4', 2.3, 1.3], [215, 130, 0.7, 't4', 2.7, 0.2], [278, 124, 0.6, 't4', 2.1, 1.0], [315, 112, 0.7, 't4', 2.5, 0.6], [118, 38, 0.4, 't3', 1.7, 0.2]];
+  const starsSvg = STARS.map(([x,y,r,cls,d,delay]) => {
+    let out = `<circle cx="${x}" cy="${y}" r="${r}" fill="white" class="${cls}" style="--d:${d}s;--delay:${delay}s;"/>`;
+    if (r >= 1.3) out += `<g class="${cls}" style="--d:${d}s;--delay:${delay}s;" opacity="0.5"><line x1="${x}" y1="${y-r*2.8}" x2="${x}" y2="${y+r*2.8}" stroke="white" stroke-width="0.5" stroke-linecap="round"/><line x1="${x-r*2.8}" y1="${y}" x2="${x+r*2.8}" y2="${y}" stroke="white" stroke-width="0.5" stroke-linecap="round"/></g>`;
+    return out;
+  }).join('');
+  const shooters = `<defs><linearGradient id="meteorGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0"/><stop offset="50%" stop-color="#ffffff" stop-opacity="0.4"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient></defs><line class="meteor" style="--dur:6s;--delay:2s;" x1="55" y1="18" x2="75" y2="38" stroke="url(#meteorGrad)" stroke-width="1.5" stroke-linecap="round" /><line class="meteor" style="--dur:8s;--delay:6s;" x1="210" y1="10" x2="230" y2="30" stroke="url(#meteorGrad)" stroke-width="1.2" stroke-linecap="round" />`;
+  return starsSvg + shooters;
+}
+
+function buildDayScene() {
+  return `<ellipse cx="160" cy="170" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/><g class="bird" style="--delay:0s;" opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"><path d="M 42 52 Q 45 49 48 52"/><path d="M 52 44 Q 55 41 58 44"/><path d="M 62 55 Q 65 52 68 55"/></g><g class="bird" style="--delay:1.5s;" opacity="0.22" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"><path d="M 218 32 Q 221 29 224 32"/><path d="M 226 24 Q 229 21 232 24"/></g>`;
+}
+
+function updateDayCycleCard() {
+    const card = document.getElementById('day-cycle-card');
+    if (!card) return;
+
+    const now = Date.now();
+    const sunrise = parseInt(card.getAttribute('data-sunrise'));
+    const sunset = parseInt(card.getAttribute('data-sunset'));
+    const prevSunset = parseInt(card.getAttribute('data-prev-sunset'));
+    const nextSunrise = parseInt(card.getAttribute('data-next-sunrise'));
+
+    let isDay = true;
+    let start, end, labelL, labelC, labelR;
+
+    if (now >= sunrise && now < sunset) {
+        isDay = true; start = sunrise; end = sunset;
+        labelL = 'Sunrise'; labelC = 'Noon'; labelR = 'Sunset';
+    } else if (now >= sunset && now < nextSunrise) {
+        isDay = false; start = sunset; end = nextSunrise;
+        labelL = 'Sunset'; labelC = 'Midnight'; labelR = 'Sunrise';
+    } else {
+        isDay = false; start = prevSunset; end = sunrise;
+        labelL = 'Sunset'; labelC = 'Midnight'; labelR = 'Sunrise';
+    }
+
+    const pct = Math.max(0, Math.min(1, (now - start) / (end - start)));
+
+    if (lastIsDayState !== isDay) {
+        lastIsDayState = isDay;
+        // Theme Apply
+        if (isDay) {
+            card.style.boxShadow = '0 32px 80px rgba(14,116,144,0.4), 0 0 0 1px rgba(255,255,255,0.07)';
+            document.getElementById('bgRect').setAttribute('fill', 'url(#bgDay)');
+            document.getElementById('titleBadge').style.background = 'rgba(251,191,36,0.14)';
+            document.getElementById('titleBadge').style.border = '1px solid rgba(251,191,36,0.28)';
+            document.getElementById('titleIcon').textContent = '☀️';
+            document.getElementById('titleText').textContent = 'DAY CYCLE';
+            document.getElementById('titleText').style.color = '#fbbf24';
+            document.getElementById('arcActive').setAttribute('stroke', 'url(#arcGradDay)');
+            document.getElementById('arcActive').setAttribute('filter', 'url(#arcGlowDay)');
+            document.getElementById('arcTrack').setAttribute('stroke', 'rgba(255,255,255,0.16)');
+            document.getElementById('horizonLine').setAttribute('stroke', 'rgba(147,197,253,0.35)');
+            document.getElementById('horizonDotL').setAttribute('fill', 'rgba(251,191,36,0.5)');
+            document.getElementById('horizonDotR').setAttribute('fill', 'rgba(251,191,36,0.5)');
+            document.getElementById('arcBgScene').innerHTML = buildDayScene();
+            document.getElementById('sunIcon').classList.remove('hidden');
+            document.getElementById('moonIcon').classList.add('hidden');
+            document.getElementById('phaseLabelStr').textContent = 'Day';
+            document.getElementById('untilLabelStr').textContent = 'Sunset';
+            document.getElementById('statPctStr').style.color = '#fbbf24';
+            document.getElementById('progressBar').style.background = 'linear-gradient(90deg,#c2410c,#f97316,#fbbf24,#fde68a,#fbbf24,#f97316,#c2410c)';
+        } else {
+            card.style.boxShadow = '0 32px 80px rgba(99,102,241,0.3), 0 0 0 1px rgba(99,102,241,0.12)';
+            document.getElementById('bgRect').setAttribute('fill', 'url(#bgNight)');
+            document.getElementById('titleBadge').style.background = 'rgba(99,102,241,0.15)';
+            document.getElementById('titleBadge').style.border = '1px solid rgba(99,102,241,0.28)';
+            document.getElementById('titleIcon').textContent = '🌙';
+            document.getElementById('titleText').textContent = 'NIGHT CYCLE';
+            document.getElementById('titleText').style.color = '#a5b4fc';
+            document.getElementById('arcActive').setAttribute('stroke', 'url(#arcGradNight)');
+            document.getElementById('arcActive').setAttribute('filter', 'url(#arcGlowNight)');
+            document.getElementById('arcTrack').setAttribute('stroke', 'rgba(99,102,241,0.22)');
+            document.getElementById('horizonLine').setAttribute('stroke', 'rgba(99,102,241,0.35)');
+            document.getElementById('horizonDotL').setAttribute('fill', 'rgba(99,102,241,0.5)');
+            document.getElementById('horizonDotR').setAttribute('fill', 'rgba(99,102,241,0.5)');
+            document.getElementById('arcBgScene').innerHTML = buildNightScene();
+            document.getElementById('sunIcon').classList.add('hidden');
+            document.getElementById('moonIcon').classList.remove('hidden');
+            document.getElementById('phaseLabelStr').textContent = 'Night';
+            document.getElementById('untilLabelStr').textContent = 'Sunrise';
+            document.getElementById('statPctStr').style.color = '#a78bfa';
+            document.getElementById('progressBar').style.background = 'linear-gradient(90deg,#1e1b4b,#3730a3,#6366f1,#a78bfa,#6366f1,#3730a3,#1e1b4b)';
+        }
+    }
+
+    // SVG ARC Update
+    const angle = Math.PI + pct * Math.PI;
+    const cx = 160, cy = 175, r = 130;
+    const ix = cx + r * Math.cos(angle);
+    const iy = cy + r * Math.sin(angle);
+    const arcEl = document.getElementById('arcActive');
+
+    if (pct <= 0.002) {
+        arcEl.setAttribute('d', `M 30 175 L 30 175`);
+    } else {
+        arcEl.setAttribute('d', `M 30 175 A 130 130 0 0 1 ${ix.toFixed(3)} ${iy.toFixed(3)}`);
+    }
+
+    if (isDay) document.getElementById('sunIcon').setAttribute('transform', `translate(${ix.toFixed(2)},${iy.toFixed(2)})`);
+    else document.getElementById('moonIcon').setAttribute('transform', `translate(${ix.toFixed(2)},${iy.toFixed(2)})`);
+
+    document.getElementById('progressBar').style.width = `${(pct * 100).toFixed(2)}%`;
+    document.getElementById('labelLeft').textContent = labelL;
+    document.getElementById('labelCenter').textContent = labelC;
+    document.getElementById('labelRight').textContent = labelR;
+    document.getElementById('statPctStr').textContent = `${Math.round(pct * 100)}%`;
+
+    const rem = Math.max(0, end - now);
+    const rSecs = Math.floor(rem / 1000);
+    const rH = Math.floor(rSecs / 3600);
+    const rM = Math.floor((rSecs % 3600) / 60);
+    const rS = rSecs % 60;
+    const pad = n => String(Math.max(0,n)).padStart(2,'0');
+
+    const hText = rH === 1 ? 'Hour' : 'Hours';
+    const mText = rM === 1 ? 'minute' : 'minutes';
+    const sText = rS === 1 ? 'second' : 'seconds';
+
+    document.getElementById('remTimeStr').textContent = `${pad(rH)} ${hText} ${pad(rM)} ${mText} ${pad(rS)} ${sText}`;
+}
+
         function startLiveClock() {
             stopLiveClock();
             
@@ -8461,6 +8751,8 @@ function renderCalendarGrid(data) {
                 
                 // Dynamic Timers Hook
                 updateLiveTimers();
+
+                if (typeof updateDayCycleCard === 'function') updateDayCycleCard();
             };
             
             updateTime();
