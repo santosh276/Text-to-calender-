@@ -8231,6 +8231,7 @@ function renderCalendarGrid(data) {
           <linearGradient id="arcGradDayCycle" gradientUnits="userSpaceOnUse" x1="30" y1="175" x2="290" y2="175"><stop offset="0%" stop-color="#f97316"/><stop offset="30%" stop-color="#fbbf24"/><stop offset="60%" stop-color="#fde68a"/><stop offset="100%" stop-color="#f97316" stop-opacity="0.6"/></linearGradient>
           <linearGradient id="arcGradNightCycle" gradientUnits="userSpaceOnUse" x1="30" y1="175" x2="290" y2="175"><stop offset="0%" stop-color="#4338ca"/><stop offset="40%" stop-color="#6366f1"/><stop offset="75%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#818cf8" stop-opacity="0.6"/></linearGradient>
         </defs>
+        <g id="arcForegroundSceneCycle"></g>
         <line id="horizonLineCycle" x1="16" y1="175" x2="304" y2="175" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="none"/>
         <circle id="horizonDotLCycle" cx="30" cy="175" r="3.5" fill="rgba(255,255,255,0.25)"/><circle id="horizonDotRCycle" cx="290" cy="175" r="3.5" fill="rgba(255,255,255,0.25)"/>
         <path id="arcTrackCycle" d="M 30 175 A 130 130 0 0 1 290 175" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="6" stroke-dasharray="5 8" stroke-linecap="round"/>
@@ -8619,7 +8620,7 @@ function buildNightScene() {
 
 function buildDayScene() {
   return `
-    <ellipse cx="160" cy="170" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
+    <ellipse cx="160" cy="175" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
     <g transform="translate(0, 15)">
       <g opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; 3,-2; -2,1; 0,0" dur="4s" repeatCount="indefinite" />
@@ -8696,7 +8697,8 @@ function updateDayCycleCard() {
             document.getElementById('horizonDotLCycle').setAttribute('fill', 'rgba(251,191,36,0.5)');
             document.getElementById('horizonDotRCycle').setAttribute('fill', 'rgba(251,191,36,0.5)');
             
-            document.getElementById('arcBgSceneCycle').innerHTML = buildDayScene();
+            document.getElementById('arcBgSceneCycle').innerHTML = '';
+            document.getElementById('arcForegroundSceneCycle').innerHTML = buildDayScene();
             document.getElementById('sunIconCycle').classList.remove('hidden');
             document.getElementById('moonIconCycle').classList.add('hidden');
             
@@ -8720,6 +8722,7 @@ function updateDayCycleCard() {
             document.getElementById('horizonDotRCycle').setAttribute('fill', 'rgba(99,102,241,0.5)');
             
             document.getElementById('arcBgSceneCycle').innerHTML = buildNightScene();
+            document.getElementById('arcForegroundSceneCycle').innerHTML = '';
             document.getElementById('sunIconCycle').classList.add('hidden');
             document.getElementById('moonIconCycle').classList.remove('hidden');
             
