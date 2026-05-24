@@ -8612,8 +8612,8 @@ function buildNightScene() {
 
 function buildDayScene() {
   return `
+    <ellipse cx="160" cy="170" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
     <g transform="translate(0, 15)">
-      <ellipse cx="160" cy="170" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
       <g opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; 3,-2; -2,1; 0,0" dur="4s" repeatCount="indefinite" />
           <path d="M 82 52 Q 85 49 88 52"/><path d="M 92 44 Q 95 41 98 44"/><path d="M 102 55 Q 105 52 108 55"/>
