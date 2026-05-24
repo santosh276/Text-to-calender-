@@ -8593,9 +8593,9 @@ window.lastIsDayCycle = null;
 
 function buildNightScene() {
   const isMobile = window.innerWidth < 768;
-  const rScale = isMobile ? 0.30 : 0.75; // Further reduced radius scale for mobile
-  const flareScale = isMobile ? 0.7 : 2.0; // Further reduced flare length for mobile
-  const flareStroke = isMobile ? 0.3 : 0.5; // Thinner stroke for flares on mobile
+  const rScale = isMobile ? 0.30 : 0.50;
+  const flareScale = isMobile ? 0.7 : 1.2;
+  const flareStroke = isMobile ? 0.3 : 0.4;
   const meteorStroke1 = isMobile ? 1.0 : 1.5;
   const meteorStroke2 = isMobile ? 0.8 : 1.2;
 
