@@ -8596,8 +8596,8 @@ function buildNightScene() {
   const rScale = isMobile ? 0.30 : 0.50;
   const flareScale = isMobile ? 0.7 : 1.2;
   const flareStroke = isMobile ? 0.3 : 0.4;
-  const meteorStroke1 = isMobile ? 1.0 : 1.5;
-  const meteorStroke2 = isMobile ? 0.8 : 1.2;
+  const meteorStroke1 = isMobile ? 0.6 : 1.0; // Reduced thickness for meteors
+  const meteorStroke2 = isMobile ? 0.5 : 0.8; // Reduced thickness for meteors
 
   const STARS = [
     [78,12,1.4,'t1',2.1,0.0],[102,7,1.5,'t1',1.9,0.4],[155,5,1.6,'t1',2.3,0.8],[218,10,1.4,'t1',2.0,0.2],[254,16,1.5,'t1',1.8,1.1],
@@ -8631,7 +8631,8 @@ function buildNightScene() {
     return out;
   }).join('');
 
-  const shooters = `<defs><linearGradient id="meteorGradCycle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0"/><stop offset="50%" stop-color="#ffffff" stop-opacity="0.4"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient></defs><g opacity="0"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.05;0.15;1" dur="6s" begin="2s" repeatCount="indefinite"/><line x1="85" y1="18" x2="105" y2="38" stroke="url(#meteorGradCycle)" stroke-width="${meteorStroke1}" stroke-linecap="round"><animateTransform attributeName="transform" type="translate" values="0,0; 45,45" dur="6s" begin="2s" repeatCount="indefinite"/></line></g><g opacity="0"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.05;0.15;1" dur="8s" begin="6s" repeatCount="indefinite"/><line x1="180" y1="10" x2="200" y2="30" stroke="url(#meteorGradCycle)" stroke-width="${meteorStroke2}" stroke-linecap="round"><animateTransform attributeName="transform" type="translate" values="0,0; 45,45" dur="8s" begin="6s" repeatCount="indefinite"/></line></g>`;
+  // Shorter meteor lines and shorter travel distances
+  const shooters = `<defs><linearGradient id="meteorGradCycle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0"/><stop offset="50%" stop-color="#ffffff" stop-opacity="0.4"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient></defs><g opacity="0"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.05;0.15;1" dur="6s" begin="2s" repeatCount="indefinite"/><line x1="85" y1="18" x2="95" y2="28" stroke="url(#meteorGradCycle)" stroke-width="${meteorStroke1}" stroke-linecap="round"><animateTransform attributeName="transform" type="translate" values="0,0; 30,30" dur="6s" begin="2s" repeatCount="indefinite"/></line></g><g opacity="0"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.05;0.15;1" dur="8s" begin="6s" repeatCount="indefinite"/><line x1="180" y1="10" x2="190" y2="20" stroke="url(#meteorGradCycle)" stroke-width="${meteorStroke2}" stroke-linecap="round"><animateTransform attributeName="transform" type="translate" values="0,0; 30,30" dur="8s" begin="6s" repeatCount="indefinite"/></line></g>`;
 
   return `<g transform="translate(0, 15)">${starsSvg}${shooters}</g>`;
 }
