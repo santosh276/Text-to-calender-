@@ -253,7 +253,14 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 .t4 { animation: twinkle-4 var(--d,2.8s) ease-in-out infinite var(--delay,0s); }
 
 @keyframes aurora { 0%, 100% { opacity: 0.10; } 50% { opacity: 0.22; } }
-.aurora { animation: aurora var(--d,7s) ease-in-out infinite var(--delay,0s); }
+.aurora { 
+    animation: aurora var(--d,7s) ease-in-out infinite var(--delay,0s); 
+    transform-origin: 160px 175px; 
+    transform: scale(0.75) translateY(-15px); 
+}
+@media (min-width: 768px) {
+    .aurora { transform: scale(1) translateY(-15px); }
+}
 
 @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 .shimmer-bar { background-size: 300% auto; animation: shimmer 3s linear infinite; }
@@ -5469,8 +5476,8 @@ function getCDNUrl(originalUrl) {
                 const lastSync = localStorage.getItem('panchang_last_sync_ts');
                 const interval = appState.config.syncInterval || (24 * 60 * 60 * 1000); // Default 24h
                 const now = Date.now();
-                
-                if (lastSync && (now - parseInt(lastSync) < interval)) {
+
+                            if (lastSync && (now - parseInt(lastSync) < interval)) {
                     console.log(`Sync Timer Valid. Elapsed: ${now - parseInt(lastSync)}ms < Interval: ${interval}ms`);
                     // --- EDITOR LOGIC START ---
                     if(syncBtn) syncBtn.innerHTML = originalText;
@@ -8193,7 +8200,7 @@ function renderCalendarGrid(data) {
             cycleWrapper.innerHTML = `
 <div id="day-cycle-card" class="cycle-card rounded-3xl overflow-hidden relative w-full" style="background: #020617;">
   <div class="absolute inset-0 overflow-hidden pointer-events-none" id="bgCanvasCycle">
-    <svg id="bgSvgCycle" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <svg id="bgSvgCycle" width="100%" height="100%" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="bgNightCycle" cx="50%" cy="0%" r="100%"><stop offset="0%" stop-color="#1e1035"/><stop offset="40%" stop-color="#0d0820"/><stop offset="100%" stop-color="#020617"/></radialGradient>
         <radialGradient id="bgDayCycle" cx="50%" cy="0%" r="120%"><stop offset="0%" stop-color="#0c4a6e"/><stop offset="50%" stop-color="#075985"/><stop offset="100%" stop-color="#1e3a5f"/></radialGradient>
@@ -8224,6 +8231,7 @@ function renderCalendarGrid(data) {
           <linearGradient id="arcGradDayCycle" gradientUnits="userSpaceOnUse" x1="30" y1="175" x2="290" y2="175"><stop offset="0%" stop-color="#f97316"/><stop offset="30%" stop-color="#fbbf24"/><stop offset="60%" stop-color="#fde68a"/><stop offset="100%" stop-color="#f97316" stop-opacity="0.6"/></linearGradient>
           <linearGradient id="arcGradNightCycle" gradientUnits="userSpaceOnUse" x1="30" y1="175" x2="290" y2="175"><stop offset="0%" stop-color="#4338ca"/><stop offset="40%" stop-color="#6366f1"/><stop offset="75%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#818cf8" stop-opacity="0.6"/></linearGradient>
         </defs>
+        <g id="arcForegroundSceneCycle"></g>
         <line id="horizonLineCycle" x1="16" y1="175" x2="304" y2="175" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="none"/>
         <circle id="horizonDotLCycle" cx="30" cy="175" r="3.5" fill="rgba(255,255,255,0.25)"/><circle id="horizonDotRCycle" cx="290" cy="175" r="3.5" fill="rgba(255,255,255,0.25)"/>
         <path id="arcTrackCycle" d="M 30 175 A 130 130 0 0 1 290 175" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="6" stroke-dasharray="5 8" stroke-linecap="round"/>
@@ -8584,29 +8592,62 @@ function renderCalendarGrid(data) {
 window.lastIsDayCycle = null;
 
 function buildNightScene() {
+  const isMobile = window.innerWidth < 768;
+  const rScale = isMobile ? 0.30 : 0.50; 
+  const flareScale = isMobile ? 0.7 : 1.2; 
+  const flareStroke = isMobile ? 0.3 : 0.4; 
+  const meteorStroke1 = isMobile ? 0.6 : 1.0; // Reduced thickness for meteors
+  const meteorStroke2 = isMobile ? 0.5 : 0.8; // Reduced thickness for meteors
+
   const STARS = [
-    [18,12,1.4,'t1',2.1,0.0],[82,7,1.5,'t1',1.9,0.4],[155,5,1.6,'t1',2.3,0.8],[218,10,1.4,'t1',2.0,0.2],[274,16,1.5,'t1',1.8,1.1],[48,55,1.3,'t1',2.5,0.6],[198,48,1.4,'t1',2.2,1.3],[295,60,1.3,'t1',2.0,0.5],[110,95,1.5,'t1',1.7,0.9],[255,90,1.4,'t1',2.4,0.3],[35,30,1.0,'t2',3.1,0.3],[68,40,0.9,'t2',3.5,0.7],[128,25,1.1,'t2',2.9,1.2],[175,33,1.0,'t2',3.3,0.1],[240,28,0.9,'t2',3.0,0.8],[302,35,1.1,'t2',2.8,1.5],[92,70,1.0,'t2',3.4,0.4],[165,72,0.9,'t2',3.1,1.0],[228,65,1.1,'t2',2.7,0.6],[308,85,1.0,'t2',3.2,1.4],[55,110,1.1,'t2',3.0,0.2],[145,105,0.9,'t2',3.6,0.7],[225,115,1.0,'t2',2.9,1.1],[290,108,1.1,'t2',3.3,0.5],[20,140,1.0,'t2',3.1,0.9],[75,135,0.9,'t2',2.8,1.3],[170,145,1.1,'t2',3.4,0.4],[260,140,1.0,'t2',3.0,0.8],[25,48,0.7,'t3',2.0,0.5],[58,20,0.6,'t3',2.5,1.0],[103,14,0.7,'t3',1.8,0.2],[142,42,0.6,'t3',2.2,0.7],[193,18,0.7,'t3',2.7,1.4],[235,45,0.6,'t3',2.1,0.3],[265,32,0.7,'t3',1.9,0.8],[312,18,0.6,'t3',2.4,1.1],[72,80,0.7,'t3',2.3,0.6],[130,85,0.6,'t3',2.6,1.2],[188,88,0.7,'t3',2.0,0.1],[248,78,0.6,'t3',2.8,0.9],[305,75,0.7,'t3',2.2,1.5],[38,122,0.6,'t4',2.5,0.4],[100,128,0.7,'t4',2.9,0.8],[160,118,0.6,'t4',2.3,1.3],[215,130,0.7,'t4',2.7,0.2],[278,124,0.6,'t4',2.1,1.0],[315,112,0.7,'t4',2.5,0.6],[118,38,0.4,'t3',1.7,0.2],[124,32,0.5,'t1',1.9,0.6],[130,42,0.3,'t4',2.3,0.1],[136,28,0.5,'t2',2.0,0.9],[142,38,0.4,'t1',2.5,0.4],[148,22,0.5,'t3',1.8,1.1],[154,35,0.4,'t4',2.2,0.3],[160,28,0.5,'t1',2.7,0.7],[166,42,0.3,'t2',1.9,1.4],[172,32,0.5,'t3',2.1,0.5],[178,22,0.4,'t4',2.4,0.8],[184,38,0.5,'t1',1.7,0.2],[190,28,0.3,'t3',2.8,1.0]
+    [78,12,1.4,'t1',2.1,0.0],[102,7,1.5,'t1',1.9,0.4],[155,5,1.6,'t1',2.3,0.8],[218,10,1.4,'t1',2.0,0.2],[254,16,1.5,'t1',1.8,1.1],
+    [68,55,1.3,'t1',2.5,0.6],[198,48,1.4,'t1',2.2,1.3],[255,60,1.3,'t1',2.0,0.5],[110,95,1.5,'t1',1.7,0.9],[255,90,1.4,'t1',2.4,0.3],
+    [65,30,1.0,'t2',3.1,0.3],[88,40,0.9,'t2',3.5,0.7],[128,25,1.1,'t2',2.9,1.2],[175,33,1.0,'t2',3.3,0.1],[240,28,0.9,'t2',3.0,0.8],
+    [262,35,1.1,'t2',2.8,1.5],[92,70,1.0,'t2',3.4,0.4],[165,72,0.9,'t2',3.1,1.0],[228,65,1.1,'t2',2.7,0.6],[268,85,1.0,'t2',3.2,1.4],
+    [75,110,1.1,'t2',3.0,0.2],[145,105,0.9,'t2',3.6,0.7],[225,115,1.0,'t2',2.9,1.1],[250,108,1.1,'t2',3.3,0.5],[60,140,1.0,'t2',3.1,0.9],
+    [95,135,0.9,'t2',2.8,1.3],[170,145,1.1,'t2',3.4,0.4],[260,140,1.0,'t2',3.0,0.8],[65,48,0.7,'t3',2.0,0.5],[78,20,0.6,'t3',2.5,1.0],
+    [103,14,0.7,'t3',1.8,0.2],[142,42,0.6,'t3',2.2,0.7],[193,18,0.7,'t3',2.7,1.4],[235,45,0.6,'t3',2.1,0.3],[255,32,0.7,'t3',1.9,0.8],
+    [262,18,0.6,'t3',2.4,1.1],[92,80,0.7,'t3',2.3,0.6],[130,85,0.6,'t3',2.6,1.2],[188,88,0.7,'t3',2.0,0.1],[248,78,0.6,'t3',2.8,0.9],
+    [265,75,0.7,'t3',2.2,1.5],[68,122,0.6,'t4',2.5,0.4],[100,128,0.7,'t4',2.9,0.8],[160,118,0.6,'t4',2.3,1.3],[215,130,0.7,'t4',2.7,0.2],
+    [258,124,0.6,'t4',2.1,1.0],[265,112,0.7,'t4',2.5,0.6],[118,38,0.4,'t3',1.7,0.2],[124,32,0.5,'t1',1.9,0.6],[130,42,0.3,'t4',2.3,0.1],
+    [136,28,0.5,'t2',2.0,0.9],[142,38,0.4,'t1',2.5,0.4],[148,22,0.5,'t3',1.8,1.1],[154,35,0.4,'t4',2.2,0.3],[160,28,0.5,'t1',2.7,0.7],
+    [166,42,0.3,'t2',1.9,1.4],[172,32,0.5,'t3',2.1,0.5],[178,22,0.4,'t4',2.4,0.8],[184,38,0.5,'t1',1.7,0.2],[190,28,0.3,'t3',2.8,1.0]
   ];
-  const starsSvg = STARS.map(([x,y,r,cls,d,delay]) => {
-    let out = `<circle cx="${x}" cy="${y}" r="${r}" fill="white" class="${cls}" style="--d:${d}s;--delay:${delay}s;" />`;
-    if (r >= 1.3) out += `<g class="${cls}" style="--d:${d}s;--delay:${delay}s;" opacity="0.5"><line x1="${x}" y1="${y-r*2.8}" x2="${x}" y2="${y+r*2.8}" stroke="white" stroke-width="0.5" stroke-linecap="round"/><line x1="${x-r*2.8}" y1="${y}" x2="${x+r*2.8}" y2="${y}" stroke="white" stroke-width="0.5" stroke-linecap="round"/></g>`;
+
+  const starsSvg = STARS.map(([x, y, rRaw, cls, d, delay]) => {
+    let r = +(rRaw * rScale).toFixed(2);
+    // Squeeze stars inward more aggressively on mobile (0.70) to prevent clipping
+    let finalX = isMobile ? 160 + (x - 160) * 0.70 : x; 
+    finalX = +finalX.toFixed(2);
+    let out = `<circle cx="${finalX}" cy="${y}" r="${r}" fill="white" class="${cls}" style="--d:${d}s;--delay:${delay}s;" />`;
+    
+    if (rRaw >= 1.3) {
+      let f = +(rRaw * flareScale).toFixed(2);
+      out += `<g class="${cls}" style="--d:${d}s;--delay:${delay}s;" opacity="0.4">
+                <line x1="${finalX}" y1="${y - f}" x2="${finalX}" y2="${y + f}" stroke="white" stroke-width="${flareStroke}" stroke-linecap="round"/>
+                <line x1="${finalX - f}" y1="${y}" x2="${finalX + f}" y2="${y}" stroke="white" stroke-width="${flareStroke}" stroke-linecap="round"/>
+              </g>`;
+    }
     return out;
   }).join('');
-  const shooters = `<defs><linearGradient id="meteorGradCycle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0"/><stop offset="50%" stop-color="#ffffff" stop-opacity="0.4"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient></defs><g opacity="0"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.05;0.15;1" dur="6s" begin="2s" repeatCount="indefinite"/><line x1="55" y1="18" x2="75" y2="38" stroke="url(#meteorGradCycle)" stroke-width="1.5" stroke-linecap="round"><animateTransform attributeName="transform" type="translate" values="0,0; 45,45" dur="6s" begin="2s" repeatCount="indefinite"/></line></g><g opacity="0"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.05;0.15;1" dur="8s" begin="6s" repeatCount="indefinite"/><line x1="210" y1="10" x2="230" y2="30" stroke="url(#meteorGradCycle)" stroke-width="1.2" stroke-linecap="round"><animateTransform attributeName="transform" type="translate" values="0,0; 45,45" dur="8s" begin="6s" repeatCount="indefinite"/></line></g>`;
+
+  // Shorter meteor lines and shorter travel distances
+  const shooters = `<defs><linearGradient id="meteorGradCycle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0"/><stop offset="50%" stop-color="#ffffff" stop-opacity="0.4"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient></defs><g opacity="0"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.05;0.15;1" dur="6s" begin="2s" repeatCount="indefinite"/><line x1="85" y1="18" x2="95" y2="28" stroke="url(#meteorGradCycle)" stroke-width="${meteorStroke1}" stroke-linecap="round"><animateTransform attributeName="transform" type="translate" values="0,0; 30,30" dur="6s" begin="2s" repeatCount="indefinite"/></line></g><g opacity="0"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.05;0.15;1" dur="8s" begin="6s" repeatCount="indefinite"/><line x1="180" y1="10" x2="190" y2="20" stroke="url(#meteorGradCycle)" stroke-width="${meteorStroke2}" stroke-linecap="round"><animateTransform attributeName="transform" type="translate" values="0,0; 30,30" dur="8s" begin="6s" repeatCount="indefinite"/></line></g>`;
+  
   return `<g transform="translate(0, 15)">${starsSvg}${shooters}</g>`;
 }
 
 function buildDayScene() {
   return `
+    <ellipse cx="160" cy="175" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
     <g transform="translate(0, 15)">
-      <ellipse cx="160" cy="170" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
       <g opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; 3,-2; -2,1; 0,0" dur="4s" repeatCount="indefinite" />
-          <path d="M 42 52 Q 45 49 48 52"/><path d="M 52 44 Q 55 41 58 44"/><path d="M 62 55 Q 65 52 68 55"/>
+          <path d="M 82 52 Q 85 49 88 52"/><path d="M 92 44 Q 95 41 98 44"/><path d="M 102 55 Q 105 52 108 55"/>
       </g>
       <g opacity="0.22" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; -2,1; 2,-1; 0,0" dur="5s" repeatCount="indefinite" />
-          <path d="M 218 32 Q 221 29 224 32"/><path d="M 226 24 Q 229 21 232 24"/>
+          <path d="M 188 32 Q 191 29 194 32"/><path d="M 196 24 Q 199 21 202 24"/>
       </g>
     </g>
   `;
@@ -8675,7 +8716,8 @@ function updateDayCycleCard() {
             document.getElementById('horizonDotLCycle').setAttribute('fill', 'rgba(251,191,36,0.5)');
             document.getElementById('horizonDotRCycle').setAttribute('fill', 'rgba(251,191,36,0.5)');
             
-            document.getElementById('arcBgSceneCycle').innerHTML = buildDayScene();
+            document.getElementById('arcBgSceneCycle').innerHTML = '';
+            document.getElementById('arcForegroundSceneCycle').innerHTML = buildDayScene();
             document.getElementById('sunIconCycle').classList.remove('hidden');
             document.getElementById('moonIconCycle').classList.add('hidden');
             
@@ -8699,6 +8741,7 @@ function updateDayCycleCard() {
             document.getElementById('horizonDotRCycle').setAttribute('fill', 'rgba(99,102,241,0.5)');
             
             document.getElementById('arcBgSceneCycle').innerHTML = buildNightScene();
+            document.getElementById('arcForegroundSceneCycle').innerHTML = '';
             document.getElementById('sunIconCycle').classList.add('hidden');
             document.getElementById('moonIconCycle').classList.remove('hidden');
             
