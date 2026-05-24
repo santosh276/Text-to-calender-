@@ -8615,13 +8615,10 @@ function buildNightScene() {
 
   const starsSvg = STARS.map(([x, y, rRaw, cls, d, delay]) => {
     let r = +(rRaw * rScale).toFixed(2);
-
-    // Squeeze stars inward on mobile to prevent clipping from 'slice' aspect ratio
-    let finalX = isMobile ? 160 + (x - 160) * 0.85 : x;
+    // Squeeze stars inward more aggressively on mobile (0.70) to prevent clipping
+    let finalX = isMobile ? 160 + (x - 160) * 0.70 : x;
     finalX = +finalX.toFixed(2);
-
     let out = `<circle cx="${finalX}" cy="${y}" r="${r}" fill="white" class="${cls}" style="--d:${d}s;--delay:${delay}s;" />`;
-
     if (rRaw >= 1.3) {
       let f = +(rRaw * flareScale).toFixed(2);
       out += `<g class="${cls}" style="--d:${d}s;--delay:${delay}s;" opacity="0.4">
