@@ -8186,7 +8186,9 @@ function renderCalendarGrid(data) {
 
             // Inject Live Day/Night Cycle Card
             const cycleWrapper = document.createElement('div');
-            cycleWrapper.className = "w-full max-w-[460px] mx-auto mt-3 mb-8";
+            cycleWrapper.className = "w-full max-w-[460px] mx-auto";
+            cycleWrapper.style.marginTop = "8px";
+            cycleWrapper.style.marginBottom = "36px";
             cycleWrapper.innerHTML = `
 <div id="day-cycle-card" class="cycle-card rounded-3xl overflow-hidden relative w-full" style="background: #020617;">
   <div class="absolute inset-0 overflow-hidden pointer-events-none" id="bgCanvasCycle">
