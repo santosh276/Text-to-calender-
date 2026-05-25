@@ -252,16 +252,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 .t3 { animation: twinkle-3 var(--d,2.5s) ease-in-out infinite var(--delay,0s); }
 .t4 { animation: twinkle-4 var(--d,2.8s) ease-in-out infinite var(--delay,0s); }
 
-@keyframes aurora { 0%, 100% { opacity: 0.10; } 50% { opacity: 0.22; } }
-.aurora { 
-    animation: aurora var(--d,7s) ease-in-out infinite var(--delay,0s); 
-    transform-origin: 160px 175px; 
-    transform: scale(0.75) translateY(2px);
-}
-@media (min-width: 768px) {
-    .aurora { transform: scale(1) translateY(2px); }
-}
-
 @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 .shimmer-bar { background-size: 300% auto; animation: shimmer 3s linear infinite; }
 
@@ -8639,7 +8629,6 @@ function buildNightScene() {
 
 function buildDayScene() {
   return `
-    <ellipse cx="160" cy="175" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
     <g transform="translate(0, -15)">
       <g opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; 3,-2; -2,1; 0,0" dur="4s" repeatCount="indefinite" />
