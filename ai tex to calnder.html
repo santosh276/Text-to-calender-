@@ -8187,8 +8187,8 @@ function renderCalendarGrid(data) {
             // Inject Live Day/Night Cycle Card
             const cycleWrapper = document.createElement('div');
             cycleWrapper.className = "w-full max-w-[460px] mx-auto";
-            cycleWrapper.style.marginTop = "8px";
-            cycleWrapper.style.marginBottom = "24px";
+            cycleWrapper.style.marginTop = "4px";
+            cycleWrapper.style.marginBottom = "16px";
             cycleWrapper.innerHTML = `
 <div id="day-cycle-card" class="cycle-card rounded-3xl overflow-hidden relative w-full" style="background: #020617;">
   <div class="absolute inset-0 overflow-hidden pointer-events-none" id="bgCanvasCycle">
@@ -8692,7 +8692,7 @@ function updateDayCycleCard() {
         window.lastIsDayCycle = isDay;
         const bgRect = document.getElementById('bgRectCycle');
         if (isDay) {
-            card.style.boxShadow = '0 12px 32px rgba(14,116,144,0.25), 0 0 0 1px rgba(255,255,255,0.07)';
+            card.style.boxShadow = '0 8px 20px rgba(14,116,144,0.15), 0 0 0 1px rgba(255,255,255,0.07)';
             bgRect.setAttribute('fill', 'url(#bgDayCycle)');
             document.getElementById('titleBadgeCycle').style.background = 'rgba(251,191,36,0.14)';
             document.getElementById('titleBadgeCycle').style.border = '1px solid rgba(251,191,36,0.28)';
@@ -8716,7 +8716,7 @@ function updateDayCycleCard() {
             document.getElementById('untilLabelStrCycle').textContent = 'Sunset';
             document.getElementById('statPctStrCycle').style.color = '#fbbf24';
         } else {
-            card.style.boxShadow = '0 12px 32px rgba(99,102,241,0.2), 0 0 0 1px rgba(99,102,241,0.12)';
+            card.style.boxShadow = '0 8px 20px rgba(99,102,241,0.15), 0 0 0 1px rgba(99,102,241,0.12)';
             bgRect.setAttribute('fill', 'url(#bgNightCycle)');
             document.getElementById('titleBadgeCycle').style.background = 'rgba(99,102,241,0.15)';
             document.getElementById('titleBadgeCycle').style.border = '1px solid rgba(99,102,241,0.28)';
