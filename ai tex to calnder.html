@@ -256,10 +256,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 .aurora { 
     animation: aurora var(--d,7s) ease-in-out infinite var(--delay,0s); 
     transform-origin: 160px 175px; 
-    transform: scale(0.75) translateY(-5px);
+    transform: scale(0.75) translateY(2px);
 }
 @media (min-width: 768px) {
-    .aurora { transform: scale(1) translateY(-5px); }
+    .aurora { transform: scale(1) translateY(2px); }
 }
 
 @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
@@ -8640,7 +8640,7 @@ function buildNightScene() {
 function buildDayScene() {
   return `
     <ellipse cx="160" cy="175" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
-    <g>
+    <g transform="translate(0, -15)">
       <g opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; 3,-2; -2,1; 0,0" dur="4s" repeatCount="indefinite" />
           <path d="M 82 52 Q 85 49 88 52"/><path d="M 92 44 Q 95 41 98 44"/><path d="M 102 55 Q 105 52 108 55"/>
