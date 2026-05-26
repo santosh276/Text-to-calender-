@@ -252,16 +252,6 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 .t3 { animation: twinkle-3 var(--d,2.5s) ease-in-out infinite var(--delay,0s); }
 .t4 { animation: twinkle-4 var(--d,2.8s) ease-in-out infinite var(--delay,0s); }
 
-@keyframes aurora { 0%, 100% { opacity: 0.10; } 50% { opacity: 0.22; } }
-.aurora { 
-    animation: aurora var(--d,7s) ease-in-out infinite var(--delay,0s); 
-    transform-origin: 160px 175px; 
-    transform: scale(0.75) translateY(-15px); 
-}
-@media (min-width: 768px) {
-    .aurora { transform: scale(1) translateY(-15px); }
-}
-
 @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 .shimmer-bar { background-size: 300% auto; animation: shimmer 3s linear infinite; }
 
@@ -270,7 +260,12 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
 
 .cycle-card { transition: background 1s ease, box-shadow 1s ease; }
 .cycle-glass { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.11); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.digit { font-family: 'Courier New', Courier, monospace; font-variant-numeric: tabular-nums; line-height: 1; }
+.digit { 
+    font-family: 'Roboto', sans-serif; 
+    font-variant-numeric: tabular-nums; 
+    line-height: 1; 
+    letter-spacing: normal; 
+}
 
 </style>
 <style>
@@ -5484,7 +5479,7 @@ function getCDNUrl(originalUrl) {
                     // --- EDITOR LOGIC END ---
                     return; // Stop.
                 }
-            }
+                            }
 
             try {
                 // Convert to ultra-fast jsDelivr CDN URL
@@ -8196,7 +8191,9 @@ function renderCalendarGrid(data) {
 
             // Inject Live Day/Night Cycle Card
             const cycleWrapper = document.createElement('div');
-            cycleWrapper.className = "w-full max-w-[460px] mx-auto mt-6 mb-4";
+            cycleWrapper.className = "w-full max-w-[460px] mx-auto";
+            cycleWrapper.style.marginTop = "4px";
+            cycleWrapper.style.marginBottom = "16px";
             cycleWrapper.innerHTML = `
 <div id="day-cycle-card" class="cycle-card rounded-3xl overflow-hidden relative w-full" style="background: #020617;">
   <div class="absolute inset-0 overflow-hidden pointer-events-none" id="bgCanvasCycle">
@@ -8639,15 +8636,14 @@ function buildNightScene() {
 
 function buildDayScene() {
   return `
-    <ellipse cx="160" cy="175" rx="160" ry="20" fill="rgba(186,230,253,0.18)" class="aurora" style="--d:5s;--delay:0s;"/>
-    <g transform="translate(0, 15)">
+    <g transform="translate(0, -15)">
       <g opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; 3,-2; -2,1; 0,0" dur="4s" repeatCount="indefinite" />
-          <path d="M 82 52 Q 85 49 88 52"/><path d="M 92 44 Q 95 41 98 44"/><path d="M 102 55 Q 105 52 108 55"/>
+          <path d="M 67 42 Q 70 39 73 42"/><path d="M 77 34 Q 80 31 83 34"/><path d="M 87 45 Q 90 42 93 45"/>
       </g>
       <g opacity="0.22" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; -2,1; 2,-1; 0,0" dur="5s" repeatCount="indefinite" />
-          <path d="M 188 32 Q 191 29 194 32"/><path d="M 196 24 Q 199 21 202 24"/>
+          <path d="M 213 24 Q 216 21 219 24"/><path d="M 221 16 Q 224 13 227 16"/>
       </g>
     </g>
   `;
@@ -8701,7 +8697,7 @@ function updateDayCycleCard() {
         window.lastIsDayCycle = isDay;
         const bgRect = document.getElementById('bgRectCycle');
         if (isDay) {
-            card.style.boxShadow = '0 32px 80px rgba(14,116,144,0.4), 0 0 0 1px rgba(255,255,255,0.07)';
+            card.style.boxShadow = '0 8px 20px rgba(14,116,144,0.15), 0 0 0 1px rgba(255,255,255,0.07)';
             bgRect.setAttribute('fill', 'url(#bgDayCycle)');
             document.getElementById('titleBadgeCycle').style.background = 'rgba(251,191,36,0.14)';
             document.getElementById('titleBadgeCycle').style.border = '1px solid rgba(251,191,36,0.28)';
@@ -8713,8 +8709,11 @@ function updateDayCycleCard() {
             document.getElementById('arcActiveCycle').setAttribute('filter', 'url(#arcGlowDayCycle)');
             document.getElementById('arcTrackCycle').setAttribute('stroke', 'rgba(255,255,255,0.13)');
             document.getElementById('horizonLineCycle').setAttribute('stroke', 'rgba(147,197,253,0.35)');
-            document.getElementById('horizonDotLCycle').setAttribute('fill', 'rgba(251,191,36,0.5)');
+            // Solid anchor for the starting point
+            document.getElementById('horizonDotLCycle').setAttribute('fill', '#f97316');
+            document.getElementById('horizonDotLCycle').setAttribute('r', '4.5');
             document.getElementById('horizonDotRCycle').setAttribute('fill', 'rgba(251,191,36,0.5)');
+            document.getElementById('horizonDotRCycle').setAttribute('r', '3.5');
             
             document.getElementById('arcBgSceneCycle').innerHTML = '';
             document.getElementById('arcForegroundSceneCycle').innerHTML = buildDayScene();
@@ -8725,7 +8724,7 @@ function updateDayCycleCard() {
             document.getElementById('untilLabelStrCycle').textContent = 'Sunset';
             document.getElementById('statPctStrCycle').style.color = '#fbbf24';
         } else {
-            card.style.boxShadow = '0 32px 80px rgba(99,102,241,0.3), 0 0 0 1px rgba(99,102,241,0.12)';
+            card.style.boxShadow = '0 8px 20px rgba(99,102,241,0.15), 0 0 0 1px rgba(99,102,241,0.12)';
             bgRect.setAttribute('fill', 'url(#bgNightCycle)');
             document.getElementById('titleBadgeCycle').style.background = 'rgba(99,102,241,0.15)';
             document.getElementById('titleBadgeCycle').style.border = '1px solid rgba(99,102,241,0.28)';
@@ -8737,8 +8736,11 @@ function updateDayCycleCard() {
             document.getElementById('arcActiveCycle').setAttribute('filter', 'url(#arcGlowNightCycle)');
             document.getElementById('arcTrackCycle').setAttribute('stroke', 'rgba(99,102,241,0.22)');
             document.getElementById('horizonLineCycle').setAttribute('stroke', 'rgba(99,102,241,0.35)');
-            document.getElementById('horizonDotLCycle').setAttribute('fill', 'rgba(99,102,241,0.5)');
+            // Solid anchor for the starting point
+            document.getElementById('horizonDotLCycle').setAttribute('fill', '#4338ca');
+            document.getElementById('horizonDotLCycle').setAttribute('r', '4.5');
             document.getElementById('horizonDotRCycle').setAttribute('fill', 'rgba(99,102,241,0.5)');
+            document.getElementById('horizonDotRCycle').setAttribute('r', '3.5');
             
             document.getElementById('arcBgSceneCycle').innerHTML = buildNightScene();
             document.getElementById('arcForegroundSceneCycle').innerHTML = '';
@@ -9123,7 +9125,9 @@ function updateDayCycleCard() {
                 let chHtml = `
                 <div class="glass rounded-xl shadow-md border-l-4 border-blue-500 p-4 transition-all duration-300 mt-4" id="choghadiya-container">
                     <div class="section-title mb-4">
-                        <h3 class="font-bold text-blue-700 mb-0"><i class="fa-solid fa-layer-group text-orange-600 mr-2"></i><span>Vedic Planner</span></h3>
+                        <h3 class="font-bold text-blue-700 mb-0 flex items-center">
+                            <i class="fa-solid fa-book-open text-orange-600 mr-2"></i><span>Vedic Planner</span>
+                        </h3>
                         <span class="badge">Choghadiya</span>
                     </div>
                     
