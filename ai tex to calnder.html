@@ -8709,8 +8709,11 @@ function updateDayCycleCard() {
             document.getElementById('arcActiveCycle').setAttribute('filter', 'url(#arcGlowDayCycle)');
             document.getElementById('arcTrackCycle').setAttribute('stroke', 'rgba(255,255,255,0.13)');
             document.getElementById('horizonLineCycle').setAttribute('stroke', 'rgba(147,197,253,0.35)');
-            document.getElementById('horizonDotLCycle').setAttribute('fill', 'rgba(251,191,36,0.5)');
+            // Solid anchor for the starting point
+            document.getElementById('horizonDotLCycle').setAttribute('fill', '#f97316');
+            document.getElementById('horizonDotLCycle').setAttribute('r', '4.5');
             document.getElementById('horizonDotRCycle').setAttribute('fill', 'rgba(251,191,36,0.5)');
+            document.getElementById('horizonDotRCycle').setAttribute('r', '3.5');
             
             document.getElementById('arcBgSceneCycle').innerHTML = '';
             document.getElementById('arcForegroundSceneCycle').innerHTML = buildDayScene();
@@ -8733,8 +8736,11 @@ function updateDayCycleCard() {
             document.getElementById('arcActiveCycle').setAttribute('filter', 'url(#arcGlowNightCycle)');
             document.getElementById('arcTrackCycle').setAttribute('stroke', 'rgba(99,102,241,0.22)');
             document.getElementById('horizonLineCycle').setAttribute('stroke', 'rgba(99,102,241,0.35)');
-            document.getElementById('horizonDotLCycle').setAttribute('fill', 'rgba(99,102,241,0.5)');
+            // Solid anchor for the starting point
+            document.getElementById('horizonDotLCycle').setAttribute('fill', '#4338ca');
+            document.getElementById('horizonDotLCycle').setAttribute('r', '4.5');
             document.getElementById('horizonDotRCycle').setAttribute('fill', 'rgba(99,102,241,0.5)');
+            document.getElementById('horizonDotRCycle').setAttribute('r', '3.5');
             
             document.getElementById('arcBgSceneCycle').innerHTML = buildNightScene();
             document.getElementById('arcForegroundSceneCycle').innerHTML = '';
