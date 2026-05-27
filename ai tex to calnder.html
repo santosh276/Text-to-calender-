@@ -3897,12 +3897,12 @@ return SunCalc;
             "https://images.unsplash.com/photo-1478265409131-1f65c88f965c?auto=format&fit=crop&q=80&w=800"  // Shishir
         ];
 const seasonUIConfig = [
-            { name: "Vasant (Spring)", dateRange: "Mid-Feb to Mid-April", color: "#388E3C", icon: SeasonIcons.vasant },   // 0
-            { name: "Grishma (Summer)", dateRange: "Mid-April to Mid-June", color: "#E65100", icon: SeasonIcons.grishma },  // 1
-            { name: "Varsha (Monsoon)", dateRange: "Mid-June to Mid-August", color: "#4527A0", icon: SeasonIcons.varsha },   // 2
-            { name: "Sharad (Autumn)", dateRange: "Mid-August to Mid-October", color: "#BF360C", icon: SeasonIcons.sharad },    // 3
-            { name: "Hemant (Pre-Winter)", dateRange: "Mid-October to Mid-December", color: "#D60000", icon: SeasonIcons.hemant },// 4
-            { name: "Shishir (Winter)", dateRange: "Mid-December to Mid-February", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
+            { name: "Vasant (Spring)", dateRange: "18 Feb - 19 Apr", timeline: "Mid-Feb to Mid-April", color: "#388E3C", icon: SeasonIcons.vasant },   // 0
+            { name: "Grishma (Summer)", dateRange: "20 Apr - 21 Jun", timeline: "Mid-April to Mid-June", color: "#E65100", icon: SeasonIcons.grishma },  // 1
+            { name: "Varsha (Monsoon)", dateRange: "22 Jun - 22 Aug", timeline: "Mid-June to Mid-August", color: "#4527A0", icon: SeasonIcons.varsha },   // 2
+            { name: "Sharad (Autumn)", dateRange: "23 Aug - 22 Oct", timeline: "Mid-August to Mid-October", color: "#BF360C", icon: SeasonIcons.sharad },    // 3
+            { name: "Hemant (Pre-Winter)", dateRange: "23 Oct - 21 Dec", timeline: "Mid-October to Mid-December", color: "#D60000", icon: SeasonIcons.hemant },// 4
+            { name: "Shishir (Winter)", dateRange: "22 Dec - 17 Feb", timeline: "Mid-December to Mid-February", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
         ];
 
         
@@ -8004,7 +8004,6 @@ function renderCalendarGrid(data) {
             const localMonths = (langObj.solarMonths && langObj.solarMonths[m1] && langObj.solarMonths[m2])
                 ? `${langObj.solarMonths[m1]} - ${langObj.solarMonths[m2]}`
                 : "";
-            const timelineText = `${localMonths} (${seasonConfig.dateRange})`.toUpperCase();
 
             // Inject Season Card at the top of the list container
             const seasonCard = document.createElement('div');
@@ -8023,7 +8022,14 @@ function renderCalendarGrid(data) {
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-base">${seasonEmojis[seasonIndex]}</div>
                             <span class="text-lg font-bold drop-shadow-lg leading-none" style="color: ${seasonTitleColors[seasonIndex]};">${seasonName}</span>
                         </div>
-                        <span class="text-white/90 drop-shadow-lg font-bold tracking-wide" style="margin-left: 36px; margin-top: 3px; font-size: 10px; line-height: 1.2; text-transform: uppercase;">${timelineText}</span>
+                        <div style="margin-left: 36px; margin-top: 4px; display: flex; flex-direction: column; gap: 2px;">
+                            <span class="text-white drop-shadow-md font-bold tracking-wide" style="font-size: 11px; line-height: 1.2;">
+                                ${localMonths}
+                            </span>
+                            <span class="text-white/80 drop-shadow-md font-bold tracking-wider" style="font-size: 9px; line-height: 1.2; text-transform: uppercase;">
+                                ${seasonConfig.timeline} (${seasonConfig.dateRange})
+                            </span>
+                        </div>
                     </div>
                 </div>
                 
