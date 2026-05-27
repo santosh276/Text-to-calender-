@@ -2003,7 +2003,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
                         <p class="text-gray-300 mb-2">Override standard UI text blocks dynamically:</p>
                         <div class="code-block">
 ::: labels
-Panchang Header : ପଞ୍ଚାଙ୍ଗ
+Panchang Header : ପାଞ୍ଜି
 Solar Date : ସୌର ତାରିଖ
 Day : ଦିନ
 Current Ritu : ବର୍ତ୍ତମାନର ଋତୁ
@@ -2019,7 +2019,6 @@ Karana : କରଣ
 Ekadashi : ଏକାଦଶୀ
 Amavasya: ଅମାବାସ୍ୟା
 Purnima: ପୂର୍ଣ୍ଣିମା
-Chat Nav : ଚାଟ୍
 Festivals Nav : ପର୍ବପର୍ବାଣି
 Listen Nav : ଶୁଣନ୍ତୁ
 More Nav : ଅଧିକ
@@ -2039,9 +2038,9 @@ Today Festival : ଆଜିର ପର୍ବ:
 Year View : ବାର୍ଷିକ ଦୃଶ୍ୟ
 Brahma Muhurta Title : ବ୍ରହ୍ମ ମୁହୂର୍ତ୍ତ
 Brahma Muhurta Desc : ଧ୍ୟାନ ଏବଂ ଶିକ୍ଷା ପାଇଁ ଉପଯୁକ୍ତ।
-Amrit Kalam Title : ଅମ୍ରିତ କଲାମ
+Amrit Kalam Title : ଅମୃତ କାଳ
 Amrit Kalam Desc : ଯେକୌଣସି କାମ ପାଇଁ ସବୁଠାରୁ ଶୁଭ ସମୟ।
-Pratah Sandhya Title : ପ୍ରାତା ସନ୍ଧ୍ୟା
+Pratah Sandhya Title : ପ୍ରାତଃ ସନ୍ଧ୍ୟା
 Pratah Sandhya Desc : ସକାଳ ପ୍ରାର୍ଥନାର ସମୟ।
 Abhijit Muhurat Title : ଅଭିଜିତ୍ ମୁହୂର୍ତ୍ତ
 Abhijit Muhurat Desc : ବାଧାବିଘ୍ନ ଉପରେ ବିଜୟ। ନୂତନ ଆରମ୍ଭ ପାଇଁ ସର୍ବୋତ୍ତମ।
@@ -2051,7 +2050,6 @@ Rahu Kalam Title : ରାହୁ କାଳ
 Rahu Kalam Desc : କୌଣସି ନୂଆ କାମ ପାଇଁ ନିଷେଧ।
 Yamaganda Title : ଯମଗଣ୍ଡ
 Yamaganda Desc : ଯାତ୍ରା କିମ୍ବା ମୂଲ୍ୟବାନ ଜିନିଷ କିଣିବାକୁ ନିଷେଧ।
-Gulika Kalam Title : ଗୁଳିକ କାଳ
 Gulika Kalam Title : ଗୁଳିକ କାଳ
 Gulika Kalam Desc : ନୂଆ କାର୍ଯ୍ୟରେ ବାଧା ଆସିପାରେ।
 Today Sankranti : ଆଜିର ସଂକ୍ରାନ୍ତି
@@ -2238,7 +2236,7 @@ It marks the sun's transit into *Makara* (Capricorn).
 ::: panchang
 @ Tithi : Shukla Paksha
 @ Nakshatra : Rohini
-3 Yoga: Indral
+@ Yoga : Indra
 @ Karana : Bava
 @ Sunrise : 06:20 AM
 @ Sunset : 05:30 PM
@@ -3897,12 +3895,12 @@ return SunCalc;
             "https://images.unsplash.com/photo-1478265409131-1f65c88f965c?auto=format&fit=crop&q=80&w=800"  // Shishir
         ];
 const seasonUIConfig = [
-            { name: "Vasant (Spring)", dateRange: "18 Feb - 19 Apr", color: "#388E3C", icon: SeasonIcons.vasant },   // 0
-            { name: "Grishma (Summer)", dateRange: "20 Apr - 21 Jun", color: "#E65100", icon: SeasonIcons.grishma },  // 1
-            { name: "Varsha (Monsoon)", dateRange: "22 Jun - 22 Aug", color: "#4527A0", icon: SeasonIcons.varsha },   // 2
-            { name: "Sharad (Autumn)", dateRange: "23 Aug - 22 Oct", color: "#BF360C", icon: SeasonIcons.sharad },    // 3
-            { name: "Hemant (Pre-Winter)", dateRange: "23 Oct - 21 Dec", color: "#D60000", icon: SeasonIcons.hemant },// 4
-            { name: "Shishir (Winter)", dateRange: "22 Dec - 17 Feb", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
+            { name: "Vasant (Spring)", dateRange: "18 Feb - 19 Apr", timeline: "Mid-Feb to Mid-April", color: "#388E3C", icon: SeasonIcons.vasant },   // 0
+            { name: "Grishma (Summer)", dateRange: "20 Apr - 21 Jun", timeline: "Mid-April to Mid-June", color: "#E65100", icon: SeasonIcons.grishma },  // 1
+            { name: "Varsha (Monsoon)", dateRange: "22 Jun - 22 Aug", timeline: "Mid-June to Mid-August", color: "#4527A0", icon: SeasonIcons.varsha },   // 2
+            { name: "Sharad (Autumn)", dateRange: "23 Aug - 22 Oct", timeline: "Mid-August to Mid-October", color: "#BF360C", icon: SeasonIcons.sharad },    // 3
+            { name: "Hemant (Pre-Winter)", dateRange: "23 Oct - 21 Dec", timeline: "Mid-October to Mid-December", color: "#D60000", icon: SeasonIcons.hemant },// 4
+            { name: "Shishir (Winter)", dateRange: "22 Dec - 17 Feb", timeline: "Mid-December to Mid-February", color: "#1976D2", icon: SeasonIcons.shishir }   // 5
         ];
 
         
@@ -4360,7 +4358,7 @@ indianMonths: ["ପୌଷ / ମାଘ", "ମାଘ / ଫାଲଗୁନ", "ଫ�
 indianMonths: ["পৌষ / মাঘ", "মাঘ / ফাল্গুন", "ফাল্গুন / চৈত্র", "চৈত্র / বৈশাখ", "বৈশাখ / জ্যৈষ্ঠ", "জ্যৈষ্ঠ / আষাঢ়", "আষাঢ় / শ্রাবণ", "শ্রাবণ / ভাদ্র", "ভাদ্র / আশ্বিন", "আশ্বিন / কার্তিক", "কার্তিক / অগ্রহায়ণ", "অগ্রহায়ণ / পৌষ"],
         indianSeasons: ["বসন্ত", "গ্রীষ্ম", "বর্ষা", "শরৎ", "হেমন্ত", "শিশির"],
         seasonDescriptions: [],
-        paksha: ["শুক্ল পক্ষ", "कृष्ण পক্ষ"],
+        paksha: ["শুক্ল পক্ষ", "কৃষ্ণ পক্ষ"],
         tithis: ["প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "পূর্ণিমা", "প্রতিপদ", "দ্বিতীয়া", "তৃতীয়া", "চতুর্থী", "পঞ্চমী", "ষষ্ঠী", "সপ্তমী", "অষ্টমী", "নবমী", "দশমী", "একাদশী", "দ্বাদশী", "ত্রয়োদশী", "চতুর্দশী", "অমাবস্যা"]
     },
     mr: { 
@@ -5490,7 +5488,7 @@ function getCDNUrl(originalUrl) {
                 
                 // Add Timeout (15 seconds)
                 let controller = new AbortController();
-                let timeoutId = setTimeout(() => controller.abort(), 15000);
+                                let timeoutId = setTimeout(() => controller.abort(), 15000);
                 
                 let response;
                 
@@ -7993,6 +7991,18 @@ function renderCalendarGrid(data) {
                                : (langObj.seasonDescriptions ? langObj.seasonDescriptions[seasonIndex] : "");
             const seasonDescHtml = formatSeasonDescription(rawSeasonDesc);
 
+            let m1, m2;
+            if (seasonIndex === 0) { m1 = 10; m2 = 11; }
+            else if (seasonIndex === 1) { m1 = 0; m2 = 1; }
+            else if (seasonIndex === 2) { m1 = 2; m2 = 3; }
+            else if (seasonIndex === 3) { m1 = 4; m2 = 5; }
+            else if (seasonIndex === 4) { m1 = 6; m2 = 7; }
+            else if (seasonIndex === 5) { m1 = 8; m2 = 9; }
+
+            const localMonths = (langObj.solarMonths && langObj.solarMonths[m1] && langObj.solarMonths[m2]) 
+                ? `${langObj.solarMonths[m1]} - ${langObj.solarMonths[m2]}` 
+                : "";
+
             // Inject Season Card at the top of the list container
             const seasonCard = document.createElement('div');
             seasonCard.className = "season-ui-card group mb-4 flex-col items-start gap-4"; // Changed layout to column for better fit
@@ -8010,7 +8020,14 @@ function renderCalendarGrid(data) {
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 shadow-sm text-base">${seasonEmojis[seasonIndex]}</div>
                             <span class="text-lg font-bold drop-shadow-lg leading-none" style="color: ${seasonTitleColors[seasonIndex]};">${seasonName}</span>
                         </div>
-                        <span class="text-white/90 drop-shadow-lg font-medium" style="margin-left: 36px; margin-top: -2px; font-size: 12.5px;">${seasonConfig.dateRange}</span>
+                        <div style="margin-left: 36px; margin-top: 4px; display: flex; flex-direction: column; gap: 2px;">
+                            <span class="text-white drop-shadow-md font-bold tracking-wide" style="font-size: 11px; line-height: 1.2;">
+                                ${localMonths}
+                            </span>
+                            <span class="text-white/80 drop-shadow-md font-bold tracking-wider" style="font-size: 9px; line-height: 1.2; text-transform: uppercase;">
+                                ${seasonConfig.timeline} (${seasonConfig.dateRange})
+                            </span>
+                        </div>
                     </div>
                 </div>
                 
