@@ -7829,15 +7829,50 @@ function renderCalendarGrid(data) {
 }
 
         // --- UPDATED HELPER: Calculate Auspicious & Inauspicious Timings ---
-        function getSpecialTimes(date, sunrise, sunset) {
-            if (!sunrise || !sunset) return { auspicious: [], inauspicious: [] };
+        function getSpecialTimes(date, sunTimesToday, sunTimesTomorrow, sunTimesYesterday) {
+            const now = new Date();
+            const sunrise = sunTimesToday.sunrise;
+            const sunset = sunTimesToday.sunset;
+            const nextSunrise = sunTimesTomorrow.sunrise;
+            const prevSunset = sunTimesYesterday.sunset;
 
-            const dayOfWeek = date.getDay(); // 0 = Sunday
-            const duration = (sunset - sunrise); // Duration in ms
-            const part = duration / 8; // Rahu/Yama/Gulika use 8 parts
-            const muhurta = duration / 15; // Auspicious timings use 15 parts
+            if (!sunrise || !sunset || !nextSunrise || !prevSunset) return { auspicious: [], inauspicious: [], isNightView: false };
 
-            // Slots (0-indexed parts of the day)
+            const isToday = (date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear());
+
+            let isNightView = false;
+            let periodStart, periodEnd, baseDayOfWeek;
+
+            if (isToday) {
+                if (now >= sunset && now < nextSunrise) {
+                    isNightView = true;
+                    periodStart = sunset;
+                    periodEnd = nextSunrise;
+                    baseDayOfWeek = date.getDay();
+                } else if (now >= prevSunset && now < sunrise) {
+                    isNightView = true;
+                    periodStart = prevSunset;
+                    periodEnd = sunrise;
+                    const prevDay = new Date(date);
+                    prevDay.setDate(prevDay.getDate() - 1);
+                    baseDayOfWeek = prevDay.getDay();
+                } else {
+                    isNightView = false;
+                    periodStart = sunrise;
+                    periodEnd = sunset;
+                    baseDayOfWeek = date.getDay();
+                }
+            } else {
+                isNightView = false;
+                periodStart = sunrise;
+                periodEnd = sunset;
+                baseDayOfWeek = date.getDay();
+            }
+
+            const duration = (periodEnd - periodStart);
+            const part = duration / 8;
+            const muhurta = duration / 15;
+
             const rahuSlots = [7, 1, 6, 4, 5, 3, 2]; 
             const yamaSlots = [4, 3, 2, 1, 0, 6, 5]; 
             const gulikaSlots = [6, 5, 4, 3, 2, 1, 0];
@@ -7846,14 +7881,7 @@ function renderCalendarGrid(data) {
                 const s = new Date(startMs);
                 const e = new Date(endMs);
                 return {
-                    name,
-                    start: s,
-                    end: e,
-                    type,
-                    description,
-                    gradientClass,
-                    iconColor,
-                    themeKey,
+                    name, start: s, end: e, type, description, gradientClass, iconColor, themeKey,
                     duration: Math.round((e - s) / 60000) + 'm'
                 };
             };
@@ -7861,110 +7889,88 @@ function renderCalendarGrid(data) {
             const auspicious = [];
             const inauspicious = [];
 
-            // --- INAUSPICIOUS ---
-            
-            // Rahu Kalam
-            const rahuStart = sunrise.getTime() + (rahuSlots[dayOfWeek] * part);
+            let effectiveWeekday = baseDayOfWeek;
+            if (isNightView) {
+                effectiveWeekday = (baseDayOfWeek + 4) % 7; // Night lords start from 5th day lord
+            }
+
+            // INAUSPICIOUS
+            const rahuStart = periodStart.getTime() + (rahuSlots[effectiveWeekday] * part);
             inauspicious.push(createTimeObj(
-                "Rahu Kalam", rahuStart, rahuStart + part, 
-                "bad", "Strictly avoid for any new undertaking.", 
+                isNightView ? "Ratri Rahu Kalam" : "Rahu Kalam",
+                rahuStart, rahuStart + part, "bad", "Strictly avoid for any new undertaking.",
                 "bg-rust-gradient", "dot-rust", "rust"
             ));
 
-            // Yamaganda
-            const yamaStart = sunrise.getTime() + (yamaSlots[dayOfWeek] * part);
+            const yamaStart = periodStart.getTime() + (yamaSlots[effectiveWeekday] * part);
             inauspicious.push(createTimeObj(
-                "Yamaganda", yamaStart, yamaStart + part, 
-                "bad", "Inauspicious period. Avoid travel.", 
+                isNightView ? "Ratri Yamaganda" : "Yamaganda",
+                yamaStart, yamaStart + part, "bad", "Inauspicious period. Avoid travel.",
                 "bg-crimson-gradient", "dot-crimson", "crimson"
             ));
 
-            // Gulika Kalam
-            const gulikaStart = sunrise.getTime() + (gulikaSlots[dayOfWeek] * part);
+            const gulikaStart = periodStart.getTime() + (gulikaSlots[effectiveWeekday] * part);
             inauspicious.push(createTimeObj(
-                "Gulika Kalam", gulikaStart, gulikaStart + part, 
-                "neutral", "Period for repeating activities.", 
+                isNightView ? "Ratri Gulika Kalam" : "Gulika Kalam",
+                gulikaStart, gulikaStart + part, "neutral", "Period for repeating activities.",
                 "bg-slate-gradient", "dot-slate", "slate"
             ));
 
+            // AUSPICIOUS
+            if (!isNightView) {
+                const brahmaStart = periodStart.getTime() - (96 * 60000);
+                const brahmaEnd = periodStart.getTime() - (48 * 60000);
+                auspicious.push(createTimeObj("Brahma Muhurta", brahmaStart, brahmaEnd, "good", "Ideal for meditation and learning.", "bg-gold-gradient", "dot-gold", "gold"));
 
-            // --- AUSPICIOUS ---
+                const pratahStart = periodStart.getTime() - (48 * 60000);
+                auspicious.push(createTimeObj("Pratah Sandhya", pratahStart, periodStart.getTime(), "good", "Time for morning prayers.", "bg-lavender-gradient", "dot-lavender", "lavender"));
 
-            // Brahma Muhurta (Sunrise - 96m to -48m)
-            const brahmaStart = sunrise.getTime() - (96 * 60000);
-            const brahmaEnd = sunrise.getTime() - (48 * 60000);
-            auspicious.push(createTimeObj(
-                "Brahma Muhurta", brahmaStart, brahmaEnd, 
-                "good", "Ideal for meditation and learning.", 
-                "bg-gold-gradient", "dot-gold", "gold"
-            ));
+                const abhijitStart = periodStart.getTime() + (7 * muhurta);
+                const abhijitEnd = periodStart.getTime() + (8 * muhurta);
+                auspicious.push(createTimeObj("Abhijit Muhurat", abhijitStart, abhijitEnd, "good", "Victory over obstacles. Best for new beginnings.", "bg-emerald-gradient", "dot-emerald", "emerald"));
 
-            // Pratah Sandhya (Sunrise - 48m to Sunrise)
-            const pratahStart = sunrise.getTime() - (48 * 60000);
-            auspicious.push(createTimeObj(
-                "Pratah Sandhya", pratahStart, sunrise.getTime(), 
-                "good", "Time for morning prayers.", 
-                "bg-lavender-gradient", "dot-lavender", "lavender"
-            ));
+                const vijayaStart = periodStart.getTime() + (10 * muhurta);
+                const vijayaEnd = periodStart.getTime() + (11 * muhurta);
+                auspicious.push(createTimeObj("Vijaya Muhurta", vijayaStart, vijayaEnd, "good", "Time for victory and success.", "bg-royal-gradient", "dot-royal", "royal"));
 
-            // Abhijit Muhurat (8th Muhurta) - Usually skipped on Wednesday (3), but requested to always show.
-            const abhijitStart = sunrise.getTime() + (7 * muhurta);
-            const abhijitEnd = sunrise.getTime() + (8 * muhurta);
-            auspicious.push(createTimeObj(
-                "Abhijit Muhurat", abhijitStart, abhijitEnd, 
-                "good", "Victory over obstacles. Best for new beginnings.", 
-                "bg-emerald-gradient", "dot-emerald", "emerald"
-            ));
+                try {
+                    const astro = VedicAstro.calculate(periodStart, 6);
+                    const nakName = astro.nakshatra;
+                    const nakIndex = Object.keys(VedicAstro.AMRIT_GHATIS).indexOf(nakName);
+                    if (nakIndex !== -1) {
+                         const times = VedicAstro.getNakshatraTimes(astro.jd, nakIndex);
+                         const jdToDate = (j) => new Date((j - 2440587.5) * 86400000);
+                         const nakStart = jdToDate(times.start);
+                         const nakEnd = jdToDate(times.end);
+                         const nakDur = nakEnd - nakStart;
+                         const ghatis = VedicAstro.AMRIT_GHATIS[nakName];
+                         if (ghatis) {
+                             const amritStart = new Date(nakStart.getTime() + (ghatis[0]/60 * nakDur));
+                             const amritEnd = new Date(nakStart.getTime() + (ghatis[1]/60 * nakDur));
+                             auspicious.push(createTimeObj("Amrit Kalam", amritStart, amritEnd, "good", "Most auspicious time for any work.", "bg-skyblue-gradient", "dot-skyblue", "skyblue"));
+                         }
+                    }
+                } catch (e) {}
+            } else {
+                const sayamEnd = periodStart.getTime() + (48 * 60000);
+                auspicious.push(createTimeObj("Sayam Sandhya", periodStart.getTime(), sayamEnd, "good", "Time for evening prayers and aarti.", "bg-lavender-gradient", "dot-lavender", "lavender"));
 
-            // Vijaya Muhurta (11th Muhurta)
-            const vijayaStart = sunrise.getTime() + (10 * muhurta);
-            const vijayaEnd = sunrise.getTime() + (11 * muhurta);
-            auspicious.push(createTimeObj(
-                "Vijaya Muhurta", vijayaStart, vijayaEnd, 
-                "good", "Time for victory and success.", 
-                "bg-royal-gradient", "dot-royal", "royal"
-            ));
+                const midNight = periodStart.getTime() + (duration / 2);
+                auspicious.push(createTimeObj("Nishita Muhurta", midNight - (24 * 60000), midNight + (24 * 60000), "good", "Auspicious for spiritual practices and puja.", "bg-emerald-gradient", "dot-emerald", "emerald"));
 
-            // Amrit Kalam (Nakshatra Based)
-            try {
-                // Get Nakshatra Active at Sunrise to determine Amrit Kalam for the day
-                const astro = VedicAstro.calculate(sunrise, 6);
-                const nakName = astro.nakshatra;
-                
-                // Find index using keys since we don't have access to internal NAKSHATRAS array
-                // But AMRIT_GHATIS keys match NAKSHATRAS names
-                const nakIndex = Object.keys(VedicAstro.AMRIT_GHATIS).indexOf(nakName);
-                
-                if (nakIndex !== -1) {
-                     const jd = astro.jd;
-                     const times = VedicAstro.getNakshatraTimes(jd, nakIndex); // Returns JD {start, end}
-                     
-                     // Convert JD to Date
-                     const jdToDate = (j) => new Date((j - 2440587.5) * 86400000);
-                     const nakStart = jdToDate(times.start);
-                     const nakEnd = jdToDate(times.end);
-                     const nakDur = nakEnd - nakStart;
-                     
-                     const ghatis = VedicAstro.AMRIT_GHATIS[nakName]; // [start, end]
-                     if (ghatis) {
-                         const amritStart = new Date(nakStart.getTime() + (ghatis[0]/60 * nakDur));
-                         const amritEnd = new Date(nakStart.getTime() + (ghatis[1]/60 * nakDur));
-                         
-                         auspicious.push(createTimeObj(
-                            "Amrit Kalam", amritStart, amritEnd, 
-                            "good", "Most auspicious time for any work.", 
-                            "bg-skyblue-gradient", "dot-skyblue", "skyblue"
-                         ));
-                     }
-                }
-            } catch (e) { console.error("Amrit Kalam Calc Failed", e); }
+                const brahmaStart = periodEnd.getTime() - (96 * 60000);
+                const brahmaEnd = periodEnd.getTime() - (48 * 60000);
+                auspicious.push(createTimeObj("Brahma Muhurta", brahmaStart, brahmaEnd, "good", "Ideal for meditation and learning.", "bg-gold-gradient", "dot-gold", "gold"));
 
+                const pratahStart = periodEnd.getTime() - (48 * 60000);
+                auspicious.push(createTimeObj("Pratah Sandhya", pratahStart, periodEnd.getTime(), "good", "Time for morning prayers.", "bg-skyblue-gradient", "dot-skyblue", "skyblue"));
+            }
 
-            // Sort
+            // Sort by start time
             auspicious.sort((a, b) => a.start - b.start);
             inauspicious.sort((a, b) => a.start - b.start);
 
-            return { auspicious, inauspicious };
+            return { auspicious, inauspicious, isNightView };
         }
 
         // --- UPDATED MAIN RENDER FUNCTION ---
@@ -8869,13 +8875,27 @@ function updateDayCycleCard() {
                            ? new Date() 
                            : new Date(data.year, data.month, 1);
 
-            let sunTimes = { sunrise: null, sunset: null };
-            let result = { auspicious: [], inauspicious: [] };
+            let sunTimesToday = { sunrise: null, sunset: null };
+            let sunTimesTomorrow = { sunrise: null, sunset: null };
+            let sunTimesYesterday = { sunrise: null, sunset: null };
+            let result = { auspicious: [], inauspicious: [], isNightView: false };
 
             if (appState.config.location && SunCalc) {
-                sunTimes = SunCalc.getTimes(calcDate, appState.config.location.lat, appState.config.location.lng);
-                if (sunTimes.sunrise && sunTimes.sunset) {
-                    result = getSpecialTimes(calcDate, sunTimes.sunrise, sunTimes.sunset);
+                const lat = appState.config.location.lat;
+                const lng = appState.config.location.lng;
+
+                sunTimesToday = SunCalc.getTimes(calcDate, lat, lng);
+
+                const tomorrow = new Date(calcDate);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                sunTimesTomorrow = SunCalc.getTimes(tomorrow, lat, lng);
+
+                const yesterday = new Date(calcDate);
+                yesterday.setDate(yesterday.getDate() - 1);
+                sunTimesYesterday = SunCalc.getTimes(yesterday, lat, lng);
+
+                if (sunTimesToday.sunrise && sunTimesToday.sunset) {
+                    result = getSpecialTimes(calcDate, sunTimesToday, sunTimesTomorrow, sunTimesYesterday);
                 }
             }
 
@@ -8891,39 +8911,31 @@ function updateDayCycleCard() {
 
             // Timing Analysis Visualization logic
             let timingAnalysisHtml = '';
-            const dayStart = new Date(calcDate);
-            dayStart.setHours(6, 0, 0, 0); // View window start (e.g., 06:00)
-            const dayEnd = new Date(calcDate);
-            dayEnd.setDate(dayEnd.getDate() + 1);
-            dayEnd.setHours(6, 0, 0, 0);   // View window end (e.g., 06:00 Next Day)
-            const totalMs = dayEnd - dayStart;
+            let logicalDayStart = new Date(calcDate);
+            if (result.isNightView && now.getHours() < 6) {
+                logicalDayStart.setDate(logicalDayStart.getDate() - 1);
+            }
+            logicalDayStart.setHours(6, 0, 0, 0);
+            let logicalDayEnd = new Date(logicalDayStart);
+            logicalDayEnd.setDate(logicalDayEnd.getDate() + 1);
+            const totalMs = logicalDayEnd - logicalDayStart;
 
             if (totalMs > 0) {
-                // Calculate "NOW" position
-                let nowPercent = ((now - dayStart) / totalMs) * 100;
-                nowPercent = Math.max(0, Math.min(100, nowPercent)); // Clamp between 0 and 100
-
-                // Generate events
+                let nowPercent = ((now - logicalDayStart) / totalMs) * 100;
+                nowPercent = Math.max(0, Math.min(100, nowPercent));
                 let eventsHtml = '';
                 let eventIndex = 0;
                 
-                // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
-                    // Only show specific major ones for cleanliness or all if preferred. Let's do Abhijit and Rahu Kalam as requested, or generally filter.
                     const name = eventItem.name.toUpperCase();
-                    if (name.includes("ABHIJIT") || name.includes("RAHU")) {
-                        let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
-                        let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
-                        
-                        // Only render if it falls within our view window
+                    if (name.includes("ABHIJIT") || name.includes("RAHU") || name.includes("NISHITA")) {
+                        let startPercent = ((eventItem.start - logicalDayStart) / totalMs) * 100;
+                        let endPercent = ((eventItem.end - logicalDayStart) / totalMs) * 100;
                         if (endPercent > 0 && startPercent < 100) {
                             startPercent = Math.max(0, startPercent);
                             endPercent = Math.min(100, endPercent);
                             const width = endPercent - startPercent;
-                            
-                            // Clean up name for label (remove "Kalam", "Muhurat")
-                            let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
-                            // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
+                            let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").replace(" RATRI ", "").trim();
                             const yOffset = (eventIndex % 2 === 0) ? '28px' : '42px';
                             eventsHtml += `
                                 <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%;">
@@ -8975,9 +8987,16 @@ function updateDayCycleCard() {
                 `;
             }
 
+            const titleBadgeHtml = result.isNightView
+                ? `<span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded border border-indigo-200 ml-2 shadow-sm uppercase tracking-wide">🌙 Night Timings</span>`
+                : `<span class="bg-orange-100 text-orange-800 text-[10px] font-bold px-2 py-0.5 rounded border border-orange-200 ml-2 shadow-sm uppercase tracking-wide">☀️ Day Timings</span>`;
+
             let html = `
                 <div class="section-title">
-                    <h3 class="font-bold text-green-700 mb-0"><i class="fa-solid fa-clock text-orange-600 mr-2"></i><span data-i18n="timings">Timings</span></h3>
+                    <div class="flex items-center">
+                        <h3 class="font-bold text-green-700 mb-0"><i class="fa-solid fa-clock text-orange-600 mr-2"></i><span data-i18n="timings">Timings</span></h3>
+                        ${titleBadgeHtml}
+                    </div>
                     <span class="badge">${dateStr}</span>
                 </div>
                 
