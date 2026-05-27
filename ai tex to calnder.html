@@ -1156,7 +1156,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             font-size: 0.85rem;
             font-weight: 600;
             color: #1f2937;
-            line-height: 1.2;
+            line-height: 1.5;
+            padding-bottom: 0.2rem;
         }
 
         .muhurat-strip {
@@ -10112,24 +10113,24 @@ function updateDayCycleCard() {
                             <div class="grid grid-cols-2 gap-2 text-xs mb-2">
                                 <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                     <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase" data-i18n="nakshatra">Nakshatra</div>
-                                    <div class="font-mono text-gray-900 font-bold">${tithiInfo.nakshatra}</div>
+                                    <div class="text-gray-900 font-bold leading-relaxed pb-1">${tithiInfo.nakshatra}</div>
                                 </div>
                                 <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                     <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase" data-i18n="yoga">Yoga</div>
-                                    <div class="font-mono text-gray-900 font-bold">${tithiInfo.yoga}</div>
+                                    <div class="text-gray-900 font-bold leading-relaxed pb-1">${tithiInfo.yoga}</div>
                                 </div>
                                 <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                     <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase" data-i18n="karana">Karana</div>
-                                    <div class="font-mono text-gray-900 font-bold">${tithiInfo.karana}</div>
+                                    <div class="text-gray-900 font-bold leading-relaxed pb-1">${tithiInfo.karana}</div>
                                 </div>
                                 <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                     <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase">Hindu Month</div>
-                                    <div class="font-mono text-gray-900 font-bold">${hinduMonthName}</div>
+                                    <div class="text-gray-900 font-bold leading-relaxed pb-1">${hinduMonthName}</div>
                                 </div>
                             </div>
                             <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 text-xs">
                                 <div class="text-gray-500 mb-1 font-bold text-[10px] uppercase">Ritu (Season)</div>
-                                <div class="font-mono text-gray-900 font-bold">${seasonName}</div>
+                                <div class="text-gray-900 font-bold leading-relaxed pb-1">${seasonName}</div>
                             </div>
                         </div>
 
@@ -10144,22 +10145,22 @@ function updateDayCycleCard() {
                                  <div class="bg-orange-50 rounded-xl p-2 border border-orange-100 flex flex-col items-center">
                                      <i class="fa-solid fa-sun text-orange-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase" data-i18n="sunrise">Sunrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunrise)}</span>
+                                     <span class="text-sm font-bold text-gray-800 tracking-wide">${fmtAstroTime(sunTimes.sunrise)}</span>
                                  </div>
                                  <div class="bg-purple-50 rounded-xl p-2 border border-purple-100 flex flex-col items-center">
                                      <i class="fa-solid fa-cloud-sun text-purple-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase" data-i18n="sunset">Sunset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(sunTimes.sunset)}</span>
+                                     <span class="text-sm font-bold text-gray-800 tracking-wide">${fmtAstroTime(sunTimes.sunset)}</span>
                                  </div>
                                  <div class="bg-blue-50 rounded-xl p-2 border border-blue-100 flex flex-col items-center">
                                      <i class="fa-solid fa-cloud-moon text-blue-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase" data-i18n="moonrise">Moonrise</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
+                                     <span class="text-sm font-bold text-gray-800 tracking-wide">${fmtAstroTime(moonTimes ? moonTimes.rise : null)}</span>
                                  </div>
                                  <div class="bg-gray-50 rounded-xl p-2 border border-gray-200 flex flex-col items-center">
                                      <i class="fa-solid fa-moon text-gray-400 mb-1"></i>
                                      <span class="text-[10px] text-gray-500 font-bold uppercase" data-i18n="moonset">Moonset</span>
-                                     <span class="text-sm font-bold text-gray-800 font-mono">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
+                                     <span class="text-sm font-bold text-gray-800 tracking-wide">${fmtAstroTime(moonTimes ? moonTimes.set : null)}</span>
                                  </div>
                             </div>
                         </div>` : ''}
