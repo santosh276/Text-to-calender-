@@ -2056,6 +2056,8 @@ Gulika Kalam Desc : ନୂଆ କାର୍ଯ୍ୟରେ ବାଧା ଆସି
 Today Sankranti : ଆଜିର ସଂକ୍ରାନ୍ତି
 Upcoming Sankranti : ଆସୁଥିବା ସଂକ୍ରାନ୍ତି
 Sankranti Text : ସଂକ୍ରାନ୍ତି
+Day Choghadiya : ଦିବା ଚୋଘଡ଼ିଆ
+Night Choghadiya : ରାତ୍ରି ଚୋଘଡ଼ିଆ
 :::
 
                         </div>
@@ -9208,40 +9210,55 @@ function updateDayCycleCard() {
                         </div>
                     </div>
 
-                    <!-- Timeline -->
-                    <div class="ch-timeline flex flex-col gap-4">
                 `;
 
-                choghadiyas.forEach((ch) => {
-                    let colorClass = "ch-bg-good";
-                    if(ch.type === 'neutral') colorClass = "ch-bg-neutral";
-                    if(ch.type === 'bad') colorClass = "ch-bg-bad";
+                // Filter into Day and Night
+                const dayChoghadiyas = choghadiyas.filter(c => !c.isNight);
+                const nightChoghadiyas = choghadiyas.filter(c => c.isNight);
 
-                    chHtml += `
-                        <div class="ch-item ${colorClass} group" data-ch-start="${ch.start.getTime()}" data-ch-end="${ch.end.getTime()}">
-                            <div class="ch-node"></div>
-                            <div class="ch-card relative overflow-hidden">
-                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                                    <div>
-                                        <div class="text-gray-500 font-mono text-xs font-semibold tracking-wide mb-1">
-                                            ${fmtC(ch.start)} - ${fmtC(ch.end)} 
-                                            <span class="text-[9px] uppercase ml-1 opacity-70">${ch.isNight ? '(Night)' : ''}</span>
+                const renderChoghadiyaGroup = (list, titleKey, defaultTitle, iconHtml) => {
+                    if(list.length === 0) return '';
+                    let groupHtml = `
+                    <h4 class="font-bold text-gray-800 text-sm mt-6 mb-3 uppercase tracking-wider border-b border-gray-200 pb-2 flex items-center gap-2">
+                        ${iconHtml}
+                        <span data-i18n="${titleKey}">${defaultTitle}</span>
+                    </h4>
+                    <div class="ch-timeline flex flex-col gap-4 mb-4">`;
+
+                    list.forEach((ch) => {
+                        let colorClass = "ch-bg-good";
+                        if(ch.type === 'neutral') colorClass = "ch-bg-neutral";
+                        if(ch.type === 'bad') colorClass = "ch-bg-bad";
+
+                        groupHtml += `
+                            <div class="ch-item ${colorClass} group" data-ch-start="${ch.start.getTime()}" data-ch-end="${ch.end.getTime()}">
+                                <div class="ch-node"></div>
+                                <div class="ch-card relative overflow-hidden">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                                        <div>
+                                            <div class="text-gray-500 font-mono text-xs font-semibold tracking-wide mb-1">
+                                                ${fmtC(ch.start)} - ${fmtC(ch.end)}
+                                            </div>
+                                            <div class="text-lg font-bold text-gray-900 leading-none mb-1">${ch.name}</div>
+                                            <div class="text-xs font-bold currentColor opacity-90">${ch.meaning}</div>
                                         </div>
-                                        <div class="text-lg font-bold text-gray-900 leading-none mb-1">${ch.name}</div>
-                                        <div class="text-xs font-bold currentColor opacity-90">${ch.meaning}</div>
-                                    </div>
-                                    
-                                    <!-- Countdown Pill (Visible only when active) -->
-                                    <div class="ch-countdown hidden px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap self-start sm:self-auto">
-                                        <span class="ch-time-left"></span> left
+
+                                        <div class="ch-countdown hidden px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap self-start sm:self-auto">
+                                            <span class="ch-time-left"></span> left
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
+                    groupHtml += `</div>`;
+                    return groupHtml;
+                };
 
-                chHtml += `</div></div>`;
+                chHtml += renderChoghadiyaGroup(dayChoghadiyas, 'day_choghadiya', 'Day Choghadiya', '<i class="fa-solid fa-sun text-orange-500"></i>');
+                chHtml += renderChoghadiyaGroup(nightChoghadiyas, 'night_choghadiya', 'Night Choghadiya', '<i class="fa-solid fa-moon text-indigo-500"></i>');
+
+                chHtml += `</div>`;
                 // Insert AFTER the timings container so it's a completely separate card
                 container.insertAdjacentHTML('afterend', chHtml);
             }
