@@ -2058,6 +2058,7 @@ Upcoming Sankranti : ଆସୁଥିବା ସଂକ୍ରାନ୍ତି
 Sankranti Text : ସଂକ୍ରାନ୍ତି
 Day Choghadiya : ଦିବା ଚୋଘଡ଼ିଆ
 Night Choghadiya : ରାତ୍ରି ଚୋଘଡ଼ିଆ
+Progress Text : ପ୍ରୋଗ୍ରେସ୍
 :::
 
                         </div>
@@ -8622,13 +8623,18 @@ function renderCalendarGrid(data) {
                     const end = parseInt(item.getAttribute('data-ch-end'));
                     const cdPill = item.querySelector('.ch-countdown');
                     const cdText = item.querySelector('.ch-time-left');
+                    const progContainer = item.querySelector('.ch-progress-container');
+                    const progFill = item.querySelector('.ch-progress-fill');
+                    const progPct = item.querySelector('.ch-progress-pct');
                     
                     if (now >= start && now < end) {
                         // Active
                         if (!item.classList.contains('active')) item.classList.add('active');
                         if (cdPill) cdPill.classList.remove('hidden');
+                        if (progContainer) progContainer.classList.remove('hidden');
                         
                         const diffMs = end - now;
+                        const totalMs = end - start;
                         const h = Math.floor(diffMs / 3600000);
                         const m = Math.floor((diffMs % 3600000) / 60000);
                         const s = Math.floor((diffMs % 60000) / 1000);
@@ -8639,10 +8645,19 @@ function renderCalendarGrid(data) {
                         
                         if(cdText) cdText.innerText = timeStr;
                         
+                        // Update Progress Bar
+                        if (progFill && progPct && totalMs > 0) {
+                            let pct = ((now - start) / totalMs) * 100;
+                            pct = Math.max(0, Math.min(100, pct));
+                            progFill.style.width = `${pct}%`;
+                            progPct.innerText = pct.toFixed(1);
+                        }
+
                     } else {
                         // Inactive (Past or Future)
                         if (item.classList.contains('active')) item.classList.remove('active');
                         if (cdPill) cdPill.classList.add('hidden');
+                        if (progContainer) progContainer.classList.add('hidden');
                     }
                 });
             }
@@ -9245,6 +9260,24 @@ function updateDayCycleCard() {
 
                                         <div class="ch-countdown hidden px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap self-start sm:self-auto">
                                             <span class="ch-time-left"></span> left
+                                        </div>
+                                    </div>
+
+                                    <!-- DYNAMIC PROGRESS BAR (Hidden by default) -->
+                                    <div class="ch-progress-container hidden mt-3 p-3 bg-gray-50 rounded-xl border border-gray-200 shadow-inner relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-amber-500/5 pointer-events-none"></div>
+                                        <div class="flex justify-between items-center mb-1.5 relative z-10">
+                                            <span class="text-gray-500 font-bold text-[10px] uppercase tracking-widest" data-i18n="progress_text">Progress</span>
+                                            <div class="flex items-baseline gap-1">
+                                                <span class="ch-progress-pct text-xl font-extrabold text-amber-500 drop-shadow-sm font-sans">0.0</span>
+                                                <span class="text-[10px] text-amber-600 font-bold">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="h-2.5 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner ring-1 ring-gray-200 relative">
+                                            <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 10px);"></div>
+                                            <div class="ch-progress-fill h-full rounded-full relative transition-all duration-1000 ease-out" style="width: 0%; background: linear-gradient(90deg, #f59e0b, #ef4444);">
+                                                <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
