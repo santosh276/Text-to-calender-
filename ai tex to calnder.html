@@ -9219,7 +9219,7 @@ function updateDayCycleCard() {
                 const renderChoghadiyaGroup = (list, titleKey, defaultTitle, iconHtml) => {
                     if(list.length === 0) return '';
                     let groupHtml = `
-                    <h4 class="font-bold text-gray-800 text-sm mt-6 mb-3 uppercase tracking-wider border-b border-gray-200 pb-2 flex items-center gap-2">
+                    <h4 class="font-bold text-gray-800 text-sm mt-2 mb-3 uppercase tracking-wider border-b border-gray-200 pb-2 flex items-center gap-2">
                         ${iconHtml}
                         <span data-i18n="${titleKey}">${defaultTitle}</span>
                     </h4>
@@ -9255,8 +9255,10 @@ function updateDayCycleCard() {
                     return groupHtml;
                 };
 
-                chHtml += renderChoghadiyaGroup(dayChoghadiyas, 'day_choghadiya', 'Day Choghadiya', '<i class="fa-solid fa-sun text-orange-500"></i>');
-                chHtml += renderChoghadiyaGroup(nightChoghadiyas, 'night_choghadiya', 'Night Choghadiya', '<i class="fa-solid fa-moon text-indigo-500"></i>');
+                chHtml += `<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">`;
+                chHtml += `<div>` + renderChoghadiyaGroup(dayChoghadiyas, 'day_choghadiya', 'Day Choghadiya', '<i class="fa-solid fa-sun text-orange-500"></i>') + `</div>`;
+                chHtml += `<div>` + renderChoghadiyaGroup(nightChoghadiyas, 'night_choghadiya', 'Night Choghadiya', '<i class="fa-solid fa-moon text-indigo-500"></i>') + `</div>`;
+                chHtml += `</div>`;
 
                 chHtml += `</div>`;
                 // Insert AFTER the timings container so it's a completely separate card
