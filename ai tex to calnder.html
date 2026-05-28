@@ -2059,6 +2059,13 @@ Sankranti Text : ସଂକ୍ରାନ୍ତି
 Day Choghadiya : ଦିବା ଚୋଘଡ଼ିଆ
 Night Choghadiya : ରାତ୍ରି ଚୋଘଡ଼ିଆ
 Progress Text : ପ୍ରୋଗ୍ରେସ୍
+Ch_Udveg_Desc : କଷ୍ଟ ଏବଂ ଚିନ୍ତା ବଢ଼ାଇଥାଏ। ନୂଆ କାର୍ଯ୍ୟରୁ ନିବୃତ୍ତ ରୁହନ୍ତୁ।
+Ch_Chal_Desc : ସାଧାରଣ ଯାତ୍ରା ଏବଂ ନିୟମିତ କାର୍ଯ୍ୟ ପାଇଁ ଅନୁକୂଳ।
+Ch_Labh_Desc : ଆର୍ଥିକ ଲାଭ ଏବଂ ବ୍ୟବସାୟରେ ସଫଳତା ଆଣିଥାଏ।
+Ch_Amrit_Desc : ଯେକୌଣସି କାର୍ଯ୍ୟ ଏବଂ ନୂତନ ଆରମ୍ଭ ପାଇଁ ସର୍ବୋତ୍ତମ।
+Ch_Kaal_Desc : ଅଶୁଭ ସମୟ। ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ କାର୍ଯ୍ୟରୁ ନିବୃତ୍ତ ରୁହନ୍ତୁ।
+Ch_Shubh_Desc : ବିବାହ, ସମ୍ପତ୍ତି କ୍ରୟ ଏବଂ ଶୁଭ କାର୍ଯ୍ୟ ପାଇଁ ଅନୁକୂଳ।
+Ch_Rog_Desc : ସ୍ୱାସ୍ଥ୍ୟ ସମସ୍ୟା ସୃଷ୍ଟି କରେ। ଯାତ୍ରା କରନ୍ତୁ ନାହିଁ।
 :::
 
                         </div>
@@ -3685,13 +3692,13 @@ return SunCalc;
         /* --- CHOGHADIYA LOGIC --- */
         const CHOGHADIYA_DATA = {
             names: {
-                1: { name: 'Udveg', type: 'bad', meaning: 'Anxiety (Bad)' },
-                2: { name: 'Chal', type: 'neutral', meaning: 'Motion (Neutral)' },
-                3: { name: 'Labh', type: 'good', meaning: 'Gain (Good)' },
-                4: { name: 'Amrit', type: 'good', meaning: 'Nectar (Best)' },
-                5: { name: 'Kaal', type: 'bad', meaning: 'Death (Bad)' },
-                6: { name: 'Shubh', type: 'good', meaning: 'Auspicious (Good)' },
-                7: { name: 'Rog', type: 'bad', meaning: 'Disease (Bad)' }
+                1: { name: 'Udveg', type: 'bad', meaning: 'Anxiety (Bad)', desc: 'Causes distress and anxiety. Avoid new ventures.' },
+                2: { name: 'Chal', type: 'neutral', meaning: 'Motion (Neutral)', desc: 'Normal period for routine travel and regular activities.' },
+                3: { name: 'Labh', type: 'good', meaning: 'Gain (Good)', desc: 'Brings financial gains and success in business.' },
+                4: { name: 'Amrit', type: 'good', meaning: 'Nectar (Best)', desc: 'Most auspicious time for any work and new beginnings.' },
+                5: { name: 'Kaal', type: 'bad', meaning: 'Death (Bad)', desc: 'Inauspicious. Avoid wealth transactions and important tasks.' },
+                6: { name: 'Shubh', type: 'good', meaning: 'Auspicious (Good)', desc: 'Favorable for marriage, buying properties, and good deeds.' },
+                7: { name: 'Rog', type: 'bad', meaning: 'Disease (Bad)', desc: 'Causes health issues. Avoid traveling or hospital visits.' }
             },
             // Order of Choghadiyas based on Weekday (0=Sun, 1=Mon... 6=Sat)
             daySequence: [
@@ -3747,6 +3754,7 @@ return SunCalc;
                     name: info.name,
                     type: info.type,
                     meaning: info.meaning,
+                    desc: info.desc,
                     start: start,
                     end: end,
                     isNight: false
@@ -3767,6 +3775,7 @@ return SunCalc;
                     name: info.name,
                     type: info.type,
                     meaning: info.meaning,
+                    desc: info.desc,
                     start: start,
                     end: end,
                     isNight: true
@@ -9256,6 +9265,7 @@ function updateDayCycleCard() {
                                             </div>
                                             <div class="text-lg font-bold text-gray-900 leading-none mb-1">${ch.name}</div>
                                             <div class="text-xs font-bold currentColor opacity-90">${ch.meaning}</div>
+                                            <p class="text-[10px] text-gray-600 mt-1.5 leading-relaxed" data-i18n="ch_${ch.name.toLowerCase()}_desc">${ch.desc}</p>
                                         </div>
 
                                         <div class="ch-countdown hidden px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap self-start sm:self-auto">
