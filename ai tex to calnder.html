@@ -2059,6 +2059,20 @@ Sankranti Text : ସଂକ୍ରାନ୍ତି
 Day Choghadiya : ଦିବା ଚୋଘଡ଼ିଆ
 Night Choghadiya : ରାତ୍ରି ଚୋଘଡ଼ିଆ
 Progress Text : ପ୍ରୋଗ୍ରେସ୍
+Ch_Udveg_Title : ଉଦ୍‌ବେଗ
+Ch_Udveg_Meaning : ଖରାପ ସମୟ
+Ch_Chal_Title : ଚଳ
+Ch_Chal_Meaning : ସାଧାରଣ ସମୟ
+Ch_Labh_Title : ଲାଭ
+Ch_Labh_Meaning : ଭଲ ସମୟ
+Ch_Amrit_Title : ଅମୃତ
+Ch_Amrit_Meaning : ସର୍ବୋତ୍ତମ ସମୟ
+Ch_Kaal_Title : କାଳ
+Ch_Kaal_Meaning : ଖରାପ ସମୟ
+Ch_Shubh_Title : ଶୁଭ
+Ch_Shubh_Meaning : ଭଲ ସମୟ
+Ch_Rog_Title : ରୋଗ
+Ch_Rog_Meaning : ଖରାପ ସମୟ
 Ch_Udveg_Desc : ଏହା ଏକ ଚିନ୍ତାଜନକ ସମୟ। ଏହି ସମୟରେ କୌଣସି ନୂଆ କାମ ଆରମ୍ଭ କରନ୍ତୁ ନାହିଁ।
 Ch_Chal_Desc : ଏହା ଏକ ସାଧାରଣ ସମୟ। ନିୟମିତ କାମ ଏବଂ ଯାତ୍ରା ପାଇଁ ଏହା ଠିକ୍ ରହିବ।
 Ch_Labh_Desc : ଟଙ୍କା ପଇସା କାରବାର ପାଇଁ ଏହା ଏକ ଭଲ ସମୟ। ବ୍ୟବସାୟରେ ଲାଭ ମିଳିବାର ସମ୍ଭାବନା ଅଛି।
@@ -9264,8 +9278,8 @@ function updateDayCycleCard() {
                                             <div class="text-gray-500 font-mono text-xs font-semibold tracking-wide mb-1">
                                                 ${fmtC(ch.start)} - ${fmtC(ch.end)}
                                             </div>
-                                            <div class="text-lg font-bold text-gray-900 leading-none mb-1">${ch.name}</div>
-                                            <div class="text-xs font-bold currentColor opacity-90">${ch.meaning}</div>
+                                            <div class="text-lg font-bold text-gray-900 leading-none mb-1" data-i18n="ch_${ch.name.toLowerCase()}_title">${ch.name}</div>
+                                            <div class="text-xs font-bold currentColor opacity-90" data-i18n="ch_${ch.name.toLowerCase()}_meaning">${ch.meaning}</div>
                                             <p class="text-[10px] text-gray-600 mt-1.5 leading-relaxed" data-i18n="ch_${ch.name.toLowerCase()}_desc">${ch.desc}</p>
                                         </div>
 
