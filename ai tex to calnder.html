@@ -9269,6 +9269,21 @@ function updateDayCycleCard() {
                         if(ch.type === 'neutral') colorClass = "ch-bg-neutral";
                         if(ch.type === 'bad') colorClass = "ch-bg-bad";
 
+                        let progGradient, pctColor, symColor, overlayColor;
+                        if (ch.type === 'good') {
+                            // Vibrant Green Gradient (Light Green/Emerald 400 to Deep Emerald 600)
+                            progGradient = 'linear-gradient(90deg, #34d399, #059669)';
+                            pctColor = 'text-emerald-600';
+                            symColor = 'text-emerald-700';
+                            overlayColor = 'bg-emerald-500/10';
+                        } else {
+                            // Both BAD and NEUTRAL will use the Orange-to-Red gradient
+                            progGradient = 'linear-gradient(90deg, #f59e0b, #ef4444)'; // Orange-Red tones
+                            pctColor = 'text-amber-500';
+                            symColor = 'text-amber-600';
+                            overlayColor = 'bg-amber-500/5';
+                        }
+
                         groupHtml += `
                             <div class="ch-item ${colorClass} group" data-ch-start="${ch.start.getTime()}" data-ch-end="${ch.end.getTime()}">
                                 <div class="ch-node"></div>
@@ -9290,17 +9305,17 @@ function updateDayCycleCard() {
 
                                     <!-- DYNAMIC PROGRESS BAR (Hidden by default) -->
                                     <div class="ch-progress-container hidden mt-3 p-3 bg-gray-50 rounded-xl border border-gray-200 shadow-inner relative overflow-hidden">
-                                        <div class="absolute inset-0 bg-amber-500/5 pointer-events-none"></div>
+                                        <div class="absolute inset-0 ${overlayColor} pointer-events-none"></div>
                                         <div class="flex justify-between items-center mb-1.5 relative z-10">
                                             <span class="text-gray-500 font-bold text-[10px] uppercase tracking-widest" data-i18n="progress_text">Progress</span>
                                             <div class="flex items-baseline gap-1">
-                                                <span class="ch-progress-pct text-xl font-extrabold text-amber-500 drop-shadow-sm font-sans">0.0</span>
-                                                <span class="text-[10px] text-amber-600 font-bold">%</span>
+                                                <span class="ch-progress-pct text-xl font-extrabold ${pctColor} drop-shadow-sm font-sans">0.0</span>
+                                                <span class="text-[10px] ${symColor} font-bold">%</span>
                                             </div>
                                         </div>
                                         <div class="h-2.5 w-full bg-gray-200 rounded-full overflow-hidden shadow-inner ring-1 ring-gray-200 relative">
                                             <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 10px);"></div>
-                                            <div class="ch-progress-fill h-full rounded-full relative transition-all duration-1000 ease-out" style="width: 0%; background: linear-gradient(90deg, #f59e0b, #ef4444);">
+                                            <div class="ch-progress-fill h-full rounded-full relative transition-all duration-1000 ease-out" style="width: 0%; background: ${progGradient};">
                                                 <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
                                             </div>
                                         </div>
