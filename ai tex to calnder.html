@@ -8997,10 +8997,10 @@ function updateDayCycleCard() {
             // Timing Analysis Visualization logic
             let timingAnalysisHtml = '';
             const dayStart = new Date(calcDate);
-            dayStart.setHours(6, 0, 0, 0); // View window start (e.g., 06:00)
+            dayStart.setHours(0, 0, 0, 0); // View window start (e.g., 06:00)
             const dayEnd = new Date(calcDate);
             dayEnd.setDate(dayEnd.getDate() + 1);
-            dayEnd.setHours(6, 0, 0, 0);   // View window end (e.g., 06:00 Next Day)
+            dayEnd.setHours(0, 0, 0, 0);   // View window end (e.g., 06:00 Next Day)
             const totalMs = dayEnd - dayStart;
 
             if (totalMs > 0) {
@@ -9012,31 +9012,51 @@ function updateDayCycleCard() {
                 let eventsHtml = '';
                 let eventIndex = 0;
                 
+                const themeColors = {
+                    gold: { border: '#f59e0b', bg: 'rgba(245,158,11,0.2)', text: '#d97706' },
+                    lavender: { border: '#a855f7', bg: 'rgba(168,85,247,0.2)', text: '#9333ea' },
+                    emerald: { border: '#10b981', bg: 'rgba(16,185,129,0.2)', text: '#059669' },
+                    skyblue: { border: '#0ea5e9', bg: 'rgba(14,165,233,0.2)', text: '#0284c7' },
+                    rust: { border: '#ea580c', bg: 'rgba(234,88,12,0.2)', text: '#c2410c' },
+                    crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#be123c' }
+                };
+
+                const legendItems = [];
+
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
-                    // Only show specific major ones for cleanliness or all if preferred. Let's do Abhijit and Rahu Kalam as requested, or generally filter.
                     const name = eventItem.name.toUpperCase();
-                    if (name.includes("ABHIJIT") || name.includes("RAHU")) {
-                        let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
-                        let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
+                    if (name.includes("GULIKA") || name.includes("VIJAYA")) return;
+
+                    let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
+                    let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
+
+                    // Only render if it falls within our view window
+                    if (endPercent > 0 && startPercent < 100) {
+                        startPercent = Math.max(0, startPercent);
+                        endPercent = Math.min(100, endPercent);
+                        const width = endPercent - startPercent;
                         
-                        // Only render if it falls within our view window
-                        if (endPercent > 0 && startPercent < 100) {
-                            startPercent = Math.max(0, startPercent);
-                            endPercent = Math.min(100, endPercent);
-                            const width = endPercent - startPercent;
-                            
-                            // Clean up name for label (remove "Kalam", "Muhurat")
-                            let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
-                            // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
-                            const yOffset = (eventIndex % 2 === 0) ? '28px' : '42px';
-                            eventsHtml += `
-                                <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%;">
-                                    <div class="timing-event-label" style="transform: translate(-50%, ${yOffset});">${displayName}</div>
-                                </div>
-                            `;
-                            eventIndex++;
+                        // Clean up name for label (remove "Kalam", "Muhurat")
+                        let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
+                        const initial = displayName.charAt(0);
+
+                        const colors = themeColors[eventItem.themeKey] || themeColors.gold;
+
+                        if (!legendItems.some(item => item.fullName === displayName)) {
+                            legendItems.push({ fullName: displayName, colors });
                         }
+
+                        // 3-level stagger for yOffset
+                        const yOffsets = ['22px', '36px', '50px'];
+                        const yOffset = yOffsets[eventIndex % 3];
+
+                        eventsHtml += `
+                            <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%; border-color: ${colors.border}; background-color: ${colors.bg};">
+                                <div class="timing-event-label" style="transform: translate(-50%, ${yOffset}); color: ${colors.text}; font-size: 11px; font-weight: 900;">${initial}</div>
+                            </div>
+                        `;
+                        eventIndex++;
                     }
                 };
 
@@ -9052,21 +9072,21 @@ function updateDayCycleCard() {
                     <div class="timing-track-container">
                         <div class="timing-baseline"></div>
                         
-                        <!-- Timeline Markers (6 AM, 12 PM, 6 PM, 12 AM) -->
+                        <!-- Timeline Markers (12 AM, 6 AM, 12 PM, 6 PM, 12 AM) -->
                         <div class="timing-marker" style="left: 0%;">
-                            <div class="timing-marker-label text-center">6 AM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 25%;">
-                            <div class="timing-marker-label text-center">12 PM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 50%;">
-                            <div class="timing-marker-label text-center">6 PM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 75%;">
                             <div class="timing-marker-label text-center">12 AM</div>
                         </div>
-                        <div class="timing-marker" style="left: 100%;">
+                        <div class="timing-marker" style="left: 25%;">
                             <div class="timing-marker-label text-center">6 AM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 50%;">
+                            <div class="timing-marker-label text-center">12 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 75%;">
+                            <div class="timing-marker-label text-center">6 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 100%;">
+                            <div class="timing-marker-label text-center">12 AM</div>
                         </div>
 
                         ${eventsHtml}
@@ -9075,6 +9095,18 @@ function updateDayCycleCard() {
                         <div class="timing-now-indicator" style="left: ${nowPercent}%;">
                             <div class="timing-now-badge"><span data-i18n="now">NOW</span></div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm">
+                    <div class="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-2 border-b border-gray-200 pb-1">LEGEND DETAILS</div>
+                    <div class="flex flex-wrap gap-x-4 gap-y-2">
+                        ${legendItems.map(item => `
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-2.5 h-2.5 rounded-full" style="background-color: ${item.colors.text};"></div>
+                            <span class="text-[11px] font-semibold text-gray-800">${item.fullName}</span>
+                        </div>
+                        `).join('')}
                     </div>
                 </div>
                 `;
