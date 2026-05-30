@@ -964,7 +964,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-track-container {
             position: relative;
-            height: 75px;
+            height: 120px;
             margin: 0 10px;
         }
         .timing-baseline {
@@ -9047,9 +9047,9 @@ function updateDayCycleCard() {
                             legendItems.push({ fullName: displayName, colors });
                         }
 
-                        // 3-level stagger for yOffset
-                        const yOffsets = ['22px', '36px', '50px'];
-                        const yOffset = yOffsets[eventIndex % 3];
+                        // 6-level stagger for yOffset (Above & Below)
+                        const yOffsets = ['24px', '-32px', '38px', '-46px', '52px', '-60px'];
+                        const yOffset = yOffsets[eventIndex % yOffsets.length];
 
                         eventsHtml += `
                             <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%; border-color: ${colors.border}; background-color: ${colors.bg};">
