@@ -964,7 +964,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-track-container {
             position: relative;
-            height: 120px;
+            height: 85px;
             margin: 0 10px;
         }
         .timing-baseline {
@@ -9010,7 +9010,6 @@ function updateDayCycleCard() {
 
                 // Generate events
                 let eventsHtml = '';
-                let eventIndex = 0;
                 
                 const themeColors = {
                     gold: { border: '#f59e0b', bg: 'rgba(245,158,11,0.2)', text: '#d97706' },
@@ -9022,6 +9021,7 @@ function updateDayCycleCard() {
                 };
 
                 const legendItems = [];
+                const labelsArray = [];
 
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
@@ -9047,21 +9047,51 @@ function updateDayCycleCard() {
                             legendItems.push({ fullName: displayName, colors });
                         }
 
-                        // 6-level stagger for yOffset (Above & Below)
-                        const yOffsets = ['24px', '-32px', '38px', '-46px', '52px', '-60px'];
-                        const yOffset = yOffsets[eventIndex % yOffsets.length];
+                        let midPct = startPercent + (width / 2);
 
-                        eventsHtml += `
-                            <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%; border-color: ${colors.border}; background-color: ${colors.bg};">
-                                <div class="timing-event-label" style="transform: translate(-50%, ${yOffset}); color: ${colors.text}; font-size: 11px; font-weight: 900;">${initial}</div>
-                            </div>
-                        `;
-                        eventIndex++;
+                        labelsArray.push({
+                            cssClass,
+                            displayName,
+                            initial,
+                            bg: colors.bg,
+                            border: colors.border,
+                            text: colors.text,
+                            startPercent,
+                            width,
+                            midPct
+                        });
                     }
                 };
 
                 result.auspicious.forEach(item => addEventToTimeline(item, 'auspicious'));
                 result.inauspicious.forEach(item => addEventToTimeline(item, 'inauspicious'));
+
+                // Sort by natural midPct to apply anti-collision properly
+                labelsArray.sort((a, b) => a.midPct - b.midPct);
+
+                // Apply Smart Anti-Collision Algorithm
+                const MIN_GAP = 4.5;
+                for (let i = 1; i < labelsArray.length; i++) {
+                    if (labelsArray[i].midPct - labelsArray[i-1].midPct < MIN_GAP) {
+                        labelsArray[i].midPct = labelsArray[i-1].midPct + MIN_GAP;
+                    }
+                }
+
+                // Generate Event Bars (without labels)
+                labelsArray.forEach(item => {
+                    eventsHtml += `
+                        <div class="timing-event ${item.cssClass}" style="left: ${item.startPercent}%; width: ${item.width}%; border-color: ${item.border}; background-color: ${item.bg};">
+                        </div>
+                    `;
+                });
+
+                // Generate standalone Labels
+                let labelsHtml = '';
+                labelsArray.forEach(item => {
+                    labelsHtml += `
+                        <div class="timing-event-label-standalone" style="position: absolute; top: 50%; left: ${item.midPct}%; transform: translate(-50%, 20px); color: ${item.text}; font-size: 11px; font-weight: 900; z-index: 10;">${item.initial}</div>
+                    `;
+                });
 
                 timingAnalysisHtml = `
                 <div class="timing-analysis-wrapper">
@@ -9090,6 +9120,7 @@ function updateDayCycleCard() {
                         </div>
 
                         ${eventsHtml}
+                        ${labelsHtml}
 
                         <!-- NOW Indicator -->
                         <div class="timing-now-indicator" style="left: ${nowPercent}%;">
