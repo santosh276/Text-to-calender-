@@ -964,7 +964,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-track-container {
             position: relative;
-            height: 140px;
+            height: 90px;
             margin: 0 10px;
         }
         .timing-baseline {
@@ -9011,6 +9011,7 @@ function updateDayCycleCard() {
                 // Generate events
                 let eventsHtml = '';
                 let eventIndex = 0;
+                let legendItems = [];
                 
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
@@ -9040,12 +9041,14 @@ function updateDayCycleCard() {
                             
                             // Clean up name for label (remove "Kalam", "Muhurat")
                             let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
+                            const shortName = displayName.charAt(0);
+                            legendItems.push({ short: shortName, full: displayName, colors: colors });
                             // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
-                            const yOffsets = ['-24px', '38px', '-40px', '56px'];
-                            const yOffset = yOffsets[eventIndex % yOffsets.length];
+                            const yOffsets = ['-24px', '24px'];
+                            const yOffset = yOffsets[eventIndex % 2];
                             eventsHtml += `
                                 <div class="timing-event" style="left: ${startPercent}%; width: ${width}%; background-color: ${colors.bg}; border-color: ${colors.border};">
-                                    <div class="timing-event-label" style="transform: translate(-50%, ${yOffset}); color: ${colors.text}; font-size: 8.5px; font-weight: 900; letter-spacing: 0.05em; white-space: nowrap;">${displayName}</div>
+                                    <div class="timing-event-label flex items-center justify-center rounded-[4px]" style="transform: translate(-50%, ${yOffset}); color: ${colors.text}; background-color: ${colors.bg}; border: 1px solid ${colors.border}; font-size: 8.5px; font-weight: 900; width: 14px; height: 14px; line-height: 1;">${shortName}</div>
                                 </div>
                             `;
                             eventIndex++;
@@ -9055,6 +9058,15 @@ function updateDayCycleCard() {
 
                 result.auspicious.forEach(item => addEventToTimeline(item, 'auspicious'));
                 result.inauspicious.forEach(item => addEventToTimeline(item, 'inauspicious'));
+
+                let legendHtml = '<div class="flex flex-wrap gap-x-3 gap-y-2 mt-4 pt-3 border-t border-white/10 justify-center">';
+                legendItems.forEach(item => {
+                    legendHtml += `<div class="flex items-center gap-1.5">
+                        <span class="w-4 h-4 rounded-[4px] flex items-center justify-center text-[9px] font-bold" style="background-color: ${item.colors.bg}; border: 1px solid ${item.colors.border}; color: ${item.colors.text};">${item.short}</span>
+                        <span class="text-[10px] font-semibold text-gray-400 tracking-wide">${item.full}</span>
+                    </div>`;
+                });
+                legendHtml += '</div>';
 
                 timingAnalysisHtml = `
                 <div class="timing-analysis-wrapper">
@@ -9089,6 +9101,7 @@ function updateDayCycleCard() {
                             <div class="timing-now-badge"><span data-i18n="now">NOW</span></div>
                         </div>
                     </div>
+                    ${legendHtml}
                 </div>
                 `;
             }
