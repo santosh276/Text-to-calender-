@@ -964,7 +964,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-track-container {
             position: relative;
-            height: 75px;
+            height: 115px;
             margin: 0 10px;
         }
         .timing-baseline {
@@ -8997,10 +8997,10 @@ function updateDayCycleCard() {
             // Timing Analysis Visualization logic
             let timingAnalysisHtml = '';
             const dayStart = new Date(calcDate);
-            dayStart.setHours(6, 0, 0, 0); // View window start (e.g., 06:00)
+            dayStart.setHours(0, 0, 0, 0); // View window start (e.g., 00:00)
             const dayEnd = new Date(calcDate);
             dayEnd.setDate(dayEnd.getDate() + 1);
-            dayEnd.setHours(6, 0, 0, 0);   // View window end (e.g., 06:00 Next Day)
+            dayEnd.setHours(0, 0, 0, 0);   // View window end (e.g., 00:00 Next Day)
             const totalMs = dayEnd - dayStart;
 
             if (totalMs > 0) {
@@ -9022,7 +9022,9 @@ function updateDayCycleCard() {
                             emerald: { border: '#10b981', bg: 'rgba(16,185,129,0.2)', text: '#059669' },
                             skyblue: { border: '#0ea5e9', bg: 'rgba(14,165,233,0.2)', text: '#0284c7' },
                             rust: { border: '#ea580c', bg: 'rgba(234,88,12,0.2)', text: '#c2410c' },
-                            crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#be123c' }
+                            crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#be123c' },
+                            royal: { border: '#3b82f6', bg: 'rgba(59,130,246,0.2)', text: '#2563eb' },
+                            slate: { border: '#64748b', bg: 'rgba(100,116,139,0.2)', text: '#475569' }
                         };
                         const themeKey = eventItem.themeKey || (cssClass === 'auspicious' ? 'emerald' : 'crimson');
                         const colors = colorsMap[themeKey] || colorsMap['gold'];
@@ -9039,8 +9041,8 @@ function updateDayCycleCard() {
                             // Clean up name for label (remove "Kalam", "Muhurat")
                             let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
                             // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
-                            const yOffsets = ['22px', '36px', '50px', '64px'];
-                            const yOffset = yOffsets[eventIndex % yOffsets.length];
+                            const yOffsets = ['25px', '45px', '65px', '85px'];
+                            const yOffset = yOffsets[eventIndex % 4];
                             eventsHtml += `
                                 <div class="timing-event" style="left: ${startPercent}%; width: ${width}%; background-color: ${colors.bg}; border-color: ${colors.border};">
                                     <div class="timing-event-label" style="transform: translate(-50%, ${yOffset}); color: ${colors.text}; font-size: 8.5px; font-weight: 900; letter-spacing: 0.05em;">${displayName}</div>
@@ -9063,21 +9065,21 @@ function updateDayCycleCard() {
                     <div class="timing-track-container">
                         <div class="timing-baseline"></div>
                         
-                        <!-- Timeline Markers (6 AM, 12 PM, 6 PM, 12 AM) -->
+                        <!-- Timeline Markers (12 AM, 6 AM, 12 PM, 6 PM, 12 AM) -->
                         <div class="timing-marker" style="left: 0%;">
-                            <div class="timing-marker-label text-center">6 AM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 25%;">
-                            <div class="timing-marker-label text-center">12 PM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 50%;">
-                            <div class="timing-marker-label text-center">6 PM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 75%;">
                             <div class="timing-marker-label text-center">12 AM</div>
                         </div>
-                        <div class="timing-marker" style="left: 100%;">
+                        <div class="timing-marker" style="left: 25%;">
                             <div class="timing-marker-label text-center">6 AM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 50%;">
+                            <div class="timing-marker-label text-center">12 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 75%;">
+                            <div class="timing-marker-label text-center">6 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 100%;">
+                            <div class="timing-marker-label text-center">12 AM</div>
                         </div>
 
                         ${eventsHtml}
