@@ -9014,29 +9014,41 @@ function updateDayCycleCard() {
                 
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
-                    // Only show specific major ones for cleanliness or all if preferred. Let's do Abhijit and Rahu Kalam as requested, or generally filter.
                     const name = eventItem.name.toUpperCase();
-                    if (name.includes("ABHIJIT") || name.includes("RAHU")) {
-                        let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
-                        let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
+
+                    let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
+                    let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
+
+                    // Only render if it falls within our view window
+                    if (endPercent > 0 && startPercent < 100) {
+                        startPercent = Math.max(0, startPercent);
+                        endPercent = Math.min(100, endPercent);
+                        const width = endPercent - startPercent;
                         
-                        // Only render if it falls within our view window
-                        if (endPercent > 0 && startPercent < 100) {
-                            startPercent = Math.max(0, startPercent);
-                            endPercent = Math.min(100, endPercent);
-                            const width = endPercent - startPercent;
-                            
-                            // Clean up name for label (remove "Kalam", "Muhurat")
-                            let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
-                            // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
-                            const yOffset = (eventIndex % 2 === 0) ? '28px' : '42px';
-                            eventsHtml += `
-                                <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%;">
-                                    <div class="timing-event-label" style="transform: translate(-50%, ${yOffset});">${displayName}</div>
-                                </div>
-                            `;
-                            eventIndex++;
-                        }
+                        // Clean up name for label (remove "Kalam", "Muhurat")
+                        let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
+
+                        const colorMap = {
+                            gold: { border: '#f59e0b', bg: 'rgba(245,158,11,0.2)', text: '#d97706' },
+                            lavender: { border: '#a855f7', bg: 'rgba(168,85,247,0.2)', text: '#9333ea' },
+                            emerald: { border: '#10b981', bg: 'rgba(16,185,129,0.2)', text: '#059669' },
+                            royal: { border: '#3b82f6', bg: 'rgba(59,130,246,0.2)', text: '#2563eb' },
+                            skyblue: { border: '#0ea5e9', bg: 'rgba(14,165,233,0.2)', text: '#0284c7' },
+                            rust: { border: '#ea580c', bg: 'rgba(234,88,12,0.2)', text: '#c2410c' },
+                            crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#be123c' },
+                            slate: { border: '#64748b', bg: 'rgba(100,116,139,0.2)', text: '#475569' }
+                        };
+                        const colors = colorMap[eventItem.themeKey] || colorMap['slate'];
+
+                        const yOffsets = ['22px', '36px', '50px', '64px'];
+                        const yOffset = yOffsets[eventIndex % 4];
+
+                        eventsHtml += `
+                            <div class="timing-event" style="left: ${startPercent}%; width: ${width}%; background-color: ${colors.bg}; border-color: ${colors.border};">
+                                <div class="timing-event-label" style="transform: translate(-50%, ${yOffset}); color: ${colors.text}; font-size: 8.5px; font-weight: 900; letter-spacing: 0.05em;">${displayName}</div>
+                            </div>
+                        `;
+                        eventIndex++;
                     }
                 };
 
