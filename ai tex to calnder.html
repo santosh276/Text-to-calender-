@@ -964,7 +964,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-track-container {
             position: relative;
-            height: 115px;
+            height: 140px;
             margin: 0 10px;
         }
         .timing-baseline {
@@ -9041,11 +9041,11 @@ function updateDayCycleCard() {
                             // Clean up name for label (remove "Kalam", "Muhurat")
                             let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
                             // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
-                            const yOffsets = ['25px', '45px', '65px', '85px'];
-                            const yOffset = yOffsets[eventIndex % 4];
+                            const yOffsets = ['-24px', '38px', '-40px', '56px'];
+                            const yOffset = yOffsets[eventIndex % yOffsets.length];
                             eventsHtml += `
                                 <div class="timing-event" style="left: ${startPercent}%; width: ${width}%; background-color: ${colors.bg}; border-color: ${colors.border};">
-                                    <div class="timing-event-label" style="transform: translate(-50%, ${yOffset}); color: ${colors.text}; font-size: 8.5px; font-weight: 900; letter-spacing: 0.05em;">${displayName}</div>
+                                    <div class="timing-event-label" style="transform: translate(-50%, ${yOffset}); color: ${colors.text}; font-size: 8.5px; font-weight: 900; letter-spacing: 0.05em; white-space: nowrap;">${displayName}</div>
                                 </div>
                             `;
                             eventIndex++;
