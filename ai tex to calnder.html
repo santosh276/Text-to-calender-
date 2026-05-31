@@ -941,8 +941,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.5rem;
         }
         .timing-analysis-header {
             display: flex;
@@ -952,20 +952,20 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-analysis-title {
             font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 2px;
+            font-weight: 800;
+            letter-spacing: 3px;
         }
         .timing-analysis-live {
             color: #22c55e;
             font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 1px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
             text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
         }
         .timing-track-container {
             position: relative;
-            height: 75px;
-            margin: 0 10px;
+            height: 90px;
+            margin: 30px 10px 0 10px;
         }
         .timing-baseline {
             position: absolute;
@@ -1027,8 +1027,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-now-indicator {
             position: absolute;
-            top: 0;
-            height: 38px;
+            top: auto;
+            bottom: 50%;
+            height: 35px;
             width: 2px;
             background-color: #22c55e;
             transform: translateX(-50%);
@@ -1037,7 +1038,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-now-badge {
             position: absolute;
-            top: -25px;
+            top: auto;
+            bottom: 100%;
+            margin-bottom: 2px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #22c55e;
@@ -1525,7 +1528,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             position: relative;
             z-index: 10;
         }
@@ -1605,6 +1608,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         /* NEW PREMIUM THEMES (Lavender & Royal) */
         .bg-lavender-gradient { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.3); }
         .bg-royal-gradient { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.3); }
+        .bg-indigo-gradient { background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3); }
+        .bg-teal-gradient { background: linear-gradient(135deg, #0d9488 0%, #115e59 100%); box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.3); }
+        .bg-stone-gradient { background: linear-gradient(135deg, #57534e 0%, #1c1917 100%); box-shadow: 0 10px 25px -5px rgba(87, 83, 78, 0.3); }
+        .bg-rose-gradient { background: linear-gradient(135deg, #f43f5e 0%, #9f1239 100%); box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.3); }
+        .bg-sunset-gradient { background: linear-gradient(135deg, #f97316 0%, #db2777 100%); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.3); }
+        .bg-midnight-gradient { background: linear-gradient(135deg, #4338ca 0%, #1e1b4b 100%); box-shadow: 0 10px 25px -5px rgba(67, 56, 202, 0.3); }
+        .bg-aqua-gradient { background: linear-gradient(135deg, #06b6d4 0%, #0369a1 100%); box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.3); }
 
         /* FOOTER THEMES */
         .footer-emerald { background: rgba(6, 78, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); }
@@ -1615,6 +1625,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .footer-slate { background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(71, 85, 105, 0.3); }
         .footer-lavender { background: rgba(76, 29, 149, 0.3); border: 1px solid rgba(167, 139, 250, 0.3); }
         .footer-royal { background: rgba(30, 58, 138, 0.3); border: 1px solid rgba(96, 165, 250, 0.3); }
+        .footer-indigo { background: rgba(49, 46, 129, 0.3); border: 1px solid rgba(99, 102, 241, 0.3); }
+        .footer-teal { background: rgba(17, 94, 89, 0.3); border: 1px solid rgba(20, 184, 166, 0.3); }
+        .footer-stone { background: rgba(28, 25, 23, 0.3); border: 1px solid rgba(120, 113, 108, 0.3); }
+        .footer-rose { background: rgba(159, 18, 57, 0.3); border: 1px solid rgba(225, 29, 72, 0.3); }
+        .footer-sunset { background: rgba(157, 23, 77, 0.3); border: 1px solid rgba(219, 39, 119, 0.3); }
+        .footer-midnight { background: rgba(30, 27, 75, 0.3); border: 1px solid rgba(49, 46, 129, 0.3); }
+        .footer-aqua { background: rgba(3, 105, 161, 0.3); border: 1px solid rgba(8, 145, 178, 0.3); }
 
         .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; }
         .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; }
@@ -1624,6 +1641,13 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; }
         .badge-lavender { background-color: rgba(76, 29, 149, 0.25); border-color: rgba(167, 139, 250, 0.5); color: white; }
         .badge-royal { background-color: rgba(30, 58, 138, 0.25); border-color: rgba(96, 165, 250, 0.5); color: white; }
+        .badge-indigo { background-color: rgba(49, 46, 129, 0.25); border-color: rgba(99, 102, 241, 0.5); color: white; }
+        .badge-teal { background-color: rgba(17, 94, 89, 0.25); border-color: rgba(20, 184, 166, 0.5); color: white; }
+        .badge-stone { background-color: rgba(28, 25, 23, 0.25); border-color: rgba(120, 113, 108, 0.5); color: white; }
+        .badge-rose { background-color: rgba(159, 18, 57, 0.25); border-color: rgba(225, 29, 72, 0.5); color: white; }
+        .badge-sunset { background-color: rgba(157, 23, 77, 0.25); border-color: rgba(219, 39, 119, 0.5); color: white; }
+        .badge-midnight { background-color: rgba(30, 27, 75, 0.25); border-color: rgba(49, 46, 129, 0.5); color: white; }
+        .badge-aqua { background-color: rgba(3, 105, 161, 0.25); border-color: rgba(8, 145, 178, 0.5); color: white; }
 
         .dot-emerald { border-color: #10b981; }
         .dot-gold { border-color: #f59e0b; }
@@ -5596,7 +5620,7 @@ function getCDNUrl(originalUrl) {
                     if (cachedString && cleanText === cachedString) {
                          console.log("Smart Diff: Data is identical. Update timestamp only.");
                          localStorage.setItem('panchang_last_sync_ts', Date.now());
-                         // --- EDITOR LOGIC START ---
+                                                 // --- EDITOR LOGIC START ---
                          if(syncBtn) showToast("Sync: No changes found.");
                          // --- EDITOR LOGIC END ---
                          return; 
@@ -7959,6 +7983,18 @@ function renderCalendarGrid(data) {
                 "bg-slate-gradient", "dot-slate", "slate"
             ));
 
+            // Dur Muhurtam
+            const durSlots = [[13], [8, 11], [3, 10], [7], [9, 12], [3, 7], [1]];
+            const daySlots = durSlots[dayOfWeek];
+            daySlots.forEach(slot => {
+                const durStart = sunrise.getTime() + (slot * muhurta);
+                const durEnd = durStart + muhurta;
+                inauspicious.push(createTimeObj(
+                    "Dur Muhurtam", durStart, durEnd, 
+                    "bad", "An inauspicious period during the day. Avoid starting important tasks.", 
+                    "bg-stone-gradient", "dot-stone", "stone"
+                ));
+            });
 
             // --- AUSPICIOUS ---
 
@@ -7976,7 +8012,24 @@ function renderCalendarGrid(data) {
             auspicious.push(createTimeObj(
                 "Pratah Sandhya", pratahStart, sunrise.getTime(), 
                 "good", "The holy morning hours. A great time for your daily prayers and worship.", 
-                "bg-lavender-gradient", "dot-lavender", "lavender"
+                "bg-rose-gradient", "dot-rose", "rose"
+            ));
+
+            // Sayahna Sandhya (Sunset - 48m to Sunset)
+            const sayahnaStart = sunset.getTime() - (48 * 60000);
+            auspicious.push(createTimeObj(
+                "Sayahna Sandhya", sayahnaStart, sunset.getTime(), 
+                "good", "Evening twilight period. Ideal for lighting lamps and evening prayers.", 
+                "bg-sunset-gradient", "dot-sunset", "sunset"
+            ));
+
+            // Nishita Muhurta (Midnight - 24m to Midnight + 24m)
+            const nightDuration = 86400000 - duration;
+            const solarMidnight = sunset.getTime() + (nightDuration / 2);
+            auspicious.push(createTimeObj(
+                "Nishita Muhurta", solarMidnight - (24 * 60000), solarMidnight + (24 * 60000), 
+                "good", "The auspicious midnight hour, excellent for spiritual practices and deep meditation.", 
+                "bg-midnight-gradient", "dot-midnight", "midnight"
             ));
 
             // Abhijit Muhurat (8th Muhurta) - Usually skipped on Wednesday (3), but requested to always show.
@@ -8025,7 +8078,7 @@ function renderCalendarGrid(data) {
                          auspicious.push(createTimeObj(
                             "Amrit Kalam", amritStart, amritEnd, 
                             "good", "A highly blessed time. Highly lucky for any important work or new beginnings.", 
-                            "bg-skyblue-gradient", "dot-skyblue", "skyblue"
+                            "bg-aqua-gradient", "dot-aqua", "aqua"
                          ));
                      }
                 }
@@ -8997,10 +9050,10 @@ function updateDayCycleCard() {
             // Timing Analysis Visualization logic
             let timingAnalysisHtml = '';
             const dayStart = new Date(calcDate);
-            dayStart.setHours(6, 0, 0, 0); // View window start (e.g., 06:00)
+            dayStart.setHours(0, 0, 0, 0); // View window start (e.g., 06:00)
             const dayEnd = new Date(calcDate);
             dayEnd.setDate(dayEnd.getDate() + 1);
-            dayEnd.setHours(6, 0, 0, 0);   // View window end (e.g., 06:00 Next Day)
+            dayEnd.setHours(0, 0, 0, 0);   // View window end (e.g., 06:00 Next Day)
             const totalMs = dayEnd - dayStart;
 
             if (totalMs > 0) {
@@ -9010,38 +9063,90 @@ function updateDayCycleCard() {
 
                 // Generate events
                 let eventsHtml = '';
-                let eventIndex = 0;
                 
+                const themeColors = {
+                    gold: { border: '#f59e0b', bg: 'rgba(245,158,11,0.2)', text: '#d97706' },
+                    lavender: { border: '#a855f7', bg: 'rgba(168,85,247,0.2)', text: '#9333ea' },
+                    emerald: { border: '#10b981', bg: 'rgba(16,185,129,0.2)', text: '#059669' },
+                    skyblue: { border: '#0ea5e9', bg: 'rgba(14,165,233,0.2)', text: '#0284c7' },
+                    rust: { border: '#ea580c', bg: 'rgba(234,88,12,0.2)', text: '#c2410c' },
+                    crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#be123c' },
+                    rose: { border: '#f43f5e', bg: 'rgba(244,63,94,0.2)', text: '#e11d48' },
+                    aqua: { border: '#06b6d4', bg: 'rgba(6,182,212,0.2)', text: '#0891b2' }
+                };
+                
+                const legendItems = [];
+                const labelsArray = [];
+
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
-                    // Only show specific major ones for cleanliness or all if preferred. Let's do Abhijit and Rahu Kalam as requested, or generally filter.
                     const name = eventItem.name.toUpperCase();
-                    if (name.includes("ABHIJIT") || name.includes("RAHU")) {
-                        let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
-                        let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
+                    if (name.includes("GULIKA") || name.includes("VIJAYA") || name.includes("NISHITA") || name.includes("SAYAHNA") || name.includes("DUR MUHURTAM")) return;
+                    
+                    let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
+                    let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
+                    
+                    // Only render if it falls within our view window
+                    if (endPercent > 0 && startPercent < 100) {
+                        startPercent = Math.max(0, startPercent);
+                        endPercent = Math.min(100, endPercent);
+                        const width = endPercent - startPercent;
                         
-                        // Only render if it falls within our view window
-                        if (endPercent > 0 && startPercent < 100) {
-                            startPercent = Math.max(0, startPercent);
-                            endPercent = Math.min(100, endPercent);
-                            const width = endPercent - startPercent;
-                            
-                            // Clean up name for label (remove "Kalam", "Muhurat")
-                            let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
-                            // Overlapping ରୋକିବା ପାଇଁ ଏକ ଅକ୍ଷରକୁ ଟିକେ ତଳକୁ କରାଗଲା
-                            const yOffset = (eventIndex % 2 === 0) ? '28px' : '42px';
-                            eventsHtml += `
-                                <div class="timing-event ${cssClass}" style="left: ${startPercent}%; width: ${width}%;">
-                                    <div class="timing-event-label" style="transform: translate(-50%, ${yOffset});">${displayName}</div>
-                                </div>
-                            `;
-                            eventIndex++;
+                        // Clean up name for label (remove "Kalam", "Muhurat")
+                        let displayName = name.replace(" KALAM", "").replace(" MUHURAT", "").trim();
+                        const initial = displayName.charAt(0);
+                        
+                        const colors = themeColors[eventItem.themeKey] || themeColors.gold;
+                        
+                        if (!legendItems.some(item => item.fullName === name)) {
+                            legendItems.push({ fullName: name, initial, color: colors.text });
                         }
+
+                        let midPct = startPercent + (width / 2);
+
+                        labelsArray.push({
+                            cssClass,
+                            displayName,
+                            initial,
+                            bg: colors.bg,
+                            border: colors.border,
+                            text: colors.text,
+                            startPercent,
+                            width,
+                            midPct
+                        });
                     }
                 };
 
                 result.auspicious.forEach(item => addEventToTimeline(item, 'auspicious'));
                 result.inauspicious.forEach(item => addEventToTimeline(item, 'inauspicious'));
+
+                // Sort by natural midPct to apply anti-collision properly
+                labelsArray.sort((a, b) => a.midPct - b.midPct);
+
+                // Apply Smart Anti-Collision Algorithm
+                const MIN_GAP = 4.5;
+                for (let i = 1; i < labelsArray.length; i++) {
+                    if (labelsArray[i].midPct - labelsArray[i-1].midPct < MIN_GAP) {
+                        labelsArray[i].midPct = labelsArray[i-1].midPct + MIN_GAP;
+                    }
+                }
+
+                // Generate Event Bars (without labels)
+                labelsArray.forEach(item => {
+                    eventsHtml += `
+                        <div class="timing-event ${item.cssClass}" style="left: ${item.startPercent}%; width: ${item.width}%; border-color: ${item.border}; background-color: ${item.bg};">
+                        </div>
+                    `;
+                });
+
+                // Generate standalone Labels
+                let labelsHtml = '';
+                labelsArray.forEach(item => {
+                    labelsHtml += `
+                        <div class="timing-event-label-standalone" style="position: absolute; top: 50%; left: ${item.midPct}%; transform: translate(-50%, 20px); color: ${item.text}; text-shadow: 0 0 2px ${item.text}; font-size: 11px; font-weight: 900; z-index: 10;">${item.initial}</div>
+                    `;
+                });
 
                 timingAnalysisHtml = `
                 <div class="timing-analysis-wrapper">
@@ -9052,29 +9157,50 @@ function updateDayCycleCard() {
                     <div class="timing-track-container">
                         <div class="timing-baseline"></div>
                         
-                        <!-- Timeline Markers (6 AM, 12 PM, 6 PM, 12 AM) -->
+                        <!-- Timeline Markers (12 AM, 6 AM, 12 PM, 6 PM, 12 AM) -->
                         <div class="timing-marker" style="left: 0%;">
-                            <div class="timing-marker-label text-center">6 AM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 25%;">
-                            <div class="timing-marker-label text-center">12 PM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 50%;">
-                            <div class="timing-marker-label text-center">6 PM</div>
-                        </div>
-                        <div class="timing-marker" style="left: 75%;">
                             <div class="timing-marker-label text-center">12 AM</div>
                         </div>
-                        <div class="timing-marker" style="left: 100%;">
+                        <div class="timing-marker" style="left: 25%;">
                             <div class="timing-marker-label text-center">6 AM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 50%;">
+                            <div class="timing-marker-label text-center">12 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 75%;">
+                            <div class="timing-marker-label text-center">6 PM</div>
+                        </div>
+                        <div class="timing-marker" style="left: 100%;">
+                            <div class="timing-marker-label text-center">12 AM</div>
                         </div>
 
                         ${eventsHtml}
+                        ${labelsHtml}
 
                         <!-- NOW Indicator -->
                         <div class="timing-now-indicator" style="left: ${nowPercent}%;">
                             <div class="timing-now-badge"><span data-i18n="now">NOW</span></div>
                         </div>
+                    </div>
+                </div>
+                
+                <div class="mt-2 rounded-xl p-3 shadow-md" style="background: linear-gradient(135deg, #120e22 0%, #1b172d 100%); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-3">
+                        ${legendItems.map(item => `
+                        <div class="flex items-center gap-2">
+                            <!-- Left Side: Dot and Initial aligned perfectly -->
+                            <div class="flex items-center justify-between shrink-0" style="width: 22px;">
+                                <div class="w-1.5 h-1.5 rounded-full" style="background-color: ${item.color}; box-shadow: 0 0 2px ${item.color};"></div>
+                                <span class="font-black text-[12px] leading-none text-center inline-block w-[12px]" style="color: ${item.color}; text-shadow: 0 0 1px ${item.color};">${item.initial}</span>
+                            </div>
+                            
+                            <!-- Colon Separator -->
+                            <span class="text-[12px] font-bold leading-none shrink-0" style="color: rgba(255, 255, 255, 0.3);">:</span>
+                            
+                            <!-- Colorful Glowing Full Name -->
+                            <span class="text-[10px] md:text-[11px] font-bold tracking-wide uppercase leading-none truncate" style="color: ${item.color}; text-shadow: 0 0 1px ${item.color}; opacity: 0.9;">${item.fullName}</span>
+                        </div>
+                        `).join('')}
                     </div>
                 </div>
                 `;
@@ -9103,7 +9229,7 @@ function updateDayCycleCard() {
                 if (list.length === 0) return '';
                 
                 let listHtml = `
-                <div class="mt-8 mb-4 flex items-center gap-3 relative z-30">
+                <div class="mb-3 flex items-center gap-3 relative z-30" style="margin-top: 20px;">
                     <div class="w-8 h-8 rounded-full ${bgIconClass} flex items-center justify-center ${titleColorClass} shadow-sm">
                         ${iconHtml}
                     </div>
