@@ -965,7 +965,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .timing-track-container {
             position: relative;
             height: 60px;
-            margin: 0 10px;
+            margin: 30px 10px 0 10px;
         }
         .timing-baseline {
             position: absolute;
@@ -1027,8 +1027,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-now-indicator {
             position: absolute;
-            top: -15px;
+            top: auto;
             bottom: 50%;
+            height: 20px;
             width: 2px;
             background-color: #22c55e;
             transform: translateX(-50%);
@@ -1037,7 +1038,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         }
         .timing-now-badge {
             position: absolute;
-            top: -25px;
+            top: auto;
+            bottom: 100%;
+            margin-bottom: 2px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #22c55e;
