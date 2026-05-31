@@ -1611,6 +1611,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .bg-indigo-gradient { background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3); }
         .bg-teal-gradient { background: linear-gradient(135deg, #0d9488 0%, #115e59 100%); box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.3); }
         .bg-stone-gradient { background: linear-gradient(135deg, #57534e 0%, #1c1917 100%); box-shadow: 0 10px 25px -5px rgba(87, 83, 78, 0.3); }
+        .bg-rose-gradient { background: linear-gradient(135deg, #f43f5e 0%, #9f1239 100%); box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.3); }
+        .bg-sunset-gradient { background: linear-gradient(135deg, #f97316 0%, #db2777 100%); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.3); }
+        .bg-midnight-gradient { background: linear-gradient(135deg, #4338ca 0%, #1e1b4b 100%); box-shadow: 0 10px 25px -5px rgba(67, 56, 202, 0.3); }
+        .bg-aqua-gradient { background: linear-gradient(135deg, #06b6d4 0%, #0369a1 100%); box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.3); }
 
         /* FOOTER THEMES */
         .footer-emerald { background: rgba(6, 78, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); }
@@ -1624,6 +1628,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .footer-indigo { background: rgba(49, 46, 129, 0.3); border: 1px solid rgba(99, 102, 241, 0.3); }
         .footer-teal { background: rgba(17, 94, 89, 0.3); border: 1px solid rgba(20, 184, 166, 0.3); }
         .footer-stone { background: rgba(28, 25, 23, 0.3); border: 1px solid rgba(120, 113, 108, 0.3); }
+        .footer-rose { background: rgba(159, 18, 57, 0.3); border: 1px solid rgba(225, 29, 72, 0.3); }
+        .footer-sunset { background: rgba(157, 23, 77, 0.3); border: 1px solid rgba(219, 39, 119, 0.3); }
+        .footer-midnight { background: rgba(30, 27, 75, 0.3); border: 1px solid rgba(49, 46, 129, 0.3); }
+        .footer-aqua { background: rgba(3, 105, 161, 0.3); border: 1px solid rgba(8, 145, 178, 0.3); }
 
         .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; }
         .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; }
@@ -1636,6 +1644,10 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .badge-indigo { background-color: rgba(49, 46, 129, 0.25); border-color: rgba(99, 102, 241, 0.5); color: white; }
         .badge-teal { background-color: rgba(17, 94, 89, 0.25); border-color: rgba(20, 184, 166, 0.5); color: white; }
         .badge-stone { background-color: rgba(28, 25, 23, 0.25); border-color: rgba(120, 113, 108, 0.5); color: white; }
+        .badge-rose { background-color: rgba(159, 18, 57, 0.25); border-color: rgba(225, 29, 72, 0.5); color: white; }
+        .badge-sunset { background-color: rgba(157, 23, 77, 0.25); border-color: rgba(219, 39, 119, 0.5); color: white; }
+        .badge-midnight { background-color: rgba(30, 27, 75, 0.25); border-color: rgba(49, 46, 129, 0.5); color: white; }
+        .badge-aqua { background-color: rgba(3, 105, 161, 0.25); border-color: rgba(8, 145, 178, 0.5); color: white; }
 
         .dot-emerald { border-color: #10b981; }
         .dot-gold { border-color: #f59e0b; }
@@ -8000,7 +8012,7 @@ function renderCalendarGrid(data) {
             auspicious.push(createTimeObj(
                 "Pratah Sandhya", pratahStart, sunrise.getTime(), 
                 "good", "The holy morning hours. A great time for your daily prayers and worship.", 
-                "bg-lavender-gradient", "dot-lavender", "lavender"
+                "bg-rose-gradient", "dot-rose", "rose"
             ));
 
             // Sayahna Sandhya (Sunset - 48m to Sunset)
@@ -8008,7 +8020,7 @@ function renderCalendarGrid(data) {
             auspicious.push(createTimeObj(
                 "Sayahna Sandhya", sayahnaStart, sunset.getTime(),
                 "good", "Evening twilight period. Ideal for lighting lamps and evening prayers.",
-                "bg-teal-gradient", "dot-teal", "teal"
+                "bg-sunset-gradient", "dot-sunset", "sunset"
             ));
 
             // Nishita Muhurta (Midnight - 24m to Midnight + 24m)
@@ -8017,7 +8029,7 @@ function renderCalendarGrid(data) {
             auspicious.push(createTimeObj(
                 "Nishita Muhurta", solarMidnight - (24 * 60000), solarMidnight + (24 * 60000),
                 "good", "The auspicious midnight hour, excellent for spiritual practices and deep meditation.",
-                "bg-indigo-gradient", "dot-indigo", "indigo"
+                "bg-midnight-gradient", "dot-midnight", "midnight"
             ));
 
             // Abhijit Muhurat (8th Muhurta) - Usually skipped on Wednesday (3), but requested to always show.
@@ -8066,7 +8078,7 @@ function renderCalendarGrid(data) {
                          auspicious.push(createTimeObj(
                             "Amrit Kalam", amritStart, amritEnd, 
                             "good", "A highly blessed time. Highly lucky for any important work or new beginnings.", 
-                            "bg-skyblue-gradient", "dot-skyblue", "skyblue"
+                            "bg-aqua-gradient", "dot-aqua", "aqua"
                          ));
                      }
                 }
@@ -9058,7 +9070,9 @@ function updateDayCycleCard() {
                     emerald: { border: '#10b981', bg: 'rgba(16,185,129,0.2)', text: '#059669' },
                     skyblue: { border: '#0ea5e9', bg: 'rgba(14,165,233,0.2)', text: '#0284c7' },
                     rust: { border: '#ea580c', bg: 'rgba(234,88,12,0.2)', text: '#c2410c' },
-                    crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#be123c' }
+                    crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#be123c' },
+                    rose: { border: '#f43f5e', bg: 'rgba(244,63,94,0.2)', text: '#e11d48' },
+                    aqua: { border: '#06b6d4', bg: 'rgba(6,182,212,0.2)', text: '#0891b2' }
                 };
 
                 const legendItems = [];
