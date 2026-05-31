@@ -9092,7 +9092,7 @@ function updateDayCycleCard() {
                 let labelsHtml = '';
                 labelsArray.forEach(item => {
                     labelsHtml += `
-                        <div class="timing-event-label-standalone" style="position: absolute; top: 50%; left: ${item.midPct}%; transform: translate(-50%, 20px); color: ${item.text}; text-shadow: 0 0 6px ${item.text}, 0 0 10px ${item.text}; font-size: 11px; font-weight: 900; z-index: 10;">${item.initial}</div>
+                        <div class="timing-event-label-standalone" style="position: absolute; top: 50%; left: ${item.midPct}%; transform: translate(-50%, 20px); color: ${item.text}; text-shadow: 0 0 4px ${item.text}; font-size: 11px; font-weight: 900; z-index: 10;">${item.initial}</div>
                     `;
                 });
 
@@ -9138,15 +9138,15 @@ function updateDayCycleCard() {
                         <div class="flex items-center gap-2">
                             <!-- Left Side: Dot and Initial aligned perfectly -->
                             <div class="flex items-center justify-between shrink-0" style="width: 22px;">
-                                <div class="w-1.5 h-1.5 rounded-full" style="background-color: ${item.color}; box-shadow: 0 0 6px ${item.color};"></div>
-                                <span class="font-black text-[12px] leading-none text-center inline-block w-[12px]" style="color: ${item.color}; text-shadow: 0 0 8px ${item.color};">${item.initial}</span>
+                                <div class="w-1.5 h-1.5 rounded-full" style="background-color: ${item.color}; box-shadow: 0 0 3px ${item.color};"></div>
+                                <span class="font-black text-[12px] leading-none text-center inline-block w-[12px]" style="color: ${item.color}; text-shadow: 0 0 3px ${item.color};">${item.initial}</span>
                             </div>
 
                             <!-- Colon Separator -->
                             <span class="text-[12px] font-bold leading-none shrink-0" style="color: rgba(255, 255, 255, 0.3);">:</span>
 
                             <!-- Colorful Glowing Full Name -->
-                            <span class="text-[10px] md:text-[11px] font-bold tracking-wide uppercase leading-none truncate" style="color: ${item.color}; text-shadow: 0 0 8px ${item.color}; opacity: 0.9;">${item.fullName}</span>
+                            <span class="text-[10px] md:text-[11px] font-bold tracking-wide uppercase leading-none truncate" style="color: ${item.color}; text-shadow: 0 0 3px ${item.color}; opacity: 0.9;">${item.fullName}</span>
                         </div>
                         `).join('')}
                     </div>
