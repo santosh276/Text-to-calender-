@@ -1608,6 +1608,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         /* NEW PREMIUM THEMES (Lavender & Royal) */
         .bg-lavender-gradient { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.3); }
         .bg-royal-gradient { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.3); }
+        .bg-indigo-gradient { background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3); }
+        .bg-teal-gradient { background: linear-gradient(135deg, #0d9488 0%, #115e59 100%); box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.3); }
+        .bg-stone-gradient { background: linear-gradient(135deg, #57534e 0%, #1c1917 100%); box-shadow: 0 10px 25px -5px rgba(87, 83, 78, 0.3); }
 
         /* FOOTER THEMES */
         .footer-emerald { background: rgba(6, 78, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); }
@@ -1618,6 +1621,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .footer-slate { background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(71, 85, 105, 0.3); }
         .footer-lavender { background: rgba(76, 29, 149, 0.3); border: 1px solid rgba(167, 139, 250, 0.3); }
         .footer-royal { background: rgba(30, 58, 138, 0.3); border: 1px solid rgba(96, 165, 250, 0.3); }
+        .footer-indigo { background: rgba(49, 46, 129, 0.3); border: 1px solid rgba(99, 102, 241, 0.3); }
+        .footer-teal { background: rgba(17, 94, 89, 0.3); border: 1px solid rgba(20, 184, 166, 0.3); }
+        .footer-stone { background: rgba(28, 25, 23, 0.3); border: 1px solid rgba(120, 113, 108, 0.3); }
 
         .badge-emerald { background-color: rgba(6, 95, 70, 0.25); border-color: rgba(52, 211, 153, 0.5); color: white; }
         .badge-gold { background-color: rgba(120, 53, 15, 0.25); border-color: rgba(251, 191, 36, 0.5); color: white; }
@@ -1627,6 +1633,9 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
         .badge-slate { background-color: rgba(15, 23, 42, 0.25); border-color: rgba(148, 163, 184, 0.5); color: white; }
         .badge-lavender { background-color: rgba(76, 29, 149, 0.25); border-color: rgba(167, 139, 250, 0.5); color: white; }
         .badge-royal { background-color: rgba(30, 58, 138, 0.25); border-color: rgba(96, 165, 250, 0.5); color: white; }
+        .badge-indigo { background-color: rgba(49, 46, 129, 0.25); border-color: rgba(99, 102, 241, 0.5); color: white; }
+        .badge-teal { background-color: rgba(17, 94, 89, 0.25); border-color: rgba(20, 184, 166, 0.5); color: white; }
+        .badge-stone { background-color: rgba(28, 25, 23, 0.25); border-color: rgba(120, 113, 108, 0.5); color: white; }
 
         .dot-emerald { border-color: #10b981; }
         .dot-gold { border-color: #f59e0b; }
@@ -7971,7 +7980,7 @@ function renderCalendarGrid(data) {
                 inauspicious.push(createTimeObj(
                     "Dur Muhurtam", durStart, durEnd,
                     "bad", "An inauspicious period during the day. Avoid starting important tasks.",
-                    "bg-slate-gradient", "dot-slate", "slate"
+                    "bg-stone-gradient", "dot-stone", "stone"
                 ));
             });
 
@@ -7999,7 +8008,7 @@ function renderCalendarGrid(data) {
             auspicious.push(createTimeObj(
                 "Sayahna Sandhya", sayahnaStart, sunset.getTime(),
                 "good", "Evening twilight period. Ideal for lighting lamps and evening prayers.",
-                "bg-gold-gradient", "dot-gold", "gold"
+                "bg-teal-gradient", "dot-teal", "teal"
             ));
 
             // Nishita Muhurta (Midnight - 24m to Midnight + 24m)
@@ -8008,7 +8017,7 @@ function renderCalendarGrid(data) {
             auspicious.push(createTimeObj(
                 "Nishita Muhurta", solarMidnight - (24 * 60000), solarMidnight + (24 * 60000),
                 "good", "The auspicious midnight hour, excellent for spiritual practices and deep meditation.",
-                "bg-royal-gradient", "dot-royal", "royal"
+                "bg-indigo-gradient", "dot-indigo", "indigo"
             ));
 
             // Abhijit Muhurat (8th Muhurta) - Usually skipped on Wednesday (3), but requested to always show.
@@ -9058,7 +9067,7 @@ function updateDayCycleCard() {
                 // Helper to add events
                 const addEventToTimeline = (eventItem, cssClass) => {
                     const name = eventItem.name.toUpperCase();
-                    if (name.includes("GULIKA") || name.includes("VIJAYA")) return;
+                    if (name.includes("GULIKA") || name.includes("VIJAYA") || name.includes("NISHITA") || name.includes("SAYAHNA") || name.includes("DUR MUHURTAM")) return;
 
                     let startPercent = ((eventItem.start - dayStart) / totalMs) * 100;
                     let endPercent = ((eventItem.end - dayStart) / totalMs) * 100;
