@@ -7962,6 +7962,18 @@ function renderCalendarGrid(data) {
                 "bg-slate-gradient", "dot-slate", "slate"
             ));
 
+            // Dur Muhurtam
+            const durSlots = [[13], [8, 11], [3, 10], [7], [9, 12], [3, 7], [1]];
+            const daySlots = durSlots[dayOfWeek];
+            daySlots.forEach(slot => {
+                const durStart = sunrise.getTime() + (slot * muhurta);
+                const durEnd = durStart + muhurta;
+                inauspicious.push(createTimeObj(
+                    "Dur Muhurtam", durStart, durEnd,
+                    "bad", "An inauspicious period during the day. Avoid starting important tasks.",
+                    "bg-slate-gradient", "dot-slate", "slate"
+                ));
+            });
 
             // --- AUSPICIOUS ---
 
@@ -7980,6 +7992,23 @@ function renderCalendarGrid(data) {
                 "Pratah Sandhya", pratahStart, sunrise.getTime(), 
                 "good", "The holy morning hours. A great time for your daily prayers and worship.", 
                 "bg-lavender-gradient", "dot-lavender", "lavender"
+            ));
+
+            // Sayahna Sandhya (Sunset - 48m to Sunset)
+            const sayahnaStart = sunset.getTime() - (48 * 60000);
+            auspicious.push(createTimeObj(
+                "Sayahna Sandhya", sayahnaStart, sunset.getTime(),
+                "good", "Evening twilight period. Ideal for lighting lamps and evening prayers.",
+                "bg-gold-gradient", "dot-gold", "gold"
+            ));
+
+            // Nishita Muhurta (Midnight - 24m to Midnight + 24m)
+            const nightDuration = 86400000 - duration;
+            const solarMidnight = sunset.getTime() + (nightDuration / 2);
+            auspicious.push(createTimeObj(
+                "Nishita Muhurta", solarMidnight - (24 * 60000), solarMidnight + (24 * 60000),
+                "good", "The auspicious midnight hour, excellent for spiritual practices and deep meditation.",
+                "bg-royal-gradient", "dot-royal", "royal"
             ));
 
             // Abhijit Muhurat (8th Muhurta) - Usually skipped on Wednesday (3), but requested to always show.
