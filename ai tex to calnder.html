@@ -941,8 +941,8 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.5rem;
         }
         .timing-analysis-header {
             display: flex;
@@ -1528,7 +1528,7 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             position: relative;
             z-index: 10;
         }
@@ -9132,7 +9132,7 @@ function updateDayCycleCard() {
                     </div>
                 </div>
 
-                <div class="mt-3 rounded-xl p-3 shadow-md" style="background: linear-gradient(135deg, #120e22 0%, #1b172d 100%); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div class="mt-2 rounded-xl p-3 shadow-md" style="background: linear-gradient(135deg, #120e22 0%, #1b172d 100%); border: 1px solid rgba(255, 255, 255, 0.1);">
                     <div class="grid grid-cols-2 gap-x-2 gap-y-3">
                         ${legendItems.map(item => `
                         <div class="flex items-center gap-2">
@@ -9177,7 +9177,7 @@ function updateDayCycleCard() {
                 if (list.length === 0) return '';
                 
                 let listHtml = `
-                <div class="mt-8 mb-4 flex items-center gap-3 relative z-30">
+                <div class="mb-3 flex items-center gap-3 relative z-30" style="margin-top: 20px;">
                     <div class="w-8 h-8 rounded-full ${bgIconClass} flex items-center justify-center ${titleColorClass} shadow-sm">
                         ${iconHtml}
                     </div>
