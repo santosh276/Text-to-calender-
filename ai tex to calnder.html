@@ -9046,8 +9046,8 @@ function updateDayCycleCard() {
 
                         const colors = themeColors[eventItem.themeKey] || themeColors.gold;
 
-                        if (!legendItems.some(item => item.fullName === displayName)) {
-                            legendItems.push({ fullName: displayName, initial, color: colors.text });
+                        if (!legendItems.some(item => item.fullName === name)) {
+                            legendItems.push({ fullName: name, initial, color: colors.text });
                         }
 
                         let midPct = startPercent + (width / 2);
