@@ -1472,7 +1472,15 @@ padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:
     }
 
 
+
+        @media (min-width: 768px) {
+            #day-modal .modal-content {
+                height: auto !important;
+                max-height: 85vh !important;
+            }
+        }
     </style>
+
 <style>
         /* =========================================
            PREMIUM CUSTOM CSS (OFFLINE & RESPONSIVE)
@@ -10273,7 +10281,7 @@ function updateDayCycleCard() {
 
             // --- 2. BUILD HTML STRUCTURE (Light Page Layout) ---
             const contentHtml = `
-                <div class="flex flex-col h-full relative overflow-hidden">
+                <div class="flex flex-col h-full md:h-auto relative overflow-hidden">
                     
                     <!-- Persistent Header -->
                     <div class="shrink-0 z-10 relative backdrop-blur-md bg-white/30 text-center pt-16 pb-4 border-b border-white/20 shadow-sm">
