@@ -24,6 +24,9 @@
             .safe-area-pb {
                 padding-bottom: env(safe-area-inset-bottom, 1rem);
             }
+            .nav-spacing-pb {
+                padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom))) !important;
+            }
             /* Hide the original header and editor panels when in mobile mode */
             .mobile-hide {
                 display: none !important;
@@ -2344,7 +2347,7 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] flex flex-col" style="padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom)));">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] md:pb-8 nav-spacing-pb flex flex-col">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -2390,7 +2393,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
 
-            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4 pt-4 pb-24 transform-gpu will-change-transform overscroll-none">
+            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto h-full overflow-y-auto px-2 md:px-4 pt-4 pb-24 md:pb-6 transform-gpu will-change-transform overscroll-none">
                 <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 hidden">
                     <!-- Placeholder: Auspicious Timings Content -->
                     <div class="timing-analysis-wrapper">
@@ -2425,7 +2428,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
 
-            <div id="more-view-container" class="hidden w-full overflow-x-hidden pt-6 md:pt-12 pb-12">
+            <div id="more-view-container" class="hidden w-full overflow-x-hidden pt-6 md:pt-12 pb-12 md:pb-6">
 
     <!-- HERO SECTION -->
     <div class="px-4 md:px-6 lg:px-12 max-w-screen-2xl mx-auto">
