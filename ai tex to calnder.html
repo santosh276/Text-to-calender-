@@ -9079,14 +9079,23 @@ function updateDayCycleCard() {
                 let eventsHtml = '';
                 
                 const themeColors = {
-                    gold: { border: '#f59e0b', bg: 'rgba(245,158,11,0.2)', text: '#d97706' },
-                    lavender: { border: '#a855f7', bg: 'rgba(168,85,247,0.2)', text: '#9333ea' },
-                    emerald: { border: '#10b981', bg: 'rgba(16,185,129,0.2)', text: '#059669' },
-                    skyblue: { border: '#0ea5e9', bg: 'rgba(14,165,233,0.2)', text: '#0284c7' },
-                    rust: { border: '#ea580c', bg: 'rgba(234,88,12,0.2)', text: '#c2410c' },
-                    crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#be123c' },
-                    rose: { border: '#f43f5e', bg: 'rgba(244,63,94,0.2)', text: '#e11d48' },
-                    aqua: { border: '#06b6d4', bg: 'rgba(6,182,212,0.2)', text: '#0891b2' }
+                    // Original Themes
+                    gold: { border: '#f59e0b', bg: 'rgba(245,158,11,0.2)', text: '#f59e0b' },
+                    lavender: { border: '#a855f7', bg: 'rgba(168,85,247,0.2)', text: '#a855f7' },
+                    emerald: { border: '#10b981', bg: 'rgba(16,185,129,0.2)', text: '#10b981' },
+                    skyblue: { border: '#0ea5e9', bg: 'rgba(14,165,233,0.2)', text: '#0ea5e9' },
+                    royal: { border: '#3b82f6', bg: 'rgba(59,130,246,0.2)', text: '#3b82f6' },
+                    rust: { border: '#ea580c', bg: 'rgba(234,88,12,0.2)', text: '#ea580c' },
+                    crimson: { border: '#e11d48', bg: 'rgba(225,29,72,0.2)', text: '#e11d48' },
+                    slate: { border: '#64748b', bg: 'rgba(100,116,139,0.2)', text: '#64748b' },
+
+                    // New Themes (Directly synced to match the card color psychology)
+                    rose: { border: '#f43f5e', bg: 'rgba(244,63,94,0.2)', text: '#fb7185' },       // Pratah Sandhya: Vibrant Sunrise Pink
+                    sunset: { border: '#f97316', bg: 'rgba(249,115,22,0.2)', text: '#fdba74' },     // Sayahna Sandhya: Sunset Orange/Coral
+                    midnight: { border: '#6366f1', bg: 'rgba(99,102,241,0.2)', text: '#a5b4fc' },   // Nishita Muhurta: Spiritual Indigo/Light Purple
+                    ocean: { border: '#0284c7', bg: 'rgba(2,132,199,0.2)', text: '#38bdf8' },      // Amrit Kalam: Deep Ocean Skyblue
+                    stone: { border: '#78716c', bg: 'rgba(120,113,108,0.2)', text: '#a8a29e' },     // Dur Muhurtam 1: Clean Stone Gray
+                    maroon: { border: '#db2777', bg: 'rgba(219,39,119,0.2)', text: '#f472b6' }      // Dur Muhurtam 2: Striking Deep Pink/Maroon
                 };
                 
                 const legendItems = [];
