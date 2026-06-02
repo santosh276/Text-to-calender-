@@ -21,6 +21,7 @@
     <style>
         /* Mobile Specific Overrides */
         @media (max-width: 767px) {
+            #preview-container { padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom))) !important; }
             .safe-area-pb {
                 padding-bottom: env(safe-area-inset-bottom, 1rem);
             }
@@ -73,6 +74,8 @@
         .-mx-2 { margin-left: -0.5rem; margin-right: -0.5rem; }
         @media (min-width: 768px) {
             .md\:-mx-8 { margin-left: -2rem; margin-right: -2rem; }
+            .md\:pb-0 { padding-bottom: 0 !important; }
+            .md\:pb-2 { padding-bottom: 0.5rem !important; }
         }
         .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
         .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
@@ -2348,7 +2351,7 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] flex flex-col" style="padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom)));">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] md:pb-2 flex flex-col">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -10289,7 +10292,7 @@ function updateDayCycleCard() {
                     </div>
 
                     <!-- Scrollable Body -->
-                    <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-[75px] md:pb-5 px-4 pt-4 space-y-2 max-w-lg mx-auto w-full transform-gpu will-change-transform overscroll-none touch-pan-y max-h-[90vh]" style="-webkit-overflow-scrolling: touch; contain: content;">
+                    <div class="flex-grow overflow-y-auto scrollbar-aurora scroll-smooth-fast pb-[75px] md:pb-2 px-4 pt-4 space-y-2 max-w-lg mx-auto w-full transform-gpu will-change-transform overscroll-none touch-pan-y max-h-[90vh]" style="-webkit-overflow-scrolling: touch; contain: content;">
                         
                         <!-- 1. Current Tithi -->
                         <div class="modal-card">
