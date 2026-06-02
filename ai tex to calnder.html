@@ -21,6 +21,9 @@
     <style>
         /* Mobile Specific Overrides */
         @media (max-width: 767px) {
+            .preview-safe-pb {
+                padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom))) !important;
+            }
             .safe-area-pb {
                 padding-bottom: env(safe-area-inset-bottom, 1rem);
             }
@@ -2348,7 +2351,7 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] flex flex-col" style="padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom)));">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:px-6 md:pt-6 md:pb-2 relative z-0 transition-all duration-300 flex flex-col preview-safe-pb">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
