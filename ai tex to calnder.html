@@ -20,6 +20,15 @@
     <!-- Tailwind CSS -->
     <style>
         /* Mobile Specific Overrides */
+        .safe-bottom-padding {
+            padding-bottom: calc(105px + env(safe-area-inset-bottom)) !important;
+        }
+        @media (min-width: 768px) {
+            .safe-bottom-padding {
+                padding-bottom: 24px !important;
+            }
+        }
+
         @media (max-width: 767px) {
             .preview-safe-pb {
                 padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom))) !important;
@@ -2351,7 +2360,7 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:px-6 md:pt-6 md:pb-2 relative z-0 transition-all duration-300 flex flex-col preview-safe-pb">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:px-6 md:pt-6 md:pb-2 relative z-0 transition-all duration-300 flex flex-col safe-bottom-padding">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -2952,7 +2961,7 @@ The word "Nua" means new and "Khai" means food.
                     </div>
                 </div>
             </div>
-            <div id="modal-rich-body" class="rich-content overflow-y-auto p-6 flex-grow transform-gpu will-change-transform overscroll-none touch-pan-y max-h-[85vh]" style="-webkit-overflow-scrolling: touch; contain: content;"></div>
+            <div id="modal-rich-body" class="rich-content overflow-y-auto p-6 flex-grow transform-gpu will-change-transform overscroll-none touch-pan-y max-h-[85vh] safe-bottom-padding" style="-webkit-overflow-scrolling: touch; contain: content;"></div>
             <div class="p-4 border-t border-gray-100 flex justify-end items-center bg-gray-50 shrink-0">
                 <button onclick="handleLearnMore()" class="bg-[#5D4037] hover:bg-[#4E342E] text-white px-5 py-2 rounded-full text-sm font-bold transition shadow-md active:scale-95">Learn More</button>
             </div>
