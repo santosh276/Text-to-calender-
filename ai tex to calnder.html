@@ -21,9 +21,6 @@
     <style>
         /* Mobile Specific Overrides */
         @media (max-width: 767px) {
-            .mobile-preview-pb {
-                padding-bottom: max(75px, calc(55px + env(safe-area-inset-bottom))) !important;
-            }
             .safe-area-pb {
                 padding-bottom: env(safe-area-inset-bottom, 1rem);
             }
@@ -2351,7 +2348,7 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:pt-8 md:px-8 md:pb-2 relative z-0 transition-all duration-300 flex flex-col mobile-preview-pb">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 pb-[100px] md:pb-6 relative z-0 transition-all duration-300 flex flex-col">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -2397,7 +2394,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
 
-            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto px-2 md:px-4 pt-4 pb-1 md:pb-0 transform-gpu will-change-transform">
+            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto px-2 md:px-4 pt-4 pb-4 md:pb-2 transform-gpu will-change-transform">
                 <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 hidden">
                     <!-- Placeholder: Auspicious Timings Content -->
                     <div class="timing-analysis-wrapper">
@@ -2813,7 +2810,7 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- CUSTOM CARD MODAL -->
-    <div id="custom-card-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+    <div id="custom-card-modal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCustomCardModal()"></div>
         <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col max-h-[85dvh]">
             <div class="bg-green-700 p-4 border-b border-green-800 flex justify-between items-center shrink-0">
@@ -2869,7 +2866,7 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- INSERT LINK MODAL -->
-    <div id="link-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+    <div id="link-modal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeLinkModal()"></div>
         <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden flex flex-col">
             <div class="bg-gray-100 p-4 border-b border-gray-200 flex justify-between items-center shrink-0">
@@ -2935,7 +2932,7 @@ The word "Nua" means new and "Khai" means food.
     </div>
 
     <!-- DAY DETAIL MODAL -->
-    <div id="day-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-hidden" style="display: none;">
+    <div id="day-modal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 modal-hidden" style="display: none;">
         <div class="modal-backdrop absolute inset-0 bg-black/70" onclick="closeDayModal()" style="touch-action: none;"></div>
         <div class="modal-content bg-aurora rounded-3xl shadow-2xl w-full max-w-[500px] relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
             <div id="modal-header-background" class="premium-header-bg p-6 relative shrink-0">
