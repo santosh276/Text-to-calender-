@@ -75,6 +75,9 @@
         .-mx-2 { margin-left: -0.5rem; margin-right: -0.5rem; }
         @media (min-width: 768px) {
             .md\:-mx-8 { margin-left: -2rem; margin-right: -2rem; }
+            .md\:-mt-2 { margin-top: -0.5rem !important; }
+            .md\:max-w-\[720px\] { max-width: 720px !important; }
+            .md\:px-0 { padding-left: 0 !important; padding-right: 0 !important; }
             .md\:pb-0 { padding-bottom: 0 !important; }
             .md\:pb-2 { padding-bottom: 0.5rem !important; }
             .md\:mb-0 { margin-bottom: 0 !important; }
@@ -2400,7 +2403,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
 
-            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto px-1 md:px-2 pt-1 pb-[2px] md:pb-0 transform-gpu will-change-transform">
+            <div id="timings-view-container" class="hidden w-full max-w-[720px] mx-auto px-1 md:px-0 pt-1 md:-mt-2 pb-[2px] md:pb-0 transform-gpu will-change-transform">
                 <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 hidden">
                     <!-- Placeholder: Auspicious Timings Content -->
                     <div class="timing-analysis-wrapper">
