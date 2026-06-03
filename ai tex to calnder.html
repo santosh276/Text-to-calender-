@@ -76,6 +76,7 @@
             .md\:-mx-8 { margin-left: -2rem; margin-right: -2rem; }
             .md\:pb-0 { padding-bottom: 0 !important; }
             .md\:pb-2 { padding-bottom: 0.5rem !important; }
+            .md\:mb-0 { margin-bottom: 0 !important; }
         }
         .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
         .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
@@ -2351,7 +2352,7 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] md:pb-2 flex flex-col">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] md:pb-0 flex flex-col">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -9421,7 +9422,7 @@ function updateDayCycleCard() {
                         ${iconHtml}
                         <span data-i18n="${titleKey}">${defaultTitle}</span>
                     </h4>
-                    <div class="ch-timeline flex flex-col gap-4 mb-4">`;
+                    <div class="ch-timeline flex flex-col gap-4 mb-1 md:mb-0">`;
                     
                     list.forEach((ch) => {
                         let colorClass = "ch-bg-good";
