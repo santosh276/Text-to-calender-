@@ -66,6 +66,7 @@
     <style id="tailwindcss">
     .pb-\[75px\] { padding-bottom: 75px; }
     .pb-\[2px\] { padding-bottom: 2px; }
+    .max-w-3xl { max-width: 48rem; }
 
         .bg-white\/30 { background-color: rgba(255, 255, 255, 0.3); }
         .border-gray-300\/50 { border-color: rgba(209, 213, 219, 0.5); }
@@ -79,6 +80,7 @@
             .md\:pb-2 { padding-bottom: 0.5rem !important; }
             .md\:mb-0 { margin-bottom: 0 !important; }
             .md\:px-2 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+            .md\:p-5 { padding: 1.25rem !important; }
         }
         .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
         .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
@@ -2354,7 +2356,7 @@ The word "Nua" means new and "Khai" means food.
         </div>
 
         <!-- RIGHT PANEL: Preview -->
-        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-8 relative z-0 transition-all duration-300 pb-[75px] md:pb-0 flex flex-col">
+        <div id="preview-container" class="w-full md:w-[65%] h-[38%] md:h-full overflow-y-auto p-2 md:p-5 relative z-0 transition-all duration-300 pb-[75px] md:pb-0 flex flex-col">
             <!-- YEAR VIEW CONTAINER -->
             <div id="year-view-container" class="hidden w-full max-w-7xl mx-auto">
                 <div class="bg-white rounded-3xl shadow-xl shadow-orange-100/50 border border-orange-100 p-3 md:p-6 mb-8 flex items-center justify-between relative overflow-hidden">
@@ -2400,7 +2402,7 @@ The word "Nua" means new and "Khai" means food.
                 </div>
             </div>
 
-            <div id="timings-view-container" class="hidden w-full max-w-2xl mx-auto px-1 md:px-2 pt-1 pb-[2px] md:pb-0 transform-gpu will-change-transform">
+            <div id="timings-view-container" class="hidden w-full max-w-3xl mx-auto px-1 md:px-2 pt-1 pb-[2px] md:pb-0 transform-gpu will-change-transform">
                 <div id="sec-timings" class="glass rounded-xl shadow-md border-l-4 border-green-500 p-4 transition-all duration-300 hidden">
                     <!-- Placeholder: Auspicious Timings Content -->
                     <div class="timing-analysis-wrapper">
