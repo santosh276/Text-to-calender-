@@ -2643,7 +2643,11 @@ The word "Nua" means new and "Khai" means food.
                         <div class="flex justify-between items-center mb-4 relative z-10 min-w-0 gap-2"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0 shrink-0"><i class="fa-solid fa-cloud-sun text-orange-500 text-lg"></i> <span data-i18n="current_ritu">Current Ritu</span></h3></div>
                         <div id="ritu-content"></div>
                     </div>
-<div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4 transform-gpu will-change-transform">
+                    <div id="sec-astro-cycle" class="glass rounded-xl shadow-md border-l-4 border-indigo-500 p-4 transition-all duration-300 order-4 transform-gpu will-change-transform hidden">
+                        <h3 class="font-bold text-indigo-700 mb-3 border-b pb-1"><i class="fa-solid fa-earth-asia text-indigo-500 mr-2"></i><span data-i18n="astro_cycles_header">Astro Cycles</span></h3>
+                        <div id="astro-cycle-content" class="flex flex-col gap-2"></div>
+                    </div>
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-5 transform-gpu will-change-transform">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i><span data-i18n="panchang_header">Panchang</span></h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul>
@@ -4407,6 +4411,7 @@ const LOCATION_DATA = {
         days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], 
         nums: ["0","1","2","3","4","5","6","7","8","9"], 
         filters: ["Festivals", "Auspicious", "Holidays", "Other festivals"], solarMonths: ["Vaishakha", "Jyeshtha", "Ashadha", "Shravana", "Bhadrapada", "Ashvina", "Kartika", "Margashirsha", "Pausha", "Magha", "Phalguna", "Chaitra"],
+        astro_cycles_header: "Astro Cycles",
         rashis: ["Mesha", "Vrishabha", "Mithuna", "Karka", "Simha", "Kanya", "Tula", "Vrischika", "Dhanu", "Makara", "Kumbha", "Meena"],
 indianMonths: ["Pausha / Magha", "Magha / Phalguna", "Phalguna / Chaitra", "Chaitra / Vaishakha", "Vaishakha / Jyeshtha", "Jyeshtha / Ashadha", "Ashadha / Shravana", "Shravana / Bhadra", "Bhadra / Ashvina", "Ashvina / Kartika", "Kartika / Margashirsha", "Margashirsha / Pausha"],
         indianSeasons: ["Vasant (Spring)", "Grishma (Summer)", "Varsha (Monsoon)", "Sharad (Autumn)", "Hemant (Pre-Winter)", "Shishir (Winter)"],
@@ -8226,10 +8231,11 @@ function renderCalendarGrid(data) {
             }
 
             // 3. Render Astro Timeline (Sun/Moon Visual Strip)
+            let timelineContainer = null;
             if (sunTimes.sunrise && sunTimes.sunset) {
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
-                const timelineContainer = document.createElement('div');
+                timelineContainer = document.createElement('div');
                 timelineContainer.className = "grid grid-cols-2 gap-2 md:gap-4 mb-6 -mx-2 md:mx-0";
                 
                 // Sun Card
@@ -8357,7 +8363,7 @@ function renderCalendarGrid(data) {
                 
                 timelineContainer.appendChild(sunCard);
                 timelineContainer.appendChild(moonCard);
-                list.appendChild(timelineContainer);
+                // We will append this to astroContent later
             }
 
             // Inject Live Day/Night Cycle Card
@@ -8461,8 +8467,24 @@ function renderCalendarGrid(data) {
     </div>
   </div>
 </div>`;
-            list.appendChild(cycleWrapper);
+            // List append removed: list.appendChild(cycleWrapper);
+
+            const astroSec = document.getElementById('sec-astro-cycle');
+            const astroContent = document.getElementById('astro-cycle-content');
+            if (astroContent) astroContent.innerHTML = '';
             
+            if (sunTimes && sunTimes.sunrise && sunTimes.sunset) {
+                if (astroSec) astroSec.classList.remove('hidden');
+                if (astroContent && typeof timelineContainer !== 'undefined' && timelineContainer) {
+                    astroContent.appendChild(timelineContainer);
+                }
+                if (astroContent && cycleWrapper) {
+                    astroContent.appendChild(cycleWrapper);
+                }
+            } else {
+                if (astroSec) astroSec.classList.add('hidden');
+            }
+
             // Initialization trigger
             window.lastIsDayCycle = null;
             updateDayCycleCard();
