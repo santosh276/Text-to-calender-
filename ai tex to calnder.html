@@ -2643,7 +2643,14 @@ The word "Nua" means new and "Khai" means food.
                         <div class="flex justify-between items-center mb-4 relative z-10 min-w-0 gap-2"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0 shrink-0"><i class="fa-solid fa-cloud-sun text-orange-500 text-lg"></i> <span data-i18n="current_ritu">Current Ritu</span></h3></div>
                         <div id="ritu-content"></div>
                     </div>
-<div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4 transform-gpu will-change-transform">
+                    <div id="sec-astro-cycles" class="glass rounded-xl shadow-md border-l-4 border-indigo-500 p-4 transition-all duration-300 order-4 transform-gpu will-change-transform">
+                        <h3 class="font-bold text-indigo-800 mb-3 border-b border-indigo-100 pb-2 flex items-center">
+                            <i class="fa-solid fa-cloud-sun-moon text-indigo-500 mr-2 text-lg"></i>
+                            <span data-i18n="astro_cycles_header">Live Astro Cycles</span>
+                        </h3>
+                        <div id="astro-cycles-content" class="flex flex-col"></div>
+                    </div>
+                    <div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-5 transform-gpu will-change-transform">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i><span data-i18n="panchang_header">Panchang</span></h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul>
@@ -8226,11 +8233,14 @@ function renderCalendarGrid(data) {
             }
 
             // 3. Render Astro Timeline (Sun/Moon Visual Strip)
+            const astroCyclesContent = document.getElementById('astro-cycles-content');
+            if (astroCyclesContent) astroCyclesContent.innerHTML = '';
+
             if (sunTimes.sunrise && sunTimes.sunset) {
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
                 const timelineContainer = document.createElement('div');
-                timelineContainer.className = "grid grid-cols-2 gap-2 md:gap-4 mb-6 -mx-2 md:mx-0";
+                timelineContainer.className = "grid grid-cols-2 gap-2 md:gap-4 mb-4 -mx-2 md:mx-0";
                 
                 // Sun Card
                 const sunCard = document.createElement('div');
@@ -8357,14 +8367,18 @@ function renderCalendarGrid(data) {
                 
                 timelineContainer.appendChild(sunCard);
                 timelineContainer.appendChild(moonCard);
-                list.appendChild(timelineContainer);
+                if (astroCyclesContent) {
+                    astroCyclesContent.appendChild(timelineContainer);
+                } else {
+                    list.appendChild(timelineContainer);
+                }
             }
 
             // Inject Live Day/Night Cycle Card
             const cycleWrapper = document.createElement('div');
             cycleWrapper.className = "w-full max-w-[460px] mx-auto";
             cycleWrapper.style.marginTop = "4px";
-            cycleWrapper.style.marginBottom = "16px";
+            cycleWrapper.style.marginBottom = "0px";
             cycleWrapper.innerHTML = `
 <div id="day-cycle-card" class="cycle-card rounded-3xl overflow-hidden relative w-full" style="background: #020617;">
   <div class="absolute inset-0 overflow-hidden pointer-events-none" id="bgCanvasCycle">
@@ -8461,7 +8475,11 @@ function renderCalendarGrid(data) {
     </div>
   </div>
 </div>`;
-            list.appendChild(cycleWrapper);
+            if (astroCyclesContent) {
+                astroCyclesContent.appendChild(cycleWrapper);
+            } else {
+                list.appendChild(cycleWrapper);
+            }
             
             // Initialization trigger
             window.lastIsDayCycle = null;
