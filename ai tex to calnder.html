@@ -2643,7 +2643,11 @@ The word "Nua" means new and "Khai" means food.
                         <div class="flex justify-between items-center mb-4 relative z-10 min-w-0 gap-2"><h3 class="font-bold text-gray-900 text-base flex items-center gap-2 m-0 shrink-0"><i class="fa-solid fa-cloud-sun text-orange-500 text-lg"></i> <span data-i18n="current_ritu">Current Ritu</span></h3></div>
                         <div id="ritu-content"></div>
                     </div>
-<div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-4 transform-gpu will-change-transform">
+<div id="sec-astro-cycle" class="glass rounded-xl shadow-md border-l-4 border-indigo-500 p-4 transition-all duration-300 order-4 transform-gpu will-change-transform hidden">
+    <h3 class="font-bold text-indigo-700 mb-3 border-b pb-1"><i class="fa-solid fa-earth-asia text-indigo-500 mr-2"></i><span data-i18n="astro_cycles_header">Astro Cycles</span></h3>
+    <div id="astro-cycle-content" class="flex flex-col gap-2"></div>
+</div>
+<div id="sec-panchang" class="glass rounded-xl shadow-md border-l-4 border-deepred p-4 transition-all duration-300 order-5 transform-gpu will-change-transform">
                         <h3 class="font-bold text-deepred mb-3 border-b pb-1"><i class="fa-solid fa-sun text-saffron mr-2"></i><span data-i18n="panchang_header">Panchang</span></h3>
                         <div id="panchang-pills" class="flex flex-wrap gap-2 mb-3"></div>
                         <ul id="panchang-list" class="text-sm space-y-2"></ul>
@@ -4401,6 +4405,7 @@ const LOCATION_DATA = {
 
         const langData = {
     en: {
+        astro_cycles_header: "Astro Cycles",
         nakshatras: ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"],
         yogas: ["Vishkumbha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", "Sukarma", "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", "Vyaghata", "Harshana", "Vajra", "Siddhi", "Vyatipata", "Variyan", "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha", "Shukla", "Brahma", "Indra", "Vaidhriti"],
         karanas: ["Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti", "Shakuni", "Chatushpada", "Naga", "Kimstughna"], 
@@ -8124,10 +8129,13 @@ function renderCalendarGrid(data) {
             const section = document.getElementById('sec-panchang');
             const pillsContainer = document.getElementById('panchang-pills');
             const list = document.getElementById('panchang-list');
+            const astroSec = document.getElementById('sec-astro-cycle');
+            const astroContent = document.getElementById('astro-cycle-content');
             
             // Clear containers
             pillsContainer.innerHTML = '';
             list.innerHTML = '';
+            if (astroContent) astroContent.innerHTML = '';
 
             // 1. Season (Ritu) Logic (Kept mostly same, but cleaner injection)
             const seasonIndex = getSeasonIndex(data.month);
@@ -8227,6 +8235,7 @@ function renderCalendarGrid(data) {
 
             // 3. Render Astro Timeline (Sun/Moon Visual Strip)
             if (sunTimes.sunrise && sunTimes.sunset) {
+                if (astroSec) astroSec.classList.remove('hidden');
                 const fmt = (d) => d ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--';
                 
                 const timelineContainer = document.createElement('div');
@@ -8357,7 +8366,9 @@ function renderCalendarGrid(data) {
                 
                 timelineContainer.appendChild(sunCard);
                 timelineContainer.appendChild(moonCard);
-                list.appendChild(timelineContainer);
+                if (astroContent) astroContent.appendChild(timelineContainer);
+            } else {
+                if (astroSec) astroSec.classList.add('hidden');
             }
 
             // Inject Live Day/Night Cycle Card
@@ -8461,7 +8472,11 @@ function renderCalendarGrid(data) {
     </div>
   </div>
 </div>`;
-            list.appendChild(cycleWrapper);
+            if (astroContent) {
+                astroContent.appendChild(cycleWrapper);
+            } else {
+                list.appendChild(cycleWrapper);
+            }
             
             // Initialization trigger
             window.lastIsDayCycle = null;
