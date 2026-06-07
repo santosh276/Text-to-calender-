@@ -5261,9 +5261,11 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
 
         function renderFooterLink(cardData) {
             return `
-            <a href="${cardData.link}" target="_blank" class="flex items-center gap-2.5 py-1.5 text-white/80 hover:text-white transition-colors group">
-                ${cardData.image ? `<img src="${cardData.image}" class="w-4 h-4 object-contain opacity-80 group-hover:opacity-100 shrink-0" alt=""/>` : ''}
-                <span class="text-[14px] md:text-[15px] font-medium tracking-wide leading-tight">${cardData.title}</span>
+            <a href="${cardData.link}" target="_blank" class="flex items-start gap-3 py-1.5 text-white/80 hover:text-white transition-colors group">
+                <div class="w-4 h-4 mt-0.5 shrink-0 flex items-center justify-center opacity-80 group-hover:opacity-100">
+                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain" alt=""/>` : `<i class="fa-solid fa-chevron-right text-[10px]"></i>`}
+                </div>
+                <span class="text-[13px] md:text-[14px] font-medium tracking-wide leading-snug">${cardData.title}</span>
             </a>
             `;
         }
@@ -6903,14 +6905,14 @@ function getCDNUrl(originalUrl) {
                     let footerHtml = `
                     <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -200px; padding-bottom: 200px; padding-top: 30px;">
                         <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
-                        <div class="max-w-screen-xl mx-auto px-8 md:px-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10 relative z-10" style="padding-bottom: 120px;">
+                        <div class="max-w-screen-xl mx-auto px-5 md:px-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 md:gap-x-12 gap-y-12 relative z-10" style="padding-bottom: 120px;">
                     `;
 
                     for (const [title, cards] of Object.entries(groupedFooters)) {
                         let linksHtml = cards.map(c => renderFooterLink(c)).join('');
                         footerHtml += `
                             <div class="flex flex-col">
-                                <h4 class="text-[16px] md:text-[18px] font-bold text-white mb-4 tracking-wide border-b border-white/20 pb-2">${title}</h4>
+                                <h4 class="text-[15px] md:text-[17px] font-bold text-white mb-4 tracking-wide border-b-2 border-white/20 pb-2">${title}</h4>
                                 <div class="flex flex-col gap-1.5">${linksHtml}</div>
                             </div>
                         `;
