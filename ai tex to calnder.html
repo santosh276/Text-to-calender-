@@ -6901,7 +6901,7 @@ function getCDNUrl(originalUrl) {
                 const groupedFooters = groupCards(appState.footerLinks);
                 if (Object.keys(groupedFooters).length > 0) {
                     let footerHtml = `
-                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -200px; padding-bottom: 200px; padding-top: 60px;">
+                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -200px; padding-bottom: 200px; padding-top: 30px;">
                         <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
                         <div class="max-w-screen-xl mx-auto px-8 md:px-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10 relative z-10" style="padding-bottom: 120px;">
                     `;
@@ -6910,7 +6910,7 @@ function getCDNUrl(originalUrl) {
                         let linksHtml = cards.map(c => renderFooterLink(c)).join('');
                         footerHtml += `
                             <div class="flex flex-col">
-                                <h4 class="text-[17px] md:text-[20px] font-bold text-white mb-4 tracking-wide">${title}</h4>
+                                <h4 class="text-[16px] md:text-[18px] font-bold text-white mb-4 tracking-wide border-b border-white/20 pb-2">${title}</h4>
                                 <div class="flex flex-col gap-1.5">${linksHtml}</div>
                             </div>
                         `;
