@@ -2838,6 +2838,7 @@ The word "Nua" means new and "Khai" means food.
                             <option value="bubble tab">Bubble (Top)</option>
                             <option value="scroll tab">Scrolling (Middle)</option>
                             <option value="more tab">Grid (Bottom)</option>
+                            <option value="footer tab">Footer Link (Clean List)</option>
                         </select>
                     </div>
                     <div>
@@ -4383,7 +4384,8 @@ const LOCATION_DATA = {
             details: {}, 
             manualTithis: {}, // New storage for dedicated Tithi overrides
             customSeasonDescriptions: {},
-            images: {}, 
+            images: {},
+            footerLinks: [],
             activeMonthDetails: {}, // Cache for pre-rendered Day Detail HTML
             view: window.innerWidth < 768 ? 'month' : 'month',
             config: { 
@@ -5215,8 +5217,10 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             let syntaxHeader = '::: More tab';
             if (designRaw === 'scroll tab') {
                 syntaxHeader = '::: Scroll tab';
-            } else if (designRaw === 'bubble tab') {
+                        } else if (designRaw === 'bubble tab') {
                 syntaxHeader = '::: Bubble tab';
+            } else if (designRaw === 'footer tab') {
+                syntaxHeader = '::: Footer tab';
             }
 
             // Format syntax string using sanitized variables
@@ -5248,6 +5252,17 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         }
 
         // --- EDITOR LOGIC END ---
+
+        function renderFooterLink(cardData) {
+            return `
+            <a href="${cardData.link}" target="_blank" class="flex items-center gap-3 py-2 text-gray-600 hover:text-orange-600 transition-colors group">
+                <div class="w-5 h-5 flex items-center justify-center shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
+                    ${cardData.image ? `<img src="${cardData.image}" class="w-4 h-4 object-contain grayscale group-hover:grayscale-0" alt="icon"/>` : `<i class="fa-solid fa-link text-sm"></i>`}
+                </div>
+                <span class="text-sm font-semibold tracking-wide">${cardData.title}</span>
+            </a>
+            `;
+        }
 
         function renderCustomCard(cardData) {
             const bgColor = cardData.color || '#0d9488';
@@ -6243,6 +6258,8 @@ function getCDNUrl(originalUrl) {
             let currentScrollCard = null;
             let parsedBubbleCards = [];
             let currentBubbleCard = null;
+            let parsedFooterLinks = [];
+            let currentFooterLink = null;
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
             let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
@@ -6449,6 +6466,22 @@ function getCDNUrl(originalUrl) {
                     const panMatch = line.match(/^@\s+(.+?)\s*:\s*(.+)/);
                     if (panMatch && currentMonthObj) currentMonthObj.panchang[panMatch[1]] = panMatch[2];
                 }
+                                else if (currentBlock === 'footer tab') {
+                    const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
+                    const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
+                    const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
+                    const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
+
+                    if (linkMatch) {
+                        currentFooterLink = { link: linkMatch[1], title: '', desc: '', image: '' };
+                        parsedFooterLinks.push(currentFooterLink);
+                    } else if (currentFooterLink) {
+                        if (mainTitleMatch) currentFooterLink.mainTitle = mainTitleMatch[1];
+                        else if (titleMatch) currentFooterLink.title = titleMatch[1];
+                        else if (imgMatch) currentFooterLink.image = imgMatch[1];
+                    }
+                }
                 else if (currentBlock === 'more tab') {
                     // Start of a new card if Hyperlink is found
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
@@ -6524,6 +6557,7 @@ function getCDNUrl(originalUrl) {
             appState.customCards = parsedCustomCards;
             appState.scrollCards = parsedScrollCards;
             appState.bubbleCards = parsedBubbleCards;
+            appState.footerLinks = parsedFooterLinks;
             
             findTodayIndex();
             
@@ -6858,6 +6892,23 @@ function getCDNUrl(originalUrl) {
 
                 for (const [title, cards] of Object.entries(groupedGrids)) {
                     finalHtml += renderGroup(title, cards, renderCustomCard, 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4');
+                }
+
+                const groupedFooters = groupCards(appState.footerLinks);
+                if (Object.keys(groupedFooters).length > 0) {
+                    let footerHtml = '<div class="w-full bg-white/40 border-t border-gray-200 mt-8 pt-8 pb-12"><div class="max-w-screen-2xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">';
+
+                    for (const [title, cards] of Object.entries(groupedFooters)) {
+                        let linksHtml = cards.map(c => renderFooterLink(c)).join('');
+                        footerHtml += `
+                            <div class="flex flex-col">
+                                <h4 class="text-xs font-bold text-orange-600 uppercase tracking-widest mb-4 border-b border-gray-200 pb-2">${title}</h4>
+                                <div class="flex flex-col gap-1">${linksHtml}</div>
+                            </div>
+                        `;
+                    }
+                    footerHtml += '</div></div>';
+                    finalHtml += footerHtml;
                 }
 
                 dynamicContainer.innerHTML = finalHtml;
@@ -10696,6 +10747,7 @@ function updateDayCycleCard() {
                 manualTithis: appState.manualTithis || {},
                 customSeasonDescriptions: appState.customSeasonDescriptions || {},
                 images: appState.images || {},
+                footerLinks: appState.footerLinks || [],
                 customCards: appState.customCards || [],
                 scrollCards: appState.scrollCards || [],
                 bubbleCards: appState.bubbleCards || [],
