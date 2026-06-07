@@ -5223,7 +5223,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             let syntaxHeader = '::: More tab';
             if (designRaw === 'scroll tab') {
                 syntaxHeader = '::: Scroll tab';
-                        } else if (designRaw === 'bubble tab') {
+            } else if (designRaw === 'bubble tab') {
                 syntaxHeader = '::: Bubble tab';
             } else if (designRaw === 'footer tab') {
                 syntaxHeader = '::: Footer tab';
@@ -5259,7 +5259,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
 
         // --- EDITOR LOGIC END ---
 
-                function renderFooterLink(cardData) {
+        function renderFooterLink(cardData) {
             return `
             <a href="${cardData.link}" target="_blank" class="flex items-center gap-2.5 py-1.5 text-white/80 hover:text-white transition-colors group">
                 ${cardData.image ? `<img src="${cardData.image}" class="w-4 h-4 object-contain opacity-80 group-hover:opacity-100 shrink-0" alt=""/>` : ''}
@@ -6260,10 +6260,10 @@ function getCDNUrl(originalUrl) {
             let currentCustomCard = null;
             let parsedScrollCards = [];
             let currentScrollCard = null;
-            let parsedBubbleCards = [];
-            let currentBubbleCard = null;
             let parsedFooterLinks = [];
             let currentFooterLink = null;
+            let parsedBubbleCards = [];
+            let currentBubbleCard = null;
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
             let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
@@ -6901,8 +6901,9 @@ function getCDNUrl(originalUrl) {
                 const groupedFooters = groupCards(appState.footerLinks);
                 if (Object.keys(groupedFooters).length > 0) {
                     let footerHtml = `
-                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-10 pt-12 pb-28 border-t-2 border-orange-500 shadow-inner" style="background-color: #8C1C31;">
-                        <div class="max-w-screen-xl mx-auto px-8 md:px-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-10 pt-10 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -200px; padding-bottom: 200px;">
+                        <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
+                        <div class="max-w-screen-xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8 relative z-10" style="padding-bottom: 120px;">
                     `;
 
                     for (const [title, cards] of Object.entries(groupedFooters)) {
