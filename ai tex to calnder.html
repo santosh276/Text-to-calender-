@@ -2838,6 +2838,7 @@ The word "Nua" means new and "Khai" means food.
                             <option value="bubble tab">Bubble (Top)</option>
                             <option value="scroll tab">Scrolling (Middle)</option>
                             <option value="more tab">Grid (Bottom)</option>
+                            <option value="footer tab">Footer Link (Text List)</option>
                         </select>
                     </div>
                     <div>
@@ -5217,6 +5218,8 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                 syntaxHeader = '::: Scroll tab';
             } else if (designRaw === 'bubble tab') {
                 syntaxHeader = '::: Bubble tab';
+            } else if (designRaw === 'footer tab') {
+                syntaxHeader = '::: Footer tab';
             }
 
             // Format syntax string using sanitized variables
@@ -5245,6 +5248,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             if (design === 'more tab') input.placeholder = 'e.g. Discover Popular Tools';
             else if (design === 'scroll tab') input.placeholder = 'e.g. Spiritual Tools';
             else if (design === 'bubble tab') input.placeholder = 'e.g. Quick Links';
+            else if (design === 'footer tab') input.placeholder = 'e.g. ASTROLOGY or QUICK LINKS';
         }
 
         // --- EDITOR LOGIC END ---
@@ -6243,6 +6247,8 @@ function getCDNUrl(originalUrl) {
             let currentScrollCard = null;
             let parsedBubbleCards = [];
             let currentBubbleCard = null;
+            let parsedFooterLinks = [];
+            let currentFooterLink = null;
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
             let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
@@ -6264,6 +6270,11 @@ function getCDNUrl(originalUrl) {
                     const blockName = line.replace(/:::/g, '').trim().toLowerCase();
                     if (blockName === '') { currentBlock = null; currentDetailKey = null; currentHoroSign = null; }
                     else currentBlock = blockName;
+
+                    if (blockName === 'more tab') currentCustomCard = null;
+                    if (blockName === 'scroll tab') currentScrollCard = null;
+                    if (blockName === 'bubble tab') currentBubbleCard = null;
+                    if (blockName === 'footer tab') currentFooterLink = null;
                     return;
                 }
                 if (currentBlock === 'config') {
@@ -6507,6 +6518,35 @@ function getCDNUrl(originalUrl) {
                         else if (colorMatch) currentBubbleCard.color = colorMatch[1];
                     }
                 }
+                else if (currentBlock === 'footer tab') {
+                    const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
+                    const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
+                    const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
+
+                    // We need a way to detect a NEW footer item.
+                    // Given the parser is line-by-line, we must reset currentFooterLink
+                    // when we see a block start, but the block start logic (`if (line.startsWith(':::'))`)
+                    // handles that globally for `currentBlock`.
+                    // Actually, the user can have multiple items in ONE block if they repeat `Main Title` or `Title`
+                    // However, standard custom card format expects ONE `:::` block PER card.
+                    // Let's assume standard custom card parsing: ONE item per `::: footer tab` block.
+                    // Wait, in `appState` arrays, if we just parse properties, we need to push a NEW object per block.
+                    // The standard parsing sets `currentFooterLink = { ... }` in the `if (line.startsWith(':::'))` block? No.
+                    // Let's just create it on the first property found in this block.
+
+                    if (linkMatch || mainTitleMatch || titleMatch || imgMatch) {
+                        // If it doesn't exist, create it and push
+                        if (!currentFooterLink) {
+                            currentFooterLink = { link: '', title: '', mainTitle: '', image: '' };
+                            parsedFooterLinks.push(currentFooterLink);
+                        }
+                        if (linkMatch) currentFooterLink.link = linkMatch[1];
+                        else if (mainTitleMatch) currentFooterLink.mainTitle = mainTitleMatch[1];
+                        else if (titleMatch) currentFooterLink.title = titleMatch[1];
+                        else if (imgMatch) currentFooterLink.image = imgMatch[1];
+                    }
+                }
             });
 
             // If parsedMonths is empty (no explicit calendar block), verify if we need a default one?
@@ -6524,6 +6564,7 @@ function getCDNUrl(originalUrl) {
             appState.customCards = parsedCustomCards;
             appState.scrollCards = parsedScrollCards;
             appState.bubbleCards = parsedBubbleCards;
+            appState.footerLinks = parsedFooterLinks;
             
             findTodayIndex();
             
@@ -6858,6 +6899,43 @@ function getCDNUrl(originalUrl) {
 
                 for (const [title, cards] of Object.entries(groupedGrids)) {
                     finalHtml += renderGroup(title, cards, renderCustomCard, 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4');
+                }
+
+                // Render Footer Links at the very bottom
+                const groupedFooters = groupCards(appState.footerLinks);
+                if (Object.keys(groupedFooters).length > 0) {
+                    let footerHtml = `
+                    <div class="max-w-screen-2xl mx-auto w-full px-4 md:px-6 lg:px-12 mt-12 mb-8 border-t border-gray-200 pt-8">
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">`;
+
+                    for (const [mainTitle, items] of Object.entries(groupedFooters)) {
+                        footerHtml += `
+                            <div>
+                                <h4 class="text-orange-600 font-bold text-xs uppercase tracking-widest mb-4">${mainTitle}</h4>
+                                <ul class="space-y-3">`;
+
+                        items.forEach(item => {
+                            footerHtml += `
+                                    <li>
+                                        <a href="${item.link}" target="_blank" class="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors group text-sm font-semibold">
+                                            <div class="w-4 h-4 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity shrink-0">
+                                                ${item.image ? `<img src="${item.image}" class="w-full h-full object-contain" />` : `<i class="fa-solid fa-angle-right text-[10px]"></i>`}
+                                            </div>
+                                            <span>${item.title}</span>
+                                        </a>
+                                    </li>`;
+                        });
+
+                        footerHtml += `
+                                </ul>
+                            </div>`;
+                    }
+
+                    footerHtml += `
+                        </div>
+                    </div>`;
+
+                    finalHtml += footerHtml;
                 }
 
                 dynamicContainer.innerHTML = finalHtml;
