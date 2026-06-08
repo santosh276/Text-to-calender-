@@ -62,6 +62,12 @@
 .px-3\.5{padding-left:0.875rem;padding-right:0.875rem}
 
 .mb-5{margin-bottom:1.25rem}
+
+.w-screen { width: 100vw; }
+.ml-\[-50vw\] { margin-left: -50vw; }
+.mr-\[-50vw\] { margin-right: -50vw; }
+.left-\[50\%\] { left: 50%; }
+.right-\[50\%\] { right: 50%; }
 </style>
     <style id="tailwindcss">
     .pb-\[75px\] { padding-bottom: 75px; }
@@ -2838,6 +2844,7 @@ The word "Nua" means new and "Khai" means food.
                             <option value="bubble tab">Bubble (Top)</option>
                             <option value="scroll tab">Scrolling (Middle)</option>
                             <option value="more tab">Grid (Bottom)</option>
+                            <option value="footer tab">Footer Link (Clean List)</option>
                         </select>
                     </div>
                     <div>
@@ -4383,7 +4390,8 @@ const LOCATION_DATA = {
             details: {}, 
             manualTithis: {}, // New storage for dedicated Tithi overrides
             customSeasonDescriptions: {},
-            images: {}, 
+            images: {},
+            footerLinks: [], 
             activeMonthDetails: {}, // Cache for pre-rendered Day Detail HTML
             view: window.innerWidth < 768 ? 'month' : 'month',
             config: { 
@@ -5217,6 +5225,8 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                 syntaxHeader = '::: Scroll tab';
             } else if (designRaw === 'bubble tab') {
                 syntaxHeader = '::: Bubble tab';
+            } else if (designRaw === 'footer tab') {
+                syntaxHeader = '::: Footer tab';
             }
 
             // Format syntax string using sanitized variables
@@ -5248,6 +5258,17 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
         }
 
         // --- EDITOR LOGIC END ---
+
+        function renderFooterLink(cardData) {
+            return `
+            <a href="${cardData.link}" target="_blank" class="flex items-start gap-2 py-1 text-white/80 hover:text-white transition-colors group">
+                <div class="w-3 h-3 mt-[3px] shrink-0 flex items-center justify-center opacity-80 group-hover:opacity-100">
+                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain" alt=""/>` : `<i class="fa-solid fa-chevron-right text-[8px]"></i>`}
+                </div>
+                <span class="text-[11px] md:text-[12px] font-medium tracking-wide leading-snug">${cardData.title}</span>
+            </a>
+            `;
+        }
 
         function renderCustomCard(cardData) {
             const bgColor = cardData.color || '#0d9488';
@@ -5651,7 +5672,7 @@ function getCDNUrl(originalUrl) {
                          return;
                                             }
                 }
-
+                
                 // Update & Save Logic (Shared)
                 await updateAppWithFetchedData(cleanText);
                 
@@ -6241,6 +6262,8 @@ function getCDNUrl(originalUrl) {
             let currentCustomCard = null;
             let parsedScrollCards = [];
             let currentScrollCard = null;
+            let parsedFooterLinks = [];
+            let currentFooterLink = null;
             let parsedBubbleCards = [];
             let currentBubbleCard = null;
             
@@ -6449,6 +6472,22 @@ function getCDNUrl(originalUrl) {
                     const panMatch = line.match(/^@\s+(.+?)\s*:\s*(.+)/);
                     if (panMatch && currentMonthObj) currentMonthObj.panchang[panMatch[1]] = panMatch[2];
                 }
+                                else if (currentBlock === 'footer tab') {
+                    const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
+                    const mainTitleMatch = line.match(/^Main Title:\s*\[(.*?)\]/i);
+                    const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
+                    const descMatch = line.match(/^Description:\s*\[(.*?)\]/i);
+                    const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
+                    
+                    if (linkMatch) {
+                        currentFooterLink = { link: linkMatch[1], title: '', desc: '', image: '' };
+                        parsedFooterLinks.push(currentFooterLink);
+                    } else if (currentFooterLink) {
+                        if (mainTitleMatch) currentFooterLink.mainTitle = mainTitleMatch[1];
+                        else if (titleMatch) currentFooterLink.title = titleMatch[1];
+                        else if (imgMatch) currentFooterLink.image = imgMatch[1];
+                    }
+                }
                 else if (currentBlock === 'more tab') {
                     // Start of a new card if Hyperlink is found
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
@@ -6524,6 +6563,7 @@ function getCDNUrl(originalUrl) {
             appState.customCards = parsedCustomCards;
             appState.scrollCards = parsedScrollCards;
             appState.bubbleCards = parsedBubbleCards;
+            appState.footerLinks = parsedFooterLinks;
             
             findTodayIndex();
             
@@ -6858,6 +6898,29 @@ function getCDNUrl(originalUrl) {
 
                 for (const [title, cards] of Object.entries(groupedGrids)) {
                     finalHtml += renderGroup(title, cards, renderCustomCard, 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4');
+                }
+
+                const groupedFooters = groupCards(appState.footerLinks);
+                if (Object.keys(groupedFooters).length > 0) {
+                    let footerHtml = `
+                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -200px; padding-bottom: 200px; padding-top: 30px;">
+                        <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
+                        <div class="max-w-screen-xl mx-auto px-3 md:px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 relative z-10" style="padding-bottom: 120px; column-gap: 1.5rem; row-gap: 1.25rem;">
+                    `;
+                    
+                    for (const [title, cards] of Object.entries(groupedFooters)) {
+                        let linksHtml = cards.map(c => renderFooterLink(c)).join('');
+                        footerHtml += `
+                            <div class="flex flex-col">
+                                <div class="mb-2">
+                                    <h4 class="inline-block text-[12px] md:text-[13px] font-bold text-white tracking-widest uppercase border-b-2 border-white/30 pb-1">${title}</h4>
+                                </div>
+                                <div class="flex flex-col gap-0.5">${linksHtml}</div>
+                            </div>
+                        `;
+                    }
+                    footerHtml += '</div></div>';
+                    finalHtml += footerHtml;
                 }
 
                 dynamicContainer.innerHTML = finalHtml;
@@ -10696,6 +10759,7 @@ function updateDayCycleCard() {
                 manualTithis: appState.manualTithis || {},
                 customSeasonDescriptions: appState.customSeasonDescriptions || {},
                 images: appState.images || {},
+                footerLinks: appState.footerLinks || [],
                 customCards: appState.customCards || [],
                 scrollCards: appState.scrollCards || [],
                 bubbleCards: appState.bubbleCards || [],
