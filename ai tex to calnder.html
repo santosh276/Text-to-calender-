@@ -5261,11 +5261,11 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
 
         function renderFooterLink(cardData) {
             return `
-            <a href="${cardData.link}" target="_blank" class="flex items-start gap-3 py-1.5 text-white/80 hover:text-white transition-colors group">
-                <div class="w-4 h-4 mt-0.5 shrink-0 flex items-center justify-center opacity-80 group-hover:opacity-100">
-                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain" alt=""/>` : `<i class="fa-solid fa-chevron-right text-[10px]"></i>`}
+            <a href="${cardData.link}" target="_blank" class="flex items-start gap-2 py-1.5 text-white/80 hover:text-white transition-colors group">
+                <div class="w-3.5 h-3.5 mt-0.5 shrink-0 flex items-center justify-center opacity-80 group-hover:opacity-100">
+                    ${cardData.image ? `<img src="${cardData.image}" class="w-full h-full object-contain" alt=""/>` : `<i class="fa-solid fa-chevron-right text-[9px]"></i>`}
                 </div>
-                <span class="text-[13px] md:text-[14px] font-medium tracking-wide leading-snug">${cardData.title}</span>
+                <span class="text-[12px] md:text-[13px] font-medium tracking-wide leading-snug">${cardData.title}</span>
             </a>
             `;
         }
@@ -6905,15 +6905,18 @@ function getCDNUrl(originalUrl) {
                     let footerHtml = `
                     <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -200px; padding-bottom: 200px; padding-top: 30px;">
                         <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
-                        <div class="max-w-screen-xl mx-auto px-5 md:px-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 md:gap-x-12 gap-y-12 relative z-10" style="padding-bottom: 120px;">
+                        <!-- Reduced padding to push content outwards, using explicit inline styles for gap to ensure rendering -->
+                        <div class="max-w-screen-xl mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 relative z-10" style="padding-bottom: 120px; column-gap: 2rem; row-gap: 2.5rem;">
                     `;
 
                     for (const [title, cards] of Object.entries(groupedFooters)) {
                         let linksHtml = cards.map(c => renderFooterLink(c)).join('');
                         footerHtml += `
                             <div class="flex flex-col">
-                                <h4 class="text-[15px] md:text-[17px] font-bold text-white mb-4 tracking-wide border-b-2 border-white/20 pb-2">${title}</h4>
-                                <div class="flex flex-col gap-1.5">${linksHtml}</div>
+                                <div class="mb-3">
+                                    <h4 class="inline-block text-[14px] md:text-[16px] font-bold text-white tracking-wide border-b-2 border-white/30 pb-1">${title}</h4>
+                                </div>
+                                <div class="flex flex-col gap-1">${linksHtml}</div>
                             </div>
                         `;
                     }
