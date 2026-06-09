@@ -6924,9 +6924,9 @@ function getCDNUrl(originalUrl) {
                 
                 if (Object.keys(groupedFooters).length > 0 || hasSocials) {
                     let footerHtml = `
-                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -80px; padding-bottom: 80px; padding-top: 30px;">
+                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -60px; padding-bottom: 80px; padding-top: 30px;">
                         <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
-                        <div class="max-w-screen-xl mx-auto px-4 md:px-8 relative z-10">
+                        <div class="max-w-screen-xl mx-auto px-4 md:px-8 relative z-10" style="padding-bottom: 0px;">
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4" style="column-gap: 3rem; row-gap: 1.25rem;">
                     `;
                     
@@ -6952,7 +6952,7 @@ function getCDNUrl(originalUrl) {
                         `).join('');
                         
                         footerHtml += `
-                            <div class="mt-8 pt-5 border-t border-white/20 flex flex-wrap items-center justify-start gap-6 md:gap-8">
+                            <div class="mt-8 pt-4 border-t border-white/20 flex flex-wrap items-center justify-end gap-6 md:gap-8">
                                 ${socialHtml}
                             </div>
                         `;
