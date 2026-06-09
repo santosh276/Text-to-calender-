@@ -6947,7 +6947,7 @@ function getCDNUrl(originalUrl) {
                     if (hasSocials) {
                         let socialHtml = appState.socialLinks.map(s => `
                             <a href="${s.link}" target="_blank" title="${s.title}" class="w-4 h-4 md:w-5 md:h-5 hover:scale-110 transition-transform cursor-pointer">
-                                <img src="${s.image}" class="w-full h-full object-contain opacity-70 hover:opacity-100 transition-opacity" style="filter: brightness(0) invert(1);" alt="${s.title}"/>
+                                <img src="${s.image}" class="w-full h-full object-contain opacity-70 hover:opacity-100 transition-opacity" alt="${s.title}"/>
                             </a>
                         `).join('');
 
