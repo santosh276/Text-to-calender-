@@ -6903,9 +6903,9 @@ function getCDNUrl(originalUrl) {
                 const groupedFooters = groupCards(appState.footerLinks);
                 if (Object.keys(groupedFooters).length > 0) {
                     let footerHtml = `
-                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -200px; padding-bottom: 200px; padding-top: 30px;">
+                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -100px; padding-bottom: 120px; padding-top: 30px;">
                         <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
-                        <div class="max-w-screen-xl mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 relative z-10" style="padding-bottom: 120px; column-gap: 3rem; row-gap: 1.25rem;">
+                        <div class="max-w-screen-xl mx-auto px-3 md:px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 relative z-10" style="padding-bottom: 20px; column-gap: 1.5rem; row-gap: 1.25rem;">
                     `;
                     
                     for (const [title, cards] of Object.entries(groupedFooters)) {
