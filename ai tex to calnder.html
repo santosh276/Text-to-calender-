@@ -2173,12 +2173,14 @@ Card Color: [#2e3459]
 ::: config
 @ Title : My Calendar 2026
 @ Logo : <span class="hl-string">![Logo](https://example.com/logo.png)</span>
+@ Copyright : Copyright © 2026 Vaidik Calendar.com All rights reserved.
 @ Live Sync GitHub trigger in every : <span class="hl-string">24 hours</span>
 :::
                         </div>
                         <p class="code-annotation">
                             - <strong>Title:</strong> Appears in the top header.<br>
                             - <strong>Logo:</strong> URL or uploaded image path.<br>
+                            - <strong>Copyright:</strong> Appears at the bottom of the footer.<br>
                             - <strong>Live Sync:</strong> Auto-update interval (minutes/hours/days).
                         </p>
                     </div>
@@ -4399,6 +4401,7 @@ const LOCATION_DATA = {
             config: { 
                 title: 'Vaidik Calendar', 
                 logoUrl: null, 
+                copyright: 'Copyright © 2026 Vaidik Calendar.com All rights reserved.',
                 language: 'en', 
                 location: null,
                 sections: { festivals: true, panchang: true },
@@ -6274,7 +6277,7 @@ function getCDNUrl(originalUrl) {
             let currentBubbleCard = null;
             
             // Preserve existing config (Language, Location, LiveUrl) while parsing
-            let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
+            let tempConfig = appState.config ? JSON.parse(JSON.stringify(appState.config)) : { title: 'Panchang App', logoUrl: null, copyright: 'Copyright © 2026 Vaidik Calendar.com All rights reserved.', language: 'en', location: null, syncLinks: { ...DEFAULT_SYNC_LINKS } };
             if (!tempConfig.syncLinks) tempConfig.syncLinks = { ...DEFAULT_SYNC_LINKS };
 
             // Reset viewDate only if we don't have one, or maybe we want to keep current view?
@@ -6298,10 +6301,12 @@ function getCDNUrl(originalUrl) {
                 if (currentBlock === 'config') {
                     const titleMatch = line.match(/^@\s*Title\s*:\s*(.+)/i);
                     const logoMatch = line.match(/^@\s*Logo\s*:\s*!\[(.*?)\]\((.*?)\)/i);
+                    const copyrightMatch = line.match(/^@\s*Copyright\s*:\s*(.+)/i);
                     const syncMatch = line.match(/^@\s*Live Sync GitHub trigger in every\s*:\s*(\d+)\s*(minute|hour|day)s?/i);
 
                     if (titleMatch) tempConfig.title = titleMatch[1];
                     if (logoMatch) tempConfig.logoUrl = logoMatch[2];
+                    if (copyrightMatch) tempConfig.copyright = copyrightMatch[1];
                     if (syncMatch) {
                          const val = parseInt(syncMatch[1]);
                          const unit = syncMatch[2].toLowerCase();
@@ -6952,7 +6957,7 @@ function getCDNUrl(originalUrl) {
                         `).join('');
                         
                         footerHtml += `
-                        <div class="w-full mt-8 pt-4 border-t border-white/20 flex flex-wrap items-center gap-6 md:gap-8" style="justify-content: flex-end;">
+                            <div class="w-full mt-8 pt-4 border-t border-white/20 flex flex-wrap items-center justify-end gap-6 md:gap-8">
                                 ${socialHtml}
                             </div>
                         `;
