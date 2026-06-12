@@ -2299,6 +2299,19 @@ It marks the sun's transit into *Makara* (Capricorn).
                         <p class="code-annotation">Use exactly 35 hyphens on a single line to visually partition months in the editor. This helps keep your configuration file clean and readable without affecting the calendar data.</p>
                     </div>
 
+                    <div class="guide-section">
+                        <div class="guide-title"><i class="fa-solid fa-copyright"></i> 8. FOOTER SOCIAL & COPYRIGHT</div>
+                        <div class="code-block">
+::: Social tab
+@ Copyright : Copyright &copy; 2026 Vaidik Calendar.com All rights reserved.
+
+Hyperlink: [https://facebook.com]
+Title: [Facebook]
+Image Link: [https://image.url/icon.png]
+:::
+                        </div>
+                        <p class="code-annotation">Add copyright text to the left, and social media icons to the right.</p>
+                    </div>
 
                 </div>
             </div>
@@ -4394,6 +4407,7 @@ const LOCATION_DATA = {
             images: {},
             footerLinks: [], 
             socialLinks: [], 
+            copyrightText: "",
             activeMonthDetails: {}, // Cache for pre-rendered Day Detail HTML
             view: window.innerWidth < 768 ? 'month' : 'month',
             config: { 
@@ -4865,6 +4879,7 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             appState.manualTithis = {};
             appState.customSeasonDescriptions = {};
             appState.images = {};
+            appState.copyrightText = "";
 
             // 2. Clear Storage & Cache
             localStorage.removeItem('panchang_autosave_text');
@@ -5692,7 +5707,7 @@ function getCDNUrl(originalUrl) {
                 // --- EDITOR LOGIC START ---
                 if(syncBtn) syncBtn.innerHTML = originalText;
                 // --- EDITOR LOGIC END ---
-                                                }
+                                                            }
         }
 
         // 2. The Fetching Logic (Google Docs - Legacy/Proxy)
@@ -6270,6 +6285,7 @@ function getCDNUrl(originalUrl) {
             let currentFooterLink = null;
             let parsedSocialLinks = [];
             let currentSocialLink = null;
+            let parsedCopyright = "";
             let parsedBubbleCards = [];
             let currentBubbleCard = null;
             
@@ -6537,7 +6553,11 @@ function getCDNUrl(originalUrl) {
                     const linkMatch = line.match(/^Hyperlink:\s*\[(.*?)\]/i);
                     const titleMatch = line.match(/^Title:\s*\[(.*?)\]/i);
                     const imgMatch = line.match(/^Image Link:\s*\[(.*?)\]/i);
-                    if (linkMatch) {
+                    const copyrightMatch = line.match(/^@\s*Copyright\s*:\s*(.+)/i);
+
+                    if (copyrightMatch) {
+                        parsedCopyright = copyrightMatch[1].trim();
+                    } else if (linkMatch) {
                         currentSocialLink = { link: linkMatch[1], title: '', image: '' };
                         parsedSocialLinks.push(currentSocialLink);
                     } else if (currentSocialLink) {
@@ -6583,6 +6603,7 @@ function getCDNUrl(originalUrl) {
             appState.bubbleCards = parsedBubbleCards;
             appState.footerLinks = parsedFooterLinks;
             appState.socialLinks = parsedSocialLinks;
+            appState.copyrightText = parsedCopyright;
             
             findTodayIndex();
             
@@ -6920,7 +6941,7 @@ function getCDNUrl(originalUrl) {
                 }
 
                 const groupedFooters = groupCards(appState.footerLinks);
-                const hasSocials = appState.socialLinks && appState.socialLinks.length > 0;
+                const hasSocials = (appState.socialLinks && appState.socialLinks.length > 0) || appState.copyrightText;
                 
                 if (Object.keys(groupedFooters).length > 0 || hasSocials) {
                     let footerHtml = `
@@ -6945,17 +6966,24 @@ function getCDNUrl(originalUrl) {
                     
                     // Add Social Links Divider & Icons
                     if (hasSocials) {
-                        let socialHtml = appState.socialLinks.map(s => `
-                            <a href="${s.link}" target="_blank" title="${s.title}" class="w-4 h-4 md:w-5 md:h-5 hover:scale-110 transition-transform cursor-pointer">
-                                <img src="${s.image}" class="w-full h-full object-contain opacity-70 hover:opacity-100 transition-opacity" alt="${s.title}"/>
-                            </a>
-                        `).join('');
+                        let bottomFooterHtml = `<div class="w-full mt-8 pt-4 border-t border-white/20 flex flex-col gap-3">`;
                         
-                        footerHtml += `
-                        <div class="w-full mt-8 pt-4 border-t border-white/20 flex flex-wrap items-center gap-6 md:gap-8" style="justify-content: flex-end;">
-                                ${socialHtml}
-                            </div>
-                        `;
+                        if (appState.copyrightText) {
+                            bottomFooterHtml += `<div class="text-left text-[11px] md:text-xs text-white/70 font-medium tracking-wide" style="color: rgba(255, 255, 255, 0.7);">${appState.copyrightText}</div>`;
+                        }
+                        
+                        if (appState.socialLinks && appState.socialLinks.length > 0) {
+                            let socialHtml = appState.socialLinks.map(s => `
+                                <a href="${s.link}" target="_blank" title="${s.title}" class="w-4 h-4 md:w-5 md:h-5 hover:scale-110 transition-transform cursor-pointer">
+                                    <img src="${s.image}" class="w-full h-full object-contain opacity-70 hover:opacity-100 transition-opacity" alt="${s.title}"/>
+                                </a>
+                            `).join('');
+                            
+                            bottomFooterHtml += `<div class="w-full flex flex-wrap items-center gap-6 md:gap-8" style="justify-content: flex-end;">${socialHtml}</div>`;
+                        }
+                        
+                        bottomFooterHtml += `</div>`;
+                        footerHtml += bottomFooterHtml;
                     }
                     
                     footerHtml += `</div></div>`; // Close wrapper
@@ -10800,6 +10828,7 @@ function updateDayCycleCard() {
                 images: appState.images || {},
                 footerLinks: appState.footerLinks || [],
                 socialLinks: appState.socialLinks || [],
+                copyrightText: appState.copyrightText || "",
                 customCards: appState.customCards || [],
                 scrollCards: appState.scrollCards || [],
                 bubbleCards: appState.bubbleCards || [],
