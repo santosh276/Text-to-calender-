@@ -6988,7 +6988,13 @@ function getCDNUrl(originalUrl) {
                                 </g>
                             </svg>
                         </div>
-                        <h2 class="text-xl md:text-2xl font-black mb-3 tracking-tight" style="color: #fbbf24; font-family: 'Roboto', sans-serif;">${displayMissionTitle}</h2>
+                        <h2 class="text-xl md:text-2xl font-black tracking-tight" style="color: #fbbf24; font-family: 'Roboto', sans-serif;">${displayMissionTitle}</h2>
+                        <div class="flex justify-center mt-1 mb-4">
+                            <svg viewBox="0 0 300 20" class="w-56 md:w-64 drop-shadow-sm" fill="currentColor" style="color: #fbbf24; opacity: 0.9;" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12 Q 150 -5 295 12 Q 150 2 5 12 Z"/>
+                                <path d="M40 18 Q 150 7 260 16 Q 150 11 40 18 Z"/>
+                            </svg>
+                        </div>
                         <p class="text-white/80 text-[13px] md:text-[14px] leading-relaxed font-medium">
                             ${displayMissionDesc}
                         </p>
@@ -6996,7 +7002,7 @@ function getCDNUrl(originalUrl) {
                     `;
 
                     let footerHtml = `
-                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -60px; padding-bottom: 80px; padding-top: 30px;">
+                    <div class="w-screen relative left-[50%] right-[50%] ml-[-50vw] mr-[-50vw] mt-12 border-t border-orange-500/50 shadow-inner" style="background-color: #8C1C31; margin-bottom: -60px; padding-bottom: 45px; padding-top: 30px;">
                         <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
                         <div class="max-w-screen-xl mx-auto px-4 md:px-8 relative z-10" style="padding-bottom: 0px;">
                             ${brandingHtml}
