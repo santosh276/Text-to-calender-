@@ -9018,6 +9018,19 @@ function buildNightScene() {
 function buildDayScene() {
   return `
     <g transform="translate(0, -15)">
+      <!-- Clouds Layer 1 (Slow drift right) -->
+      <g opacity="0.12" fill="#ffffff">
+          <animateTransform attributeName="transform" type="translate" values="-10,0; 15,0; -10,0" dur="30s" repeatCount="indefinite" />
+          <path d="M 100 50 C 100 40 110 35 120 40 C 130 25 150 25 160 40 C 170 35 180 40 180 50 Z" />
+          <path d="M 230 70 C 230 63 237 58 244 62 C 251 51 265 51 272 62 C 279 58 286 63 286 70 Z" />
+      </g>
+      <!-- Clouds Layer 2 (Slower drift left) -->
+      <g opacity="0.08" fill="#ffffff">
+          <animateTransform attributeName="transform" type="translate" values="10,0; -15,0; 10,0" dur="40s" repeatCount="indefinite" />
+          <path d="M 40 85 C 40 78 47 73 54 77 C 61 66 75 66 82 77 C 89 73 96 78 96 85 Z" />
+      </g>
+
+      <!-- Birds Layer -->
       <g opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; 3,-2; -2,1; 0,0" dur="4s" repeatCount="indefinite" />
           <path d="M 52 67 Q 55 64 58 67"/><path d="M 62 59 Q 65 56 68 59"/><path d="M 72 70 Q 75 67 78 70"/>
