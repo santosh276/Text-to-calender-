@@ -9026,14 +9026,12 @@ function buildDayScene() {
           <g transform="translate(20, -10) scale(0.4)"><path d="${cloudPath}"/></g>
           <!-- NEW: Small cloud in the top middle -->
           <g transform="translate(150, -25) scale(0.35)"><path d="${cloudPath}"/></g>
-          <g transform="translate(270, 5) scale(-0.5, 0.5)"><path d="${cloudPath}"/></g>
+          <g transform="translate(325, 5) scale(-0.5, 0.5)"><path d="${cloudPath}"/></g>
       </g>
       
       <!-- Clouds Layer 2 (Mid background, lower and smaller) -->
       <g opacity="0.05" fill="#ffffff">
           <animateTransform attributeName="transform" type="translate" values="15,60; -15,60; 15,60" dur="35s" repeatCount="indefinite" />
-          <!-- MOVED: Shifted large cloud to the right to prevent overlap -->
-          <g transform="translate(220, -15) scale(0.65)"><path d="${cloudPath}"/></g>
           <g transform="translate(-10, 10) scale(0.5, 0.4)"><path d="${cloudPath}"/></g>
       </g>
       
