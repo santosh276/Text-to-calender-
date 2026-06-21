@@ -9020,18 +9020,21 @@ function buildDayScene() {
 
   return `
     <g transform="translate(0, -15)">
-      <!-- Clouds Layer 1 (Far background, lower and smaller) -->
-      <g opacity="0.03" fill="#ffffff">
+      <!-- Clouds Layer 1 (Far background, perfectly scattered) -->
+      <g opacity="0.02" fill="#ffffff">
           <animateTransform attributeName="transform" type="translate" values="-10,45; 15,45; -10,45" dur="45s" repeatCount="indefinite" />
-          <g transform="translate(20, -10) scale(0.4)"><path d="${cloudPath}"/></g>
-          <g transform="translate(270, 5) scale(-0.5, 0.5)"><path d="${cloudPath}"/></g>
+          <g transform="translate(20, 0) scale(0.4)"><path d="${cloudPath}"/></g>
+          <g transform="translate(130, -30) scale(0.3)"><path d="${cloudPath}"/></g>
+          <!-- Pushed far right to avoid overlap -->
+          <g transform="translate(300, 10) scale(-0.4, 0.4)"><path d="${cloudPath}"/></g>
       </g>
 
-      <!-- Clouds Layer 2 (Mid background, lower and smaller) -->
-      <g opacity="0.05" fill="#ffffff">
+      <!-- Clouds Layer 2 (Mid background, lower opacity) -->
+      <g opacity="0.03" fill="#ffffff">
           <animateTransform attributeName="transform" type="translate" values="15,60; -15,60; 15,60" dur="35s" repeatCount="indefinite" />
-          <g transform="translate(130, -15) scale(0.7)"><path d="${cloudPath}"/></g>
-          <g transform="translate(-10, 10) scale(0.5, 0.4)"><path d="${cloudPath}"/></g>
+          <!-- Pulled left and scaled down to maintain gap from the rightmost cloud -->
+          <g transform="translate(200, -15) scale(0.55)"><path d="${cloudPath}"/></g>
+          <g transform="translate(-20, 15) scale(0.5, 0.4)"><path d="${cloudPath}"/></g>
       </g>
 
       <!-- Birds Layer -->
