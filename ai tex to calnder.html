@@ -5749,7 +5749,7 @@ function getCDNUrl(originalUrl) {
                 force = true;
             }
 
-            // --- EDITOR LOGIC START ---
+                    // --- EDITOR LOGIC START ---
             // UI Feedback
             const syncBtn = document.querySelector('button[onclick="configureLiveSync()"]');
             const originalText = syncBtn ? syncBtn.innerHTML : '';
@@ -8574,7 +8574,7 @@ function renderCalendarGrid(data) {
       <g id="arcBgSceneCycle" clip-path="url(#aboveHorizonCycle)"></g>
     </svg>
   </div>
-  <div class="relative z-10 flex flex-col" style="padding: 12px 16px 16px;">
+  <div class="relative z-10 flex flex-col" style="padding: 12px 10px 16px 10px;">
     <div class="flex items-center justify-between relative z-20" style="margin-bottom:0px;">
       <div id="titleBadgeCycle" class="flex items-center gap-1.5 rounded-full" style="padding:3px 10px 3px 8px; background:rgba(251,191,36,0.14); border:1px solid rgba(251,191,36,0.28);">
         <span id="titleIconCycle" style="font-size:12px;">☀️</span>
@@ -8585,7 +8585,7 @@ function renderCalendarGrid(data) {
         <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.75);">Live</span>
       </div>
     </div>
-    <div class="relative z-10" style="width:100%; margin-bottom:0px; margin-top:-15px;">
+    <div class="relative z-10" style="width:100%; margin-bottom:0px; margin-top:-28px;">
       <svg id="arcSvgCycle" viewBox="0 0 320 185" width="100%" style="display:block; overflow:visible;" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="arcGradDayCycle" gradientUnits="userSpaceOnUse" x1="30" y1="175" x2="290" y2="175"><stop offset="0%" stop-color="#f97316"/><stop offset="30%" stop-color="#fbbf24"/><stop offset="60%" stop-color="#fde68a"/><stop offset="100%" stop-color="#f97316" stop-opacity="0.6"/></linearGradient>
@@ -8597,7 +8597,7 @@ function renderCalendarGrid(data) {
         <path id="arcTrackCycle" d="M 30 175 A 130 130 0 0 1 290 175" fill="none" stroke="rgba(255,255,255,0.13)" stroke-width="6" stroke-dasharray="5 8" stroke-linecap="round"/>
         <path id="arcActiveCycle" d="M 30 175 L 30 175" fill="none" stroke="url(#arcGradDayCycle)" stroke-width="6" stroke-linecap="round" filter="url(#arcGlowDayCycle)"/>
         <g id="sunIconCycle" transform="translate(30,175)">
-          <g style="transform: scale(0.75);">
+          <g style="transform: scale(0.78);">
               <circle class="sun-corona" cx="0" cy="0" r="20" fill="#fde68a" opacity="0.18"/>
               <circle class="sun-halo" cx="0" cy="0" r="13" fill="#fbbf24" opacity="0.32"/>
               <g>
@@ -8616,7 +8616,7 @@ function renderCalendarGrid(data) {
           </g>
         </g>
         <g id="moonIconCycle" transform="translate(30,175)" class="hidden">
-          <g style="transform: scale(0.75);">
+          <g style="transform: scale(0.72);">
               <circle class="moon-outer" cx="0" cy="0" r="26" fill="#818cf8" opacity="0.10"/><circle class="moon-halo" cx="0" cy="0" r="17" fill="#6366f1" opacity="0.22"/>
               <g filter="url(#moonIconGlowCycle)">
                 <circle cx="0" cy="0" r="10" fill="#dde4ff" stroke="#a5b4fc" stroke-width="1.5" />
@@ -9016,15 +9016,35 @@ function buildNightScene() {
 }
 
 function buildDayScene() {
+  const cloudPath = "M43.7,51.3C34,51.3 26.1,59 26.1,68.6C26.1,78.2 34,86 43.7,86L105.6,86C115.3,86 123.1,78.2 123.1,68.6C123.1,59 115.3,51.2 105.6,51.2C104,51.2 102.5,51.4 101.1,51.9C97.4,40.3 86.7,32 74,32C61.5,32 50.8,40.1 47,51.6C45.9,51.4 44.8,51.3 43.7,51.3Z";
+  
   return `
     <g transform="translate(0, -15)">
+      <!-- Clouds Layer 1 (Far background, lower and smaller) -->
+      <g opacity="0.03" fill="#ffffff">
+          <animateTransform attributeName="transform" type="translate" values="-10,45; 15,45; -10,45" dur="45s" repeatCount="indefinite" />
+          <g transform="translate(20, -10) scale(0.4)"><path d="${cloudPath}"/></g>
+          <!-- NEW: Small cloud in the top middle -->
+          <g transform="translate(150, -25) scale(0.35)"><path d="${cloudPath}"/></g>
+          <g transform="translate(270, 5) scale(-0.5, 0.5)"><path d="${cloudPath}"/></g>
+      </g>
+      
+      <!-- Clouds Layer 2 (Mid background, lower and smaller) -->
+      <g opacity="0.05" fill="#ffffff">
+          <animateTransform attributeName="transform" type="translate" values="15,60; -15,60; 15,60" dur="35s" repeatCount="indefinite" />
+          <!-- MOVED: Shifted large cloud to the right to prevent overlap -->
+          <g transform="translate(220, -15) scale(0.65)"><path d="${cloudPath}"/></g>
+          <g transform="translate(-10, 10) scale(0.5, 0.4)"><path d="${cloudPath}"/></g>
+      </g>
+      
+      <!-- Birds Layer -->
       <g opacity="0.30" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; 3,-2; -2,1; 0,0" dur="4s" repeatCount="indefinite" />
-          <path d="M 67 42 Q 70 39 73 42"/><path d="M 77 34 Q 80 31 83 34"/><path d="M 87 45 Q 90 42 93 45"/>
+          <path d="M 52 67 Q 55 64 58 67"/><path d="M 62 59 Q 65 56 68 59"/><path d="M 72 70 Q 75 67 78 70"/>
       </g>
       <g opacity="0.22" fill="none" stroke="#94a3b8" stroke-width="1" stroke-linecap="round">
           <animateTransform attributeName="transform" type="translate" values="0,0; -2,1; 2,-1; 0,0" dur="5s" repeatCount="indefinite" />
-          <path d="M 213 24 Q 216 21 219 24"/><path d="M 221 16 Q 224 13 227 16"/>
+          <path d="M 213 39 Q 216 36 219 39"/><path d="M 221 31 Q 224 28 227 31"/>
       </g>
     </g>
   `;
