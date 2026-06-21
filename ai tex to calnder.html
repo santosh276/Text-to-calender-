@@ -9016,18 +9016,27 @@ function buildNightScene() {
 }
 
 function buildDayScene() {
+  // A professional cumulus cloud SVG path (flat bottom, fluffy organic tops)
+  const cloudPath = "M43.7,51.3C34,51.3 26.1,59 26.1,68.6C26.1,78.2 34,86 43.7,86L105.6,86C115.3,86 123.1,78.2 123.1,68.6C123.1,59 115.3,51.2 105.6,51.2C104,51.2 102.5,51.4 101.1,51.9C97.4,40.3 86.7,32 74,32C61.5,32 50.8,40.1 47,51.6C45.9,51.4 44.8,51.3 43.7,51.3Z";
+
   return `
     <g transform="translate(0, -15)">
-      <!-- Clouds Layer 1 (Slow drift right) -->
-      <g opacity="0.12" fill="#ffffff">
-          <animateTransform attributeName="transform" type="translate" values="-10,0; 15,0; -10,0" dur="30s" repeatCount="indefinite" />
-          <path d="M 100 50 C 100 40 110 35 120 40 C 130 25 150 25 160 40 C 170 35 180 40 180 50 Z" />
-          <path d="M 230 70 C 230 63 237 58 244 62 C 251 51 265 51 272 62 C 279 58 286 63 286 70 Z" />
+      <!-- Clouds Layer 1 (Far background, slower, lower opacity) -->
+      <g opacity="0.05" fill="#ffffff">
+          <animateTransform attributeName="transform" type="translate" values="-10,25; 15,25; -10,25" dur="45s" repeatCount="indefinite" />
+          <!-- Small Cloud Left -->
+          <g transform="translate(10, -10) scale(0.6)"><path d="${cloudPath}"/></g>
+          <!-- Small Cloud Right (Flipped horizontally for natural variation) -->
+          <g transform="translate(340, 0) scale(-0.7, 0.7)"><path d="${cloudPath}"/></g>
       </g>
-      <!-- Clouds Layer 2 (Slower drift left) -->
+
+      <!-- Clouds Layer 2 (Mid background, slightly faster, slightly more visible) -->
       <g opacity="0.08" fill="#ffffff">
-          <animateTransform attributeName="transform" type="translate" values="10,0; -15,0; 10,0" dur="40s" repeatCount="indefinite" />
-          <path d="M 40 85 C 40 78 47 73 54 77 C 61 66 75 66 82 77 C 89 73 96 78 96 85 Z" />
+          <animateTransform attributeName="transform" type="translate" values="15,32; -15,32; 15,32" dur="35s" repeatCount="indefinite" />
+          <!-- Large Fluffy Cloud Center-Right -->
+          <g transform="translate(110, -10) scale(1.1)"><path d="${cloudPath}"/></g>
+          <!-- Medium Cloud Left (Squashed slightly for variation) -->
+          <g transform="translate(-10, 15) scale(0.9, 0.7)"><path d="${cloudPath}"/></g>
       </g>
 
       <!-- Birds Layer -->
