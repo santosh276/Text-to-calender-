@@ -9016,27 +9016,22 @@ function buildNightScene() {
 }
 
 function buildDayScene() {
-  // A professional cumulus cloud SVG path (flat bottom, fluffy organic tops)
   const cloudPath = "M43.7,51.3C34,51.3 26.1,59 26.1,68.6C26.1,78.2 34,86 43.7,86L105.6,86C115.3,86 123.1,78.2 123.1,68.6C123.1,59 115.3,51.2 105.6,51.2C104,51.2 102.5,51.4 101.1,51.9C97.4,40.3 86.7,32 74,32C61.5,32 50.8,40.1 47,51.6C45.9,51.4 44.8,51.3 43.7,51.3Z";
 
   return `
     <g transform="translate(0, -15)">
-      <!-- Clouds Layer 1 (Far background, slower, lower opacity) -->
-      <g opacity="0.05" fill="#ffffff">
-          <animateTransform attributeName="transform" type="translate" values="-10,25; 15,25; -10,25" dur="45s" repeatCount="indefinite" />
-          <!-- Small Cloud Left -->
-          <g transform="translate(10, -10) scale(0.6)"><path d="${cloudPath}"/></g>
-          <!-- Small Cloud Right (Flipped horizontally for natural variation) -->
-          <g transform="translate(340, 0) scale(-0.7, 0.7)"><path d="${cloudPath}"/></g>
+      <!-- Clouds Layer 1 (Far background, lower and smaller) -->
+      <g opacity="0.03" fill="#ffffff">
+          <animateTransform attributeName="transform" type="translate" values="-10,45; 15,45; -10,45" dur="45s" repeatCount="indefinite" />
+          <g transform="translate(20, -10) scale(0.4)"><path d="${cloudPath}"/></g>
+          <g transform="translate(270, 5) scale(-0.5, 0.5)"><path d="${cloudPath}"/></g>
       </g>
 
-      <!-- Clouds Layer 2 (Mid background, slightly faster, slightly more visible) -->
-      <g opacity="0.08" fill="#ffffff">
-          <animateTransform attributeName="transform" type="translate" values="15,32; -15,32; 15,32" dur="35s" repeatCount="indefinite" />
-          <!-- Large Fluffy Cloud Center-Right -->
-          <g transform="translate(110, -10) scale(1.1)"><path d="${cloudPath}"/></g>
-          <!-- Medium Cloud Left (Squashed slightly for variation) -->
-          <g transform="translate(-10, 15) scale(0.9, 0.7)"><path d="${cloudPath}"/></g>
+      <!-- Clouds Layer 2 (Mid background, lower and smaller) -->
+      <g opacity="0.05" fill="#ffffff">
+          <animateTransform attributeName="transform" type="translate" values="15,60; -15,60; 15,60" dur="35s" repeatCount="indefinite" />
+          <g transform="translate(130, -15) scale(0.7)"><path d="${cloudPath}"/></g>
+          <g transform="translate(-10, 10) scale(0.5, 0.4)"><path d="${cloudPath}"/></g>
       </g>
 
       <!-- Birds Layer -->
