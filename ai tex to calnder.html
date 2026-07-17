@@ -68,6 +68,26 @@
 .mr-\[-50vw\] { margin-right: -50vw; }
 .left-\[50\%\] { left: 50%; }
 .right-\[50\%\] { right: 50%; }
+/* Custom Nav Icons Styling */
+.custom-nav-icon {
+    transition: all 0.3s ease;
+}
+/* Inactive state for mobile and desktop */
+button.text-gray-400 .custom-nav-icon {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+/* Active state for mobile (orange) and desktop (white) */
+button.text-orange-600 .custom-nav-icon,
+button.text-white .custom-nav-icon {
+    opacity: 1;
+    filter: grayscale(0%);
+}
+/* Inactive state for desktop */
+button.text-white\/80 .custom-nav-icon {
+    opacity: 0.8;
+    filter: grayscale(20%);
+}
 </style>
     <style id="tailwindcss">
     .pb-\[75px\] { padding-bottom: 75px; }
@@ -2953,6 +2973,12 @@ The word "Nua" means new and "Khai" means food.
                                 <span class="block font-bold text-gray-700 text-sm">Update Ritu Banners</span>
                             </div>
                         </div>
+                        <div class="radio-option" onclick="updateLinkType('navicon')">
+                            <div class="radio-circle"><div class="radio-dot"></div></div>
+                            <div class="flex-1">
+                                <span class="block font-bold text-gray-700 text-sm">Navigation Icon</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="link-date-container" class="hidden">
@@ -2968,6 +2994,16 @@ The word "Nua" means new and "Khai" means food.
                         <option value="3">Sharad (Autumn / ଶରତ)</option>
                         <option value="4">Hemant (Pre-Winter / ହେମନ୍ତ)</option>
                         <option value="5">Shishir (Winter / ଶିଶିର)</option>
+                    </select>
+                </div>
+                <div id="link-navicon-container" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Select Navigation Item</label>
+                    <select id="link-navicon-select" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+                        <option value="Calendar">Calendar</option>
+                        <option value="Festivals">Festivals</option>
+                        <option value="Listen">Listen</option>
+                        <option value="Timings">Timings</option>
+                        <option value="More">More</option>
                     </select>
                 </div>
                 <div class="mt-4">
@@ -5156,6 +5192,24 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
                     const rituImg = document.querySelector(`img[data-season-index="${rituIndex}"]`);
                     if (rituImg) rituImg.src = url;
                 }, 100);
+            } else if (type === 'navicon') {
+                const navName = extraParam;
+                if (!navName) { alert("Please select a Navigation Item."); return; }
+                const configBlockRegex = /::: config([\s\S]*?):::/;
+                const navIconLine = `@ Nav Icon ${navName} : ![Icon](${url})`;
+
+                if (configBlockRegex.test(newText)) {
+                    newText = newText.replace(configBlockRegex, (match, content) => {
+                        const existingRegex = new RegExp(`@\\s*Nav Icon ${navName}\\s*:.*(\\r?\\n|$)`, 'i');
+                        if (content.match(existingRegex)) {
+                            return match.replace(existingRegex, `${navIconLine}\n`);
+                        } else {
+                            return `::: config\n${navIconLine}\n${content}:::`;
+                        }
+                    });
+                } else {
+                    newText = `::: config\n${navIconLine}\n:::\n\n` + newText;
+                }
             }
             editor.value = newText;
             parseInput(newText);
@@ -5378,13 +5432,17 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             
             const dateContainer = document.getElementById('link-date-container');
             const rituContainer = document.getElementById('link-ritu-container');
+            const naviconContainer = document.getElementById('link-navicon-container');
             if (dateContainer) dateContainer.classList.add('hidden');
             if (rituContainer) rituContainer.classList.add('hidden');
+            if (naviconContainer) naviconContainer.classList.add('hidden');
             
             if(type === 'banner' || type === 'gridbg') {
                 if (dateContainer) dateContainer.classList.remove('hidden');
             } else if(type === 'ritu') {
                 if (rituContainer) rituContainer.classList.remove('hidden');
+            } else if(type === 'navicon') {
+                if(naviconContainer) naviconContainer.classList.remove('hidden');
             }
         }
 
@@ -5428,6 +5486,9 @@ indianMonths: ["পুহ / মাঘ", "মাঘ / ফাগুন", "ফা�
             } else if (type === 'ritu') {
                 extraParam = document.getElementById('link-ritu-select').value;
                 if (!extraParam) { alert("Please select a Ritu."); return; }
+            } else if (type === 'navicon') {
+                extraParam = document.getElementById('link-navicon-select').value;
+                if (!extraParam) { alert("Please select a Navigation Item."); return; }
             }
             insertImageToEditor(url, type, extraParam);
             closeLinkModal();
@@ -6320,6 +6381,8 @@ function getCDNUrl(originalUrl) {
             // We don't push a default month immediately. We wait to see if 'calendar' block exists.
             // If parsedMonths ends up empty, we handle that later.
 
+            tempConfig.navIcons = {};
+
             lines.forEach(line => {
                 line = line.trim();
                 if (!line) return;
@@ -6345,6 +6408,11 @@ function getCDNUrl(originalUrl) {
                          if (unit.startsWith('minute')) multiplier = 1000 * 60;
                          if (unit.startsWith('hour')) multiplier = 1000 * 60 * 60;
                          tempConfig.syncInterval = val * multiplier;
+                    }
+                    const navIconMatch = line.match(/^@\s*Nav Icon\s+(Calendar|Festivals|Listen|Timings|More)\s*:\s*!\[(.*?)\]\((.*?)\)/i);
+                    if (navIconMatch) {
+                        if (!tempConfig.navIcons) tempConfig.navIcons = {};
+                        tempConfig.navIcons[navIconMatch[1].toLowerCase()] = navIconMatch[3];
                     }
                 }
                 else if (currentBlock === 'labels') {
@@ -7089,7 +7157,61 @@ function getCDNUrl(originalUrl) {
             // Step 1: Cache the state
             saveStateToCache();
             
+            applyCustomNavIcons();
             applyCustomLabels();
+        }
+
+        function applyCustomNavIcons() {
+            const iconMap = {
+                'calendar': '.fa-calendar',
+                'festivals': '.festivals-icon',
+                'listen': '.fa-headphones',
+                'timings': '.fa-clock',
+                'more': 'svg' // Targeting inner SVG for "More" menu
+            };
+
+            ['mobile-bottom-nav', 'desktop-top-nav'].forEach(navId => {
+                const nav = document.getElementById(navId);
+                if (!nav) return;
+
+                Object.keys(iconMap).forEach(key => {
+                    let originalIcon;
+                    let btn;
+
+                    if (key === 'more') {
+                        btn = nav.querySelector('.menu-icon-btn');
+                        if(btn) originalIcon = btn.querySelector('svg:not(.custom-nav-icon)');
+                    } else {
+                        originalIcon = nav.querySelector(iconMap[key] + ':not(.custom-nav-icon)');
+                        if (originalIcon) btn = originalIcon.closest('button');
+                    }
+
+                    if (!btn || !originalIcon) return;
+
+                    let customImg = btn.querySelector('.custom-nav-icon');
+
+                    if (appState.config.navIcons && appState.config.navIcons[key]) {
+                        const url = resolveImageUrls(appState.config.navIcons[key]);
+
+                        originalIcon.style.display = 'none';
+
+                        if (!customImg) {
+                            customImg = document.createElement('img');
+                            customImg.className = 'custom-nav-icon object-contain w-5 h-5 mb-0.5 mt-px';
+                            const textSpan = btn.querySelector('span');
+                            if(textSpan) {
+                                btn.insertBefore(customImg, textSpan);
+                            } else {
+                                btn.appendChild(customImg);
+                            }
+                        }
+                        customImg.src = url;
+                    } else {
+                        if (customImg) customImg.remove();
+                        originalIcon.style.display = '';
+                    }
+                });
+            });
         }
 
         function applyCustomLabels() {
