@@ -1,0 +1,356 @@
+{
+  "language": "or",
+  "name": "ଓଡ଼ିଆ (Odia)",
+  "config": {
+    "title": "Vaidik Calendar",
+    "language": "or"
+  },
+  "customMonths": {
+    "0": "ଜାନୁଆରୀ",
+    "1": "ଫେବୃଆରୀ",
+    "2": "ମାର୍ଚ୍ଚ",
+    "3": "ଏପ୍ରିଲ୍",
+    "4": "ମଇ",
+    "5": "ଜୁନ୍",
+    "6": "ଜୁଲାଇ",
+    "7": "ଅଗଷ୍ଟ",
+    "8": "ସେପ୍ଟେମ୍ବର",
+    "9": "ଅକ୍ଟୋବର",
+    "10": "ନଭେମ୍ବର",
+    "11": "ଡିସେମ୍ବର"
+  },
+  "monthsData": [
+    {
+      "month": 0,
+      "year": 2026,
+      "events": [
+        { "date": 1, "symbol": "*", "engName": "New Year's Day", "locName": "ଇଂରାଜୀ ନବବର୍ଷ" },
+        { "date": 14, "symbol": "!", "engName": "Makar Sankranti", "locName": "ମକର ସଂକ୍ରାନ୍ତି" },
+        { "date": 23, "symbol": "!", "engName": "Netaji Jayanti / Saraswati Puja", "locName": "ନେତାଜୀ ଜୟନ୍ତୀ / ଶ୍ରୀପଞ୍ଚମୀ" },
+        { "date": 26, "symbol": "*", "engName": "Republic Day", "locName": "ଗଣତନ୍ତ୍ର ଦିବସ" }
+      ],
+      "panchang": {
+        "Sunrise": "06:20 AM",
+        "Sunset": "05:35 PM"
+      }
+    },
+    {
+      "month": 1,
+      "year": 2026,
+      "events": [
+        { "date": 15, "symbol": "!", "engName": "Maha Shivaratri", "locName": "ଜାଗର ମହାଶିବରାତ୍ରି" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 2,
+      "year": 2026,
+      "events": [
+        { "date": 3, "symbol": "!", "engName": "Dola Purnima", "locName": "ଦୋଳ ପୂର୍ଣ୍ଣିମା (ଫଗୁ ଦଶମୀ)" },
+        { "date": 4, "symbol": "!", "engName": "Holi", "locName": "ହୋଲି (ରଙ୍ଗର ପର୍ବ)" },
+        { "date": 27, "symbol": "!", "engName": "Rama Navami", "locName": "ଶ୍ରୀରାମ ନବମୀ" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 3,
+      "year": 2026,
+      "events": [
+        { "date": 1, "symbol": "*", "engName": "Utkal Divas", "locName": "ଉତ୍କଳ ଦିବସ" },
+        { "date": 14, "symbol": "!", "engName": "Maha Vishuva Sankranti", "locName": "ପଣା ସଂକ୍ରାନ୍ତି (ଓଡ଼ିଆ ନବବର୍ଷ)" },
+        { "date": 19, "symbol": "!", "engName": "Akshaya Tritiya", "locName": "ଅକ୍ଷୟ ତୃତୀୟା (ରଥ ଅନୁକୂଳ)" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 4,
+      "year": 2026,
+      "events": [
+        { "date": 1, "symbol": "*", "engName": "May Day", "locName": "ଶ୍ରମିକ ଦିବସ" },
+        { "date": 31, "symbol": "!", "engName": "Devasnana Purnima", "locName": "ଦେବସ୍ନାନ ପୂର୍ଣ୍ଣିମା" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 5,
+      "year": 2026,
+      "events": [
+        { "date": 16, "symbol": "!", "engName": "Ratha Yatra", "locName": "ଶ୍ରୀଗୁଣ୍ଡିଚା ରଥଯାତ୍ରା" },
+        { "date": 20, "symbol": "!", "engName": "Hera Panchami", "locName": "ହେରା ପଞ୍ଚମୀ" },
+        { "date": 24, "symbol": "!", "engName": "Bahuda Yatra", "locName": "ବାହୁଡ଼ା ଯାତ୍ରା" },
+        { "date": 26, "symbol": "!", "engName": "Suna Besha", "locName": "ବଡ଼ତଢ଼ାଉ ସୁନାବେଶ" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 6,
+      "year": 2026,
+      "events": [
+        { "date": 29, "symbol": "!", "engName": "Gamha Purnima", "locName": "ରାକ୍ଷୀ ପୂର୍ଣ୍ଣିମା (ଗହ୍ମା ପୂର୍ଣ୍ଣିମା)" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 7,
+      "year": 2026,
+      "events": [
+        { "date": 15, "symbol": "*", "engName": "Independence Day", "locName": "ସ୍ୱାଧୀନତା ଦିବସ" },
+        { "date": 4, "symbol": "!", "engName": "Janmashtami", "locName": "ଶ୍ରୀକୃଷ୍ଣ ଜନ୍ମାଷ୍ଟମୀ" },
+        { "date": 14, "symbol": "!", "engName": "Ganesh Puja", "locName": "ଗଣେଶ ଚତୁର୍ଥୀ" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 8,
+      "year": 2026,
+      "events": [
+        { "date": 15, "symbol": "!", "engName": "Nuakhai", "locName": "ନୂଆଖାଇ (କୃଷିଭିତ୍ତିକ ଗଣପର୍ବ)" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 9,
+      "year": 2026,
+      "events": [
+        { "date": 2, "symbol": "*", "engName": "Gandhi Jayanti", "locName": "ଗାନ୍ଧୀ ଜୟନ୍ତୀ" },
+        { "date": 19, "symbol": "!", "engName": "Maha Navami / Durga Puja", "locName": "ଦୁର୍ଗାପୂଜା (ମହାନବମୀ)" },
+        { "date": 20, "symbol": "!", "engName": "Vijaya Dashami", "locName": "ବିଜୟା ଦଶମୀ (ଦଶହରା)" },
+        { "date": 25, "symbol": "!", "engName": "Kumar Purnima", "locName": "କୁମାର ପୂର୍ଣ୍ଣିମା" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 10,
+      "year": 2026,
+      "events": [
+        { "date": 8, "symbol": "!", "engName": "Diwali / Kali Puja", "locName": "ଦୀପାବଳି / କାଳୀପୂଜା" },
+        { "date": 24, "symbol": "!", "engName": "Kartika Purnima", "locName": "ରାସ ପୂର୍ଣ୍ଣିମା / ବୋଇତ ବନ୍ଦାଣ" }
+      ],
+      "panchang": {}
+    },
+    {
+      "month": 11,
+      "year": 2026,
+      "events": [
+        { "date": 2, "symbol": "!", "engName": "Prathamashtami", "locName": "ପ୍ରଥମାଷ୍ଟମୀ (ପୋଢ଼ୁଆଁଷ୍ଟମୀ)" },
+        { "date": 25, "symbol": "*", "engName": "Christmas", "locName": "ବଡ଼ଦିନ (ଖ୍ରୀଷ୍ଟଜୟନ୍ତୀ)" }
+      ],
+      "panchang": {}
+    }
+  ],
+  "recurringEvents": [
+    { "day": 1, "month": 0, "symbol": "*", "engName": "New Year's Day", "locName": "ଇଂରାଜୀ ନବବର୍ଷ" },
+    { "day": 26, "month": 0, "symbol": "*", "engName": "Republic Day", "locName": "ଗଣତନ୍ତ୍ର ଦିବସ" },
+    { "day": 1, "month": 3, "symbol": "*", "engName": "Utkal Divas", "locName": "ଉତ୍କଳ ଦିବସ" },
+    { "day": 1, "month": 4, "symbol": "*", "engName": "May Day", "locName": "ମଇ ଦିବସ" },
+    { "day": 15, "month": 7, "symbol": "*", "engName": "Independence Day", "locName": "ସ୍ୱାଧୀନତା ଦିବସ" },
+    { "day": 2, "month": 9, "symbol": "*", "engName": "Gandhi Jayanti", "locName": "ଗାନ୍ଧୀ ଜୟନ୍ତୀ" },
+    { "day": 25, "month": 11, "symbol": "*", "engName": "Christmas Day", "locName": "ବଡ଼ଦିନ" }
+  ],
+  "details": {
+    "2026-8-15": [
+      {
+        "bannerUrl": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&q=80&w=1000",
+        "tags": ["Agricultural Festival", "Western Odisha"],
+        "bodyLines": [
+          "# Significance",
+          "ନୂଆଖାଇ ହେଉଛି ପଶ୍ଚିମ ଓଡ଼ିଶାର ଏକ ପ୍ରଧାନ କୃଷିଭିତ୍ତିକ ସାମାଜିକ ଗଣପର୍ବ। 'ନୂଆ' ଅର୍ଥ ନୂତନ ଧାନ ଏବଂ 'ଖାଇ' ଅର୍ଥ ଭକ୍ଷଣ କରିବା।",
+          "# Rituals",
+          "- ଇଷ୍ଟଦେବୀ ମା' ସମଲେଶ୍ୱରୀଙ୍କ ନିକଟରେ ପ୍ରଥମ ଅନ୍ନ ଲାଗି କରାଯାଏ",
+          "- ପରିବାରର ସମସ୍ତ ସଦସ୍ୟ ଏକାଠି ବସି ନବାନ୍ନ ଗ୍ରହଣ କରନ୍ତି",
+          "- ବରିଷ୍ଠମାନଙ୍କୁ ପ୍ରଣାମ କରି 'ନୂଆଖାଇ ଜୁହାର' ଭେଟଘାଟ କରାଯାଏ"
+        ]
+      }
+    ],
+    "2026-5-16": [
+      {
+        "bannerUrl": "https://images.unsplash.com/photo-1596405835955-e65fae740133?auto=format&fit=crop&q=80&w=1000",
+        "tags": ["Major Festival", "Puri Jagannath"],
+        "bodyLines": [
+          "# Significance",
+          "ବିଶ୍ୱପ୍ରସିଦ୍ଧ ପୁରୀ ରଥଯାତ୍ରା। ଚତୁର୍ଦ୍ଧାମୂର୍ତ୍ତି ଶ୍ରୀଜଗନ୍ନାଥ, ବଳଭଦ୍ର, ଦେବୀ ସୁଭଦ୍ରା ଓ ସୁଦର୍ଶନ ତିନି ରଥରେ ବସି ଗୁଣ୍ଡିଚା ମନ୍ଦିର ଅଭିମୁଖେ ବିଜେ କରନ୍ତି।",
+          "# Rituals",
+          "- ପହଣ୍ଡି ବିଜେ ଓ ଛେରା ପହଁରା ନୀତି ସମ୍ପାଦନ",
+          "- ଭକ୍ତମାନେ ଶ୍ରଦ୍ଧାର ସହ ରଥ ଟାଣନ୍ତି"
+        ]
+      }
+    ]
+  },
+  "customCards": [
+    {
+      "mainTitle": "Discover Popular Tools",
+      "title": "Divya Drishti Panchang",
+      "desc": "ପ୍ରାମାଣିକ କୁଣ୍ଡଳୀ, ହୋରା, ଗୌରୀ ଓ ସୂକ୍ଷ୍ମ ବୈଦିକ ମୁହୂର୍ତ୍ତ ବିଶ୍ଳେଷଣ।",
+      "image": "https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=400&q=80",
+      "link": "https://example.com/panchang",
+      "color": "#991B1B"
+    },
+    {
+      "mainTitle": "Discover Popular Tools",
+      "title": "Vedic Kundali",
+      "desc": "ନିର୍ଭୁଲ ଉତ୍ତର, ଦକ୍ଷିଣ ଓ ପୂର୍ବ ଭାରତୀୟ ଶୈଳୀର ବୈଦିକ କୁଣ୍ଡଳୀ।",
+      "image": "https://images.unsplash.com/photo-1532012164546-f432f2e30129?auto=format&fit=crop&w=400&q=80",
+      "link": "https://example.com/kundali",
+      "color": "#D97706"
+    }
+  ],
+  "scrollCards": [
+    {
+      "mainTitle": "Spiritual Tools",
+      "title": "Choghadiya Planner",
+      "desc": "ଦିନ ଓ ରାତ୍ରିର ୮ଟି ଚୋଘଡ଼ିଆ ମୁହୂର୍ତ୍ତ ଗଣନା।",
+      "image": "",
+      "link": "#",
+      "color": "#1E3A8A"
+    },
+    {
+      "mainTitle": "Spiritual Tools",
+      "title": "Gowri Nalla Neram",
+      "desc": "ଦୈନନ୍ଦିନ କାର୍ଯ୍ୟାରମ୍ଭ ପାଇଁ ଶୁଭ ବେଳା।",
+      "image": "",
+      "link": "#",
+      "color": "#065F46"
+    }
+  ],
+  "bubbleCards": [
+    {
+      "mainTitle": "Quick Links",
+      "title": "Panchang",
+      "desc": "ଦୈନିକ ପଞ୍ଚାଙ୍ଗ",
+      "image": "",
+      "link": "#",
+      "color": "#B45309"
+    },
+    {
+      "mainTitle": "Quick Links",
+      "title": "Kundali",
+      "desc": "ଜନ୍ମ କୁଣ୍ଡଳୀ",
+      "image": "",
+      "link": "#",
+      "color": "#7C2D12"
+    }
+  ],
+  "lunarMonths": {
+    "Chaitra": "ଚୈତ୍ର",
+    "Vaishakha": "ବୈଶାଖ",
+    "Jyeshtha": "ଜ୍ୟୈଷ୍ଠ",
+    "Ashadha": "ଆଷାଢ଼",
+    "Shravana": "ଶ୍ରାବଣ",
+    "Bhadrapada": "ଭାଦ୍ରବ",
+    "Bhadrava": "ଭାଦ୍ରବ",
+    "Ashwina": "ଆଶ୍ୱିନ",
+    "Ashvina": "ଆଶ୍ୱିନ",
+    "Kartika": "କାର୍ତ୍ତିକ",
+    "Margashirsha": "ମାର୍ଗଶିର",
+    "Pausha": "ପୌଷ",
+    "Magha": "ମାଘ",
+    "Phalguna": "ଫାଲ୍ଗୁନ"
+  },
+  "choghadiya": {
+    "Amrit": { "name": "ଅମୃତ", "meaning": "ଅମୃତ (ସର୍ବୋତ୍ତମ)", "desc": "ଅତ୍ୟନ୍ତ ଶୁଭ ସମୟ। ନୂତନ କାର୍ଯ୍ୟ ଆରମ୍ଭ, ଯାତ୍ରା ଓ ଶୁଭ କର୍ମ ପାଇଁ ସର୍ବୋତ୍କୃଷ୍ଟ।" },
+    "Shubh": { "name": "ଶୁଭ", "meaning": "ଶୁଭ (ମଙ୍ଗଳକାରୀ)", "desc": "ମଙ୍ଗଳମୟ ସମୟ। ବିବାହ ଆଲୋଚନା, ଧାର୍ମିକ କାର୍ଯ୍ୟ ଓ ଚୁକ୍ତିପତ୍ର ପାଇଁ ଉତ୍ତମ।" },
+    "Labh": { "name": "ଲାଭ", "meaning": "ଲାଭ (ଉନ୍ନତିକାରୀ)", "desc": "ଆର୍ଥିକ ଉନ୍ନତି ଓ ବ୍ୟବସାୟ ପାଇଁ ଶ୍ରେଷ୍ଠ। ନୂଆ ବ୍ୟବସାୟ ଓ ହିସାବ କାରବାର ପାଇଁ ଅନୁକୂଳ।" },
+    "Chal": { "name": "ଚଳ", "meaning": "ଚଳ (ସାଧାରଣ)", "desc": "ଚଳନଶୀଳ ସମୟ। ସାଧାରଣ ଯାତ୍ରା ଓ ନିତ୍ୟକର୍ମ ପାଇଁ ଉପଯୁକ୍ତ।" },
+    "Udveg": { "name": "ଉଦ୍ବେଗ", "meaning": "ଉଦ୍ବେଗ (ଅଶୁଭ)", "desc": "ମାନସିକ ଚିନ୍ତା ବୃଦ୍ଧି ହୋଇପାରେ। କୌଣସି ନୂଆ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ କାର୍ଯ୍ୟ ଆରମ୍ଭ କରନ୍ତୁ ନାହିଁ।" },
+    "Rog": { "name": "ରୋଗ", "meaning": "ରୋଗ (ଅଶୁଭ)", "desc": "ବାଧା ଓ ଅସୁସ୍ଥତା ଆଶଙ୍କା। ଶୁଭ କାର୍ଯ୍ୟ ଓ ଦୂର ଯାତ୍ରା ବର୍ଜନ କରନ୍ତୁ।" },
+    "Kaal": { "name": "କାଳ", "meaning": "କାଳ (ହାନିକାରକ)", "desc": "ଅତ୍ୟନ୍ତ ଅଶୁଭ ସମୟ। ଧନ ନିବେଶ ଓ ନୂଆ କାର୍ଯ୍ୟ ଆରମ୍ଭ ସମ୍ପୂର୍ଣ୍ଣ ନିଷିଦ୍ଧ।" }
+  },
+  "muhurta": {
+    "Brahma Muhurta": {
+      "name": "ବ୍ରାହ୍ମ ମୁହୂର୍ତ୍ତ",
+      "desc": "ଦିନର ସର୍ବାଧିକ ଶାନ୍ତ ସମୟ। ପ୍ରାତଃ ଜାଗରଣ, ଧ୍ୟାନ ଓ ଅଧ୍ୟୟନ ପାଇଁ ସର୍ବୋତ୍ତମ।"
+    },
+    "Pratah Sandhya": {
+      "name": "ପ୍ରାତଃ ସନ୍ଧ୍ୟା",
+      "desc": "ପବିତ୍ର ପ୍ରଭାତ ସମୟ। ଦୈନିକ ପ୍ରାର୍ଥନା ଓ ଉପାସନା ପାଇଁ ଅତ୍ୟନ୍ତ ଅନୁକୂଳ।"
+    },
+    "Abhijit": {
+      "name": "ଅଭିଜିତ୍ ମୁହୂର୍ତ୍ତ",
+      "desc": "ଅତ୍ୟନ୍ତ ଶକ୍ତିଶାଳୀ ଓ ଶୁଭ ସମୟ। ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ନିଷ୍ପତ୍ତି ଓ ଶୁଭ କାର୍ଯ୍ୟାରମ୍ଭ ପାଇଁ ଶ୍ରେଷ୍ଠ।"
+    },
+    "Abhijit Muhurat": {
+      "name": "ଅଭିଜିତ୍ ମୁହୂର୍ତ୍ତ",
+      "desc": "ଅତ୍ୟନ୍ତ ଶକ୍ତିଶାଳୀ ଓ ଶୁଭ ସମୟ। ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ନିଷ୍ପତ୍ତି ଓ ଶୁଭ କାର୍ଯ୍ୟାରମ୍ଭ ପାଇଁ ଶ୍ରେଷ୍ଠ।"
+    },
+    "Vijaya Muhurta": {
+      "name": "ବିଜୟ ମୁହୂର୍ତ୍ତ",
+      "desc": "ବିଜୟର ଶୁଭ ବେଳା। କାର୍ଯ୍ୟ ସଫଳତା ଓ ପ୍ରତିଷ୍ଠା ଲାଭ ପାଇଁ ଅତ୍ୟନ୍ତ ଉପଯୁକ୍ତ।"
+    },
+    "Godhuli Muhurta": {
+      "name": "ଗୋଧୂଳି ମୁହୂର୍ତ୍ତ",
+      "desc": "ପବିତ୍ର ସନ୍ଧ୍ୟା କାଳ। ଧାର୍ମିକ କର୍ମ, ପ୍ରଦୀପ ପ୍ରଜ୍ଜ୍ୱଳନ ଓ ଆଳତି ପାଇଁ ପ୍ରଶସ୍ତ।"
+    },
+    "Sayahna Sandhya": {
+      "name": "ସାୟାହ୍ନ ସନ୍ଧ୍ୟା",
+      "desc": "ସନ୍ଧ୍ୟା କାଳୀନ ପୂଜାବନ୍ଦନା। ଶାନ୍ତି, ଜପ ଓ ପରିବାର ମଙ୍ଗଳ ପାଇଁ ଉଦ୍ଦିଷ୍ଟ।"
+    },
+    "Amrit Kalam": {
+      "name": "ଅମୃତ କାଳ",
+      "desc": "ଅତ୍ୟନ୍ତ ଶୁଭ ଓ ମଙ୍ଗଳକାରୀ ସମୟ। ଯେକୌଣସି ଶୁଭ କାର୍ଯ୍ୟ ଆରମ୍ଭ ପାଇଁ ଉତ୍ତମ।"
+    },
+    "Nishita Muhurta": {
+      "name": "ନିଶୀଥ ମୁହୂର୍ତ୍ତ",
+      "desc": "ଅର୍ଦ୍ଧରାତ୍ରିର ପବିତ୍ର ସମୟ। ଗଭୀର ଧ୍ୟାନ ଓ ଆଧ୍ୟାତ୍ମିକ ସାଧନା ପାଇଁ ଉଦ୍ଦିଷ୍ଟ।"
+    },
+    "Rahu Kalam": {
+      "name": "ରାହୁ କାଳ",
+      "desc": "ଅତ୍ୟନ୍ତ ଅଶୁଭ ସମୟ। କୌଣସି ନୂତନ ବା ଶୁଭ କାର୍ଯ୍ୟ ଆରମ୍ଭ ଏହି ସମୟରେ ବର୍ଜନ କରନ୍ତୁ।"
+    },
+    "Yamaganda": {
+      "name": "ଯମଗଣ୍ଡ",
+      "desc": "ଅଶୁଭ ସମୟ। ଏହି ସମୟରେ ଦୂର ଯାତ୍ରା ବା ନୂତନ କାର୍ଯ୍ୟାରମ୍ଭରୁ ଦୂରେଇ ରୁହନ୍ତୁ।"
+    },
+    "Gulikai Kalam": {
+      "name": "ଗୁଳିକା କାଳ",
+      "desc": "ନିୟମିତ କାର୍ଯ୍ୟ ପାଇଁ ସାଧାରଣ, କିନ୍ତୁ ନୂତନ ଶୁଭ କାର୍ଯ୍ୟାରମ୍ଭ ପାଇଁ ବର୍ଜନୀୟ।"
+    },
+    "Dur Muhurtam": {
+      "name": "ଦୁର୍ମୁହୂର୍ତ୍ତ",
+      "desc": "ଅତ୍ୟନ୍ତ ଅଶୁଭ ସମୟ। କୌଣସି ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ କାର୍ଯ୍ୟ ଏହି ବେଳାରେ କରନ୍ତୁ ନାହିଁ।"
+    }
+  },
+  "ui": {
+    "Panchang Header": "ପାଞ୍ଜି",
+    "Solar Date": "ସୌର ତାରିଖ",
+    "Day": "ଦିନ",
+    "Current Ritu": "ବର୍ତ୍ତମାନର ଋତୁ",
+    "Calendar Nav": "କ୍ୟାଲେଣ୍ଡର",
+    "Current Time": "ବର୍ତ୍ତମାନ ସମୟ",
+    "Timing Analysis": "ସମୟ ବିଶ୍ଳେଷଣ",
+    "Now": "ବର୍ତ୍ତମାନ",
+    "Completed": "ସମ୍ପୂର୍ଣ୍ଣ",
+    "Tithi": "ତିଥି",
+    "Nakshatra": "ନକ୍ଷତ୍ର",
+    "Yoga": "ଯୋଗ",
+    "Karana": "କରଣ",
+    "Ekadashi": "ଏକାଦଶୀ",
+    "Amavasya": "ଅମାବାସ୍ୟା",
+    "Purnima": "ପୂର୍ଣ୍ଣିମା",
+    "Festivals Nav": "ପର୍ବପର୍ବାଣି",
+    "Listen Nav": "ଶୁଣନ୍ତୁ",
+    "More Nav": "ଅଧିକ",
+    "Moonrise": "ଚନ୍ଦ୍ରୋଦୟ",
+    "Moonset": "ଚନ୍ଦ୍ରାସ୍ତ",
+    "Sunrise": "ସୂର୍ଯ୍ୟୋଦୟ",
+    "Sunset": "ସୂର୍ଯ୍ୟାସ୍ତ",
+    "Festivals Header": "ପର୍ବପର୍ବାଣି",
+    "Timings": "ମୁହୂର୍ତ୍ତ ସମୟ",
+    "Auspicious Timings Header": "ଶୁଭ ସମୟ",
+    "Inauspicious Timings Header": "ଅଶୁଭ ସମୟ",
+    "Upcoming Tithis": "ଆଗାମୀ ତିଥି",
+    "Upcoming Festivals": "ଆସୁଥିବା ପର୍ବପର୍ବାଣି",
+    "View calendar": "କ୍ୟାଲେଣ୍ଡର ଦେଖନ୍ତୁ",
+    "Next Upcoming Festival": "ପରବର୍ତ୍ତୀ ପର୍ବ",
+    "Today Festival": "ଆଜିର ପର୍ବ:",
+    "Year View": "ବାର୍ଷିକ ଦୃଶ୍ୟ",
+    "Today Sankranti": "ଆଜିର ସଂକ୍ରାନ୍ତି",
+    "Upcoming Sankranti": "ଆଗାମୀ ସଂକ୍ରାନ୍ତି",
+    "Sankranti Text": "ସଂକ୍ରାନ୍ତି",
+    "Day Choghadiya": "ଦିନ ଚୋଘଡ଼ିଆ",
+    "Night Choghadiya": "ରାତ୍ରି ଚୋଘଡ଼ିଆ",
+    "Progress Text": "ପ୍ରୋଗ୍ରେସ୍",
+    "Timings Nav": "ସମୟ",
+    "Vedic Planner": "ବୈଦିକ ପ୍ଲାନର୍",
+    "Choghadiya Badge": "ଚୋଘଡ଼ିଆ"
+  }
+}
